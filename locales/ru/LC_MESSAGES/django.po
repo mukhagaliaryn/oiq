@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-07 11:44+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+#: config/settings.py:112
+msgid "Kazakh"
+msgstr ""
+
+#: config/settings.py:113
+msgid "Russian"
+msgstr ""
+
+#: config/settings.py:114
+msgid "English"
+msgstr ""
+
+#: core/admin/accounts.py:15
+msgid "Personal data"
+msgstr ""
+
+#: core/admin/accounts.py:16
+msgid "Permissions"
+msgstr ""
+
+#: core/models/accounts.py:15
+msgid "The user must have an username"
+msgstr ""
+
+#: core/models/accounts.py:17
+msgid "The user must have an email address"
+msgstr ""
+
+#: core/models/accounts.py:36
+msgid "Student"
+msgstr ""
+
+#: core/models/accounts.py:37
+msgid "Teacher"
+msgstr ""
+
+#: core/models/accounts.py:40
+msgid "email"
+msgstr ""
+
+#: core/models/accounts.py:42
+msgid "username"
+msgstr ""
+
+#: core/models/accounts.py:45
+msgid "First name"
+msgstr ""
+
+#: core/models/accounts.py:46
+msgid "Last name"
+msgstr ""
+
+#: core/models/accounts.py:47
+msgid "Avatar"
+msgstr ""
+
+#: core/models/accounts.py:48
+msgid "Google avatar"
+msgstr ""
+
+#: core/models/accounts.py:50
+msgid "Account type"
+msgstr ""
+
+#: core/models/accounts.py:54
+msgid "staff status"
+msgstr ""
+
+#: core/models/accounts.py:55
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: core/models/accounts.py:58
+msgid "active"
+msgstr ""
+
+#: core/models/accounts.py:60
+msgid ""
+"Designates whether this user should be treated as active.Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: core/models/accounts.py:64
+msgid "date joined"
+msgstr ""
+
+#: core/models/accounts.py:81
+msgid "User"
+msgstr ""
+
+#: core/models/accounts.py:82
+msgid "Users"
+msgstr ""

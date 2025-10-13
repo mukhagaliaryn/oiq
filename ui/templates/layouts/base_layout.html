@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block base %}
+<div class="flex flex-col h-screen">
+    <div class="flex-1 flex flex-col">
+        <header class="sticky top-0 z-10 border-border-200 bg-white">
+            <div class="max-w-screen-2xl w-full mx-auto h-16 px-4 flex justify-center md:justify-between items-center">
+                <a 
+                    href="{% if user.is_authenticated %}{% url 'learner_home' %}{% else %}{% url 'main' %}{% endif %}"
+                    class="border border-transparent transition-all active:border active:border-dashed active:border-muted active:scale-95"
+                >
+                    <img src="{% static 'images/full-logo.svg' %}" class="w-28" alt="">
+                </a>
+                
+                <div class="hidden md:flex gap-4 items-center">
+                    <button 
+                        id="dropdownLocaleButton" 
+                        data-dropdown-toggle="locale"
+                        data-dropdown-offset-distance="4"
+                        data-dropdown-trigger="hover"
+                        class="flex gap-2 items-center px-4 py-2 rounded-lg border border-border-200 cursor-pointer transition-all hover:shadow active:scale-95"
+                        type="button"
+                    >
+                        <img src="{% static 'images/locales/kk.png' %}" class="w-6" alt="">
+                        <span>Қазақша</span>
+                    </button>
+
+                    <!-- Locale menu -->
+                    <div 
+                        id="locale" 
+                        class="hidden border border-border-200 bg-white z-10 rounded-lg w-44"
+                    >
+                        <ul class="py-2" aria-labelledby="dropdownLocaleButton">
+                            <li>
+                                <a href="#" class="flex gap-2 items-center px-4 py-2 hover:bg-secondary-100">
+                                    <img src="{% static 'images/locales/kk.png' %}" class="w-6" alt="">
+                                    <span>Қазақша</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex gap-2 items-center px-4 py-2 hover:bg-secondary-100">
+                                    <img src="{% static 'images/locales/ru.png' %}" class="w-6" alt="">
+                                    <span>Русский</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="flex gap-2 items-center px-4 py-2 hover:bg-secondary-100">
+                                    <img src="{% static 'images/locales/en.png' %}" class="w-6" alt="">
+                                    <span>English</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Auth user -->
+                    {% if request.user.is_authenticated %}
+                        <div>
+                            <button 
+                                id="dropdownUserAvatarButton" 
+                                data-dropdown-toggle="dropdownAvatar"
+                                data-dropdown-offset-distance="4"
+                                type="button"
+                                class="flex items-center rounded-full transition-all border-2 border-border-200 active:scale-95 cursor-pointer"
+                            >
+                                {% if user.avatar %}
+                                    <img class="w-10 h-10 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo">
+                                {% else %}
+                                    <div class="w-10 h-10 rounded-full bg-secondary-100 flex items-center justify-center text-foreground">
+                                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                                    </div>
+                                {% endif %}
+                            </button>
+
+                            <!-- Dropdown menu -->
+                            <div 
+                                id="dropdownAvatar"
+                                class="z-10 hidden bg-white divide-y divide-secondary-200 rounded-lg border border-border-200 w-48"
+                            >
+                                <div class="px-4 py-2">
+                                    <h3 class="font-medium line-clamp-1">{{ user.get_full_name }}</h3>
+                                    <span class="truncate">name@flowbite.com</span>
+                                </div>
+                                <ul 
+                                    class="py-2" 
+                                    aria-labelledby="dropdownUserAvatarButton"
+                                >
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 hover:bg-secondary-100 transition-all">Профиль</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 hover:bg-secondary-100 transition-all">Баптаулар</a>
+                                    </li>
+                                </ul>
+                                <form class="py-2" action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button 
+                                        type="submit" 
+                                        class="w-full block text-left px-4 py-2 hover:bg-secondary-100 transition-all cursor-pointer"
+                                    >
+                                        Жүйеден шығу
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1">
+            {% block base_layout %}
+            {% endblock base_layout %}
+        </div>
+    </div>
+    <!-- <footer class="border-t border-border-200">
+        <div class="max-w-screen-2xl w-full mx-auto flex justify-between py-8 px-4">
+            <a href="#" class="border border-transparent transition-all active:border active:border-dashed active:border-muted active:scale-95">
+                <img src="{% static 'images/full-logo.svg' %}" class="w-28" alt="">
+            </a>
+        </div>
+    </footer> -->
+</div>
+{% endblock base %}
