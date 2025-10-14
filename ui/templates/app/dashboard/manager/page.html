@@ -1,0 +1,28 @@
+{% extends 'layouts/manager_layout.html' %}
+
+{% block title %}Басқару панелі{% endblock title %}
+
+
+{% block manager_layout %}
+<div class="flex items-center h-full p-4">
+    <div class="max-w-xl w-full mx-auto flex justify-center items-center p-4">
+        <div class="grid gap-2 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench-icon lucide-wrench mx-auto">
+                <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />
+            </svg>
+            <h1 class="text-4xl font-medium">Администрация</h1>
+            <span class="text-muted">Администрациялық басқару панелі әзірлену үстінде. Оған дейін базалық администрацияға кірсеңіз болады</span>
+            <div class="flex justify-center">
+                <a 
+                    href="/admin/" 
+                    class="flex justify-center px-4 py-2 rounded-xl bg-primary-500 text-white font-medium transition-all hover:bg-primary-600 hover:shadow active:scale-95 active:shadow-none"
+                >
+                    Базалық администрация
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock manager_layout %}

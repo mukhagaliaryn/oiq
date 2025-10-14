@@ -35,6 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USER_TYPE = (
         ('pupil', _('Pupil')),
         ('teacher', _('Teacher')),
+        ('manager', _('Manager')),
     )
 
     email = models.EmailField(_('email'), max_length=128, unique=True)
@@ -50,6 +51,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('Account type'), max_length=32,
         choices=USER_TYPE, default='pupil'
     )
+    school = models.ForeignKey('generics.School', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
+    user_class = models.ForeignKey('generics.Class', on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
     is_staff = models.BooleanField(
         verbose_name=_('staff status'), default=False,
         help_text=_("Designates whether the user can log into this admin site."),

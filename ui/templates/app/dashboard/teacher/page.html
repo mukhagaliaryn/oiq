@@ -1,11 +1,10 @@
-{% extends 'layouts/learner_layout.html' %}
+{% extends 'layouts/teacher_layout.html' %}
+
+{% block title %}Басқару панелі{% endblock title %}
 
 
-{% block title %}Басты бет{% endblock title %}
-
-
-{% block learner_layout %}
-<div class="grid gap-4">
+{% block teacher_layout %}
+<div class="max-w-screen-lg mx-auto p-4">
     <!-- Профиль -->
     <div class="grid gap-4">
         <div class="flex justify-center p-8 rounded-xl bg-primary-100">
@@ -79,5 +78,4 @@
         </div>
     </div>
 </div>
-
-{% endblock learner_layout %}
+{% endblock teacher_layout %}

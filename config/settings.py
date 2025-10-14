@@ -24,11 +24,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tailwind',
     'ui',
-    'core.apps.CoreConfig',
+    # core apps...
+    'core.generics.apps.GenericsConfig',
 
-    # apps...
+    # view apps...
     'apps.main.apps.MainConfig',
     'apps.learner.apps.LearnerConfig',
+    'apps.teacher.apps.TeacherConfig',
+    'apps.manager.apps.ManagerConfig',
 ]
 
 # Middlewares
@@ -50,7 +53,6 @@ if DEBUG:
         'django_browser_reload.middleware.BrowserReloadMiddleware',
     ]
 
-AUTH_USER_MODEL = 'core.User'
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -154,10 +156,10 @@ SILENCED_SYSTEM_CHECKS = ['security.W019']
 # ----------------------------------------------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'core.db.backends.EmailOrUsernameModelBackend',
+    'core.generics.db.backends.EmailOrUsernameModelBackend',
 ]
 
-
+AUTH_USER_MODEL = 'generics.User'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'learner_home'
 LOGOUT_REDIRECT_URL = 'login'
