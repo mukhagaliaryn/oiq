@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from core.generics.models import User
 
 
-# School
+# School global
 # ----------------------------------------------------------------------------------------------------------------------
 # School model
 class School(models.Model):
@@ -26,14 +26,10 @@ class School(models.Model):
         ordering = ('order', )
 
 
-# Class
+# Class global
 # ----------------------------------------------------------------------------------------------------------------------
 # ClassType model
 class ClassType(models.Model):
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE,
-        related_name='class_types', verbose_name=_('School')
-    )
     letter = models.CharField(_('Letter'), max_length=2, unique=True)
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
@@ -41,7 +37,6 @@ class ClassType(models.Model):
         return self.letter
 
     class Meta:
-        unique_together = ('school', 'letter')
         verbose_name = _('Class type')
         verbose_name_plural = _('Class types')
         ordering = ('order', )
@@ -49,21 +44,47 @@ class ClassType(models.Model):
 
 # Class model
 class Class(models.Model):
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='classes', verbose_name=_('School'))
     grade = models.PositiveSmallIntegerField(_('Grade'))
     class_type = models.ForeignKey(
         ClassType, on_delete=models.CASCADE,
         related_name='classes', verbose_name=_('Class type')
     )
-    order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     def __str__(self):
         return f"{self.grade}{self.class_type.letter}"
 
     class Meta:
+        unique_together = ('grade', 'class_type')
         verbose_name = _('Class')
         verbose_name_plural = _('Classes')
-        ordering = ('order', )
+        ordering = ('grade', 'class_type', )
+
+
+
+# Defined school
+# ----------------------------------------------------------------------------------------------------------------------
+# SchoolClass
+class SchoolClass(models.Model):
+    school = models.ForeignKey(
+        School, on_delete=models.CASCADE,
+        related_name='school_classes', verbose_name=_('School')
+    )
+    user_class = models.ForeignKey(
+        Class, on_delete=models.CASCADE,
+        related_name='school_links', verbose_name=_('Class')
+    )
+    homeroom_teacher = models.ForeignKey(
+        User, on_delete=models.SET_NULL, limit_choices_to={'user_type': 'teacher'},
+        null=True, blank=True, verbose_name=_('Homeroom teacher')
+    )
+
+    class Meta:
+        unique_together = ('school', 'user_class')
+        verbose_name = _('School class')
+        verbose_name_plural = _('School classes')
+
+    def __str__(self):
+        return f"{self.school.name} – {self.user_class}"
 
 
 # SchoolSubject model
@@ -85,14 +106,14 @@ class SchoolSubject(models.Model):
         ordering = ('order', )
 
     def __str__(self):
-        return f"{self.school.name} – {self.subject.name}"
+        return f"{self.subject.name} - {self.school.name}"
 
 
 # ClassSubject model
 class ClassSubject(models.Model):
-    user_class = models.ForeignKey(
-        Class, on_delete=models.CASCADE,
-        related_name='class_subjects', verbose_name=_('Class')
+    school_class = models.ForeignKey(
+        SchoolClass, on_delete=models.CASCADE,
+        related_name='class_subjects', verbose_name=_('School class')
     )
     school_subject = models.ForeignKey(
         SchoolSubject, on_delete=models.CASCADE,
@@ -105,7 +126,7 @@ class ClassSubject(models.Model):
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     class Meta:
-        unique_together = ('user_class', 'school_subject')
+        unique_together = ('school_class', 'school_subject')
         verbose_name = _('Class subject')
         verbose_name_plural = _('Class subjects')
         ordering = ('order', )
@@ -115,4 +136,4 @@ class ClassSubject(models.Model):
         return self.school_subject.subject
 
     def __str__(self):
-        return f"{self.user_class} – {self.subject}"
+        return f"{self.school_class.user_class}–сынып. {self.subject}"

@@ -47,10 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('Last name'), max_length=128)
     avatar = models.ImageField(_('Avatar'), upload_to='core/models/accounts/users/', blank=True, null=True)
     google_avatar = models.URLField(_('Google avatar'), blank=True, null=True)
-    user_type = models.CharField(
-        _('Account type'), max_length=32,
-        choices=USER_TYPE, default='pupil'
-    )
+    user_type = models.CharField(_('Account type'), max_length=32, choices=USER_TYPE, default='pupil')
     school = models.ForeignKey('generics.School', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     user_class = models.ForeignKey('generics.Class', on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
     is_staff = models.BooleanField(

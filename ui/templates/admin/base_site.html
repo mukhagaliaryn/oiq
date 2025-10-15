@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+
+{% block title %}{{ title }} | OIQ{% endblock %}
+
+
+{% block extrahead %}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .login #container #header {
+            justify-content: center;
+        }
+
+        .login #container #header #branding {
+            text-align: center;
+        }
+    </style>
+{% endblock %}

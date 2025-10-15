@@ -39,6 +39,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'config.middleware.ForceKazakhLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -106,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # ----------------------------------------------------------------------------------------------------------------------
-LANGUAGE_CODE = 'ru-RU'
+LANGUAGE_CODE = 'kk'
 TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
@@ -120,6 +121,8 @@ LANGUAGES = (
 LOCALE_PATHS = [
     BASE_DIR / 'locales'
 ]
+
+LANGUAGE_COOKIE_NAME = 'language'
 
 
 # Static files (CSS, JavaScript, Images)

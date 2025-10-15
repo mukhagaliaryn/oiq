@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-07 11:44+0500\n"
+"POT-Creation-Date: 2025-10-15 16:04+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,96 +17,256 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-#: config/settings.py:112
+
+#: apps/main/views/auth.py:23
+msgid "Қате логин немесе пароль"
+msgstr ""
+
+#: apps/main/views/auth.py:40
+msgid "Сәтті тіркелдіңіз!"
+msgstr ""
+
+#: apps/main/views/auth.py:43
+msgid "Тіркеу сәтсіз аяқталды. Деректерді тексеріңіз!"
+msgstr ""
+
+#: config/settings.py:115
 msgid "Kazakh"
 msgstr "Қазақша"
 
-#: config/settings.py:113
+#: config/settings.py:116
 msgid "Russian"
 msgstr "Русский"
 
-#: config/settings.py:114
+#: config/settings.py:117
 msgid "English"
 msgstr "English"
 
-#: core/admin/accounts.py:15
+#: core/generics/admin/accounts.py:20
 msgid "Personal data"
-msgstr ""
+msgstr "Жеке мәліметтер"
 
-#: core/admin/accounts.py:16
+#: core/generics/admin/accounts.py:25
 msgid "Permissions"
-msgstr ""
+msgstr "Рұқсаттар"
 
-#: core/models/accounts.py:15
+#: core/generics/models/accounts.py:15
 msgid "The user must have an username"
-msgstr ""
+msgstr "Қолданушының аты болуы керек"
 
-#: core/models/accounts.py:17
+#: core/generics/models/accounts.py:17
 msgid "The user must have an email address"
-msgstr ""
+msgstr "Қолданушының электрондық поштасы болуы керек"
 
-#: core/models/accounts.py:36
-msgid "Student"
-msgstr ""
+#: core/generics/models/accounts.py:36
+msgid "Pupil"
+msgstr "Оқушы"
 
-#: core/models/accounts.py:37
+#: core/generics/models/accounts.py:37
 msgid "Teacher"
-msgstr ""
+msgstr "Оқытушы"
 
-#: core/models/accounts.py:40
+#: core/generics/models/accounts.py:38
+msgid "Manager"
+msgstr "Менеджер"
+
+#: core/generics/models/accounts.py:41
 msgid "email"
-msgstr ""
+msgstr "Электронды пошта"
 
-#: core/models/accounts.py:42
+#: core/generics/models/accounts.py:43
 msgid "username"
-msgstr ""
+msgstr "Қолданушының аты"
 
-#: core/models/accounts.py:45
+#: core/generics/models/accounts.py:46
 msgid "First name"
-msgstr ""
+msgstr "Есімі"
 
-#: core/models/accounts.py:46
+#: core/generics/models/accounts.py:47
 msgid "Last name"
-msgstr ""
+msgstr "Тегі"
 
-#: core/models/accounts.py:47
+#: core/generics/models/accounts.py:48
 msgid "Avatar"
-msgstr ""
+msgstr "Аватар"
 
-#: core/models/accounts.py:48
+#: core/generics/models/accounts.py:49
 msgid "Google avatar"
-msgstr ""
+msgstr "Google аватар"
 
-#: core/models/accounts.py:50
+#: core/generics/models/accounts.py:50
 msgid "Account type"
-msgstr ""
+msgstr "Аккаунт типі"
 
-#: core/models/accounts.py:54
+#: core/generics/models/accounts.py:54
 msgid "staff status"
-msgstr ""
+msgstr "Статус"
 
-#: core/models/accounts.py:55
+#: core/generics/models/accounts.py:55
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
+msgstr "Қолданушының осы әкімші сайтына кіре алатынын белгілейді."
 
-#: core/models/accounts.py:58
+#: core/generics/models/accounts.py:58
 msgid "active"
-msgstr ""
+msgstr "Белсенді"
 
-#: core/models/accounts.py:60
+#: core/generics/models/accounts.py:60
 msgid ""
 "Designates whether this user should be treated as active.Unselect this "
 "instead of deleting accounts."
 msgstr ""
+"Бұл пайдаланушыға белсенді ретінде қарау керек пе, жоқ па, соны анықтайды."
 
-#: core/models/accounts.py:64
+#: core/generics/models/accounts.py:64
 msgid "date joined"
-msgstr ""
+msgstr "Тіркелген уақыты"
 
-#: core/models/accounts.py:81
+#: core/generics/models/accounts.py:81
 msgid "User"
-msgstr ""
+msgstr "Қолданушы"
 
-#: core/models/accounts.py:82
+#: core/generics/models/accounts.py:82
 msgid "Users"
-msgstr ""
+msgstr "Қолданушылар"
+
+#: core/generics/models/schools.py:11
+msgid "State"
+msgstr "Мемлекеттік"
+
+#: core/generics/models/schools.py:12
+msgid "Private"
+msgstr "Жеке меншік"
+
+#: core/generics/models/schools.py:13
+msgid "Cozy"
+msgstr "Жайлы"
+
+#: core/generics/models/schools.py:15 core/generics/models/subjects.py:9
+msgid "Name"
+msgstr "Атауы"
+
+#: core/generics/models/schools.py:16
+msgid "Type"
+msgstr "Типі"
+
+#: core/generics/models/schools.py:17
+msgid "Address"
+msgstr "Мекен-жайы"
+
+#: core/generics/models/schools.py:18 core/generics/models/schools.py:34
+#: core/generics/models/schools.py:100 core/generics/models/schools.py:126
+#: core/generics/models/subjects.py:10 core/generics/models/subjects.py:33
+#: core/generics/models/subjects.py:55
+msgid "Order"
+msgstr "Реттілік"
+
+#: core/generics/models/schools.py:24 core/generics/models/schools.py:70
+#: core/generics/models/schools.py:94
+msgid "School"
+msgstr "Мектеп"
+
+#: core/generics/models/schools.py:25
+msgid "Schools"
+msgstr "Мектептер"
+
+#: core/generics/models/schools.py:33
+msgid "Letter"
+msgstr "Литтер"
+
+#: core/generics/models/schools.py:40 core/generics/models/schools.py:50
+msgid "Class type"
+msgstr "Сынып литі"
+
+#: core/generics/models/schools.py:41
+msgid "Class types"
+msgstr "Сынып литтері"
+
+#: core/generics/models/schools.py:47
+msgid "Grade"
+msgstr "Сынып нөмері"
+
+#: core/generics/models/schools.py:58 core/generics/models/schools.py:74
+#: core/generics/models/subjects.py:29
+msgid "Class"
+msgstr "Сынып"
+
+#: core/generics/models/schools.py:59
+msgid "Classes"
+msgstr "Сыныптар"
+
+#: core/generics/models/schools.py:78
+msgid "Homeroom teacher"
+msgstr "Сынып жетекшісі"
+
+#: core/generics/models/schools.py:83 core/generics/models/schools.py:116
+msgid "School class"
+msgstr "Мектеп сыныбы"
+
+#: core/generics/models/schools.py:84
+msgid "School classes"
+msgstr "Мектеп сыныптары"
+
+#: core/generics/models/schools.py:98 core/generics/models/subjects.py:16
+#: core/generics/models/subjects.py:25
+msgid "Subject"
+msgstr "Пән"
+
+#: core/generics/models/schools.py:104 core/generics/models/schools.py:120
+msgid "School subject"
+msgstr "Мектеп пәні"
+
+#: core/generics/models/schools.py:105
+msgid "School subjects"
+msgstr "Мектеп пәндері"
+
+#: core/generics/models/schools.py:124
+msgid "Teachers"
+msgstr "Оқытушылар"
+
+#: core/generics/models/schools.py:130
+msgid "Class subject"
+msgstr "Сыныптың пәні"
+
+#: core/generics/models/schools.py:131
+msgid "Class subjects"
+msgstr "Сыныптың пәндері"
+
+#: core/generics/models/subjects.py:17
+msgid "Subjects"
+msgstr "Пәндер"
+
+#: core/generics/models/subjects.py:32 core/generics/models/subjects.py:53
+msgid "Title"
+msgstr "Тақырыбы"
+
+#: core/generics/models/subjects.py:36 core/generics/models/subjects.py:51
+msgid "Chapter"
+msgstr "Бөлім"
+
+#: core/generics/models/subjects.py:37
+msgid "Chapters"
+msgstr "Бөлімдер"
+
+#: core/generics/models/subjects.py:54
+msgid "Description"
+msgstr "Анықтама"
+
+#: core/generics/models/subjects.py:56
+msgid "Active"
+msgstr "Белсенді"
+
+#: core/generics/models/subjects.py:57
+msgid "Created at"
+msgstr "Жасалған уақыты"
+
+#: core/generics/models/subjects.py:58
+msgid "Updated at"
+msgstr "Өзгертілген уақыты"
+
+#: core/generics/models/subjects.py:61
+msgid "Topic"
+msgstr "Тақырып"
+
+#: core/generics/models/subjects.py:62
+msgid "Topics"
+msgstr "Тақырыптар"
