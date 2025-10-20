@@ -40,29 +40,69 @@ class Chapter(models.Model):
 
     def __str__(self):
         if self.user_class:
-            return f"{self.user_class}: {self.title}"
+            return self.title
         return self.title
 
 
 # Topic model
 class Topic(models.Model):
+    title = models.CharField(_('Title'), max_length=255)
     chapter = models.ForeignKey(
         Chapter, on_delete=models.CASCADE,
         related_name='topics', verbose_name=_('Chapter')
     )
-    title = models.CharField(_('Title'), max_length=255)
-    description = models.TextField(_('Description'), blank=True, null=True)
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
-    is_active = models.BooleanField(_('Active'), default=True)
-    created_at = models.DateTimeField(_('Created at'), auto_now_add=True)
-    updated_at = models.DateTimeField(_('Updated at'), auto_now=True)
 
     class Meta:
         verbose_name = _('Topic')
         verbose_name_plural = _('Topics')
-        ordering = ('chapter', 'order', 'id')
+        ordering = ('order', )
         unique_together = ('chapter', 'title')
 
     def __str__(self):
         return self.title
 
+
+# Question
+# ----------------------------------------------------------------------------------------------------------------------
+# QuestionType model
+class QuestionType(models.Model):
+    name = models.CharField(_('Name'), max_length=128)
+    slug = models.SlugField(_('Slug'), max_length=128, unique=True)
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Question type')
+        verbose_name_plural = _('Question types')
+
+    def __str__(self):
+        return self.name
+
+
+# Question model
+class Question(models.Model):
+    LEVEL = (
+        ('easy', _('Easy')),
+        ('medium', _('Medium')),
+        ('hard', _('Hard')),
+    )
+
+    title = models.CharField(_('Title'), max_length=128)
+    body = models.TextField(_('Body'))
+    topic = models.ForeignKey(
+        Topic, on_delete=models.CASCADE,
+        related_name='questions', verbose_name=_('Topic')
+    )
+    question_type = models.ForeignKey(
+        QuestionType, on_delete=models.CASCADE,
+        related_name='questions', verbose_name=_('Question type')
+    )
+    level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Question')
+        verbose_name_plural = _('Questions')
+
+    def __str__(self):
+        return self.title

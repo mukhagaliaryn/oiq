@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (
             _('Personal data'), {
-                'fields': ('first_name', 'last_name', 'user_type', 'school', 'user_class', )
+                'fields': ('first_name', 'last_name', 'role', 'school', 'user_class', )
             }
         ),
         (

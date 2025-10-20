@@ -28,37 +28,33 @@ class School(models.Model):
 
 # Class global
 # ----------------------------------------------------------------------------------------------------------------------
-# ClassType model
-class ClassType(models.Model):
-    letter = models.CharField(_('Letter'), max_length=2, unique=True)
-    order = models.PositiveSmallIntegerField(_('Order'), default=0)
-
-    def __str__(self):
-        return self.letter
-
-    class Meta:
-        verbose_name = _('Class type')
-        verbose_name_plural = _('Class types')
-        ordering = ('order', )
-
-
 # Class model
 class Class(models.Model):
     grade = models.PositiveSmallIntegerField(_('Grade'))
-    class_type = models.ForeignKey(
-        ClassType, on_delete=models.CASCADE,
-        related_name='classes', verbose_name=_('Class type')
-    )
 
     def __str__(self):
-        return f"{self.grade}{self.class_type.letter}"
+        return _('{}-class').format(self.grade)
 
     class Meta:
-        unique_together = ('grade', 'class_type')
         verbose_name = _('Class')
         verbose_name_plural = _('Classes')
-        ordering = ('grade', 'class_type', )
+        ordering = ('grade', )
 
+
+# ClassType model
+class Letter(models.Model):
+    name = models.CharField(_('Name'), max_length=2, unique=True)
+    class_grade = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='letters', verbose_name=_('Class'))
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    def __str__(self):
+        return _('{}{} - class').format(self.class_grade, self.name)
+
+    class Meta:
+        unique_together = ('class_grade', 'name')
+        verbose_name = _('Letter')
+        verbose_name_plural = _('Letters')
+        ordering = ('order', )
 
 
 # Defined school

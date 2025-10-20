@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from core.generics.models import School, ClassType, Class, SchoolClass, ClassSubject, SchoolSubject
+from core.generics.models import School, Class, SchoolClass, ClassSubject, SchoolSubject, Letter
 
 
 # School admin
@@ -14,18 +14,18 @@ class SchoolAdmin(admin.ModelAdmin):
 
 # Class admin
 # ----------------------------------------------------------------------------------------------------------------------
-# ClassType admin
-@register(ClassType)
-class ClassTypeAdmin(admin.ModelAdmin):
-    list_display = ('letter', 'order', )
+# LetterTab
+class LetterTab(admin.TabularInline):
+    model = Letter
+    extra = 0
 
 
 # ClassAdmin
 @register(Class)
 class ClassAdmin(admin.ModelAdmin):
-    list_display = ('grade', 'class_type', )
-    list_filter = ('class_type', )
+    list_display = ('grade', )
     search_fields = ('grade', )
+    inlines = (LetterTab, )
 
 
 # SchoolSubject admin
