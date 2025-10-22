@@ -10,13 +10,13 @@ def role_required(*allowed_roles):
             user = request.user
 
             if user.is_authenticated:
-                if user.user_type == 'manager' and not request.path.startswith('/manage/'):
+                if user.role == 'manager' and not request.path.startswith('/manage/'):
                     return redirect('manager_dashboard')
 
-                if user.user_type == 'teacher' and not request.path.startswith('/teacher/'):
+                if user.role == 'teacher' and not request.path.startswith('/teacher/'):
                     return redirect('teacher_dashboard')
 
-                if user.user_type in allowed_roles:
+                if user.role in allowed_roles:
                     return view_func(request, *args, **kwargs)
 
             raise Http404('Page not found')

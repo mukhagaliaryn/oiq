@@ -46,7 +46,7 @@ class Chapter(models.Model):
 
 # Topic model
 class Topic(models.Model):
-    title = models.TextField(_('Title'))
+    title = models.CharField(_('Title'), max_length=255)
     chapter = models.ForeignKey(
         Chapter, on_delete=models.CASCADE,
         related_name='topics', verbose_name=_('Chapter')

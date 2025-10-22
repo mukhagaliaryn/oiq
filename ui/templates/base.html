@@ -85,15 +85,21 @@
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.7.1/dist/dotlottie-wc.js" type="module"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
     <script>
-        const r = new rive.Rive({
+        const logo = new rive.Rive({
             src: "/static/images/logo.riv",
-            // OR the path to a discoverable and public Rive asset
-            // src: '/public/example.riv',
-            canvas: document.getElementById("canvas"),
+            canvas: document.getElementById("logo"),
             autoplay: true,
-            // artboard: "Artboard", // Optional. If not supplied the default is selected
             onLoad: () => {
-                r.resizeDrawingSurfaceToCanvas();
+                logo.resizeDrawingSurfaceToCanvas();
+            },
+        });
+
+        const mascot = new rive.Rive({
+            src: "/static/images/svg/qarga.riv",
+            canvas: document.getElementById("mascot"),
+            autoplay: true,
+            onLoad: () => {
+                mascot.resizeDrawingSurfaceToCanvas();
             },
         });
     </script>

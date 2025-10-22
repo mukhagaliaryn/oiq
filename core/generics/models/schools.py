@@ -41,14 +41,14 @@ class Class(models.Model):
         ordering = ('grade', )
 
 
-# ClassType model
+# Letter model
 class Letter(models.Model):
     name = models.CharField(_('Name'), max_length=2)
     class_grade = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='letters', verbose_name=_('Class'))
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     def __str__(self):
-        return _('{}{} - class').format(self.class_grade, self.name)
+        return _('{}{} - class').format(self.class_grade.grade, self.name)
 
     class Meta:
         verbose_name = _('Letter')
