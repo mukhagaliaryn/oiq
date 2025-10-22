@@ -43,7 +43,7 @@ class Class(models.Model):
 
 # ClassType model
 class Letter(models.Model):
-    name = models.CharField(_('Name'), max_length=2, unique=True)
+    name = models.CharField(_('Name'), max_length=2)
     class_grade = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='letters', verbose_name=_('Class'))
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
@@ -51,7 +51,6 @@ class Letter(models.Model):
         return _('{}{} - class').format(self.class_grade, self.name)
 
     class Meta:
-        unique_together = ('class_grade', 'name')
         verbose_name = _('Letter')
         verbose_name_plural = _('Letters')
         ordering = ('order', )
