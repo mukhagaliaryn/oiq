@@ -10,7 +10,6 @@ from django.utils.translation import gettext_lazy as _
 # User manager
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **kwargs):
-
         if not username:
             raise ValueError(_('The user must have an username'))
         if not email:
@@ -48,8 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(_('Avatar'), upload_to='core/models/accounts/users/', blank=True, null=True)
     google_avatar = models.URLField(_('Google avatar'), blank=True, null=True)
     role = models.CharField(_('Role'), max_length=32, choices=ROLE, default='pupil')
-    school = models.ForeignKey('generics.School', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
-    user_class = models.ForeignKey('generics.Class', on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
     is_staff = models.BooleanField(
         verbose_name=_('staff status'), default=False,
         help_text=_("Designates whether the user can log into this admin site."),
@@ -74,9 +71,75 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
 
-    def get_short_name(self):
-        return self.first_name
+    @property
+    def get_role(self):
+        if self.role == 'learner':
+            return getattr(self, 'learner', None)
+        elif self.role == 'teacher':
+            return getattr(self, 'teacher', None)
+        elif self.role == 'manager':
+            return getattr(self, 'manager', None)
+        return None
 
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+
+
+# Roles
+# ----------------------------------------------------------------------------------------------------------------------
+# Learner
+class Learner(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE,
+        related_name='learner', verbose_name=_('User'))
+    school = models.ForeignKey(
+        'School', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='learners', verbose_name=_('')
+    )
+
+    class Meta:
+        verbose_name = _('Learner')
+        verbose_name_plural = _('Learners')
+
+    def __str__(self):
+        return _('Learner: {}').format(self.user.get_full_name())
+
+
+# Teacher
+class Teacher(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE,
+        related_name='teacher', verbose_name=_('User'))
+    school = models.ForeignKey(
+        'School', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='teachers'
+    )
+    subjects = models.ManyToManyField('Subject', blank=True, related_name='teachers', verbose_name=_('Subjects'))
+    is_homeroom_teacher = models.BooleanField(_('Homeroom teacher'), default=False)
+
+    class Meta:
+        verbose_name = _('Teacher')
+        verbose_name_plural = _('Teachers')
+
+    def __str__(self):
+        return _('Teacher: {}').format(self.user.get_full_name())
+
+
+# Manager
+class Manager(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE,
+        related_name='manager', verbose_name=_('User'))
+    school = models.ForeignKey(
+        'School', on_delete=models.CASCADE,
+        related_name='managers',
+    )
+    position = models.CharField(_('Position'), max_length=100, default="Director")
+
+    class Meta:
+        verbose_name = _('Manager')
+        verbose_name_plural = _('Managers')
+
+    def __str__(self):
+        return _('Manager: {}').format(self.user.get_full_name())
