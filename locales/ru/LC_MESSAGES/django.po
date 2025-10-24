@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-15 16:04+0500\n"
+"POT-Creation-Date: 2025-10-24 11:51+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,103 +32,189 @@ msgstr ""
 msgid "Тіркеу сәтсіз аяқталды. Деректерді тексеріңіз!"
 msgstr ""
 
-#: config/settings.py:115
+#: config/settings.py:117
 msgid "Kazakh"
 msgstr "Қазақша"
 
-#: config/settings.py:116
+#: config/settings.py:118
 msgid "Russian"
 msgstr "Русский"
 
-#: config/settings.py:117
+#: config/settings.py:119
 msgid "English"
 msgstr "English"
 
-#: core/generics/admin/accounts.py:20
+#: core/generics/admin/accounts.py:41
 msgid "Personal data"
 msgstr "Личные данные"
 
-#: core/generics/admin/accounts.py:25
+#: core/generics/admin/accounts.py:46
 msgid "Permissions"
 msgstr "Разрешения"
 
-#: core/generics/models/accounts.py:15
+#: core/generics/admin/subjects.py:24 core/generics/admin/subjects.py:49
+msgid "Detail link"
+msgstr "Подробная ссылка"
+
+#: core/generics/apps.py:8
+msgid "Generics models"
+msgstr "Generics модели"
+
+#: core/generics/models/accounts.py:14
 msgid "The user must have an username"
 msgstr "У пользователя должно быть имя пользователя"
 
-#: core/generics/models/accounts.py:17
+#: core/generics/models/accounts.py:16
 msgid "The user must have an email address"
 msgstr "У пользователя должен быть адрес электронной почты"
 
-#: core/generics/models/accounts.py:36
-msgid "Pupil"
-msgstr "Ученик"
+#: core/generics/models/accounts.py:35 core/generics/models/accounts.py:98
+msgid "Learner"
+msgstr "Учащийся"
 
-#: core/generics/models/accounts.py:37
+#: core/generics/models/accounts.py:36 core/generics/models/accounts.py:116
 msgid "Teacher"
 msgstr "Учитель"
 
-#: core/generics/models/accounts.py:38
+#: core/generics/models/accounts.py:37 core/generics/models/accounts.py:130
 msgid "Manager"
 msgstr "Менеджер"
+
+#: core/generics/models/accounts.py:38
+msgid "Admin"
+msgstr "Администратор"
 
 #: core/generics/models/accounts.py:41
 msgid "email"
 msgstr "Электронная почта"
 
-#: core/generics/models/accounts.py:43
+#: core/generics/models/accounts.py:42
 msgid "username"
 msgstr "Имя пользователя"
 
-#: core/generics/models/accounts.py:46
+#: core/generics/models/accounts.py:43
 msgid "First name"
 msgstr "Имя"
 
-#: core/generics/models/accounts.py:47
+#: core/generics/models/accounts.py:44
 msgid "Last name"
 msgstr "Фамилия"
 
-#: core/generics/models/accounts.py:48
+#: core/generics/models/accounts.py:45
 msgid "Avatar"
 msgstr "Аватар"
 
-#: core/generics/models/accounts.py:49
+#: core/generics/models/accounts.py:46
 msgid "Google avatar"
 msgstr "Аватар в Google"
 
-#: core/generics/models/accounts.py:50
-msgid "Account type"
-msgstr "Тип учетной записи"
+#: core/generics/models/accounts.py:47
+msgid "User role"
+msgstr "Роль пользователя"
 
-#: core/generics/models/accounts.py:54
+#: core/generics/models/accounts.py:49
 msgid "staff status"
 msgstr "Статус персонала"
 
-#: core/generics/models/accounts.py:55
+#: core/generics/models/accounts.py:50
 msgid "Designates whether the user can log into this admin site."
 msgstr "Определяет, может ли пользователь войти на этот административный сайт."
 
-#: core/generics/models/accounts.py:58
+#: core/generics/models/accounts.py:53
 msgid "active"
 msgstr "Активный"
 
-#: core/generics/models/accounts.py:60
+#: core/generics/models/accounts.py:55
 msgid ""
 "Designates whether this user should be treated as active.Unselect this "
 "instead of deleting accounts."
 msgstr "Указывает, следует ли считать этого пользователя активным."
 
-#: core/generics/models/accounts.py:64
+#: core/generics/models/accounts.py:59
 msgid "date joined"
 msgstr "Дата присоединения"
 
-#: core/generics/models/accounts.py:81
+#: core/generics/models/accounts.py:83 core/generics/models/accounts.py:91
+#: core/generics/models/accounts.py:107 core/generics/models/accounts.py:125
 msgid "User"
 msgstr "Пользователь"
 
-#: core/generics/models/accounts.py:82
+#: core/generics/models/accounts.py:84
 msgid "Users"
 msgstr "Пользователи"
+
+#: core/generics/models/accounts.py:94 core/generics/models/accounts.py:110
+#: core/generics/models/accounts.py:126 core/generics/models/schools.py:24
+#: core/generics/models/schools.py:65 core/generics/models/schools.py:89
+msgid "School"
+msgstr "Школа"
+
+#: core/generics/models/accounts.py:99
+msgid "Learners"
+msgstr "Учащиеся"
+
+#: core/generics/models/accounts.py:102
+msgid "Learner: {}"
+msgstr "Учащийся: {}"
+
+#: core/generics/models/accounts.py:112 core/generics/models/subjects.py:17
+msgid "Subjects"
+msgstr "Предметы"
+
+#: core/generics/models/accounts.py:113
+msgid "Is homeroom teacher"
+msgstr "Классный руководитель"
+
+#: core/generics/models/accounts.py:117 core/generics/models/schools.py:119
+msgid "Teachers"
+msgstr "Учителя"
+
+#: core/generics/models/accounts.py:120
+msgid "Teacher: {}"
+msgstr "Учитель: {}"
+
+#: core/generics/models/accounts.py:127
+msgid "Position"
+msgstr "Позиция"
+
+#: core/generics/models/accounts.py:131
+msgid "Managers"
+msgstr "Менеджеры"
+
+#: core/generics/models/accounts.py:134
+msgid "Manager: {}"
+msgstr "Менеджер: {}"
+
+#: core/generics/models/games.py:8 core/generics/models/games.py:24
+#: core/generics/models/schools.py:15 core/generics/models/schools.py:46
+#: core/generics/models/subjects.py:9 core/generics/models/subjects.py:70
+msgid "Name"
+msgstr "Имя"
+
+#: core/generics/models/games.py:9 core/generics/models/games.py:25
+#: core/generics/models/schools.py:18 core/generics/models/schools.py:48
+#: core/generics/models/schools.py:95 core/generics/models/schools.py:121
+#: core/generics/models/subjects.py:10 core/generics/models/subjects.py:33
+#: core/generics/models/subjects.py:54 core/generics/models/subjects.py:72
+#: core/generics/models/subjects.py:101
+msgid "Order"
+msgstr "Порядок"
+
+#: core/generics/models/games.py:12
+msgid "Game"
+msgstr ""
+
+#: core/generics/models/games.py:13
+msgid "Games"
+msgstr ""
+
+#: core/generics/models/games.py:28
+msgid "Virtual"
+msgstr ""
+
+#: core/generics/models/games.py:29
+msgid "Virtuals"
+msgstr ""
 
 #: core/generics/models/schools.py:11
 msgid "State"
@@ -142,10 +228,6 @@ msgstr "Частный"
 msgid "Cozy"
 msgstr "Уютный"
 
-#: core/generics/models/schools.py:15 core/generics/models/subjects.py:9
-msgid "Name"
-msgstr "Имя"
-
 #: core/generics/models/schools.py:16
 msgid "Type"
 msgstr "Тип"
@@ -154,93 +236,78 @@ msgstr "Тип"
 msgid "Address"
 msgstr "Адрес"
 
-#: core/generics/models/schools.py:18 core/generics/models/schools.py:34
-#: core/generics/models/schools.py:100 core/generics/models/schools.py:126
-#: core/generics/models/subjects.py:10 core/generics/models/subjects.py:33
-#: core/generics/models/subjects.py:55
-msgid "Order"
-msgstr "Порядок"
-
-#: core/generics/models/schools.py:24 core/generics/models/schools.py:70
-#: core/generics/models/schools.py:94
-msgid "School"
-msgstr "Школа"
-
 #: core/generics/models/schools.py:25
 msgid "Schools"
 msgstr "Школы"
 
 #: core/generics/models/schools.py:33
-msgid "Letter"
-msgstr "Литтер"
-
-#: core/generics/models/schools.py:40 core/generics/models/schools.py:50
-msgid "Class type"
-msgstr "Тип класса"
-
-#: core/generics/models/schools.py:41
-msgid "Class types"
-msgstr "Типы классов"
-
-#: core/generics/models/schools.py:47
 msgid "Grade"
 msgstr "Номер класса"
 
-#: core/generics/models/schools.py:58 core/generics/models/schools.py:74
-#: core/generics/models/subjects.py:29
+#: core/generics/models/schools.py:36
+msgid "{}-class"
+msgstr "{}-Класс"
+
+#: core/generics/models/schools.py:39 core/generics/models/schools.py:47
+#: core/generics/models/schools.py:69 core/generics/models/subjects.py:29
 msgid "Class"
 msgstr "Класс"
 
-#: core/generics/models/schools.py:59
+#: core/generics/models/schools.py:40
 msgid "Classes"
 msgstr "Классы"
 
-#: core/generics/models/schools.py:78
+#: core/generics/models/schools.py:51
+msgid "{}{} - class"
+msgstr ""
+
+#: core/generics/models/schools.py:54
+msgid "Letter"
+msgstr "Литтер"
+
+#: core/generics/models/schools.py:55
+msgid "Letters"
+msgstr "Литтер"
+
+#: core/generics/models/schools.py:73
 msgid "Homeroom teacher"
 msgstr "Классный руководитель"
 
-#: core/generics/models/schools.py:83 core/generics/models/schools.py:116
+#: core/generics/models/schools.py:78 core/generics/models/schools.py:111
 msgid "School class"
 msgstr "Школьный класс"
 
-#: core/generics/models/schools.py:84
+#: core/generics/models/schools.py:79
 msgid "School classes"
 msgstr "Школьные классы"
 
-#: core/generics/models/schools.py:98 core/generics/models/subjects.py:16
+#: core/generics/models/schools.py:93 core/generics/models/subjects.py:16
 #: core/generics/models/subjects.py:25
 msgid "Subject"
 msgstr "Предмет"
 
-#: core/generics/models/schools.py:104 core/generics/models/schools.py:120
+#: core/generics/models/schools.py:99 core/generics/models/schools.py:115
 msgid "School subject"
 msgstr "Школьный предмет"
 
-#: core/generics/models/schools.py:105
+#: core/generics/models/schools.py:100
 msgid "School subjects"
 msgstr "Школьные предметы"
 
-#: core/generics/models/schools.py:124
-msgid "Teachers"
-msgstr "Учителя"
-
-#: core/generics/models/schools.py:130
+#: core/generics/models/schools.py:125
 msgid "Class subject"
 msgstr "Предмет класса"
 
-#: core/generics/models/schools.py:131
+#: core/generics/models/schools.py:126
 msgid "Class subjects"
 msgstr "Предметы классов"
 
-#: core/generics/models/subjects.py:17
-msgid "Subjects"
-msgstr "Предметы"
-
-#: core/generics/models/subjects.py:32 core/generics/models/subjects.py:53
+#: core/generics/models/subjects.py:32 core/generics/models/subjects.py:49
+#: core/generics/models/subjects.py:90
 msgid "Title"
 msgstr "Заглавие"
 
-#: core/generics/models/subjects.py:36 core/generics/models/subjects.py:51
+#: core/generics/models/subjects.py:36 core/generics/models/subjects.py:52
 msgid "Chapter"
 msgstr "Глава"
 
@@ -248,26 +315,50 @@ msgstr "Глава"
 msgid "Chapters"
 msgstr "Главы"
 
-#: core/generics/models/subjects.py:54
-msgid "Description"
-msgstr "Описание"
-
-#: core/generics/models/subjects.py:56
-msgid "Active"
-msgstr "Активный"
-
-#: core/generics/models/subjects.py:57
-msgid "Created at"
-msgstr "Создано"
-
-#: core/generics/models/subjects.py:58
-msgid "Updated at"
-msgstr "Обновлено"
-
-#: core/generics/models/subjects.py:61
+#: core/generics/models/subjects.py:57 core/generics/models/subjects.py:94
 msgid "Topic"
 msgstr "Тема"
 
-#: core/generics/models/subjects.py:62
+#: core/generics/models/subjects.py:58
 msgid "Topics"
 msgstr "Темы"
+
+#: core/generics/models/subjects.py:71
+msgid "Slug"
+msgstr ""
+
+#: core/generics/models/subjects.py:75 core/generics/models/subjects.py:98
+msgid "Question type"
+msgstr ""
+
+#: core/generics/models/subjects.py:76
+msgid "Question types"
+msgstr ""
+
+#: core/generics/models/subjects.py:85
+msgid "Easy"
+msgstr ""
+
+#: core/generics/models/subjects.py:86
+msgid "Medium"
+msgstr ""
+
+#: core/generics/models/subjects.py:87
+msgid "Hard"
+msgstr ""
+
+#: core/generics/models/subjects.py:91
+msgid "Body"
+msgstr ""
+
+#: core/generics/models/subjects.py:100
+msgid "Level"
+msgstr ""
+
+#: core/generics/models/subjects.py:104
+msgid "Question"
+msgstr "Описание"
+
+#: core/generics/models/subjects.py:105
+msgid "Questions"
+msgstr "Разрешения"

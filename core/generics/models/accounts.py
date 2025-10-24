@@ -31,24 +31,22 @@ class UserManager(BaseUserManager):
 
 # User model
 class User(AbstractBaseUser, PermissionsMixin):
-    ROLE = (
-        ('pupil', _('Pupil')),
+    USER_ROLE = (
+        ('learner', _('Learner')),
         ('teacher', _('Teacher')),
         ('manager', _('Manager')),
+        ('admin', _('Admin')),
     )
 
     email = models.EmailField(_('email'), max_length=128, unique=True)
-    username = models.CharField(
-        _('username'), max_length=128, unique=True,
-        validators=[UnicodeUsernameValidator()]
-    )
+    username = models.CharField(_('username'), max_length=128, unique=True, validators=[UnicodeUsernameValidator()])
     first_name = models.CharField(_('First name'), max_length=128)
     last_name = models.CharField(_('Last name'), max_length=128)
     avatar = models.ImageField(_('Avatar'), upload_to='core/models/accounts/users/', blank=True, null=True)
     google_avatar = models.URLField(_('Google avatar'), blank=True, null=True)
-    role = models.CharField(_('Role'), max_length=32, choices=ROLE, default='pupil')
+    user_role = models.CharField(_('User role'), max_length=32, choices=USER_ROLE, default='learner')
     is_staff = models.BooleanField(
-        verbose_name=_('staff status'), default=False,
+        _('staff status'), default=False,
         help_text=_("Designates whether the user can log into this admin site."),
     )
     is_active = models.BooleanField(
@@ -69,15 +67,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email or self.username
 
     def get_full_name(self):
-        return f"{self.first_name} {self.last_name}".strip()
+        return f'{self.first_name} {self.last_name}'.strip()
 
     @property
-    def get_role(self):
-        if self.role == 'learner':
+    def role(self):
+        if self.user_role == 'learner':
             return getattr(self, 'learner', None)
-        elif self.role == 'teacher':
+        elif self.user_role == 'teacher':
             return getattr(self, 'teacher', None)
-        elif self.role == 'manager':
+        elif self.user_role == 'manager':
             return getattr(self, 'manager', None)
         return None
 
@@ -90,12 +88,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 # ----------------------------------------------------------------------------------------------------------------------
 # Learner
 class Learner(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE,
-        related_name='learner', verbose_name=_('User'))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='learner', verbose_name=_('User'))
     school = models.ForeignKey(
-        'School', on_delete=models.SET_NULL,
-        null=True, blank=True, related_name='learners', verbose_name=_('')
+        'School', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='learners', verbose_name=_('School')
     )
 
     class Meta:
@@ -108,15 +104,13 @@ class Learner(models.Model):
 
 # Teacher
 class Teacher(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE,
-        related_name='teacher', verbose_name=_('User'))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher', verbose_name=_('User'))
     school = models.ForeignKey(
-        'School', on_delete=models.SET_NULL,
-        null=True, blank=True, related_name='teachers'
+        'School', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='teachers', verbose_name=_('School')
     )
     subjects = models.ManyToManyField('Subject', blank=True, related_name='teachers', verbose_name=_('Subjects'))
-    is_homeroom_teacher = models.BooleanField(_('Homeroom teacher'), default=False)
+    is_homeroom_teacher = models.BooleanField(_('Is homeroom teacher'), default=False)
 
     class Meta:
         verbose_name = _('Teacher')
@@ -128,14 +122,9 @@ class Teacher(models.Model):
 
 # Manager
 class Manager(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE,
-        related_name='manager', verbose_name=_('User'))
-    school = models.ForeignKey(
-        'School', on_delete=models.CASCADE,
-        related_name='managers',
-    )
-    position = models.CharField(_('Position'), max_length=100, default="Director")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager', verbose_name=_('User'))
+    school = models.ForeignKey('School', on_delete=models.CASCADE, related_name='managers', verbose_name=_('School'))
+    position = models.CharField(_('Position'), max_length=100, default='Director')
 
     class Meta:
         verbose_name = _('Manager')
