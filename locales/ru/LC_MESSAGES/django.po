@@ -259,7 +259,7 @@ msgstr "Классы"
 
 #: core/generics/models/schools.py:51
 msgid "{}{} - class"
-msgstr ""
+msgstr "{}{} - класс"
 
 #: core/generics/models/schools.py:54
 msgid "Letter"

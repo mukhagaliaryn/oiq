@@ -6,3 +6,7 @@ class GenericsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'core.generics'
     verbose_name = _('Generics models')
+
+
+    def ready(self):
+        import core.generics.signals.accounts

@@ -93,6 +93,10 @@ class Learner(models.Model):
         'School', on_delete=models.SET_NULL, null=True, blank=True,
         related_name='learners', verbose_name=_('School')
     )
+    school_class = models.ForeignKey(
+        'schools.SchoolClass', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='learners', verbose_name=_('School class')
+    )
 
     class Meta:
         verbose_name = _('Learner')
@@ -123,7 +127,10 @@ class Teacher(models.Model):
 # Manager
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager', verbose_name=_('User'))
-    school = models.ForeignKey('School', on_delete=models.CASCADE, related_name='managers', verbose_name=_('School'))
+    school = models.ForeignKey(
+        'School', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='managers', verbose_name=_('School')
+    )
     position = models.CharField(_('Position'), max_length=100, default='Director')
 
     class Meta:

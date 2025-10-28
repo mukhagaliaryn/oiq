@@ -27,6 +27,7 @@ INSTALLED_APPS = [
 
     # core apps...
     'core.generics.apps.GenericsConfig',
+    'core.schools.apps.SchoolsConfig',
 
     # view apps...
     'apps.main.apps.MainConfig',

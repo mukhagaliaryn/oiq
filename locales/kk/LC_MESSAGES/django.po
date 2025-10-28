@@ -245,7 +245,7 @@ msgstr "Сынып нөмері"
 
 #: core/generics/models/schools.py:36
 msgid "{}-class"
-msgstr "Сынып"
+msgstr "{}-сынып"
 
 #: core/generics/models/schools.py:39 core/generics/models/schools.py:47
 #: core/generics/models/schools.py:69 core/generics/models/subjects.py:29

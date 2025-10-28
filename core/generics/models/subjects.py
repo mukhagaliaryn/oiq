@@ -65,15 +65,16 @@ class Topic(models.Model):
 
 # Question
 # ----------------------------------------------------------------------------------------------------------------------
-# QuestionType model
-class QuestionType(models.Model):
+# TaskType models
+class TaskType(models.Model):
     name = models.CharField(_('Name'), max_length=128)
     slug = models.SlugField(_('Slug'), max_length=128, unique=True)
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     class Meta:
-        verbose_name = _('Question type')
-        verbose_name_plural = _('Question types')
+        verbose_name = _('Task type')
+        verbose_name_plural = _('Task types')
+        ordering = ('order', )
 
     def __str__(self):
         return self.name
@@ -87,18 +88,17 @@ class Question(models.Model):
         ('hard', _('Hard')),
     )
 
-    title = models.CharField(_('Title'), max_length=128)
+    title = models.CharField(_('Title'), max_length=255)
     body = models.TextField(_('Body'))
     topic = models.ForeignKey(
         Topic, on_delete=models.CASCADE,
         related_name='questions', verbose_name=_('Topic')
     )
-    question_type = models.ForeignKey(
-        QuestionType, on_delete=models.CASCADE,
-        related_name='questions', verbose_name=_('Question type')
+    task_type = models.ForeignKey(
+        TaskType, on_delete=models.CASCADE,
+        related_name='questions', verbose_name=_('Task type')
     )
     level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
-    order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     class Meta:
         verbose_name = _('Question')
@@ -106,3 +106,18 @@ class Question(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# Question variants
+# ----------------------------------------------------------------------------------------------------------------------
+# Option
+class Option(models.Model):
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE,
+        related_name='options', verbose_name=_('Question')
+    )
+    answer = models.TextField(_('Answer'))
+    is_correct = models.BooleanField(_('Is correct'), default=False)
+
+    def __str__(self):
+        return _('{}-answer').format(self.pk)
