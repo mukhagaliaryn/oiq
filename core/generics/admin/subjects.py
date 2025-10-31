@@ -1,7 +1,5 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from django.urls import reverse
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from core.generics.models import Subject, Chapter, Topic, Question, TaskType, Option
 from core.generics.admin.mixins import LinkedAdminMixin
@@ -24,7 +22,6 @@ class ChapterInline(LinkedAdminMixin, admin.TabularInline):
 @register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ( 'name', 'order', )
-
     inlines = (ChapterInline, )
 
 

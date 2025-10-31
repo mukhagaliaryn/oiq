@@ -6,7 +6,7 @@ from core.decorators.roles import role_required
 # learner home page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-@role_required('pupil')
+@role_required('learner')
 def learner_home_view(request):
     context = {}
     return render(request, 'app/dashboard/learner/page.html', context)
@@ -15,7 +15,7 @@ def learner_home_view(request):
 # learner game page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-@role_required('pupil')
+@role_required('learner')
 def learner_games_view(request):
     context = {}
     return render(request, 'app/dashboard/learner/games/page.html', context)

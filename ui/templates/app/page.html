@@ -10,12 +10,11 @@
         <div class="max-w-screen-lg w-full mx-auto grid lg:flex justify-center items-center">
             <canvas 
                 id="mascot"
-                class="mx-auto w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[420px] md:h-[420px] lg:w-[480px] lg:h-[480px] xl:w-[540px] xl:h-[540px] 2xl:w-[640px] 2xl:h-[640px]"
+                class="mx-auto w-[280px] h-[280px]"
             ></canvas>
             
-            <div class="flex-1 grid gap-2 text-center">
+            <div class="grid gap-2 text-center">
                 <div class="grid gap-4">
-                    <canvas id="logo" width="96px" height="96px" class="hidden md:block mx-auto"></canvas>
                     <img src="{% static 'images/logo-label.svg' %}" class="w-20 mx-auto" alt="OQU">
                 </div>
                 
@@ -44,3 +43,16 @@
     </div>
 </div>
 {% endblock base_layout %}
+
+{% block js %}
+<script>
+    const mascot = new rive.Rive({
+        src: "/static/images/svg/qarga.riv",
+        canvas: document.getElementById("mascot"),
+        autoplay: true,
+        onLoad: () => {
+            mascot.resizeDrawingSurfaceToCanvas();
+        },
+    });
+</script>
+{% endblock js %}

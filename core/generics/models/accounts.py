@@ -121,7 +121,7 @@ class Teacher(models.Model):
         verbose_name_plural = _('Teachers')
 
     def __str__(self):
-        return _('Teacher: {}').format(self.user.get_full_name())
+        return self.user.get_full_name()
 
 
 # Manager

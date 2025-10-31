@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
+from core.generics.admin.mixins import LinkedAdminMixin
 from core.generics.models import User, Learner, Teacher, Manager
 
 
@@ -14,10 +16,15 @@ class LearnerInline(admin.TabularInline):
 
 
 # TeacherTab
-class TeacherInline(admin.StackedInline):
+class TeacherInline(LinkedAdminMixin, admin.StackedInline):
     model = Teacher
     extra = 0
     filter_horizontal = ('subjects', )
+    readonly_fields = ('detail_link',)
+
+    def detail_link(self, obj):
+        return self.admin_link(obj, 'teacher', label=_('Detail view'))
+    detail_link.short_description = _('Detail link')
 
 
 # ManagerTab
@@ -27,6 +34,7 @@ class ManagerInline(admin.StackedInline):
 
 
 # UserAdmin
+@register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'user_role', 'is_staff', 'is_superuser', )
     list_filter = ('user_role', 'is_active', 'is_staff', 'is_superuser', )
@@ -74,7 +82,19 @@ class UserAdmin(BaseUserAdmin):
         return inlines
 
 
-# registrations
+# Teacher admin
 # ----------------------------------------------------------------------------------------------------------------------
-admin.site.register(User, UserAdmin)
+# TeacherAdmin
+@register(Teacher)
+class TeacherAdmin(LinkedAdminMixin, admin.ModelAdmin):
+    list_display = ('user', 'school', 'is_homeroom_teacher', )
+    filter_horizontal = ('subjects', )
+    readonly_fields = ('detail_link', )
+
+    def detail_link(self, obj):
+        return self.parent_link(obj, 'user')
+    detail_link.short_description = _('User')
+
+
+# registrations
 admin.site.unregister(Group)

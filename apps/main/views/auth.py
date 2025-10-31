@@ -20,7 +20,7 @@ def login_view(request):
             login(request, user)
             return redirect('learner_home')
         else:
-            messages.error(request, _('Қате логин немесе пароль'))
+            messages.error(request, _('Incorrect username or password'))
             return render(request, 'app/auth/login/page.html', {'identifier': identifier})
 
     return render(request, 'app/auth/login/page.html')
@@ -37,10 +37,10 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, _('Сәтті тіркелдіңіз!'))
+            messages.success(request, _('You have successfully registered!'))
             return redirect('learner_home')
         else:
-            messages.error(request, _('Тіркеу сәтсіз аяқталды. Деректерді тексеріңіз!'))
+            messages.error(request, _('Registration failed. Check the data!'))
     else:
         form = UserRegisterForm()
 
