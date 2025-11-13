@@ -14,7 +14,6 @@ class EmailOrUsernameModelBackend(ModelBackend):
             username = kwargs.get(User.USERNAME_FIELD)
 
         try:
-            # Егер email арқылы жазса → email бойынша табамыз
             if "@" in username:
                 user = User.objects.get(email__iexact=username)
             else:

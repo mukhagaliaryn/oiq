@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="kk" data-theme="light">
 <head>
-    <title>{% block title %}{% endblock %} | Oqu</title>
+    <title>{% block title %}{% endblock %} | OIQ</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -12,6 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     {% tailwind_css %}
+
+    {% block css %}
+    {% endblock css %}
 </head>
 
 <body class="font-inter text-foreground text-normal">
@@ -64,7 +67,6 @@
                     el.style.opacity = '1';
                 }, 100 * index);
 
-                // 5 секундтан кейін жоғалту анимациясы
                 setTimeout(() => {
                     el.style.transform = 'translateY(-50px)';
                     el.style.opacity = '0';
@@ -74,17 +76,15 @@
         </script>
     {% endif %}
 
-    {% include 'components/dashboard/teacher/settings-modal.html' %}
-
     <main>
         {% block base %}
         {% endblock base %}
     </main>
 
     <!-- CDNs -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>  <!-- Flowbite -->
+     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>  <!-- htmx -->
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.7.1/dist/dotlottie-wc.js" type="module"></script>
-    <script src="https://unpkg.com/@rive-app/canvas"></script>
     {% block js %}{% endblock js %}
 </body>
 </html>

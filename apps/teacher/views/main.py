@@ -1,6 +1,5 @@
 from django.shortcuts import render
-
-from core.decorators.roles import role_required
+from core.utils.decorators import role_required
 
 
 # teacher dashboard page

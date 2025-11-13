@@ -166,5 +166,5 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = 'generics.User'
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'learner_home'
+LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGOUT_REDIRECT_URL = 'login'

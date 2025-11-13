@@ -9,4 +9,4 @@ class GenericsConfig(AppConfig):
 
 
     def ready(self):
-        import core.generics.signals.accounts
+        import core.utils.signals

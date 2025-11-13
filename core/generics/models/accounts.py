@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(_('username'), max_length=128, unique=True, validators=[UnicodeUsernameValidator()])
     first_name = models.CharField(_('First name'), max_length=128)
     last_name = models.CharField(_('Last name'), max_length=128)
-    avatar = models.ImageField(_('Avatar'), upload_to='core/models/accounts/users/', blank=True, null=True)
+    avatar = models.ImageField(_('Avatar'), upload_to='core/generics/accounts/users/', blank=True, null=True)
     google_avatar = models.URLField(_('Google avatar'), blank=True, null=True)
     user_role = models.CharField(_('User role'), max_length=32, choices=USER_ROLE, default='learner')
     is_staff = models.BooleanField(

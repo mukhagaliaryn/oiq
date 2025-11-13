@@ -3,8 +3,10 @@ from django.dispatch import receiver
 from core.generics.models import User, Learner, Teacher, Manager
 
 
+# Create user role
+# ----------------------------------------------------------------------------------------------------------------------
 @receiver(post_save, sender=User)
-def create_user_role_profile(sender, instance, created, **kwargs):
+def create_user_role(sender, instance, created, **kwargs):
     if created:
         if instance.user_role == 'learner':
             Learner.objects.create(user=instance)

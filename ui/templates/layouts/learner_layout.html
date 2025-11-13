@@ -8,13 +8,13 @@
         <div>
             <div class="relative mb-4">
                 <a 
-                    href="{% if user.is_authenticated %}{% url 'learner_home' %}{% else %}{% url 'main' %}{% endif %}"
+                    href="{% if user.is_authenticated %}{% url 'learner_dashboard' %}{% else %}{% url 'main' %}{% endif %}"
                     class="hidden lg:inline-block border border-transparent transition-all active:border active:border-dashed active:border-muted active:scale-95"
                 >
                     <img src="{% static 'images/full-logo.svg' %}" class="w-28" alt="">
                 </a>
                 <a 
-                    href="{% if user.is_authenticated %}{% url 'learner_home' %}{% else %}{% url 'main' %}{% endif %}"
+                    href="{% if user.is_authenticated %}{% url 'learner_dashboard' %}{% else %}{% url 'main' %}{% endif %}"
                     class="flex lg:hidden justify-center border border-transparent transition-all active:border active:border-dashed active:border-muted active:scale-95"
                 >
                     <img src="{% static 'images/logo.svg' %}" class="w-10" alt="">
@@ -24,7 +24,7 @@
             <ul class="grid gap-1">
                 <li>
                     <a 
-                        href="{% url 'learner_home' %}" 
+                        href="{% url 'learner_dashboard' %}" 
                         class="flex gap-2 items-center px-4 py-4 lg:py-2 rounded-xl transition-all hover:shadow-md active:scale-95 {% if request.path == '/learn/' %}bg-primary-500 text-white hover:bg-primary-600{% else %}hover:bg-secondary-100{% endif %}"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
