@@ -1,14 +1,10 @@
 @import "tailwindcss";
-@plugin "daisyui";
-@plugin "flowbite/plugin";
-@import "flowbite/src/themes/default";
-@source "../node_modules/flowbite";
 
 
 @theme {
   --color-background: #fafafa;
   --color-foreground: #0a0a0a;
-  --color-subtitle: #525252;
+  --color-subtle: #525252;
   --color-muted: #737373;
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
@@ -40,9 +36,15 @@
   --breakpoint-3xl: 1920px;
 
   --text-normal: 15px;
-
   --font-inter: "Inter Tight", "sans-serif";
 }
 
 
 @source "../../../**/*.{html,py,js}";
+
+
+@layer base {
+  * {
+    @apply outline-none focus:outline-2 focus:outline-primary-600;
+  }
+}

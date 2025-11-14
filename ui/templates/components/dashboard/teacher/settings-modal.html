@@ -1,10 +1,11 @@
 <div 
     id="settings-modal" 
-    class="hidden fixed inset-0 top-0 left-0 z-40 items-center justify-center bg-black/50"
+    class="hidden fixed inset-0 top-0 left-0 z-50 items-center justify-center bg-black/50"
 >
+    <!-- Модальды терезе контенті -->
     <div class="relative p-4 w-full max-w-screen-md h-[540px]">
-        <div class="relative flex bg-white rounded-xl overflow-hidden shadow h-full">
-            <button 
+        <div class="relative grid md:flex bg-white rounded-xl overflow-hidden shadow h-full">
+            <button
                 type="button"
                 id="settingsClose"
                 class="absolute z-10 top-2 right-4 p-2 rounded-xl transition-all cursor-pointer hover:bg-primary-200 hover:text-primary-600 active:scale-95"
@@ -15,12 +16,12 @@
                     <path d="m6 6 12 12" />
                 </svg>
             </button>
-            <div class="w-64 sticky top-0 bg-primary-50 border-r border-border-200">
+            <div class="md:w-64 sticky top-0 bg-primary-50 border-b md:border-r border-border-200">
                 <div class="grid gap-2 items-start px-2">
                     <div class="flex h-12 pl-2 items-center">
                         <h2 class="text-xl font-medium">Баптаулар</h2>
                     </div>
-                    <ul class="grid gap-1">
+                    <ul class="flex md:grid gap-1 mb-2 md:mb-0">
                         <li>
                             <a 
                                 href="#settings/account"

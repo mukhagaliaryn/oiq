@@ -4,22 +4,20 @@
 
 
 {% block teacher_layout %}
-<div class="max-w-screen-lg mx-auto p-4">
+<div class="max-w-screen-xl mx-auto grid gap-8 p-4">
     <!-- Профиль -->
     <div class="grid gap-4">
-        <div class="flex justify-center p-8 rounded-xl bg-primary-100">
-            <div class="border-2 border-primary-200 rounded-full">
-                {% if user.avatar %}
-                    <img class="w-36 h-36 rounded-full" src="{{ user.avatar.url }}" alt="user photo">
-                {% else %}
-                    <div class="w-36 h-36 rounded-full bg-primary-500 flex items-center justify-center text-6xl text-white">
-                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                    </div>
-                {% endif %}
-            </div>
+        <div class="w-24 h-24 mx-auto border-2 border-primary-200 rounded-full">
+            {% if user.avatar %}
+                <img class="w-full h-full rounded-full" src="{{ user.avatar.url }}" alt="user photo">
+            {% else %}
+                <div class="w-full h-full rounded-full bg-primary-500 flex items-center justify-center text-6xl text-white">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+            {% endif %}
         </div>
-        <div class="grid text-center border-b border-border-200 pb-4">
-            <h1 class="text-xl md:text-2xl font-medium">{{ user.get_full_name }}</h1>
+        <div class="grid text-center">
+            <h2 class="text-xl font-medium">{{ user.get_full_name }}</h2>
             <span class="text-muted">@{{ user.username }}</span>
 
             <div class="flex justify-center mt-2">
@@ -42,6 +40,65 @@
                         <span>{{ user.get_user_role_display }}</span>
                     </div>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full grid lg:flex gap-4 items-start">
+        <!-- Ойын тапсырмалары -->
+        <div class="flex-1 space-y-2">
+            <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
+                <h4 class="text-base">Ойындар</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </a>
+
+            <div class="grid gap-2">
+                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+            </div>
+        </div>
+
+        <!-- Сыныптар мен оқушылар -->
+        <div class="sticky top-14 w-full lg:max-w-sm grid gap-4">
+            <div class="w-full space-y-2">
+                <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
+                    <h4 class="text-base">Сыныптар</h4>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </a>
+                <div class="grid gap-2">
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                </div>
+            </div>
+
+            <div class="w-full space-y-2">
+                <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
+                    <h4 class="text-base">Оқушылар</h4>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </a>
+
+                <div class="grid gap-2">
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                </div>
             </div>
         </div>
     </div>

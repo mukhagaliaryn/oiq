@@ -183,3 +183,41 @@
         </button>
     </div>
 </form>
+
+
+<!-- Қолданушы аватар суретін сақтамас бұрын көрсету -->
+<script>
+    function attachAvatarPreview() {
+        const input = document.getElementById("avatar-input");
+        let preview = document.getElementById("avatar-preview");
+
+        if (!input || !preview) return;
+
+        input.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                if (preview.tagName === "IMG") {
+                    preview.src = e.target.result;
+                } else {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.className = "w-full h-full object-cover transition-opacity duration-300";
+                    img.id = "avatar-preview";
+                    preview.replaceWith(img);
+                    preview = img;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", attachAvatarPreview);
+    document.body.addEventListener("htmx:afterSwap", function (e) {
+        if (e.target.id === "settingsContent") {
+            attachAvatarPreview();
+        }
+    });
+</script>
