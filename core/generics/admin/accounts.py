@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from core.generics.admin.mixins import LinkedAdminMixin
 from core.generics.models import User, Learner, Teacher, Manager
+from core.schools.models import SchoolClass, ClassSubject
 
 
 # User admin
@@ -84,11 +85,18 @@ class UserAdmin(BaseUserAdmin):
 
 # Teacher admin
 # ----------------------------------------------------------------------------------------------------------------------
+# ClassInline
+class ClassInline(admin.StackedInline):
+    model = SchoolClass
+    extra = 0
+
+
 # TeacherAdmin
 @register(Teacher)
 class TeacherAdmin(LinkedAdminMixin, admin.ModelAdmin):
     list_display = ('user', 'school', 'is_homeroom_teacher', )
     filter_horizontal = ('subjects', )
+    inlines = (ClassInline, )
     readonly_fields = ('detail_link', )
 
     def detail_link(self, obj):

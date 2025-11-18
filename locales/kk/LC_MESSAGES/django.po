@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-31 17:23+0500\n"
+"POT-Creation-Date: 2025-11-18 16:34+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,17 +18,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: apps/main/views/auth.py:23
+#: apps/main/views/auth.py:53
 msgid "Incorrect username or password"
 msgstr "Қолданушы аты немесе пароль қате терілді"
 
-#: apps/main/views/auth.py:40
+#: apps/main/views/auth.py:70
 msgid "You have successfully registered!"
 msgstr "Сіз сәтті тіркелдіңіз!"
 
-#: apps/main/views/auth.py:43
+#: apps/main/views/auth.py:73
 msgid "Registration failed. Check the data!"
 msgstr "Тіркеу кезінде қате кетті. Деректерді тексеріңіз!"
+
+#: apps/teacher/views/account.py:21
+msgid "Personal data saved"
+msgstr "Жеке мәліметтер сақталды"
+
+#: apps/teacher/views/account.py:23
+msgid "Something went wrong"
+msgstr "Қателік кетті. Форманы қайта тексеріңіз"
 
 #: config/settings.py:118
 msgid "Kazakh"
@@ -42,25 +50,25 @@ msgstr "Русский"
 msgid "English"
 msgstr "English"
 
-#: core/generics/admin/accounts.py:26 core/generics/admin/subjects.py:17
+#: core/generics/admin/accounts.py:27 core/generics/admin/subjects.py:17
 #: core/generics/admin/subjects.py:37 core/generics/admin/subjects.py:62
 msgid "Detail view"
 msgstr "Толығырақ"
 
-#: core/generics/admin/accounts.py:27 core/generics/admin/subjects.py:18
+#: core/generics/admin/accounts.py:28 core/generics/admin/subjects.py:18
 #: core/generics/admin/subjects.py:38 core/generics/admin/subjects.py:63
 msgid "Detail link"
 msgstr "Сілтеме"
 
-#: core/generics/admin/accounts.py:48
+#: core/generics/admin/accounts.py:49
 msgid "Personal data"
 msgstr "Жеке мәліметтер"
 
-#: core/generics/admin/accounts.py:53
+#: core/generics/admin/accounts.py:54
 msgid "Permissions"
 msgstr "Рұқсаттар"
 
-#: core/generics/admin/accounts.py:96 core/generics/models/accounts.py:83
+#: core/generics/admin/accounts.py:104 core/generics/models/accounts.py:83
 #: core/generics/models/accounts.py:91 core/generics/models/accounts.py:111
 #: core/generics/models/accounts.py:129
 msgid "User"
@@ -68,7 +76,7 @@ msgstr "Қолданушы"
 
 #: core/generics/admin/subjects.py:50 core/generics/models/subjects.py:16
 #: core/generics/models/subjects.py:25
-#: core/schools/models/school_profiles.py:64
+#: core/schools/models/school_profiles.py:68
 msgid "Subject"
 msgstr "Пән"
 
@@ -77,14 +85,14 @@ msgstr "Пән"
 msgid "Chapter"
 msgstr "Бөлім"
 
-#: core/generics/admin/subjects.py:100 core/generics/models/subjects.py:57
-#: core/generics/models/subjects.py:95
+#: core/generics/admin/subjects.py:94 core/generics/models/subjects.py:57
+#: core/generics/models/subjects.py:79
 msgid "Topic"
 msgstr "Тақырып"
 
 #: core/generics/apps.py:8
-msgid "Generics models"
-msgstr "Generics модельдер"
+msgid "Generics app"
+msgstr "Generics қосымшасы"
 
 #: core/generics/models/accounts.py:14
 msgid "The user must have an username"
@@ -168,12 +176,13 @@ msgstr "Қолданушылар"
 #: core/generics/models/accounts.py:94 core/generics/models/accounts.py:114
 #: core/generics/models/accounts.py:132 core/generics/models/schools.py:22
 #: core/schools/models/school_profiles.py:10
+#: core/schools/models/school_profiles.py:32
 msgid "School"
 msgstr "Мектеп"
 
 #: core/generics/models/accounts.py:98
-#: core/schools/models/school_profiles.py:49
-#: core/schools/models/school_profiles.py:60
+#: core/schools/models/school_profiles.py:48
+#: core/schools/models/school_profiles.py:64
 msgid "School class"
 msgstr "Мектеп сыныбы"
 
@@ -194,13 +203,13 @@ msgid "Is homeroom teacher"
 msgstr "Сынып жетекші"
 
 #: core/generics/models/accounts.py:121
-#: core/schools/models/school_profiles.py:67
+#: core/schools/models/school_profiles.py:71
 msgid "Teachers"
 msgstr "Оқытушылар"
 
 #: core/generics/models/accounts.py:134
-msgid "Position"
-msgstr "Мамандығы"
+msgid "Activity"
+msgstr "Қызметі"
 
 #: core/generics/models/accounts.py:138
 msgid "Managers"
@@ -209,45 +218,6 @@ msgstr "Менеджер"
 #: core/generics/models/accounts.py:141
 msgid "Manager: {}"
 msgstr "Менеджер: {}"
-
-#: core/generics/models/games.py:9 core/generics/models/games.py:27
-#: core/generics/models/schools.py:14 core/generics/models/schools.py:44
-#: core/generics/models/subjects.py:9 core/generics/models/subjects.py:70
-msgid "Name"
-msgstr "Атауы"
-
-#: core/generics/models/games.py:10 core/generics/models/games.py:28
-#: core/generics/models/subjects.py:71
-msgid "Slug"
-msgstr "Кілттік сөз"
-
-#: core/generics/models/games.py:11 core/generics/models/games.py:29
-msgid "Required questions"
-msgstr "Қажетті сұрақтар"
-
-#: core/generics/models/games.py:12 core/generics/models/games.py:30
-#: core/generics/models/schools.py:16 core/generics/models/schools.py:46
-#: core/generics/models/subjects.py:10 core/generics/models/subjects.py:33
-#: core/generics/models/subjects.py:54 core/generics/models/subjects.py:72
-#: core/schools/models/school_profiles.py:69
-msgid "Order"
-msgstr "Реттілік"
-
-#: core/generics/models/games.py:15
-msgid "Game"
-msgstr "Ойын"
-
-#: core/generics/models/games.py:16
-msgid "Games"
-msgstr "Ойындар"
-
-#: core/generics/models/games.py:33
-msgid "Virtual"
-msgstr "Виртуалды лаборатория"
-
-#: core/generics/models/games.py:34
-msgid "Virtuals"
-msgstr "Виртуалды лабораториялар"
 
 #: core/generics/models/schools.py:10
 msgid "State"
@@ -261,9 +231,21 @@ msgstr "Жеке меншік"
 msgid "Cozy"
 msgstr "Жайлы"
 
+#: core/generics/models/schools.py:14 core/generics/models/schools.py:44
+#: core/generics/models/subjects.py:9
+msgid "Name"
+msgstr "Атауы"
+
 #: core/generics/models/schools.py:15
 msgid "Type"
 msgstr "Типі"
+
+#: core/generics/models/schools.py:16 core/generics/models/schools.py:45
+#: core/generics/models/subjects.py:10 core/generics/models/subjects.py:33
+#: core/generics/models/subjects.py:54
+#: core/schools/models/school_profiles.py:73
+msgid "Order"
+msgstr "Реттілік"
 
 #: core/generics/models/schools.py:23
 msgid "Schools"
@@ -273,12 +255,7 @@ msgstr "Мектептер"
 msgid "Grade"
 msgstr "Сынып нөмері"
 
-#: core/generics/models/schools.py:34
-msgid "{}-class"
-msgstr "{}-сынып"
-
-#: core/generics/models/schools.py:37 core/generics/models/schools.py:45
-#: core/generics/models/subjects.py:29
+#: core/generics/models/schools.py:37 core/generics/models/subjects.py:29
 #: core/schools/models/school_profiles.py:36
 msgid "Class"
 msgstr "Сынып"
@@ -287,20 +264,15 @@ msgstr "Сынып"
 msgid "Classes"
 msgstr "Сыныптар"
 
-#: core/generics/models/schools.py:49 core/schools/models/school_profiles.py:53
-msgid "{}{} - class"
-msgstr "{}{} - сынып"
-
-#: core/generics/models/schools.py:52 core/schools/models/school_profiles.py:40
+#: core/generics/models/schools.py:51 core/schools/models/school_profiles.py:40
 msgid "Letter"
 msgstr "Литтер"
 
-#: core/generics/models/schools.py:53
+#: core/generics/models/schools.py:52
 msgid "Letters"
 msgstr "Литтерлер"
 
 #: core/generics/models/subjects.py:32 core/generics/models/subjects.py:49
-#: core/generics/models/subjects.py:91
 msgid "Title"
 msgstr "Тақырыбы"
 
@@ -312,57 +284,102 @@ msgstr "Бөлімдер"
 msgid "Topics"
 msgstr "Тақырыптар"
 
-#: core/generics/models/subjects.py:75 core/generics/models/subjects.py:99
-msgid "Task type"
-msgstr "Тапсырма түрі"
-
-#: core/generics/models/subjects.py:76
-msgid "Task types"
-msgstr "Тапсырма түрлері"
-
-#: core/generics/models/subjects.py:86
+#: core/generics/models/subjects.py:71
 msgid "Easy"
 msgstr "Жеңіл"
 
-#: core/generics/models/subjects.py:87
+#: core/generics/models/subjects.py:72
 msgid "Medium"
 msgstr "Орташа"
 
-#: core/generics/models/subjects.py:88
+#: core/generics/models/subjects.py:73
 msgid "Hard"
 msgstr "Қиын"
 
-#: core/generics/models/subjects.py:92
+#: core/generics/models/subjects.py:76
 msgid "Body"
-msgstr ""
+msgstr "Сұрақ"
 
-#: core/generics/models/subjects.py:101
+#: core/generics/models/subjects.py:81
 msgid "Level"
 msgstr "Деңгей"
 
-#: core/generics/models/subjects.py:104 core/generics/models/subjects.py:117
+#: core/generics/models/subjects.py:84 core/generics/models/subjects.py:118
+#: core/generics/models/subjects.py:137
 msgid "Question"
 msgstr "Сұрақ"
 
-#: core/generics/models/subjects.py:105
+#: core/generics/models/subjects.py:85
 msgid "Questions"
 msgstr "Сұрақтар"
 
-#: core/generics/models/subjects.py:119
+#: core/generics/models/subjects.py:94 core/generics/models/subjects.py:101
+msgid "None"
+msgstr "Ешнәрсе"
+
+#: core/generics/models/subjects.py:95
+msgid "Test"
+msgstr "Тест"
+
+#: core/generics/models/subjects.py:96
+msgid "Matching"
+msgstr "Сәйкестендіру"
+
+#: core/generics/models/subjects.py:97
+msgid "Written"
+msgstr "Жазбаша"
+
+#: core/generics/models/subjects.py:103
+msgid "Test features"
+msgstr "Тест баптаулары"
+
+#: core/generics/models/subjects.py:104
+msgid "Single"
+msgstr "Жекеше"
+
+#: core/generics/models/subjects.py:105
+msgid "Multiple"
+msgstr "Көпше"
+
+#: core/generics/models/subjects.py:109
+msgid "Matching features"
+msgstr "Сәйкестендіру баптаулары"
+
+#: core/generics/models/subjects.py:110
+msgid "Column"
+msgstr "Баған"
+
+#: core/generics/models/subjects.py:111
+msgid "Row"
+msgstr "Қатар"
+
+#: core/generics/models/subjects.py:120 core/generics/models/subjects.py:124
+msgid "Question type"
+msgstr "Сұрақ"
+
+#: core/generics/models/subjects.py:121
+msgid "Feature"
+msgstr "Ерекшелік"
+
+#: core/generics/models/subjects.py:125
+msgid "Question types"
+msgstr "Сұрақ түрлері"
+
+#: core/generics/models/subjects.py:139
 msgid "Answer"
 msgstr "Жауап"
 
-#: core/generics/models/subjects.py:120
+#: core/generics/models/subjects.py:140
 msgid "Is correct"
 msgstr "Дұрыс жауап"
 
-#: core/generics/models/subjects.py:123
+#: core/generics/models/subjects.py:143
 msgid "{}-answer"
 msgstr "{}-жауап"
 
 #: core/schools/apps.py:8
-msgid "School models"
-msgstr "School модельдер"
+msgid "Schools app"
+msgstr "Schools қосымшасы"
 
 #: core/schools/models/school_profiles.py:12
 msgid "Logo"
@@ -393,7 +410,6 @@ msgid "Rating"
 msgstr "Рейтинг"
 
 #: core/schools/models/school_profiles.py:21
-#: core/schools/models/school_profiles.py:32
 msgid "School profile"
 msgstr "Мектеп профилі"
 
@@ -409,18 +425,23 @@ msgstr "{}-профиль"
 msgid "Homeroom teacher"
 msgstr "Сынып жетекшісі"
 
-#: core/schools/models/school_profiles.py:50
+#: core/schools/models/school_profiles.py:49
 msgid "School classes"
 msgstr "Мектеп сыныптары"
 
-#: core/schools/models/school_profiles.py:73
+#: core/schools/models/school_profiles.py:53
+#: core/schools/models/school_profiles.py:57
+msgid "{}{} - class"
+msgstr "{}{} - сынып"
+
+#: core/schools/models/school_profiles.py:77
 msgid "Class subject"
 msgstr "Сыныптың пәні"
 
-#: core/schools/models/school_profiles.py:74
+#: core/schools/models/school_profiles.py:78
 msgid "Class subjects"
 msgstr "Сыныптың пәндері"
 
-#: core/schools/models/school_profiles.py:78
+#: core/schools/models/school_profiles.py:82
 msgid "{} ({})"
 msgstr ""

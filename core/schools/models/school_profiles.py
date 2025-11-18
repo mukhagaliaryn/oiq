@@ -27,9 +27,9 @@ class SchoolProfile(models.Model):
 
 # SchoolClass model
 class SchoolClass(models.Model):
-    school_profile = models.ForeignKey(
-        SchoolProfile, on_delete=models.CASCADE, null=True,
-        related_name='classes', verbose_name=_('School profile')
+    school = models.ForeignKey(
+        'generics.School', on_delete=models.CASCADE, null=True,
+        related_name='classes', verbose_name=_('School')
     )
     grade = models.ForeignKey(
         'generics.Class', on_delete=models.CASCADE,
@@ -45,11 +45,15 @@ class SchoolClass(models.Model):
     )
 
     class Meta:
-        unique_together = ('school_profile', 'grade', )
         verbose_name = _('School class')
         verbose_name_plural = _('School classes')
+        ordering = ('grade', 'letter', )
 
     def __str__(self):
+        return _('{}{} - class').format(self.grade, self.letter)
+
+    @property
+    def school_class(self):
         return _('{}{} - class').format(self.grade, self.letter)
 
 

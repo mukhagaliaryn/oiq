@@ -47,13 +47,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_role = models.CharField(_('User role'), max_length=32, choices=USER_ROLE, default='learner')
     is_staff = models.BooleanField(
         _('staff status'), default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
+        help_text=_('Designates whether the user can log into this admin site.'),
     )
     is_active = models.BooleanField(
         _('active'), default=True,
         help_text=_(
-            "Designates whether this user should be treated as active."
-            "Unselect this instead of deleting accounts."
+            'Designates whether this user should be treated as active.'
+            'Unselect this instead of deleting accounts.'
         ),
     )
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name' ]
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name', )
 
     def __str__(self):
         return self.email or self.username
@@ -131,7 +131,7 @@ class Manager(models.Model):
         'School', on_delete=models.CASCADE, null=True, blank=True,
         related_name='managers', verbose_name=_('School')
     )
-    position = models.CharField(_('Position'), max_length=100, default='Director')
+    activity = models.CharField(_('Activity'), max_length=100, default='Director')
 
     class Meta:
         verbose_name = _('Manager')

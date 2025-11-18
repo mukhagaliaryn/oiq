@@ -65,21 +65,6 @@ class Topic(models.Model):
 
 # Question
 # ----------------------------------------------------------------------------------------------------------------------
-# TaskType models
-class TaskType(models.Model):
-    name = models.CharField(_('Name'), max_length=128)
-    slug = models.SlugField(_('Slug'), max_length=128, unique=True)
-    order = models.PositiveSmallIntegerField(_('Order'), default=0)
-
-    class Meta:
-        verbose_name = _('Task type')
-        verbose_name_plural = _('Task types')
-        ordering = ('order', )
-
-    def __str__(self):
-        return self.name
-
-
 # Question model
 class Question(models.Model):
     LEVEL = (
@@ -88,15 +73,10 @@ class Question(models.Model):
         ('hard', _('Hard')),
     )
 
-    title = models.CharField(_('Title'), max_length=255)
     body = models.TextField(_('Body'))
     topic = models.ForeignKey(
         Topic, on_delete=models.CASCADE,
         related_name='questions', verbose_name=_('Topic')
-    )
-    task_type = models.ForeignKey(
-        TaskType, on_delete=models.CASCADE,
-        related_name='questions', verbose_name=_('Task type')
     )
     level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
 
@@ -105,7 +85,47 @@ class Question(models.Model):
         verbose_name_plural = _('Questions')
 
     def __str__(self):
-        return self.title
+        return f'{self.pk}-question'
+
+
+# QuestionType model
+class QuestionType(models.Model):
+    QUESTION_TYPE = (
+        ('none', _('None')),
+        ('test', _('Test')),
+        ('matching', _('Matching')),
+        ('written', _('Written')),
+    )
+
+    FEATURES = (
+        ('none', _('None')),
+        (
+            _('Test features'), (
+                ('single', _('Single')),
+                ('multiple', _('Multiple')),
+            ),
+        ),
+        (
+            _('Matching features'), (
+                ('col', _('Column')),
+                ('row', _('Row')),
+            ),
+        ),
+    )
+
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE,
+        related_name='question_types', verbose_name=_('Question')
+    )
+    question_type = models.CharField(_('Question type'), max_length=16, choices=QUESTION_TYPE, default='none')
+    feature = models.CharField(_('Feature'), max_length=16, choices=FEATURES, default='none')
+
+    class Meta:
+        verbose_name = _('Question type')
+        verbose_name_plural = _('Question types')
+
+    def __str__(self):
+        return f'{self.get_question_type_display()} {self.get_feature_display()}'
 
 
 # Question variants

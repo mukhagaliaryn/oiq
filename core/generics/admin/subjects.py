@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
-from core.generics.models import Subject, Chapter, Topic, Question, TaskType, Option
+from core.generics.models import Subject, Chapter, Topic, Question, Option, QuestionType
 from core.generics.admin.mixins import LinkedAdminMixin
 
 
@@ -77,23 +77,17 @@ class TopicAdmin(LinkedAdminMixin, admin.ModelAdmin):
 
 # Question admin
 # ----------------------------------------------------------------------------------------------------------------------
-# QuestionTypeAdmin
-@register(TaskType)
-class TaskTypeAdmin(admin.ModelAdmin):
-    list_filter = ('name', 'slug', 'order', )
-
-
-class OptionInline(admin.TabularInline):
-    model = Option
+class QuestionTypeInline(admin.TabularInline):
+    model = QuestionType
     extra = 0
 
 
 # QuestionAdmin
 @register(Question)
 class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
-    list_filter = ('title', 'topic', 'task_type', 'level', )
+    list_filter = ('id', 'topic', 'level', )
     readonly_fields = ('detail_link', )
-    inlines = (OptionInline, )
+    inlines = (QuestionTypeInline, )
 
     def detail_link(self, obj):
         return self.parent_link(obj, 'topic')
