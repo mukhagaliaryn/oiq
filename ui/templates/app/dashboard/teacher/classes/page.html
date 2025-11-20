@@ -6,67 +6,151 @@
 
 {% block teacher_layout %}
 <div class="max-w-screen-lg mx-auto p-4">
-    <div class="grid gap-2">
-        <h4 class="font-medium">Сыныптар</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-            <div
-                class="grid gap-2 rounded-xl overflow-hidden border border-border-200 transition-all hover:bg-secondary-100 active:scale-95 cursor-pointer"
+    <div class="grid gap-8">
+        <div class="flex gap-1 items-center">
+            <a 
+                href="{% url 'teacher_dashboard' %}" 
+                class="inline-flex items-center px-3 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
             >
-                <div class="flex justify-center items-center p-6 bg-primary-100">
-                    <h1 class="text-6xl font-black">5А</h1>
+                <h4>Басты бет</h4>
+            </a>
+            <span class="text-subtle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </span>
+            <h4 class="inline-flex items-center px-2 py-1 rounded-xl text-subtle">Сыныптар</h4>
+        </div>
+        
+        <!-- Оқытушы сыныптары -->
+        {% if teacher_classes %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                {% for item in teacher_classes %}
+                    <a
+                        href="{% url 'teacher_class' item.id %}"
+                        class="
+                            grid rounded-xl overflow-hidden border border-border-200 transition-all 
+                            hover:shadow active:scale-95 cursor-pointer
+                        "
+                    >
+                        <div class="flex justify-center items-center p-6 text-primary-600 bg-primary-100">
+                            <h1 class="text-6xl font-black">{{ item.grade }}{{ item.letter }}</h1>
+                        </div>
+                        <div class="grid gap-2 py-2 px-2">
+                            <div class="grid gap-1">
+                                <h3 class="text-base font-medium px-2">{{ item.school_class }}</h3>
+                                {% if item.teacher_class_subjects %}
+                                    <div class="flex gap-1">
+                                        {% for cs in item.teacher_class_subjects %}
+                                            <div class="border border-border-200 bg-white rounded-xl px-2 py-1 text-xs text-muted">{{ cs.subject.name }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex gap-2 justify-between">
+                                <div
+                                    title="{{ teacher.user.get_full_name }}"
+                                    class="relative w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200"
+                                >
+                                    {% if teacher.user.avatar %}
+                                        <img 
+                                            src="{{ teacher.user.avatar.url }}" 
+                                            class="w-full h-full" 
+                                            alt="{{ teacher.user.get_full_name }}"
+                                        />
+                                    {% else %}
+                                        <div class="w-full h-full bg-primary-600 flex items-center justify-center text-xs text-white">
+                                            {{ teacher.user.first_name|first|upper }}{{ teacher.user.last_name|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div
+                                    title="Оқушылар"
+                                    class="inline-flex -space-x-4 rtl:space-x-reverse"
+                                >
+                                    {% for learner in item.learners.all %}
+                                        <div class="w-8 h-8 overflow-hidden border-2 border-primary-200 rounded-full">
+                                            {% if learner.user.avatar %}
+                                                <img 
+                                                    class="w-full h-full"
+                                                    src="{{ learner.user.avatar.url }}" 
+                                                    alt="{{ leaner.user.get_full_name }}"
+                                                />
+                                            {% else %}
+                                                <div class="w-full h-full flex items-center justify-center text-xs">
+                                                    {{ learner.user.first_name|first|upper }}{{ learner.user.last_name|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                        <div  
+                                            class="
+                                                flex items-center justify-center w-8 h-8 text-xs font-medium text-white 
+                                                bg-primary-600 border-2 border-primary-200 rounded-full
+                                            "
+                                        >
+                                            {{ item.learners.count }}
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Мектеп сыныптары -->
+        {% if school_classes %}
+            <div class="grid gap-2">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-medium">Мектеп сыныптары</h2>
+                    <form 
+                        hx-get="{% url 'teacher_classes' %}"
+                        hx-target="#school-classes"
+                        hx-trigger="change"
+                        hx-include="this"    
+                        class="flex gap-2"
+                    >
+                        <select 
+                            name="grade"
+                            class="border border-border-200 rounded-lg px-2 py-1 text-subtle"
+                        >
+                            <option value="">Сынып</option>
+                            {% for item in grades %}
+                                <option 
+                                    value="{{ item.id }}" 
+                                    {% if selected_grade == item.id|stringformat:'s' %}selected{% endif %}
+                                >
+                                    {{ item.grade }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <select 
+                            name="letter"
+                            class="border border-border-200 rounded-lg px-2 py-1 text-subtle"
+                        >
+                            <option value="">Литтер</option>
+                            {% for item in letters %}
+                                <option 
+                                    value="{{ item.id }}" 
+                                    {% if selected_letter == item.id|stringformat:'s' %}selected{% endif %}
+                                >
+                                    {{ item.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
                 </div>
-                <div class="grid gap-4 py-2 px-4">
-                    <h1 class="font-medium">5А сынып</h1>
-
-                    <div class="flex gap-2 justify-between">
-                        <div class="relative">
-                            <div
-                                data-tooltip-target="tooltip-teacher-{{ class }}"
-                                class="w-8 h-8 border-2 border-border-200 flex justify-center items-center rounded-full bg-primary-500"
-                            >
-                                <span class="font-medium text-xs text-white">МҚ</span>
-                            </div>
-                            <div 
-                                id="tooltip-teacher-{{ class }}" 
-                                role="tooltip" 
-                                class="absolute z-10 invisible block px-3 py-2 whitespace-nowrap transition-opacity duration-300 bg-foreground rounded-lg shadow-xs opacity-0 tooltip"
-                            >
-                                <span class="text-xs font-medium text-white">Сынып жетекшісі</span>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        </div>
-                        
-
-                        <div class="relative">
-                            <div
-                                data-tooltip-target="tooltip-children-{{ class }}"
-                                class="inline-flex -space-x-4 rtl:space-x-reverse"
-                            >
-                                <img class="w-8 h-8 border-2 border-white rounded-full"
-                                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full"
-                                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full"
-                                    src="https://flowbite.com/docs/images/people/profile-picture-2.jpg" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full"
-                                    src="https://flowbite.com/docs/images/people/profile-picture-3.jpg" alt="">
-                                <a 
-                                    class="flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-primary-500 border-2 border-white rounded-full hover:bg-primary-600"
-                                    href="#">+15</a>
-                            </div>
-                            <div 
-                                id="tooltip-children-{{ class }}" 
-                                role="tooltip" 
-                                class="absolute z-10 invisible inline-block px-3 py-2 transition-opacity duration-300 bg-foreground rounded-lg shadow-xs opacity-0 tooltip"
-                            >
-                                <span class="text-xs font-medium text-white">Оқушылар</span>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="school-classes">
+                    {% include './_school_classes_list.html' %}
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock teacher_layout %}

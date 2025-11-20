@@ -6,6 +6,7 @@ urlpatterns = [
     # main views...
     path('', main.teacher_dashboard_view, name='teacher_dashboard'),
     path('classes/', main.teacher_classes_view, name='teacher_classes'),
+    path('classes/<pk>/', main.teacher_class_view, name='teacher_class'),
     path('pupils/', main.teacher_pupils_view, name='teacher_pupils'),
 
     # account views...

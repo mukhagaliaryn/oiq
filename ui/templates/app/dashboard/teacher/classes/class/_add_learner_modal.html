@@ -1,0 +1,46 @@
+<div 
+    x-cloak 
+    x-show="open" 
+    x-transition.opacity 
+    @keydown.escape.window="open = false"
+    class="fixed inset-0 z-40 flex items-center justify-center p-4"
+>
+    <div class="absolute inset-0 bg-black/40" @click="open = false"></div>
+
+    <div 
+        x-show="open" 
+        x-transition.origin.top
+        class="relative z-50 w-full max-w-lg rounded-xl shadow-lg overflow-hidden"
+    >
+        <div class="max-h-[540px] overflow-y-auto bg-white">
+            <div class="sticky top-0">
+                <form class="bg-white flex items-center">
+                    <input 
+                        type="text" 
+                        name="add_learner"
+                        placeholder="Оқушыны іздеп қосу..."
+                        class="w-full py-2.5 pl-4 pr-10 border-b border-border-200 focus:ring-2 focus:ring-primary-600"    
+                    />
+                </form>
+                <button 
+                    type="button" 
+                    @click="open = false" 
+                    class="absolute top-1 right-1 p-2 rounded-xl text-muted cursor-pointer transition-all hover:bg-primary-50 active:scale-95"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
+            </div>
+
+
+            <div class="grid gap-2">
+                <div class="flex justify-center py-8">
+                    <span class="text-muted">...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import strip_tags
 
 
 # Subject
@@ -46,7 +47,7 @@ class Chapter(models.Model):
 
 # Topic model
 class Topic(models.Model):
-    title = models.CharField(_('Title'), max_length=255)
+    title = models.TextField(_('Title'))
     chapter = models.ForeignKey(
         Chapter, on_delete=models.CASCADE,
         related_name='topics', verbose_name=_('Chapter')
@@ -65,6 +66,39 @@ class Topic(models.Model):
 
 # Question
 # ----------------------------------------------------------------------------------------------------------------------
+# QuestionFormat model
+class QuestionFormat(models.Model):
+    name = models.CharField(_('Name'), max_length=100)
+    code = models.SlugField(_('Code'), max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Question format')
+        verbose_name_plural = _('Question formats')
+        ordering = ('order', )
+
+    def __str__(self):
+        return self.name
+
+
+class QuestionVariant(models.Model):
+    format = models.ForeignKey(
+        QuestionFormat, on_delete=models.CASCADE,
+        related_name='variants', verbose_name=_('Format')
+    )
+    name = models.CharField(_('Name'), max_length=100)
+    code = models.SlugField(_('Code'), max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Question variant')
+        verbose_name_plural = _('Question variants')
+        ordering = ('order', )
+
+    def __str__(self):
+        return self.name
+
+
 # Question model
 class Question(models.Model):
     LEVEL = (
@@ -73,59 +107,28 @@ class Question(models.Model):
         ('hard', _('Hard')),
     )
 
-    body = models.TextField(_('Body'))
     topic = models.ForeignKey(
         Topic, on_delete=models.CASCADE,
         related_name='questions', verbose_name=_('Topic')
     )
+    body = models.TextField(_('Body'))
+    format = models.ForeignKey(QuestionFormat, on_delete=models.PROTECT, related_name='questions')
+    variant = models.ForeignKey(
+        QuestionVariant, on_delete=models.PROTECT, null=True, blank=True,
+        related_name='questions', verbose_name=_('Variant')
+    )
     level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
+    date_in = models.DateField(_('Date in'), blank=True, null=True)
 
     class Meta:
         verbose_name = _('Question')
         verbose_name_plural = _('Questions')
 
     def __str__(self):
-        return f'{self.pk}-question'
-
-
-# QuestionType model
-class QuestionType(models.Model):
-    QUESTION_TYPE = (
-        ('none', _('None')),
-        ('test', _('Test')),
-        ('matching', _('Matching')),
-        ('written', _('Written')),
-    )
-
-    FEATURES = (
-        ('none', _('None')),
-        (
-            _('Test features'), (
-                ('single', _('Single')),
-                ('multiple', _('Multiple')),
-            ),
-        ),
-        (
-            _('Matching features'), (
-                ('col', _('Column')),
-                ('row', _('Row')),
-            ),
-        ),
-    )
-
-    question = models.ForeignKey(
-        Question, on_delete=models.CASCADE,
-        related_name='question_types', verbose_name=_('Question')
-    )
-    question_type = models.CharField(_('Question type'), max_length=16, choices=QUESTION_TYPE, default='none')
-    feature = models.CharField(_('Feature'), max_length=16, choices=FEATURES, default='none')
-
-    class Meta:
-        verbose_name = _('Question type')
-        verbose_name_plural = _('Question types')
-
-    def __str__(self):
-        return f'{self.get_question_type_display()} {self.get_feature_display()}'
+        clean_text = strip_tags(self.body)
+        if len(clean_text) > 40:
+            return f'#{self.pk}. {clean_text[:40]}...'
+        return f'#{self.pk}. {clean_text}'
 
 
 # Question variants
@@ -140,4 +143,4 @@ class Option(models.Model):
     is_correct = models.BooleanField(_('Is correct'), default=False)
 
     def __str__(self):
-        return _('{}-answer').format(self.pk)
+        return _('#{}-answer').format(self.pk)

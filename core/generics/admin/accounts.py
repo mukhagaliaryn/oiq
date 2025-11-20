@@ -3,7 +3,7 @@ from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from core.generics.admin.mixins import LinkedAdminMixin
+from core.generics.admin._mixins import LinkedAdminMixin
 from core.generics.models import User, Learner, Teacher, Manager
 from core.schools.models import SchoolClass, ClassSubject
 

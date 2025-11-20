@@ -1,0 +1,85 @@
+<div 
+    x-cloak 
+    x-show="open" 
+    x-transition.opacity 
+    @keydown.escape.window="open = false"
+    class="fixed inset-0 z-40 flex items-center justify-center p-4"
+>
+    <div class="absolute inset-0 bg-black/40" @click="open = false"></div>
+
+    <div 
+        x-show="open" 
+        x-transition.origin.top
+        class="relative z-50 w-full max-w-lg rounded-xl shadow-lg overflow-hidden"
+    >
+        <div class="max-h-[540px] overflow-y-auto bg-white">
+            <div class="sticky top-0 bg-white flex items-center py-2 px-4 border-b border-border-200">
+                <h3 class="text-lg font-medium">Сабақ беретін мұғалімдер</h3>
+                <button 
+                    type="button" 
+                    @click="open = false" 
+                    class="absolute top-1 right-1 p-2 rounded-xl text-muted cursor-pointer transition-all hover:bg-primary-50 active:scale-95"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid gap-2">
+                {% if school_class.homeroom_teacher %}
+                    <div class="flex gap-2 items-center py-2 px-4 border-b border-border-200">
+                        <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200">
+                            {% if school_class.homeroom_teacher.user.avatar %}
+                                <img src="{{ school_class.homeroom_teacher.user.avatar.url }}" class="w-full h-full">
+                            {% else %}
+                                <div class="w-full h-full flex justify-center items-center bg-primary-600 text-xs text-white">
+                                    {{ school_class.homeroom_teacher.user.first_name|first|upper }}{{ school_class.homeroom_teacher.user.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="grid">
+                            <h4 class="font-medium">{{ school_class.homeroom_teacher.user.get_full_name }}</h4>
+                            <span class="text-xs text-muted">Сынып жетекшісі</span>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% for t in class_teachers %}
+                    <div class="flex gap-2 items-center py-2 px-4 border-b border-border-100">
+                        <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200">
+                            {% if t.user.avatar %}
+                                <img src="{{ school_class.homeroom_teacher.user.avatar.url }}" class="w-full h-full">
+                            {% else %}
+                                <div class="w-full h-full flex justify-center items-center bg-primary-600 text-xs text-white">
+                                    {{ t.user.first_name|first|upper }}{{ t.user.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="grid">
+                            <h4 class="font-medium">
+                                {{ t.user.get_full_name }} {% if t == teacher %}
+                                <span class="text-green-600 text-xs">(Сіз)</span>{% endif %}
+                            </h4>
+                            {% if t.class_subjects_for_this_class %}
+                                <div class="flex gap-1">
+                                    {% for cs in t.class_subjects_for_this_class %}
+                                        <span class="text-xs text-muted">{{ cs.subject.name }}{% if not forloop.last %}, {% endif %}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Пәндері анықталмаған</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="flex justify-center py-8">
+                        <span class="text-muted">Бұл сыныпқа мұғалімдер бекітілмеген.</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+{% extends 'layouts/teacher_layout.html' %}
+
+
+{% block title %}{{ school_class }}{% endblock title %}
+
+
+{% block teacher_layout %}
+<div class="max-w-screen-md mx-auto p-4">
+    <div class="grid gap-4">
+        <!-- Брэйдкамп навигация -->
+        <div class="flex gap-1 items-center">
+            <a 
+                href="{% url 'teacher_dashboard' %}" 
+                class="inline-flex items-center px-3 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
+            >
+                <h4>Басты бет</h4>
+            </a>
+            <span class="inline-flex text-subtle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </span>
+            <a 
+                href="{% url 'teacher_classes' %}" 
+                class="inline-flex items-center px-3 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
+            >
+                <h4>Сыныптар</h4>
+            </a>
+            <span class="text-subtle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </span>
+            <h4 class="inline-flex items-center px-2 py-1 rounded-xl text-subtle">{{ school_class }}</h4>
+        </div>
+        
+        <!-- Басқару блогы -->
+        <div class="grid gap-4">
+            <div class="flex justify-between items-center">
+                <div class="flex gap-2 items-center">
+                    <h1 class="text-xl md:text-2xl font-medium">{{ school_class }}</h1>
+                    <div x-data="{ open: false }" class="relative">
+                        <button 
+                            type="button" 
+                            @click="open = true" 
+                            class="p-2 rounded-xl text-muted cursor-pointer transition-all hover:bg-primary-50 active:scale-95"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-ellkkipsis-icon lucide-ellipsis">
+                                <circle cx="12" cy="12" r="1" />
+                                <circle cx="19" cy="12" r="1" />
+                                <circle cx="5" cy="12" r="1" />
+                            </svg>
+                        </button>
+                        {% include './_class_teachers_modal.html' %}
+                    </div>
+                </div>
+
+                <div x-data="{ open: false }" class="relative">
+                    <button 
+                        type="button"
+                        @click="open = true"
+                        class="flex px-4 py-2 rounded-xl text-white bg-primary-600 transition-all cursor-pointer hover:bg-primary-700 active:scale-95"
+                    >
+                        Оқушы қосу
+                    </button>
+                    {% include './_add_learner_modal.html' %}
+                </div>
+            </div>
+
+            <div class="relative grid gap-2">
+                <input
+                    hx-get="{% url 'teacher_class' school_class.id %}"
+                    hx-target="#class-learners"
+                    hx-trigger="keyup changed delay:500ms"
+                    type="text"
+                    name="learner_search"
+                    placeholder="Оқушыны іздеу..."
+                    class="rounded-xl border border-border-200 px-4 py-2 focus:ring-2 focus:ring-primary-600" 
+                />
+
+                <button
+                    type="button" 
+                    class="absolute top-0.5 right-0.5 p-2 rounded-xl text-muted cursor-pointer focus:ring-2 focus:ring-primary-600"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+                        <path d="m21 21-4.34-4.34" />
+                        <circle cx="11" cy="11" r="8" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Оқушылар -->
+        <div id="class-learners">
+            {% include './_class_learners_list.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

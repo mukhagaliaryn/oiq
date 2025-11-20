@@ -188,14 +188,14 @@
                             {% if user.avatar %}
                                 <img class="w-full h-full" src="{{ user.avatar.url }}" alt="user photo">
                             {% else %}
-                                <div class="w-full h-full bg-primary-600 flex items-center justify-center text-white">
+                                <div class="w-full h-full bg-primary-600 flex items-center justify-center text-white text-xs">
                                     {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
                                 </div>
                             {% endif %}
                         </div>
                         <div class="overflow-hidden text-left" :class="sidebarCollapsed ? 'hidden' : 'block'">
                             <h4 class="font-medium">{{ user.get_full_name }}</h4>
-                            <span class="block text-sm text-muted">{{ user.email }}</span>
+                            <span class="block text-xs text-muted">{{ user.email }}</span>
                         </div>
                     </button>
 

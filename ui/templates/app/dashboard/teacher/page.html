@@ -4,102 +4,120 @@
 
 
 {% block teacher_layout %}
-<div class="max-w-screen-xl mx-auto grid gap-8 p-4">
-    <!-- Профиль -->
-    <div class="grid gap-4">
-        <div class="w-24 h-24 mx-auto border-2 border-primary-200 rounded-full">
-            {% if user.avatar %}
-                <img class="w-full h-full rounded-full" src="{{ user.avatar.url }}" alt="user photo">
-            {% else %}
-                <div class="w-full h-full rounded-full bg-primary-500 flex items-center justify-center text-4xl text-white">
-                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                </div>
-            {% endif %}
-        </div>
-        <div class="grid text-center">
-            <h2 class="text-xl font-medium">{{ user.get_full_name }}</h2>
-            <span class="text-muted">@{{ user.username }}</span>
-
-            <div class="flex justify-center mt-2">
-                {% if user.teacher.school %}
-                    <div class="flex gap-2 justify-center items-center  py-2 px-4 rounded-full bg-secondary-100 text-subtitle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-school-icon lucide-school">
-                            <path d="M14 21v-3a2 2 0 0 0-4 0v3" />
-                            <path d="M18 5v16" />
-                            <path d="m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6" />
-                            <path d="m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11" />
-                            <path d="M6 5v16" />
-                            <circle cx="12" cy="9" r="2" />
-                        </svg>
-                        <span>{{ user.teacher.school.name }}</span>
-                    </div>
-                {% else %}
-                    <div class="flex gap-1 items-center px-2 py-1 rounded-full bg-green-100 text-green-600 font-medium text-xs">
-                        <span class="w-2 h-2 rounded-full bg-green-600"></span>
-                        <span>{{ user.get_user_role_display }}</span>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <div class="w-full grid lg:flex gap-4 items-start">
+<div class="max-w-screen-lg mx-auto grid gap-8 p-4">
+    <div class="w-full grid gap-8 items-start">
         <!-- Ойын тапсырмалары -->
-        <div class="flex-1 space-y-2">
-            <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
-                <h4 class="text-base">Ойындар</h4>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        <div class="space-y-2">
+            <a 
+                href="#" 
+                class="inline-flex items-center pl-3 pr-1 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
+            >
+                <h4 class="">Ойындар</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-chevron-right-icon lucide-chevron-right">
                     <path d="m9 18 6-6-6-6" />
                 </svg>
             </a>
 
-            <div class="grid gap-2">
-                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                <div class="h-64 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+            <div class="grid gap-2 grid-cols-4">
+                <div class="h-48 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-48 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-48 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                <div class="h-48 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
             </div>
         </div>
 
         <!-- Сыныптар мен оқушылар -->
-        <div class="sticky top-14 w-full lg:max-w-sm grid gap-4">
-            <div class="w-full space-y-2">
-                <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
-                    <h4 class="text-base">Сыныптар</h4>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-chevron-right-icon lucide-chevron-right">
-                        <path d="m9 18 6-6-6-6" />
-                    </svg>
-                </a>
-                <div class="grid gap-2">
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                </div>
-            </div>
+        <div class="space-y-2">
+            <a 
+                href="{% url 'teacher_classes' %}" 
+                class="inline-flex items-center pl-3 pr-1 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
+            >
+                <h4 class="">Сыныптар</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </a>
+            {% if classes %}
+                <div class="grid gap-2 grid-cols-4">
+                    {% for item in classes %}
+                        <a
+                            href="{% url 'teacher_class' item.id %}"
+                            class="
+                                grid gap-2 rounded-xl overflow-hidden border border-border-200 transition-all 
+                                hover:shadow active:scale-95 cursor-pointer
+                            "
+                        >
+                            <div class="flex justify-center items-center p-6 text-primary-600 bg-primary-100">
+                                <h1 class="text-6xl font-black">{{ item.grade }}{{ item.letter }}</h1>
+                            </div>
+                            <div class="grid gap-4 py-2 px-2">
+                                <div class="grid gap-1">
+                                    <h3 class="text-base font-medium px-2">{{ item.school_class }}</h3>
+                                    {% if item.teacher_class_subjects %}
+                                        <div class="flex gap-1">
+                                            {% for cs in item.teacher_class_subjects %}
+                                                <div class="border border-border-200 bg-white rounded-xl px-2 py-1 text-xs text-muted">{{ cs.subject.name }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
 
-            <div class="w-full space-y-2">
-                <a href="#" class="inline-flex items-center px-2 py-1 rounded-xl text-subtle transition-all hover:bg-primary-100 hover:text-primary-600 active:scale-95">
-                    <h4 class="text-base">Оқушылар</h4>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-chevron-right-icon lucide-chevron-right">
-                        <path d="m9 18 6-6-6-6" />
-                    </svg>
-                </a>
+                                <div class="flex gap-2 justify-between">
+                                    <div
+                                        title="{{ teacher.user.get_full_name }}"
+                                        class="relative w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200"
+                                    >
+                                        {% if teacher.user.avatar %}
+                                            <img 
+                                                src="{{ teacher.user.avatar.url }}" 
+                                                class="w-full h-full" 
+                                                alt="{{ teacher.user.get_full_name }}"
+                                            />
+                                        {% else %}
+                                            <div class="w-full h-full bg-primary-600 flex items-center justify-center text-xs text-white">
+                                                {{ teacher.user.first_name|first|upper }}{{ teacher.user.last_name|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
 
-                <div class="grid gap-2">
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
-                    <div class="h-24 rounded-xl bg-primary-50 border border-border-200 transition-all cursor-pointer hover:shadow"></div>
+                                    <div
+                                        title="Оқушылар"
+                                        class="inline-flex -space-x-4 rtl:space-x-reverse"
+                                    >
+                                        {% for learner in item.learners.all %}
+                                            <div class="w-8 h-8 overflow-hidden border-2 border-primary-200 rounded-full">
+                                                {% if learner.user.avatar %}
+                                                    <img 
+                                                        class="w-full h-full"
+                                                        src="{{ learner.user.avatar.url }}" 
+                                                        alt="{{ leaner.user.get_full_name }}"
+                                                    />
+                                                {% else %}
+                                                    <div class="w-full h-full flex items-center justify-center text-xs">
+                                                        {{ learner.user.first_name|first|upper }}{{ learner.user.last_name|first|upper }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                        <div  
+                                            class="
+                                                flex items-center justify-center w-8 h-8 text-xs font-medium text-white 
+                                                bg-primary-600 border-2 border-primary-200 rounded-full
+                                            "
+                                        >
+                                            {{ item.learners.count }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>

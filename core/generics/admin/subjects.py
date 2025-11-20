@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
-from core.generics.models import Subject, Chapter, Topic, Question, Option, QuestionType
-from core.generics.admin.mixins import LinkedAdminMixin
+from core.generics.models import Subject, Chapter, Topic, Question, QuestionFormat, QuestionVariant, Option
+from core.generics.admin._mixins import LinkedAdminMixin
 
 
 # Subject admin
@@ -52,9 +52,8 @@ class ChapterAdmin(LinkedAdminMixin, admin.ModelAdmin):
 
 # Topic admin
 # ----------------------------------------------------------------------------------------------------------------------
-class QuestionInline(LinkedAdminMixin, admin.TabularInline):
+class QuestionInline(LinkedAdminMixin, admin.StackedInline):
     model = Question
-    exclude = ('body', )
     extra = 0
     readonly_fields = ('detail_link', )
 
@@ -67,28 +66,63 @@ class QuestionInline(LinkedAdminMixin, admin.TabularInline):
 @register(Topic)
 class TopicAdmin(LinkedAdminMixin, admin.ModelAdmin):
     list_display = ( 'title', 'chapter', 'order', )
-    inlines = (QuestionInline, )
+    list_filter = ('chapter', )
     readonly_fields = ('detail_link', )
+    inlines = (QuestionInline, )
 
     def detail_link(self, obj):
         return self.parent_link(obj, 'chapter')
     detail_link.short_description = _('Chapter')
 
+    class Media:
+        js = ('scripts/admin/format_variant.js', )
+
+
+# QuestionFormat admin
+# ----------------------------------------------------------------------------------------------------------------------
+# QuestionVariantInline
+class QuestionVariantInline(LinkedAdminMixin, admin.TabularInline):
+    model = QuestionVariant
+    extra = 0
+
+
+# QuestionFormatAdmin
+@register(QuestionFormat)
+class QuestionFormatAdmin(admin.ModelAdmin):
+    list_display = ( 'name', 'code', 'order', )
+    inlines = (QuestionVariantInline, )
+
 
 # Question admin
 # ----------------------------------------------------------------------------------------------------------------------
-class QuestionTypeInline(admin.TabularInline):
-    model = QuestionType
+# AnswerInline
+class OptionInline(admin.TabularInline):
+    model = Option
     extra = 0
 
 
 # QuestionAdmin
 @register(Question)
 class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
-    list_filter = ('id', 'topic', 'level', )
+    list_display = ( '__str__', 'format', 'variant', 'topic', )
+    list_filter = ('format', 'variant', 'level', )
     readonly_fields = ('detail_link', )
-    inlines = (QuestionTypeInline, )
 
     def detail_link(self, obj):
         return self.parent_link(obj, 'topic')
     detail_link.short_description = _('Topic')
+
+    def get_inline_instances(self, request, obj=None):
+        if obj is None:
+            return []
+
+        inline_instances = []
+        format_code = getattr(obj.format, 'code', None)
+
+        if format_code == 'test':
+            inline_instances.append(OptionInline(self.model, self.admin_site))
+
+        return inline_instances
+
+    class Media:
+        js = ('scripts/admin/format_variant.js', )

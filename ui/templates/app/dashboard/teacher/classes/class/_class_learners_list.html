@@ -1,0 +1,48 @@
+<div class="grid">
+    {% for item in class_learners %}
+        <a 
+            href="#"
+            class="flex justify-between border-b border-border-200 p-4 cursor-pointer transition-all group hover:bg-primary-50">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200">
+                    {% if item.user.avatar %}
+                        <img src="{{ item.user.avatar.url }}" class="w-full h-full">
+                    {% else %}
+                        <div class="w-full h-full flex justify-center items-center bg-primary-600 text-xs text-white">
+                            {{ item.user.first_name|first|upper }}{{ item.user.last_name|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="grid">
+                    <h4 class="font-medium">{{ item.user.get_full_name }}</h4>
+                    <span class="text-muted text-xs">{{ item.user.email }}</span>
+                </div>
+            </div>
+
+            <button 
+                @click.stop.prevent="console.log('Dropdown')"
+                class="hidden group-hover:block p-2 rounded-xl cursor-pointer hover:bg-primary-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-ellipsis-icon lucide-ellipsis">
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="19" cy="12" r="1" />
+                    <circle cx="5" cy="12" r="1" />
+                </svg>
+            </button>
+        </a>
+    {% empty %}
+        <div class="flex justify-center py-8">
+            <div class="grid gap-2 text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users mx-auto">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <circle cx="9" cy="7" r="4" />
+                </svg>
+                <span class="block">Оқушылар жоқ!</span>
+            </div>
+        </div>
+    {% endfor %}
+</div>
