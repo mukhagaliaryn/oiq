@@ -55,6 +55,7 @@ def teacher_classes_view(request):
     school_classes_qs = (
         SchoolClass.objects
         .filter(school=teacher.school)
+        .exclude(class_subjects__teachers=teacher)
         .select_related('grade', 'letter', 'school')
     )
     if grade_id:

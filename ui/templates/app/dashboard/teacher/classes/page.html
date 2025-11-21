@@ -30,15 +30,17 @@
                 {% for item in teacher_classes %}
                     <a
                         href="{% url 'teacher_class' item.id %}"
-                        class="
-                            grid rounded-xl overflow-hidden border border-border-200 transition-all 
-                            hover:shadow active:scale-95 cursor-pointer
-                        "
+                        class="flex items-start md:grid gap-2 rounded-xl border border-border-200 transition-all hover:shadow active:scale-95 cursor-pointer"
                     >
-                        <div class="flex justify-center items-center p-6 text-primary-600 bg-primary-100">
-                            <h1 class="text-6xl font-black">{{ item.grade }}{{ item.letter }}</h1>
+                        <div 
+                            class="
+                                flex justify-center items-center p-6 text-primary-600 bg-primary-100 
+                                w-24 md:w-auto rounded-tl-xl rounded-bl-xl md:rounded-tr-xl md:rounded-bl-none
+                            "
+                        >
+                            <h1 class="text-2xl md:text-6xl font-black">{{ item.grade }}{{ item.letter }}</h1>
                         </div>
-                        <div class="grid gap-2 py-2 px-2">
+                        <div class="grid gap-4 p-2">
                             <div class="grid gap-1">
                                 <h3 class="text-base font-medium px-2">{{ item.school_class }}</h3>
                                 {% if item.teacher_class_subjects %}
@@ -50,51 +52,108 @@
                                 {% endif %}
                             </div>
 
-                            <div class="flex gap-2 justify-between">
-                                <div
-                                    title="{{ teacher.user.get_full_name }}"
-                                    class="relative w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200"
-                                >
-                                    {% if teacher.user.avatar %}
-                                        <img 
-                                            src="{{ teacher.user.avatar.url }}" 
-                                            class="w-full h-full" 
-                                            alt="{{ teacher.user.get_full_name }}"
-                                        />
-                                    {% else %}
-                                        <div class="w-full h-full bg-primary-600 flex items-center justify-center text-xs text-white">
-                                            {{ teacher.user.first_name|first|upper }}{{ teacher.user.last_name|first|upper }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div
-                                    title="Оқушылар"
-                                    class="inline-flex -space-x-4 rtl:space-x-reverse"
-                                >
-                                    {% for learner in item.learners.all %}
-                                        <div class="w-8 h-8 overflow-hidden border-2 border-primary-200 rounded-full">
-                                            {% if learner.user.avatar %}
+                            <div class="hidden md:flex gap-2 justify-between">
+                                <div x-data="{ show: false }" class="relative inline-block">
+                                    <div
+                                        @mouseenter="show = true"
+                                        @mouseleave="show = false"
+                                        class="relative w-8 h-8 rounded-full overflow-hidden border-2 border-primary-200"
+                                    >
+                                        {% if item.homeroom_teacher %}
+                                            {% if item.homeroom_teacher.user.avatar %}
                                                 <img 
-                                                    class="w-full h-full"
-                                                    src="{{ learner.user.avatar.url }}" 
-                                                    alt="{{ leaner.user.get_full_name }}"
+                                                    src="{{ item.homeroom_teacher.user.avatar.url }}" 
+                                                    class="w-full h-full" 
+                                                    alt="{{ item.homeroom_teacher.user.get_full_name }}"
                                                 />
                                             {% else %}
-                                                <div class="w-full h-full flex items-center justify-center text-xs">
-                                                    {{ learner.user.first_name|first|upper }}{{ learner.user.last_name|first|upper }}
+                                                <div class="w-full h-full bg-primary-600 flex items-center justify-center text-xs text-white">
+                                                    {{ item.homeroom_teacher.user.first_name|first|upper }}{{ item.homeroom_teacher.user.last_name|first|upper }}
                                                 </div>
                                             {% endif %}
-                                        </div>
-                                    {% endfor %}
+                                        {% else %}
+                                            <div class="w-full h-full flex justify-center items-center text-muted">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                                    <path d="M12 17h.01" />
+                                                </svg>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div 
+                                        x-show="show" 
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0 -translate-y-1"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                        x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 -translate-y-1"
+                                        class="
+                                            absolute left-1/2 -translate-x-1/2 bottom-full z-50
+                                            mb-2 bg-foreground text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap
+                                        "
+                                    >
+                                        {% if item.homeroom_teacher %}
+                                            Сынып жетекшісі: {{ item.homeroom_teacher.user.get_full_name }}
+                                        {% else %}
+                                            Сынып жетекшісі тағымдалмаған
+                                        {% endif %}
+                                        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
+                                    </div>
+                                </div>
+
+
+                                <div x-data="{ show: false }" class="relative inline-block">
+                                    <div 
+                                        @mouseenter="show = true"
+                                        @mouseleave="show = false"
+                                        class="inline-flex -space-x-4 rtl:space-x-reverse"
+                                    >
+                                        {% for learner in item.learners.all|slice:":3" %}
+                                            <div class="w-8 h-8 overflow-hidden border-2 border-primary-200 rounded-full bg-white">
+                                                {% if learner.user.avatar %}
+                                                    <img 
+                                                        class="w-full h-full"
+                                                        src="{{ learner.user.avatar.url }}" 
+                                                        alt="{{ learner.user.get_full_name }}"
+                                                    />
+                                                {% else %}
+                                                    <div class="w-full h-full flex items-center justify-center text-xs">
+                                                        {{ learner.user.first_name|first|upper }}{{ learner.user.last_name|first|upper }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
                                         <div  
                                             class="
                                                 flex items-center justify-center w-8 h-8 text-xs font-medium text-white 
                                                 bg-primary-600 border-2 border-primary-200 rounded-full
                                             "
                                         >
-                                            {{ item.learners.count }}
+                                            +{{ item.learners.count }}
                                         </div>
+                                    </div>
+
+                                    <div 
+                                        x-show="show" 
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0 -translate-y-1"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                        x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 -translate-y-1"
+                                        class="
+                                            absolute left-1/2 -translate-x-1/2 bottom-full z-50
+                                            mb-2 bg-foreground text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap
+                                        "
+                                    >
+                                        {{ item.learners.count }} оқушы
+                                        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +164,7 @@
 
         <!-- Мектеп сыныптары -->
         {% if school_classes %}
-            <div class="grid gap-2">
+            <div class="grid gap-4 md:mt-8">
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-medium">Мектеп сыныптары</h2>
                     <form 

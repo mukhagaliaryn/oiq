@@ -70,13 +70,12 @@ class ClassSubject(models.Model):
     teachers = models.ManyToManyField(
         'generics.Teacher', related_name='teaching_subjects', blank=True, verbose_name=_('Teachers')
     )
-    order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     class Meta:
         unique_together = ('school_class', 'subject')
         verbose_name = _('Class subject')
         verbose_name_plural = _('Class subjects')
-        ordering = ('school_class', 'order')
+        ordering = ('school_class', 'subject__order')
 
     def __str__(self):
         return _('{} ({})').format(self.subject.name, self.school_class)
