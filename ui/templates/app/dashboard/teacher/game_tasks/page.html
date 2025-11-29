@@ -1,0 +1,43 @@
+{% extends 'layouts/teacher_layout.html' %}
+
+
+{% block teacher_layout %}
+<div class="max-w-screen-lg mx-auto grid gap-8 p-4">
+    <div class="w-full grid gap-4 items-start">
+        <div class="flex items-center">
+            <a 
+                href="{% url 'teacher:game_tasks' %}" 
+                class="
+                    font-medium px-4 py-2 transition-all rounded-tl-xl rounded-tr-xl border-b-4 hover:bg-primary-50 active:scale-95
+                    {% if request.path == '/teacher/game-tasks/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}
+                "
+            >
+                Соңғылары
+            </a>
+            <a 
+                href="{% url 'teacher:game_task_drafts' %}" 
+                class="
+                    font-medium px-4 py-2 transition-all rounded-tl-xl rounded-tr-xl border-b-4 hover:bg-primary-50 active:scale-95
+                    {% if request.path == '/teacher/game-tasks/drafts/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
+                "
+            >
+                Черновиктер
+            </a>
+            <a 
+                href="{% url 'teacher:game_task_archives' %}" 
+                class="
+                    font-medium px-4 py-2 transition-all rounded-tl-xl rounded-tr-xl border-b-4 hover:bg-primary-50 active:scale-95
+                    {% if request.path == '/teacher/game-tasks/archives/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
+                "
+            >
+                Архивтер
+            </a>
+            
+        </div>
+
+        <!-- Ойын тапсырмалары -->
+        {% block game_tasks_block %}
+        {% endblock game_tasks_block %}
+    </div>
+</div>
+{% endblock teacher_layout %}

@@ -1,0 +1,51 @@
+{% extends './page.html' %}
+
+{% block title %}Соңғылары{% endblock title %}
+
+{% block game_tasks_block %}
+    {% if game_tasks %}
+        <div class="space-y-2">
+            <div class="grid gap-2">
+                {% for item in game_tasks %}
+                    <a 
+                        href="{% url 'teacher:game_task_detail' item.pk %}"
+                        class="flex justify-between items-start gap-4 rounded-xl border border-border-200 transition-all hover:shadow"
+                    >
+                        <div class="aspect-square p-2 flex justify-center items-center rounded-tl-xl rounded-bl-xl bg-primary-50">
+                            <lord-icon
+                                src="https://cdn.lordicon.com/xzvgfwwv.json"
+                                trigger="hover"
+                                colors="primary:#ebe6ef,secondary:#4f46e5"
+                                style="width: 64px; height: 64px;">
+                            </lord-icon>
+                        </div>
+
+                        <div class="flex-1 grid gap-1 py-2">
+                            <h4 class="font-medium text-base">#{{ item.id }} {{ item }}</h4>
+                            <div class="flex">
+                                <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
+                                    <span>{{ item.activity.get_activity_type_display }}: </span>
+                                    <span>{{ item.activity.name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="flex justify-center">
+            <div class="grid gap-2 py-16">
+                <lord-icon
+                    src="https://cdn.lordicon.com/ikagbcik.json"
+                    trigger="loop"
+                    colors="primary:#f5f5f5,secondary:#d4d4d4"
+                    style="width:128px; height:128px"
+                    class="mx-auto"    
+                >
+                </lord-icon>
+                <span class="text-muted">Әлі бірде бір ойын тапсырмасы жасалмаған</span>
+            </div>
+        </div>
+    {% endif %}
+{% endblock game_tasks_block %}

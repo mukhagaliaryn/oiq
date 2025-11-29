@@ -1,0 +1,385 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-28 15:51+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: apps/main/views/auth.py:53
+msgid "Incorrect username or password"
+msgstr "Қолданушы аты немесе пароль қате терілді"
+
+#: apps/main/views/auth.py:70
+msgid "You have successfully registered!"
+msgstr "Сіз сәтті тіркелдіңіз!"
+
+#: apps/main/views/auth.py:73
+msgid "Registration failed. Check the data!"
+msgstr "Тіркеу кезінде қате кетті. Деректерді тексеріңіз!"
+
+#: apps/teacher/views/account.py:21
+msgid "Personal data saved"
+msgstr "Жеке мәліметтер сақталды"
+
+#: apps/teacher/views/account.py:23
+msgid "Something went wrong"
+msgstr "Қателік кетті. Форманы қайта тексеріңіз"
+
+#: config/settings.py:116
+msgid "Kazakh"
+msgstr "Қазақша"
+
+#: config/settings.py:117
+msgid "Russian"
+msgstr "Русский"
+
+#: config/settings.py:118
+msgid "English"
+msgstr "English"
+
+#: core/admin/account.py:23
+msgid "Personal data"
+msgstr "Жеке мәліметтер"
+
+#: core/admin/account.py:28
+msgid "Permissions"
+msgstr "Рұқсаттар"
+
+#: core/admin/subject.py:17 core/admin/subject.py:37 core/admin/subject.py:61
+msgid "Detail view"
+msgstr "Толығырақ"
+
+#: core/admin/subject.py:18 core/admin/subject.py:38 core/admin/subject.py:62
+msgid "Detail link"
+msgstr "Сілтеме"
+
+#: core/admin/subject.py:50 core/models/game_task.py:16
+#: core/models/subject.py:17 core/models/subject.py:26
+msgid "Subject"
+msgstr "Пән"
+
+#: core/admin/subject.py:75 core/models/subject.py:32 core/models/subject.py:45
+msgid "Chapter"
+msgstr "Бөлім"
+
+#: core/admin/subject.py:113 core/models/subject.py:50
+#: core/models/subject.py:105
+msgid "Topic"
+msgstr "Тақырып"
+
+#: core/apps.py:8
+msgid "Core app"
+msgstr "Core қосымшасы"
+
+#: core/models/account.py:14
+msgid "The user must have an username"
+msgstr "Қолданушының аты болуы керек"
+
+#: core/models/account.py:16
+msgid "The user must have an email address"
+msgstr "Қолданушының электрондық поштасы болуы керек"
+
+#: core/models/account.py:35
+msgid "Learner"
+msgstr "Оқушы"
+
+#: core/models/account.py:36
+msgid "Teacher"
+msgstr "Оқытушы"
+
+#: core/models/account.py:37
+msgid "Admin"
+msgstr "Администрация"
+
+#: core/models/account.py:40
+msgid "email"
+msgstr "Электронды пошта"
+
+#: core/models/account.py:41
+msgid "username"
+msgstr "Қолданушының аты"
+
+#: core/models/account.py:42
+msgid "First name"
+msgstr "Есімі"
+
+#: core/models/account.py:43
+msgid "Last name"
+msgstr "Тегі"
+
+#: core/models/account.py:44
+msgid "Avatar"
+msgstr "Аватар"
+
+#: core/models/account.py:45
+msgid "User role"
+msgstr "Рөлі"
+
+#: core/models/account.py:47
+msgid "staff status"
+msgstr "Статус"
+
+#: core/models/account.py:48
+msgid "Designates whether the user can log into this admin site."
+msgstr "Қолданушының осы әкімші сайтына кіре алатынын белгілейді."
+
+#: core/models/account.py:51
+msgid "active"
+msgstr "Белсенді"
+
+#: core/models/account.py:53
+msgid ""
+"Designates whether this user should be treated as active.Unselect this "
+"instead of deleting accounts."
+msgstr ""
+"Бұл пайдаланушыға белсенді ретінде қарау керек пе, жоқ па, соны анықтайды."
+
+#: core/models/account.py:57
+msgid "date joined"
+msgstr "Тіркелген уақыты"
+
+#: core/models/account.py:71
+msgid "User"
+msgstr "Қолданушы"
+
+#: core/models/account.py:72
+msgid "Users"
+msgstr "Қолданушылар"
+
+#: core/models/activity.py:10
+msgid "Game"
+msgstr "Ойын"
+
+#: core/models/activity.py:11
+msgid "Simulator"
+msgstr "Тренажер"
+
+#: core/models/activity.py:14 core/models/game_task.py:9
+#: core/models/subject.py:10 core/models/subject.py:63
+#: core/models/subject.py:82
+msgid "Name"
+msgstr "Атауы"
+
+#: core/models/activity.py:15
+msgid "Slug"
+msgstr "Кілттік сөз"
+
+#: core/models/activity.py:17
+msgid "Activity type"
+msgstr "Интерактивтің түрі"
+
+#: core/models/activity.py:21 core/models/subject.py:69
+msgid "Question formats"
+msgstr "Сұрақ форматтары"
+
+#: core/models/activity.py:23 core/models/subject.py:11
+#: core/models/subject.py:29 core/models/subject.py:47
+#: core/models/subject.py:65 core/models/subject.py:84
+msgid "Order"
+msgstr "Реттілік"
+
+#: core/models/activity.py:26 core/models/game_task.py:20
+msgid "Activity"
+msgstr "Интерактив"
+
+#: core/models/activity.py:27
+msgid "Activities"
+msgstr "Интерактивтер"
+
+#: core/models/game_task.py:12
+msgid "Owner"
+msgstr "Құрастырған"
+
+#: core/models/game_task.py:23 core/models/subject.py:121
+msgid "Questions"
+msgstr "Сұрақтар"
+
+#: core/models/game_task.py:25
+msgid "Question limit"
+msgstr "Сұрақ лимиті"
+
+#: core/models/game_task.py:28 core/models/game_task.py:45
+msgid "Game Task"
+msgstr "Геймтэск"
+
+#: core/models/game_task.py:29
+msgid "Game Tasks"
+msgstr "Геймтэсктер"
+
+#: core/models/game_task.py:38
+msgid "Pending"
+msgstr "Күтуде"
+
+#: core/models/game_task.py:39
+msgid "Active"
+msgstr "Белсенді"
+
+#: core/models/game_task.py:40
+msgid "Finished"
+msgstr "Аяқталды"
+
+#: core/models/game_task.py:47
+msgid "Status"
+msgstr "Статус"
+
+#: core/models/game_task.py:48
+msgid "Duration (minutes)"
+msgstr "Ұзақтығы (минут)"
+
+#: core/models/game_task.py:54 core/models/game_task.py:65
+msgid "Game Task Session"
+msgstr "Геймтэск сессиясы"
+
+#: core/models/game_task.py:55
+msgid "Game Task Sessions"
+msgstr "Геймтэск сессиялары"
+
+#: core/models/game_task.py:67
+msgid "Nickname"
+msgstr "Есімі"
+
+#: core/models/game_task.py:68
+msgid "Token"
+msgstr "Токен"
+
+#: core/models/game_task.py:69
+msgid "Score"
+msgstr "Ұпай"
+
+#: core/models/game_task.py:70
+msgid "Correct answers"
+msgstr "Дұрыс жауаптар"
+
+#: core/models/game_task.py:71
+msgid "Started at"
+msgstr "Басталған уақыты"
+
+#: core/models/game_task.py:72
+msgid "Finished at"
+msgstr "Аяқталған уақыты"
+
+#: core/models/game_task.py:73
+msgid "Is finished"
+msgstr "Аяқталған"
+
+#: core/models/game_task.py:76 core/models/game_task.py:87
+msgid "Participant"
+msgstr "Қатысушы"
+
+#: core/models/game_task.py:77
+msgid "Participants"
+msgstr "Қатысушылар"
+
+#: core/models/game_task.py:91 core/models/subject.py:120
+#: core/models/subject.py:136
+msgid "Question"
+msgstr "Сұрақ"
+
+#: core/models/game_task.py:93 core/models/subject.py:139
+msgid "Is correct"
+msgstr "Дұрыс жауап"
+
+#: core/models/game_task.py:94
+msgid "Score delta"
+msgstr "Delta ұпайы"
+
+#: core/models/game_task.py:95
+msgid "Time spent (seconds)"
+msgstr "Өткізілген уақыт (секунд)"
+
+#: core/models/game_task.py:96
+msgid "Answered at"
+msgstr "Жауап берген уақыты"
+
+#: core/models/game_task.py:99 core/models/game_task.py:118
+msgid "Question attempt"
+msgstr "Сұрақ нәтижесі"
+
+#: core/models/game_task.py:100
+msgid "Question attempts"
+msgstr "Сұрақ нәтижелері"
+
+#: core/models/game_task.py:122
+msgid "Selected options"
+msgstr "Таңдалған жауаптар"
+
+#: core/models/subject.py:18
+msgid "Subjects"
+msgstr "Пәндер"
+
+#: core/models/subject.py:28 core/models/subject.py:42
+msgid "Title"
+msgstr "Тақырыбы"
+
+#: core/models/subject.py:33
+msgid "Chapters"
+msgstr "Бөлімдер"
+
+#: core/models/subject.py:51
+msgid "Topics"
+msgstr "Тақырыптар"
+
+#: core/models/subject.py:64 core/models/subject.py:83
+msgid "Code"
+msgstr "Код"
+
+#: core/models/subject.py:68
+msgid "Question format"
+msgstr "Сұрақ форматы"
+
+#: core/models/subject.py:80 core/models/subject.py:110
+msgid "Format"
+msgstr "Формат"
+
+#: core/models/subject.py:87
+msgid "Question variant"
+msgstr "Сұрақ нұсқасы"
+
+#: core/models/subject.py:88
+msgid "Question variants"
+msgstr "Сұрақ нұсқалары"
+
+#: core/models/subject.py:98
+msgid "Easy"
+msgstr "Жеңіл"
+
+#: core/models/subject.py:99
+msgid "Medium"
+msgstr "Орташа"
+
+#: core/models/subject.py:100
+msgid "Hard"
+msgstr "Қиын"
+
+#: core/models/subject.py:107
+msgid "Body"
+msgstr "Сұрақ"
+
+#: core/models/subject.py:114
+msgid "Variant"
+msgstr "Нұсқа"
+
+#: core/models/subject.py:116
+msgid "Level"
+msgstr "Деңгей"
+
+#: core/models/subject.py:117
+msgid "Date in"
+msgstr "Жасалған уақыты"
+
+#: core/models/subject.py:138
+msgid "Answer"
+msgstr "Жауап"

@@ -1,0 +1,60 @@
+{% if messages %}
+    <div 
+        id="flash-messages" 
+        class="fixed z-50 top-10 left-1/2 -translate-1/2 flex flex-col gap-2"
+    >
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div
+                class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-check-icon lucide-circle-check text-green-500">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="m9 12 2 2 4-4" />
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% elif message.tags == 'error' or message.tags == 'danger' %}
+            <div
+                class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-ban-icon lucide-ban text-destructive">
+                    <path d="M4.929 4.929 19.07 19.071" />
+                    <circle cx="12" cy="12" r="10" />
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% elif message.tags == 'warning' %}
+            <div
+                class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-octagon-alert-icon lucide-octagon-alert">
+                    <path d="M12 16h.01" />
+                    <path d="M12 8v4" />
+                    <path
+                        d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z" />
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <script>
+        document.querySelectorAll('.flash-item').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.transform = 'translateY(0)';
+                el.style.opacity = '1';
+            }, 100 * index);
+
+            setTimeout(() => {
+                el.style.transform = 'translateY(-50px)';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 700);
+            }, 5000);
+        });
+    </script>
+{% endif %}
