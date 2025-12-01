@@ -1,17 +1,30 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic
+from requests import session
+
+from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic, GameTaskSession
 from core.utils.decorators import role_required
 
 
-# game_task container
+# Game task create
 # ----------------------------------------------------------------------------------------------------------------------
 # game_task_create
 @role_required('teacher')
 def game_task_create_view(request):
+    user = request.user
+    drafts = GameTask.objects.filter(owner=user, status='draft').order_by('-id')
+    draft_count = drafts.count()
+
+    if draft_count >= 3:
+        last_draft = drafts.first()
+        messages.warning(request, 'Сізде 3 аяқталмаған ойын тапсырмасы бар. Алдымен солардың бірін аяқтаңыз.')
+        if last_draft:
+            return redirect('teacher:game_task_edit', pk=last_draft.pk)
+
+
     game_task = GameTask.objects.create(
         name='',
-        owner=request.user,
+        owner=user,
         subject=None,
         activity=None,
         status='draft'
@@ -19,13 +32,33 @@ def game_task_create_view(request):
     return redirect('teacher:game_task_edit', pk=game_task.pk)
 
 
+# get_game_task_current_step
+def get_game_task_current_step(game_task: GameTask) -> str:
+    if game_task.activity_id is None:
+        return 'activity'
+    if not game_task.questions.exists():
+        return 'questions'
+    if not game_task.name:
+        return 'settings'
+    return 'settings'
+
+
 # game_task_edit
 @role_required('teacher')
 def game_task_edit_view(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
 
+    current_step = get_game_task_current_step(game_task)
+    step_activity_done = game_task.activity_id is not None
+    step_questions_done = game_task.questions.exists()
+    step_settings_done = bool(game_task.name)
+
     context = {
         'game_task': game_task,
+        'current_step': current_step,
+        'step_activity_done': step_activity_done,
+        'step_questions_done': step_questions_done,
+        'step_settings_done': step_settings_done,
     }
     return render(request, 'app/dashboard/teacher/game_tasks/edit/page.html', context)
 
@@ -240,7 +273,24 @@ def game_task_publish_view(request, pk):
 @role_required('teacher')
 def game_task_detail_view(request, pk):
     game_task = get_object_or_404(GameTask, id=pk)
+    sessions = GameTaskSession.objects.filter(game_task=game_task)
+
     context = {
         'game_task': game_task,
+        'sessions': sessions,
     }
-    return render(request, 'app/dashboard/teacher/game_tasks/detail/page.html', context)
+    return render(request, 'app/dashboard/teacher/game_tasks/game_task/page.html', context)
+
+
+# Game task questions page
+# ----------------------------------------------------------------------------------------------------------------------
+@role_required('teacher')
+def game_task_questions_view(request, pk):
+    game_task = get_object_or_404(GameTask, id=pk)
+    questions = GameTaskQuestion.objects.filter(game_task=game_task)
+
+    context = {
+        'game_task': game_task,
+        'questions': questions,
+    }
+    return render(request, 'app/dashboard/teacher/game_tasks/game_task/questions/page.html', context)

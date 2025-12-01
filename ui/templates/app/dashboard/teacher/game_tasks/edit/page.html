@@ -5,27 +5,105 @@
 
 
 {% block teacher_layout %}
-    <div class="max-w-screen-lg w-full mx-auto p-4 grid gap-6">
+    <div 
+        class="max-w-screen-lg w-full mx-auto p-4 grid gap-6"
+        x-data="{ 
+            step: '{{ current_step }}',
+            stepActivityDone: {% if step_activity_done %}true{% else %}false{% endif %},
+            stepQuestionsDone: {% if step_questions_done %}true{% else %}false{% endif %},
+            stepSettingsDone: {% if step_settings_done %}true{% else %}false{% endif %}
+        }"
+    >
+        <h1 class="text-2xl font-medium">Ойын тапсырмасын құру</h1>
 
-        <h1 class="text-2xl font-semibold">
-            Ойын тапсырмасын құру
-        </h1>
+        <div class="flex items-center gap-4 border-b border-border-200 pb-3 text-sm">
+            <!-- 1. Интерактивтер -->
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    :class="stepActivityDone
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                        : 'bg-secondary-100 text-muted border-border-200'"
+                >
+                    <span x-show="!stepActivityDone">1</span>
+                    <svg
+                        x-show="stepActivityDone" 
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                </div>
+                <span :class="stepActivityDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                >
+                    Интерактивтер
+                </span>
+            </div>
 
-        <div class="flex items-center gap-4 border-b border-border-200 pb-3">
-            <div>1. Activity</div>
-            <div>2. Сұрақтар</div>
-            <div>3. Settings</div>
+            <div class="flex-1 h-px bg-border-200"></div>
+
+            <!-- 2. Сұрақтар -->
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    :class="stepQuestionsDone
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                        : 'bg-secondary-100 text-muted border-border-200'"
+                >
+                    <span x-show="!stepQuestionsDone">2</span>
+                    <svg
+                        x-show="stepQuestionsDone" 
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                </div>
+                <span :class="stepQuestionsDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                >
+                    Сұрақтар
+                </span>
+            </div>
+
+            <div class="flex-1 h-px bg-border-200"></div>
+
+            <!-- 3. Баптаулар -->
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    :class="stepSettingsDone
+                        ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                        : 'bg-secondary-100 text-muted border-border-200'"
+                >
+                    <span x-show="!stepSettingsDone">3</span>
+                    <svg
+                        x-show="stepSettingsDone" 
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                </div>
+                <span :class="stepSettingsDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                >
+                    Баптаулар
+                </span>
+            </div>
         </div>
-
-        <div 
+        
+        <div
             id="step-container" 
-            hx-get="{% url 'teacher:game_task_step_activity' pk=game_task.pk %}" 
+            hx-get="
+                {% if current_step == 'questions' %}
+                    {% url 'teacher:game_task_step_questions' pk=game_task.pk %}
+                {% elif current_step == 'settings' %}
+                    {% url 'teacher:game_task_step_settings' pk=game_task.pk %}
+                {% else %}
+                    {% url 'teacher:game_task_step_activity' pk=game_task.pk %}
+                {% endif %}
+            " 
             hx-trigger="load"
             hx-target="#step-container" 
             hx-swap="innerHTML"
         >
             <div class="text-muted">Жүктелуде...</div>
         </div>
-
     </div>
 {% endblock %}

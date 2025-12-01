@@ -41,7 +41,7 @@
                     >
                 </label>
                 <label class="grid gap-1">
-                    <span class="font-medium">Қысқаша сипаттама (optional)</span>
+                    <span class="font-medium">Қысқаша сипаттама (Маңызды емес)</span>
                     <textarea
                         name="description"
                         rows="4"
@@ -57,7 +57,7 @@
             <p class="text-muted">
                 Бұл қадамда атауын, пәнін және қажет болса қысқаша сипаттамасын нақтылап алыңыз.
             </p>
-            <ul class="list-disc list-inside text-muted text-sm space-y-1">
+            <ul class="list-disc list-inside text-muted space-y-1">
                 <li>Кем дегенде бір сұрақ генерацияланған болуы керек.</li>
                 <li>Ойынға атау беру міндетті.</li>
                 <li>Жарияланғаннан кейін де осы ойын шаблонын кез келген уақытта өзгерте аласыз.</li>
@@ -75,6 +75,7 @@
                 flex items-center px-4 py-2 border border-border-200 bg-white rounded-xl cursor-pointer transition-all hover:shadow
                 active:scale-95 focus:ring-2 focus:ring-secondary-200
             "
+            @click="step = 'questions'"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -85,35 +86,35 @@
         </button>
 
         <div class="flex gap-4">
-            {% if not can_publish %}
                 <button
                     type="submit"
                     form="settings-form"
                     class="
                         flex px-5 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all cursor-pointer hover:bg-primary-800 active:scale-95 
-                        focus:ring-2 focus:ring-primary-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                        focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
                     "
+                    x-show="!stepSettingsDone"
+                    @click="stepSettingsDone = true"
                 >
                     Сақтау
                 </button>
-            {% else %}
+            
                 <form
                     method="post"
                     action="{% url 'teacher:game_task_publish' pk=game_task.pk %}"
+                    x-show="stepSettingsDone"
                 >
                     {% csrf_token %}
                     <button
                         type="submit"
                         class="
                             w-full flex justify-center px-6 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all cursor-pointer hover:bg-primary-800 active:scale-95
-                            focus:ring-2 focus:ring-primary-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                            focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
                         "
-                        {% if not game_task.name or not selected_questions_count %}disabled{% endif %}
                     >
                         Аяқтау
                     </button>
                 </form>
-            {% endif %}
         </div>
     </div>
 </div>

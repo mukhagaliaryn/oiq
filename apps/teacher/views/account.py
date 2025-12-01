@@ -27,7 +27,7 @@ def account_view(request):
     context = {
         'form': form,
     }
-    return render(request, 'app/dashboard/teacher/components/teacher_account.html', context)
+    return render(request, 'app/dashboard/teacher/settings/account/page.html', context)
 
 
 # teacher security
@@ -38,7 +38,7 @@ def security_view(request):
         raise Http404('Page not found')
 
     context = {}
-    return render(request, 'app/dashboard/teacher/components/teacher_security.html', context)
+    return render(request, 'app/dashboard/teacher/settings/security/page.html', context)
 
 
 # teacher generics

@@ -1,37 +1,50 @@
 {% extends './page.html' %}
 
+
 {% block title %}Архивтер{% endblock title %}
+
 
 {% block game_tasks_block %}
     {% if game_tasks %}
-        <div class="space-y-2">
-            <div class="grid gap-2">
-                {% for item in game_tasks %}
-                    <a 
-                        href="{% url 'teacher:game_task_detail' item.pk %}"
-                        class="flex justify-between items-start gap-4 rounded-xl border border-border-200 transition-all hover:shadow"
-                    >
-                        <div class="aspect-square p-2 flex justify-center items-center rounded-tl-xl rounded-bl-xl bg-primary-50">
-                            <lord-icon
-                                src="https://cdn.lordicon.com/xzvgfwwv.json"
-                                trigger="hover"
-                                colors="primary:#ebe6ef,secondary:#4f46e5"
-                                style="width: 64px; height: 64px;">
-                            </lord-icon>
-                        </div>
+        <div class="grid">
+            {% for item in game_tasks %}
+                <a 
+                    href="{% url 'teacher:game_task_detail' item.pk %}"
+                    class="flex justify-between items-center gap-4 p-2 border-b border-border-200 transition-all group hover:bg-primary-50"
+                >
+                    <div class="aspect-square rounded-xl p-2 flex justify-center items-center bg-primary-50">
+                        <lord-icon
+                            src="https://cdn.lordicon.com/xzvgfwwv.json"
+                            trigger="hover"
+                            colors="primary:#ebe6ef,secondary:#4f46e5"
+                            style="width: 48px; height: 48px;">
+                        </lord-icon>
+                    </div>
 
-                        <div class="flex-1 grid gap-1 py-2">
-                            <h4 class="font-medium text-base">#{{ item.id }} {{ item }}</h4>
-                            <div class="flex">
-                                <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
-                                    <span>{{ item.activity.get_activity_type_display }}: </span>
-                                    <span>{{ item.activity.name }}</span>
-                                </div>
+                    <div class="flex-1 grid gap-1">
+                        <h4 class="font-medium text-base">#{{ item.id }} {{ item }}</h4>
+                        <div class="flex">
+                            <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
+                                <span>{{ item.activity.get_activity_type_display }}: </span>
+                                <span>{{ item.activity.name }}</span>
                             </div>
                         </div>
-                    </a>
-                {% endfor %}
-            </div>
+                    </div>
+
+                    <button 
+                        type="button"
+                        class="hidden p-2 rounded-xl cursor-pointer transition-all text-muted group-hover:flex hover:bg-primary-100 active:scale-95 focus:ring-2 focus:ring-primary-600"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                        </svg>
+                    </button>
+                </a>
+            {% endfor %}
         </div>
     {% else %}
         <div class="flex justify-center">

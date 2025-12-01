@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 
 from core.models import GameTask
@@ -16,15 +17,21 @@ def dashboard_view(request):
         .prefetch_related('questions')
         .order_by('-pk')[:4]
     )
+
+    drafts = GameTask.objects.filter(owner=user, status='draft').order_by('-id')
+    draft_count = drafts.count()
+    last_draft = drafts.first()
+
     context = {
         'game_tasks': game_tasks,
+        'draft_count': draft_count,
+        'last_draft': last_draft,
     }
     return render(request, 'app/dashboard/teacher/page.html', context)
 
 
-# GameTask page
+# Game_tasks page
 # ----------------------------------------------------------------------------------------------------------------------
-# game_tasks
 @role_required('teacher')
 def game_tasks_view(request):
     user = request.user
@@ -33,6 +40,7 @@ def game_tasks_view(request):
         .filter(owner=user, status='published')
         .select_related('activity', 'subject')
         .prefetch_related('questions')
+        .order_by('-pk')
     )
     context = {
         'game_tasks': game_tasks,
@@ -40,7 +48,6 @@ def game_tasks_view(request):
     return render(request, 'app/dashboard/teacher/game_tasks/recents.html', context)
 
 
-# game_tasks
 @role_required('teacher')
 def game_task_drafts_view(request):
     user = request.user
@@ -49,6 +56,7 @@ def game_task_drafts_view(request):
         .filter(owner=user, status='draft')
         .select_related('activity', 'subject')
         .prefetch_related('questions')
+        .order_by('-pk')
     )
     context = {
         'game_tasks': game_tasks,
@@ -56,7 +64,6 @@ def game_task_drafts_view(request):
     return render(request, 'app/dashboard/teacher/game_tasks/drafts.html', context)
 
 
-# game_tasks
 @role_required('teacher')
 def game_task_archives_view(request):
     user = request.user
@@ -65,6 +72,7 @@ def game_task_archives_view(request):
         .filter(owner=user, status='archived')
         .select_related('activity', 'subject')
         .prefetch_related('questions')
+        .order_by('-pk')
     )
     context = {
         'game_tasks': game_tasks,

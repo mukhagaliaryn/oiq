@@ -136,7 +136,7 @@
                     type="submit"
                     class="
                         flex justify-center px-6 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all hover:bg-primary-800 active:scale-95 cursor-pointer
-                        focus:ring-2 focus:ring-primary-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                        focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
                     "
                     {% if not current_subject_id %}disabled{% endif %}
                 >
@@ -196,6 +196,7 @@
                 flex items-center pl-3 pr-5 py-2 border border-border-200 bg-white rounded-xl cursor-pointer transition-all hover:shadow
                 active:scale-95 focus:ring-2 focus:ring-secondary-200
             "
+            @click="step = 'activity'"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -211,8 +212,9 @@
             hx-swap="innerHTML"
             class="
                 flex items-center pl-5 pr-3 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all cursor-pointer hover:bg-primary-800 active:scale-95 
-                focus:ring-2 focus:ring-primary-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
             "
+            @click="step = 'settings'; stepQuestionsDone = true"
             {% if not selected_questions %}disabled{% endif %}
         >
             <span>Келесі</span>

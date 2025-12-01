@@ -1,0 +1,57 @@
+{% extends '../layout.html' %}
+
+{% block title %}Сұрақтар{% endblock title %}
+
+
+{% block layout %}
+<div class="grid gap-4">
+    <div class="">
+        <h3 class="font-medium text-lg">Сұрақтар ({{ questions.count }})</h3>
+    </div>
+    
+    <div class="grid gap-2" x-data="{ open: null }">
+        {% for item in questions %}
+            <div class="border border-border-200 rounded-xl ">
+                <button
+                    class="flex justify-between items-center w-full p-4 text-left cursor-pointer"
+                    @click="open === {{ item.id }} ? open = null : open = {{ item.id }}"
+                >
+                    <h4 class="font-medium">{{ item.order }}. {{ item.question.body|safe }}</h4>
+                    <svg
+                        :class="open === {{ item.id }} ? 'rotate-180' : ''"
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-down-icon lucide-chevron-down transform transition-all">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
+
+                <div
+                    x-show="open === {{ item.id }}"
+                    x-collapse
+                    class="grid grid-cols-2 pb-4 border-t border-border-200 rounded-b-xl"
+                >
+                    {% for option in item.question.options.all %}
+                        <div class="flex items-start gap-2 py-2 px-4 hover:bg-primary-50">
+                            {% if option.is_correct %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-circle-check-icon lucide-circle-check text-emerald-700">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="m9 12 2 2 4-4" />
+                                </svg>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-icon lucide-circle text-destructive">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>
+                            {% endif %}
+                            <span>{{ option.answer|safe }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock layout %}

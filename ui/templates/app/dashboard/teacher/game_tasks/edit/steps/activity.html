@@ -14,7 +14,7 @@
             <div class="grid gap-2">
                 <h4 class="font-medium">Ойын түрлері</h4>
 
-                <div class="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in games %}
                         <label 
                             class="block cursor-pointer"
@@ -66,7 +66,7 @@
             <div class="grid gap-4">
                 <h3 class="text-lg font-medium">Симуляторлар</h3>
 
-                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in simulators %}
                         <label 
                             class="block cursor-pointer"
@@ -119,8 +119,9 @@
                 type="submit" 
                 class="
                     flex items-center pl-5 pr-3 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all cursor-pointer hover:bg-primary-800 active:scale-95 
-                    focus:ring-2 focus:ring-primary-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                    focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
                 "
+                @click="step = 'questions'; stepActivityDone = true"
                 :disabled="!selectedActivity"
             >
                 <span>Келесі</span>
