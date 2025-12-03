@@ -40,7 +40,7 @@ def login_view(request):
 
     if request.user.is_authenticated:
         if next_url:
-            return redirect(f'{reverse('post_login_redirect')}?next={next_url}')
+            return redirect(f"{reverse('post_login_redirect')}?next={next_url}")
         return redirect('post_login_redirect')
 
     if request.method == 'POST':
@@ -51,7 +51,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if next_url:
-                return redirect(f'{reverse('post_login_redirect')}?next={next_url}')
+                return redirect(f"{reverse('post_login_redirect')}?next={next_url}")
             return redirect('post_login_redirect')
         else:
             messages.error(request, _('Incorrect username or password'))
