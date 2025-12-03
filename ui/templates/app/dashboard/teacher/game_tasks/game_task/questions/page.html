@@ -16,7 +16,7 @@
                     class="flex justify-between items-center w-full p-4 text-left cursor-pointer"
                     @click="open === {{ item.id }} ? open = null : open = {{ item.id }}"
                 >
-                    <h4 class="font-medium">{{ item.order }}. {{ item.question.body|safe }}</h4>
+                    <h4 class="flex  gap-2 items-center font-medium">{{ item.order }}. {{ item.question.body|safe }}</h4>
                     <svg
                         :class="open === {{ item.id }} ? 'rotate-180' : ''"
                         xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"

@@ -159,7 +159,7 @@
                         <div class="grid gap-2">
                             <div class="flex gap-1 font-medium text-sm">
                                 <span>{{ item.order }}.</span>
-                                <h5 class="line-clamp-1">{{ item.question.body|truncatechars:160|safe }}</h5>
+                                <h5 class="line-clamp-1">{{ item.question.body|safe }}</h5>
                             </div>
                             <div class="flex">
                                 <span class="flex px-1.5 py-0.5 text-xs border border-border-200 rounded-xl text-muted">
