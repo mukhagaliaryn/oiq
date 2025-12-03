@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
+
+from core.forms.subject import QuestionForm
 from core.models import Subject, Chapter, Topic, Question, QuestionFormat, QuestionVariant, Option
 from core.admin.mixins import LinkedAdminMixin
 
@@ -56,6 +58,7 @@ class QuestionInline(LinkedAdminMixin, admin.StackedInline):
     model = Question
     extra = 0
     readonly_fields = ('detail_link', )
+    form = QuestionForm
 
     def detail_link(self, obj):
         return self.admin_link(obj, 'question', label=_('Detail view'))
@@ -107,6 +110,7 @@ class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
     list_display = ( '__str__', 'format', 'variant', 'topic', )
     list_filter = ('format', 'variant', 'level', )
     readonly_fields = ('detail_link', )
+    form = QuestionForm
 
     def detail_link(self, obj):
         return self.parent_link(obj, 'topic')

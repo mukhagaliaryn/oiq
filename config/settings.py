@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tailwind',
     'ui',
+    'ckeditor',
 
     # core apps...
     'core.apps.CoreConfig',
@@ -166,3 +167,55 @@ AUTH_USER_MODEL = 'core.User'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+# CKEditor settings
+# ----------------------------------------------------------------------------------------------------------------------
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'skin': 'moono-lisa',
+        'defaultLanguage': 'ru',
+
+        'toolbar': [
+            {
+                'name': 'styles',
+                'items': ['Format']
+            },
+            {
+                'name': 'basicstyles',
+                'items': ['Bold', 'Italic', 'Underline', '-', 'RemoveFormat']
+            },
+            {
+                'name': 'paragraph',
+                'items': [
+                    'NumberedList', 'BulletedList', '-',
+                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                ]
+            },
+            {
+                'name': 'insert',
+                'items': ['Image', 'Table', 'Mathjax', ]
+            },
+            {
+                'name': 'document',
+                'items': ['Source', '-', 'Preview', '-', 'Maximize']
+            },
+        ],
+        'format_tags': 'p;h2;h3;h4',
+
+        'mathJaxLib': 'https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS_HTML',
+        'tabSpaces': 4,
+
+        'extraPlugins': ','.join([
+            'mathjax',
+            'uploadimage',
+            'autogrow',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath',
+        ]),
+    }
+}

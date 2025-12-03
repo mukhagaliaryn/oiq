@@ -121,10 +121,7 @@ class Question(models.Model):
         verbose_name_plural = _('Questions')
 
     def __str__(self):
-        clean_text = strip_tags(self.body)
-        if len(clean_text) > 40:
-            return f'#{self.pk}. {clean_text[:40]}...'
-        return f'#{self.pk}. {clean_text}'
+        return f'#{self.pk}-question'
 
 
 # Question variants
