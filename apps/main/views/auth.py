@@ -44,7 +44,7 @@ def login_view(request):
         return redirect('post_login_redirect')
 
     if request.method == 'POST':
-        identifier = request.POST.get('identifier')  # email немесе username
+        identifier = request.POST.get('identifier')
         password = request.POST.get('password')
         user = authenticate(request, username=identifier, password=password)
 
