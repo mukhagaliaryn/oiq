@@ -1,5 +1,9 @@
-import uuid
 from django.db import models
+import uuid
+import random
+import string
+from datetime import timedelta
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -57,6 +61,11 @@ class GameTaskQuestion(models.Model):
 
 
 # GameTaskSession model
+def generate_pin_code(length: int = 6) -> str:
+    digits = string.digits
+    return ''.join(random.choice(digits) for _ in range(length))
+
+
 class GameTaskSession(models.Model):
     STATUS = (
         ('pending', _('Pending')),
@@ -69,10 +78,10 @@ class GameTaskSession(models.Model):
         related_name='sessions', verbose_name=_('Game Task')
     )
     status = models.CharField(_('Status'), max_length=16, choices=STATUS, default='pending')
-    duration = models.PositiveIntegerField(_('Duration (minutes)'), default=0)
-
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    duration = models.PositiveIntegerField(_('Duration (minutes)'), default=0)
+    pin_code = models.CharField(_('PIN code'), max_length=8, editable=False, unique=True, null=True)
 
     class Meta:
         verbose_name = _('Game Task Session')
@@ -80,6 +89,45 @@ class GameTaskSession(models.Model):
 
     def __str__(self):
         return f'{self.game_task} ({self.status})'
+
+    @property
+    def deadline(self):
+        if self.started_at and self.duration:
+            return self.started_at + timedelta(minutes=self.duration)
+        return None
+
+    def is_time_over(self) -> bool:
+        dl = self.deadline
+        if not dl:
+            return False
+        return timezone.now() >= dl
+
+    def is_pending(self) -> bool:
+        return self.status == 'pending'
+
+    def is_active(self) -> bool:
+        return self.status == 'active'
+
+    def is_finished(self) -> bool:
+        return self.status == 'finished'
+
+    def is_joinable(self) -> bool:
+        return self.is_pending()
+
+    def _ensure_pin_code(self):
+        if self.pin_code:
+            return
+
+        while True:
+            candidate = generate_pin_code()
+            if not GameTaskSession.objects.filter(pin_code=candidate).exists():
+                self.pin_code = candidate
+                break
+
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.pin_code:
+            self._ensure_pin_code()
+        super().save(*args, **kwargs)
 
 
 # Participant model

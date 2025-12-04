@@ -135,8 +135,9 @@ class Option(models.Model):
     answer = models.TextField(_('Answer'))
     is_correct = models.BooleanField(_('Is correct'), default=False)
 
+    class Meta:
+        verbose_name = _('Option')
+        verbose_name_plural = _('Options')
+
     def __str__(self):
-        clean_text = strip_tags(self.answer)
-        if len(clean_text) > 40:
-            return f'#{self.pk}. {clean_text[:40]}...'
-        return f'#{self.pk}. {clean_text}'
+        return f'#{self.pk}-option'

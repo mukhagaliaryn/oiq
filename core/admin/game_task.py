@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import GameTask, GameTaskQuestion
+from core.models import GameTask, GameTaskQuestion, GameTaskSession
 
 
 # GameTask admin
@@ -18,3 +18,8 @@ class GameTaskAdmin(admin.ModelAdmin):
     search_fields = ('name', 'owner', 'activity', 'subject', )
 
     inlines = (GameTaskQuestionInline, )
+
+
+@admin.register(GameTaskSession)
+class GameTaskSessionAdmin(admin.ModelAdmin):
+    list_display = ('game_task', 'pin_code', )

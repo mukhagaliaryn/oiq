@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-28 15:51+0500\n"
+"POT-Creation-Date: 2025-12-04 09:10+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,15 +20,15 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: apps/main/views/auth.py:53
+#: apps/main/views/auth.py:57
 msgid "Incorrect username or password"
 msgstr "Неверное имя пользователя или пароль"
 
-#: apps/main/views/auth.py:70
+#: apps/main/views/auth.py:74
 msgid "You have successfully registered!"
 msgstr "Вы успешно зарегистрировались!"
 
-#: apps/main/views/auth.py:73
+#: apps/main/views/auth.py:77
 msgid "Registration failed. Check the data!"
 msgstr "Регистрация не удалась. Проверьте данные!"
 
@@ -40,15 +40,15 @@ msgstr "Личные данные сохранены"
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-#: config/settings.py:116
+#: config/settings.py:117
 msgid "Kazakh"
 msgstr "Қазақша"
 
-#: config/settings.py:117
+#: config/settings.py:118
 msgid "Russian"
 msgstr "Русский"
 
-#: config/settings.py:118
+#: config/settings.py:119
 msgid "English"
 msgstr "English"
 
@@ -60,24 +60,24 @@ msgstr "Личные данные"
 msgid "Permissions"
 msgstr "Разрешения"
 
-#: core/admin/subject.py:17 core/admin/subject.py:37 core/admin/subject.py:61
+#: core/admin/subject.py:19 core/admin/subject.py:39 core/admin/subject.py:64
 msgid "Detail view"
 msgstr "Подробнее"
 
-#: core/admin/subject.py:18 core/admin/subject.py:38 core/admin/subject.py:62
+#: core/admin/subject.py:20 core/admin/subject.py:40 core/admin/subject.py:65
 msgid "Detail link"
 msgstr "Подробная ссылка"
 
-#: core/admin/subject.py:50 core/models/game_task.py:16
+#: core/admin/subject.py:52 core/models/game_task.py:22
 #: core/models/subject.py:17 core/models/subject.py:26
 msgid "Subject"
 msgstr "Предмет"
 
-#: core/admin/subject.py:75 core/models/subject.py:32 core/models/subject.py:45
+#: core/admin/subject.py:78 core/models/subject.py:32 core/models/subject.py:45
 msgid "Chapter"
 msgstr "Глава"
 
-#: core/admin/subject.py:113 core/models/subject.py:50
+#: core/admin/subject.py:117 core/models/subject.py:50
 #: core/models/subject.py:105
 msgid "Topic"
 msgstr "Тема"
@@ -168,7 +168,7 @@ msgstr "Ойын"
 msgid "Simulator"
 msgstr "Тренажёр"
 
-#: core/models/activity.py:14 core/models/game_task.py:9
+#: core/models/activity.py:14 core/models/game_task.py:15
 #: core/models/subject.py:10 core/models/subject.py:63
 #: core/models/subject.py:82
 msgid "Name"
@@ -186,13 +186,14 @@ msgstr "Тип интерактива"
 msgid "Question formats"
 msgstr "Форматы вопросов"
 
-#: core/models/activity.py:23 core/models/subject.py:11
-#: core/models/subject.py:29 core/models/subject.py:47
-#: core/models/subject.py:65 core/models/subject.py:84
+#: core/models/activity.py:23 core/models/game_task.py:49
+#: core/models/subject.py:11 core/models/subject.py:29
+#: core/models/subject.py:47 core/models/subject.py:65
+#: core/models/subject.py:84
 msgid "Order"
 msgstr "Порядок"
 
-#: core/models/activity.py:26 core/models/game_task.py:20
+#: core/models/activity.py:26 core/models/game_task.py:26
 msgid "Activity"
 msgstr "Интерактив"
 
@@ -200,120 +201,137 @@ msgstr "Интерактив"
 msgid "Activities"
 msgstr "Интерактивы"
 
+#: core/models/game_task.py:11
+msgid "Draft"
+msgstr "Черновик"
+
 #: core/models/game_task.py:12
+msgid "Published"
+msgstr "Опубликованный"
+
+#: core/models/game_task.py:13
+msgid "Archived"
+msgstr "Заархивированный"
+
+#: core/models/game_task.py:18
 msgid "Owner"
 msgstr "Преподаватель"
 
-#: core/models/game_task.py:23 core/models/subject.py:121
-msgid "Questions"
-msgstr "Вопросы"
-
-#: core/models/game_task.py:25
-msgid "Question limit"
-msgstr "Лимит вопроса"
-
-#: core/models/game_task.py:28 core/models/game_task.py:45
-msgid "Game Task"
-msgstr "Геймтэск"
-
-#: core/models/game_task.py:29
-msgid "Game Tasks"
-msgstr "Геймтэски"
-
-#: core/models/game_task.py:38
-msgid "Pending"
-msgstr "Ожидаемый"
-
-#: core/models/game_task.py:39
-msgid "Active"
-msgstr "Активный"
-
-#: core/models/game_task.py:40
-msgid "Finished"
-msgstr "Завершено"
-
-#: core/models/game_task.py:47
+#: core/models/game_task.py:28 core/models/game_task.py:71
 msgid "Status"
 msgstr "Статус"
 
-#: core/models/game_task.py:48
-msgid "Duration (minutes)"
-msgstr "Продолжительность (минуты)"
+#: core/models/game_task.py:29
+msgid "Description"
+msgstr "Описание"
 
-#: core/models/game_task.py:54 core/models/game_task.py:65
-msgid "Game Task Session"
-msgstr "Сессия геймтэски"
-
-#: core/models/game_task.py:55
-msgid "Game Task Sessions"
-msgstr "Сессии геймтэска"
-
-#: core/models/game_task.py:67
-msgid "Nickname"
-msgstr "Прозвище"
-
-#: core/models/game_task.py:68
-msgid "Token"
-msgstr "Токен"
-
+#: core/models/game_task.py:32 core/models/game_task.py:43
 #: core/models/game_task.py:69
-msgid "Score"
-msgstr "Очки"
+msgid "Game Task"
+msgstr "Геймтэск"
 
-#: core/models/game_task.py:70
-msgid "Correct answers"
-msgstr "Правильные ответы"
+#: core/models/game_task.py:33
+msgid "Game Tasks"
+msgstr "Геймтэски"
 
-#: core/models/game_task.py:71
-msgid "Started at"
-msgstr "Началось с"
-
-#: core/models/game_task.py:72
-msgid "Finished at"
-msgstr "Законченный в"
-
-#: core/models/game_task.py:73
-msgid "Is finished"
-msgstr "Завершено"
-
-#: core/models/game_task.py:76 core/models/game_task.py:87
-msgid "Participant"
-msgstr "Участник"
-
-#: core/models/game_task.py:77
-msgid "Participants"
-msgstr "Участники"
-
-#: core/models/game_task.py:91 core/models/subject.py:120
-#: core/models/subject.py:136
+#: core/models/game_task.py:47 core/models/game_task.py:115
+#: core/models/subject.py:120 core/models/subject.py:133
 msgid "Question"
 msgstr "Вопрос"
 
-#: core/models/game_task.py:93 core/models/subject.py:139
+#: core/models/game_task.py:52
+msgid "Game Task Question"
+msgstr "Вопрос геймтэска"
+
+#: core/models/game_task.py:53
+msgid "Game Task Questions"
+msgstr "Вопросы геймтэска"
+
+#: core/models/game_task.py:62
+msgid "Pending"
+msgstr "Ожидаемый"
+
+#: core/models/game_task.py:63
+msgid "Active"
+msgstr "Активный"
+
+#: core/models/game_task.py:64
+msgid "Finished"
+msgstr "Завершено"
+
+#: core/models/game_task.py:72
+msgid "Duration (minutes)"
+msgstr "Продолжительность (минуты)"
+
+#: core/models/game_task.py:78 core/models/game_task.py:89
+msgid "Game Task Session"
+msgstr "Сессия геймтэски"
+
+#: core/models/game_task.py:79
+msgid "Game Task Sessions"
+msgstr "Сессии геймтэска"
+
+#: core/models/game_task.py:91
+msgid "Nickname"
+msgstr "Прозвище"
+
+#: core/models/game_task.py:92
+msgid "Token"
+msgstr "Токен"
+
+#: core/models/game_task.py:93
+msgid "Score"
+msgstr "Очки"
+
+#: core/models/game_task.py:94
+msgid "Correct answers"
+msgstr "Правильные ответы"
+
+#: core/models/game_task.py:95
+msgid "Started at"
+msgstr "Началось с"
+
+#: core/models/game_task.py:96
+msgid "Finished at"
+msgstr "Законченный в"
+
+#: core/models/game_task.py:97
+msgid "Is finished"
+msgstr "Завершено"
+
+#: core/models/game_task.py:100 core/models/game_task.py:111
+msgid "Participant"
+msgstr "Участник"
+
+#: core/models/game_task.py:101
+msgid "Participants"
+msgstr "Участники"
+
+#: core/models/game_task.py:117 core/models/subject.py:136
 msgid "Is correct"
 msgstr "Правильный ответ"
 
-#: core/models/game_task.py:94
+#: core/models/game_task.py:118
 msgid "Score delta"
 msgstr "Дельта оценки"
 
-#: core/models/game_task.py:95
+#: core/models/game_task.py:119
 msgid "Time spent (seconds)"
 msgstr "Затраченное время (секунды)"
 
-#: core/models/game_task.py:96
+#: core/models/game_task.py:120
 msgid "Answered at"
 msgstr "Ответил(а) в"
 
-#: core/models/game_task.py:99 core/models/game_task.py:118
+#: core/models/game_task.py:123 core/models/game_task.py:142
 msgid "Question attempt"
 msgstr "Результат опроса"
 
-#: core/models/game_task.py:100
+#: core/models/game_task.py:124
 msgid "Question attempts"
 msgstr "Результаты опроса"
 
-#: core/models/game_task.py:122
+#: core/models/game_task.py:146
 msgid "Selected options"
 msgstr "Выбранные ответы"
 
@@ -381,6 +399,18 @@ msgstr "Уровень"
 msgid "Date in"
 msgstr "Дата создание"
 
-#: core/models/subject.py:138
+#: core/models/subject.py:121
+msgid "Questions"
+msgstr "Вопросы"
+
+#: core/models/subject.py:135
 msgid "Answer"
 msgstr "Ответ"
+
+#: core/models/subject.py:139
+msgid "Option"
+msgstr "Вариант"
+
+#: core/models/subject.py:140
+msgid "Options"
+msgstr "Варианты"

@@ -164,9 +164,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'core.User'
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'post_login_redirect'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'main:login'
+LOGIN_REDIRECT_URL = 'main:post_login_redirect'
+LOGOUT_REDIRECT_URL = 'main:login'
 
 
 # CKEditor settings

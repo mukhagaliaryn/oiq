@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
 
-from core.forms.subject import QuestionForm
+from core.forms.subject import QuestionForm, OptionForm
 from core.models import Subject, Chapter, Topic, Question, QuestionFormat, QuestionVariant, Option
 from core.admin.mixins import LinkedAdminMixin
 
@@ -102,6 +102,7 @@ class QuestionFormatAdmin(admin.ModelAdmin):
 class OptionInline(admin.TabularInline):
     model = Option
     extra = 0
+    form = OptionForm
 
 
 # QuestionAdmin

@@ -1,8 +1,11 @@
 from ckeditor.widgets import CKEditorWidget
 from django import forms
-from core.models import Question
+from core.models import Question, Option
 
 
+# Question
+# ----------------------------------------------------------------------------------------------------------------------
+# QuestionForm
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
@@ -11,9 +14,14 @@ class QuestionForm(forms.ModelForm):
             'body': CKEditorWidget(config_name='default'),
         }
 
-    def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
-        if request is not None:
-            lang = (request.LANGUAGE_CODE or 'en').split('-')[0]
-            self.fields['body'].widget.config['language'] = lang
+
+# Question variants
+# ----------------------------------------------------------------------------------------------------------------------
+# OptionForm
+class OptionForm(forms.ModelForm):
+    class Meta:
+        model = Option
+        fields = '__all__'
+        widgets = {
+            'answer': CKEditorWidget(config_name='default'),
+        }

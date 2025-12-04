@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import account, dashboard, game_task, game_task_session
+from .views import account, dashboard, game_task, gt_session
 
 app_name = 'teacher'
 
@@ -30,5 +30,24 @@ urlpatterns = [
 
     # game_task_session
     # ------------------------------------------------------------------------------------------------------------------
-    path('game-task/live/session/<int:pk>/', game_task_session.game_task_session_view, name='game_task_live_session'),
+    path(
+        'game-tasks/<int:pk>/sessions/create/',
+        gt_session.game_task_session_create_view,
+        name='session_create'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/waiting/',
+        gt_session.game_task_session_waiting_view,
+        name='session_waiting'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/participants/',
+        gt_session.game_task_session_participants_fragment,
+        name='session_participants_fragment'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/start/',
+        gt_session.game_task_session_start_view,
+        name='session_start'
+    ),
 ]

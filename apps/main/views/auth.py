@@ -40,7 +40,7 @@ def login_view(request):
 
     if request.user.is_authenticated:
         if next_url:
-            return redirect(f"{reverse('post_login_redirect')}?next={next_url}")
+            return redirect(f"{reverse('main:post_login_redirect')}?next={next_url}")
         return redirect('post_login_redirect')
 
     if request.method == 'POST':
@@ -51,8 +51,8 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if next_url:
-                return redirect(f"{reverse('post_login_redirect')}?next={next_url}")
-            return redirect('post_login_redirect')
+                return redirect(f"{reverse('main:post_login_redirect')}?next={next_url}")
+            return redirect('main:post_login_redirect')
         else:
             messages.error(request, _('Incorrect username or password'))
             return render(request, 'app/auth/login/page.html', {'identifier': identifier})
@@ -72,7 +72,7 @@ def register_view(request):
             user = form.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, _('You have successfully registered!'))
-            return redirect('post_login_redirect')
+            return redirect('main:post_login_redirect')
         else:
             messages.error(request, _('Registration failed. Check the data!'))
     else:
@@ -89,5 +89,5 @@ def register_view(request):
 # ----------------------------------------------------------------------------------------------------------------------
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('main:login')
 

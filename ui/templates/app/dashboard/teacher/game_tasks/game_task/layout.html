@@ -18,7 +18,7 @@
                 <h1 class="text-xl md:text-2xl font-medium">{{ game_task.name }}</h1>
                 <div class="flex">
                     <div class="flex gap-1 items-center bg-primary-100 py-1 px-2 rounded-xl text-primary-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-gamepad-directional-icon lucide-gamepad-directional">
                             <path
@@ -30,7 +30,19 @@
                             <path
                                 d="M9 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2.172a2 2 0 0 1-.586 1.414l-1.56 1.56a1.207 1.207 0 0 1-1.708 0l-1.56-1.56A2 2 0 0 1 9 5.172z" />
                         </svg>
-                        <span class="block">{{ game_task.activity.get_activity_type_display }}</span>
+                        <span class="block text-sm">{{ game_task.activity.get_activity_type_display }}</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <div class="flex items-center text-muted font-medium gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <path d="M12 17h.01" />
+                        </svg>
+                        <span>{{ game_task.questions.count }}- сұрақ</span>
                     </div>
                 </div>
                 {% if game_task.description %}
@@ -42,26 +54,35 @@
         </div>
 
         <div class="grid gap-2">
-            <a 
-                href="#"
-                class="
-                    flex items-center gap-2 px-4 py-2 rounded-xl font-medium bg-primary-600 text-white cursor-pointer transition-all 
-                    hover:bg-primary-700 active:scale-95 focus:ring-2 focus:ring-primary-300
-                "
+            <form
+                method="post"
+                action="{% url 'teacher:session_create' game_task.id %}"
+                target="_blank"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus">
-                    <path d="M12 2a10 10 0 0 1 7.38 16.75" />
-                    <path d="M12 8v8" />
-                    <path d="M16 12H8" />
-                    <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
-                    <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
-                    <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
-                    <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
-                </svg>
-                <span>Жаңа сессия</span>
-            </a>
+                {% csrf_token %}
+                <input type="hidden" name="duration" value="10">
+
+                <button
+                    type="submit"
+                    class="
+                        w-full flex items-center gap-2 px-4 py-2 rounded-xl font-medium bg-primary-600 text-white cursor-pointer transition-all 
+                        hover:bg-primary-700 active:scale-95 focus:ring-2 focus:ring-primary-300
+                    "
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus">
+                        <path d="M12 2a10 10 0 0 1 7.38 16.75" />
+                        <path d="M12 8v8" />
+                        <path d="M16 12H8" />
+                        <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
+                        <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
+                        <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
+                        <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
+                    </svg>
+                    <span>Жаңа сессия</span>
+                </button>
+            </form>
             <a 
                 href="#"
                 class="
