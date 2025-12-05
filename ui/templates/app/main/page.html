@@ -1,0 +1,40 @@
+{% extends 'layouts/main_layout.html' %}
+{% load static %}
+
+{% block title %}Қош келдіңіздер!{% endblock title %}
+
+
+{% block main_layout %}
+<div class="w-full sm:max-w-sm mx-auto space-y-4 py-16 text-center">
+    <img src="{% static 'images/logo.svg' %}" class="w-48 mx-auto" alt="">
+    <h6 class="text-lg text-muted">Интерактивті, геймификацияланған және визуалды білім беру платформасы</h6>
+    <div class="grid gap-4">
+        <a 
+            href="{% url 'main:session_join' %}" 
+            class="relative grid group"
+        >  
+            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+            <span class="
+                relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                group-hover:bg-primary-500 group-active:translate-y-1.5
+                "
+            >
+                Ойынға қосылу
+            </span>
+        </a>
+        <a 
+            href="{% url 'main:login' %}" 
+            class="relative grid group"
+        >  
+            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
+            <span class="
+                relative w-full px-4 py-2 rounded-xl bg-white border border-border-300 font-medium 
+                group-hover:bg-secondary-50 group-active:translate-y-1.5
+                "
+            >
+                Мен оқытушымын
+            </span>
+        </a>
+    </div>
+</div>
+{% endblock main_layout %}

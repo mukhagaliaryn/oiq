@@ -1,0 +1,156 @@
+{% extends 'layouts/dashboard_layout.html' %}
+
+{% block title %}{{ game_task }}{% endblock title %}
+
+{% block dashboard_layout %}
+<div class="max-w-screen-lg w-full mx-auto p-4">
+    <div class="flex items-start justify-between py-8">
+        <div class="flex items-start gap-4">
+            <div class="w-36 h-36 flex justify-center items-center rounded-xl bg-primary-50">
+                <lord-icon
+                    src="https://cdn.lordicon.com/xzvgfwwv.json"
+                    trigger="loop"
+                    colors="primary:#ebe6ef,secondary:#4f46e5"
+                    style="width:128px; height: 128px">
+                </lord-icon>
+            </div>
+            <div class="grid gap-2 items-start">
+                <h1 class="text-xl md:text-2xl font-medium">{{ game_task.name }}</h1>
+                <div class="flex">
+                    <div class="flex gap-1 items-center bg-primary-100 py-1 px-2 rounded-xl text-primary-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-gamepad-directional-icon lucide-gamepad-directional">
+                            <path
+                                d="M11.146 15.854a1.207 1.207 0 0 1 1.708 0l1.56 1.56A2 2 0 0 1 15 18.828V21a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2.172a2 2 0 0 1 .586-1.414z" />
+                            <path
+                                d="M18.828 15a2 2 0 0 1-1.414-.586l-1.56-1.56a1.207 1.207 0 0 1 0-1.708l1.56-1.56A2 2 0 0 1 18.828 9H21a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z" />
+                            <path
+                                d="M6.586 14.414A2 2 0 0 1 5.172 15H3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2.172a2 2 0 0 1 1.414.586l1.56 1.56a1.207 1.207 0 0 1 0 1.708z" />
+                            <path
+                                d="M9 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2.172a2 2 0 0 1-.586 1.414l-1.56 1.56a1.207 1.207 0 0 1-1.708 0l-1.56-1.56A2 2 0 0 1 9 5.172z" />
+                        </svg>
+                        <span class="block text-sm">{{ game_task.activity.get_activity_type_display }}</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <div class="flex items-center text-muted font-medium gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <path d="M12 17h.01" />
+                        </svg>
+                        <span>{{ game_task.questions.count }}- сұрақ</span>
+                    </div>
+                </div>
+                {% if game_task.description %}
+                    <div class="max-w-sm w-full text-muted">
+                        {{ game_task.description|safe }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="grid gap-2">
+            <form
+                method="post"
+                action="{% url 'dashboard:session_create' game_task.id %}"
+                target="_blank"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="duration" value="10">
+
+                <button
+                    type="submit"
+                    class="
+                        w-full flex items-center gap-2 px-4 py-2 rounded-xl font-medium bg-primary-600 text-white cursor-pointer transition-all 
+                        hover:bg-primary-700 active:scale-95 focus:ring-2 focus:ring-primary-300
+                    "
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus">
+                        <path d="M12 2a10 10 0 0 1 7.38 16.75" />
+                        <path d="M12 8v8" />
+                        <path d="M16 12H8" />
+                        <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
+                        <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
+                        <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
+                        <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
+                    </svg>
+                    <span>Жаңа сессия</span>
+                </button>
+            </form>
+            <a 
+                href="#"
+                class="
+                    flex items-center gap-2 px-4 py-2 rounded-xl font-medium border border-border-200 bg-white transition-all 
+                    hover:shadow active:scale-95 focus:ring-2 focus:ring-secondary-200
+                "
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-presentation-icon lucide-presentation">
+                    <path d="M2 3h20" />
+                    <path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3" />
+                    <path d="m7 21 5-5 5 5" />
+                </svg>
+                <span>Демонстрация</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="grid gap-8">
+        <nav class="flex">
+            {% url 'dashboard:game_task_detail' pk=game_task.pk as game_task_detail %}
+            <a 
+                href="{{ game_task_detail }}" 
+                class=
+                "
+                    flex gap-2 items-center px-4 py-2 border-b-4 transition-all 
+                    {% if request.path == game_task_detail %}border-b-primary-600 hover:bg-primary-50{% else %}border-b-transparent hover:bg-primary-50{% endif %}
+                "
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-component-icon lucide-component">
+                    <path
+                        d="M15.536 11.293a1 1 0 0 0 0 1.414l2.376 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z" />
+                    <path
+                        d="M2.297 11.293a1 1 0 0 0 0 1.414l2.377 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414L6.088 8.916a1 1 0 0 0-1.414 0z" />
+                    <path
+                        d="M8.916 17.912a1 1 0 0 0 0 1.415l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.415l-2.377-2.376a1 1 0 0 0-1.414 0z" />
+                    <path
+                        d="M8.916 4.674a1 1 0 0 0 0 1.414l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z" />
+                </svg>
+                <span>Сессиялар</span>
+            </a>
+
+            {% url 'dashboard:game_task_questions' pk=game_task.pk as game_task_questions %}
+            <a 
+                href="{{ game_task_questions }}" 
+                class="
+                    flex gap-2 items-center px-4 py-2 border-b-4 transition-all 
+                    {% if request.path == game_task_questions %}border-b-primary-600 hover:bg-primary-50{% else %}border-b-transparent hover:bg-primary-50{% endif %}    
+                "
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <path d="M12 17h.01" />
+                </svg>
+                <span>Сұрақтар</span>
+            </a>
+        </nav>
+
+        <main class="flex-1">
+            {% block layout %}
+            {% endblock layout %}
+        </main>
+    </div>
+</div>
+{% endblock dashboard_layout %}

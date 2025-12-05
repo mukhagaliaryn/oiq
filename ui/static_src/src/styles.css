@@ -35,7 +35,11 @@
   --breakpoint-2xl: 1536px;
   --breakpoint-3xl: 1920px;
 
-  --font-sans: "Roboto", "sans-serif";
+  --text-normal: 15px;
+
+  --font-roboto: "Roboto", "sans-serif";
+  --font-inter: "Inter", sans-serif;
+  --font-inter-t: "Inter Tight", sans-serif;
 }
 
 

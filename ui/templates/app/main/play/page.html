@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ participant.nickname }}{% endblock %}
+
+{% block base %}
+    <div class="flex items-center justify-center h-screen">
+        <h1 class="text-2xl font-black">{{ participant.nickname }}</h1>
+    </div>
+{% endblock base %}

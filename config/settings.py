@@ -31,8 +31,7 @@ INSTALLED_APPS = [
 
     # view apps...
     'apps.main.apps.MainConfig',
-    'apps.learner.apps.LearnerConfig',
-    'apps.teacher.apps.TeacherConfig',
+    'apps.dashboard.apps.DashboardConfig',
 ]
 
 # Middlewares
@@ -165,7 +164,7 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = 'core.User'
 LOGIN_URL = 'main:login'
-LOGIN_REDIRECT_URL = 'main:post_login_redirect'
+LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 LOGOUT_REDIRECT_URL = 'main:login'
 
 

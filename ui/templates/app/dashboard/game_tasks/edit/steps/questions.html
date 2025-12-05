@@ -1,0 +1,228 @@
+<div class="grid gap-4">
+    <h2 class="font-medium text-xl">Сұрақтарды генерациялау:</h2>
+
+    {% if error_message %}
+        <div class="flex gap-2 items-center px-4 py-2 rounded-xl text-sm bg-amber-50 text-amber-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+            </svg>
+            <span>{{ error_message }}</span>
+        </div>
+    {% endif %}
+
+    <div class="flex items-center justify-between border-b border-border-200">
+        <div class="flex gap-2 py-2">
+            <span>Интерактив түрі:</span>
+            {% if game_task.activity %}
+                <span class="font-medium">{{ game_task.activity.name }}</span>
+            {% else %}
+                <span class="italic text-muted">таңдалмаған</span>
+            {% endif %}
+        </div>
+
+        <div class="flex gap-2 py-2">
+            <span>Таңдалған сұрақтар:</span>
+            <span class="font-medium">{{ selected_questions|length }}</span>
+        </div>
+    </div>
+
+    <div class="flex items-start flex-col lg:flex-row gap-8">
+        <!-- Сол жақ: фильтр + генерация -->
+        <div class="grid gap-4 w-full lg:max-w-sm">
+            <h4 class="font-medium">Фильтр арқылы генерация</h4>
+
+            <form
+                x-data
+                hx-post="{% url 'dashboard:game_task_step_questions' pk=game_task.pk %}"
+                hx-target="#step-container"
+                hx-swap="innerHTML"
+                class="grid gap-4"
+            >
+                {% csrf_token %}
+                <label class="grid gap-1">
+                    <span class="font-medium">Пән <span class="text-red-500">*</span></span>
+                    <select
+                        name="subject_id"
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        hx-get="{% url 'dashboard:game_task_step_questions' pk=game_task.pk %}"
+                        hx-target="#step-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                    >
+                        <option value="">Пәнді таңдаңыз</option>
+                        {% for s in subjects %}
+                            <option value="{{ s.id }}"
+                                    {% if current_subject_id and current_subject_id|add:'0' == s.id|add:'0' %}selected{% endif %}>
+                                {{ s.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="grid gap-1 w-full">
+                    <span class="font-medium">Бөлім (Маңызды емес)</span>
+                    <select
+                        name="chapter_id"
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        {% if not current_subject_id %}disabled{% endif %}
+                        hx-get="{% url 'dashboard:game_task_step_questions' pk=game_task.pk %}"
+                        hx-target="#step-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="change"
+                        hx-include="[name='subject_id']"
+                    >
+                        <option value="">Барлық бөлімдер</option>
+                        {% for ch in chapters %}
+                            <option value="{{ ch.id }}"
+                                {% if current_chapter_id and current_chapter_id|add:'0' == ch.id|add:'0' %}selected{% endif %}>
+                                {{ ch.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="grid gap-1">
+                    <span class="font-medium">Тақырып (Маңызды емес)</span>
+                    <select
+                        name="topic_id"
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        {% if not current_chapter_id %}disabled{% endif %}
+                    >
+                        <option value="">Барлық тақырыптар</option>
+                        {% for t in topics %}
+                            <option value="{{ t.id }}"
+                                    {% if current_topic_id and current_topic_id|add:'0' == t.id|add:'0' %}selected{% endif %}>
+                                {{ t.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <!-- Деңгейлер -->
+                <div class="grid gap-1">
+                    <span class="font-medium">Деңгей:</span>
+                    <div class="flex flex-wrap gap-4">
+                        {% for code, label in levels %}
+                            <label class="flex items-center gap-2">
+                                <input 
+                                    type="checkbox" 
+                                    name="levels" 
+                                    value="{{ code }}" 
+                                    class="rounded-xl border-secondary-300 p-2">
+                                <span>{{ label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Сұрақ саны -->
+                <label class="grid gap-1">
+                    <span class="font-medium">Сұрақ саны:</span>
+                    <input 
+                        type="number" 
+                        name="count" 
+                        min="1" 
+                        max="100" 
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        value="{% if selected_questions %}{{ selected_questions|length }}{% else %}10{% endif %}"
+                        required
+                    >
+                </label>
+
+                <button
+                    type="submit"
+                    class="
+                        flex justify-center px-6 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all hover:bg-primary-800 active:scale-95 cursor-pointer
+                        focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+                    "
+                    {% if not current_subject_id %}disabled{% endif %}
+                >
+                    Рандомды түрде генерациялау
+                </button>
+            </form>
+
+            <p class="text-xs text-muted">
+                Генерация режимінде пәнді міндетті түрде таңдаңыз. Бөлім мен тақырып – опционал.
+            </p>
+        </div>
+
+        <!-- Оң жақ: генерацияланған сұрақтардың тізімі -->
+        <div class="flex-1 w-full grid gap-4">
+            <h4 class="font-medium">Генерацияланған сұрақтар</h4>
+
+            <div class="h-[460px] overflow-y-auto grid gap-2">
+                {% for item in selected_questions %}
+                    <div class="flex items-start justify-between px-4 py-2 border border-border-200 rounded-xl">
+                        <div class="grid gap-2">
+                            <div class="flex gap-1 font-medium text-sm">
+                                <span>{{ item.order }}.</span>
+                                <h5 class="line-clamp-1">{{ item.question.body|safe }}</h5>
+                            </div>
+                            <div class="flex">
+                                <span class="flex px-1.5 py-0.5 text-xs border border-border-200 rounded-xl text-muted">
+                                    {{ item.question.variant }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            {% if item.question.level == 'easy' %}
+                                <span class="rounded-lg px-2 py-1 text-xs bg-green-100 text-green-600">{{ item.question.get_level_display }}</span>
+                            {% elif item.question.level == 'medium' %}
+                                <span class="rounded-lg px-2 py-1 text-xs bg-amber-100 text-amber-600">{{ item.question.get_level_display }}</span>
+                            {% elif item.question.level == 'hard' %}
+                                <span class="rounded-lg px-2 py-1 text-xs bg-red-100 text-red-600">{{ item.question.get_level_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="border border-dashed border-border-200 rounded-xl flex justify-center items-center">
+                        <span class="text-muted text-sm">Әзірге сұрақтар генерацияланған жоқ.</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-between items-center pt-4 border-t border-border-200">
+        <button
+            hx-get="{% url 'dashboard:game_task_step_activity' pk=game_task.pk %}"
+            hx-target="#step-container"
+            hx-swap="innerHTML"
+            class="
+                flex items-center pl-3 pr-5 py-2 border border-border-200 bg-white rounded-xl cursor-pointer transition-all hover:shadow
+                active:scale-95 focus:ring-2 focus:ring-secondary-200
+            "
+            @click="step = 'activity'"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-left-icon lucide-chevron-left">
+                <path d="m15 18-6-6 6-6" />
+            </svg>
+            <span>Артқа</span>
+        </button>
+
+        <button 
+            hx-get="{% url 'dashboard:game_task_step_settings' pk=game_task.pk %}"
+            hx-target="#step-container"
+            hx-swap="innerHTML"
+            class="
+                flex items-center pl-5 pr-3 py-2 font-medium bg-primary-600 text-white rounded-xl transition-all cursor-pointer hover:bg-primary-800 active:scale-95 
+                focus:ring-2 focus:ring-primary-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:active:scale-100
+            "
+            @click="step = 'settings'; stepQuestionsDone = true"
+            {% if not selected_questions %}disabled{% endif %}
+        >
+            <span>Келесі</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-right-icon lucide-chevron-right">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+        </button>
+    </div>
+</div>

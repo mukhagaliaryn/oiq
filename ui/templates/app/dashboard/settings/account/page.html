@@ -1,0 +1,208 @@
+{% if messages %}
+    <div id="flash-messages" class="fixed z-50 top-10 left-1/2 -translate-1/2 flex flex-col gap-2">
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div
+                    class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-check-icon lucide-circle-check text-green-500">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% elif message.tags == 'error' or message.tags == 'danger' %}
+                <div
+                    class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-ban-icon lucide-ban text-destructive">
+                        <path d="M4.929 4.929 19.07 19.071" />
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% elif message.tags == 'warning' %}
+                <div
+                    class="flash-item flex gap-2 items-center px-4 py-2 bg-white rounded-lg shadow transition-all duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-octagon-alert-icon lucide-octagon-alert">
+                        <path d="M12 16h.01" />
+                        <path d="M12 8v4" />
+                        <path
+                            d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z" />
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <script>
+        document.querySelectorAll('.flash-item').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.transform = 'translateY(0)';
+                el.style.opacity = '1';
+            }, 100 * index);
+
+            setTimeout(() => {
+                el.style.transform = 'translateY(-50px)';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 700);
+            }, 5000);
+        });
+    </script>
+{% endif %}
+
+
+<form 
+    hx-post="{% url 'dashboard:account' %}" 
+    hx-target="#settingsContent"
+    hx-swap="innerHTML"
+    hx-indicator="#dashboard-account-loader"
+    enctype="multipart/form-data"
+> 
+    {% csrf_token %}
+    <div class="grid gap-8 p-4">
+        <!-- Жеке деректер -->
+        <div class="grid gap-4">
+            <div class="flex items-center pb-2 border-b border-border-200">
+                <h3 class="text-lg font-medium">Жеке деректер</h3>
+            </div>
+
+            <div class="relative w-20 h-20 mx-auto">
+                <label for="avatar-input" class="cursor-pointer group block w-20 h-20 rounded-full overflow-hidden relative">
+                    {% if user.avatar %}
+                        <img 
+                            id="avatar-preview" 
+                            src="{{ user.avatar.url }}" 
+                            alt="Avatar" 
+                            class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-70"
+                        >
+                    {% else %}
+                        <div 
+                            id="avatar-preview"
+                            class="w-full h-full bg-neutral-100 flex items-center justify-center text-2xl"
+                        >
+                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                        </div>
+                    {% endif %}
+
+                    <div class="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-icon lucide-image">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                            <circle cx="9" cy="9" r="2" />
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                    </div>
+                </label>
+
+                <input type="file" name="avatar" id="avatar-input" accept="image/*" class="hidden">
+            </div>
+            <div class="grid gap-1">
+                <label class="block font-medium px-2">Аты</label>
+                <input
+                    type="text"
+                    name="first_name"
+                    value="{{ form.first_name.value|default_if_none:'' }}"
+                    class="w-full px-4 py-2 rounded-xl border border-border-200 transition-all focus:border-primary-500 focus:ring-1 focus:ring-primary-500" 
+                >
+            </div>
+            <div class="grid gap-1">
+                <label class="block font-medium px-2">Тегі</label>
+                <input
+                    type="text"
+                    name="last_name"
+                    value="{{ form.last_name.value|default_if_none:'' }}"
+                    class="w-full px-4 py-2 rounded-xl border border-border-200 transition-all focus:border-primary-500 focus:ring-1 focus:ring-primary-500" 
+                >
+            </div>
+            <div class="grid gap-1">
+                <label class="block font-medium px-2">Рөлі</label>
+                <input
+                    type="text"
+                    name="user_role"
+                    value="{{ request.user.get_user_role_display }}"
+                    class="w-full px-4 py-2 rounded-xl border border-border-200 transition-all disabled:bg-secondary-100 disabled:text-muted"
+                    disabled 
+                >
+            </div>
+            <div class="grid gap-1">
+                <label class="block font-medium px-2">Қолданушының аты</label>
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ form.username.value }}"
+                    class="w-full px-4 py-2 rounded-xl border border-border-200 transition-all focus:border-primary-500 focus:ring-1 focus:ring-primary-500" 
+                >
+            </div>
+            <div class="grid gap-1">
+                <label class="block font-medium px-2">Email</label>
+                <input 
+                    type="email" 
+                    name="email"
+                    value="{{ form.email.value }}"
+                    class="w-full px-4 py-2 rounded-xl border border-border-200 transition-all focus:border-primary-500 focus:ring-1 focus:ring-primary-500" 
+                >
+            </div>
+        </div>
+    </div>
+
+    <!-- Сақтау батырмасы -->
+    <div class="sticky bottom-0 bg-white p-4 flex justify-end">
+        <button 
+            type="submit"
+            class="
+                flex justify-center px-4 py-2 rounded-xl bg-primary-600 text-white font-medium transition-all cursor-pointer 
+                hover:bg-primary-700 hover:shadow active:scale-95 focus:ring-2 focus:ring-primary-300
+            "
+        >
+            <span>Сақтау</span>
+            <span
+                id="dashboard-account-loader"
+                class="htmx-indicator h-4 w-4 rounded-full border-2 border-white/60 border-t-transparent animate-spin"
+            ></span>
+        </button>
+    </div>
+</form>
+
+
+<!-- Қолданушы аватар суретін сақтамас бұрын көрсету -->
+<script>
+    function attachAvatarPreview() {
+        const input = document.getElementById("avatar-input");
+        let preview = document.getElementById("avatar-preview");
+
+        if (!input || !preview) return;
+
+        input.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                if (preview.tagName === "IMG") {
+                    preview.src = e.target.result;
+                } else {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.className = "w-full h-full object-cover transition-opacity duration-300";
+                    img.id = "avatar-preview";
+                    preview.replaceWith(img);
+                    preview = img;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", attachAvatarPreview);
+    document.body.addEventListener("htmx:afterSwap", function (e) {
+        if (e.target.id === "settingsContent") {
+            attachAvatarPreview();
+        }
+    });
+</script>
