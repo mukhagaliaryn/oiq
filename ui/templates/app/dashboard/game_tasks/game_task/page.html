@@ -4,61 +4,63 @@
 
 
 {% block layout %}
-<div class="grid gap-2">
-    <div class="">
-        <h3 class="font-medium text-lg">Сессиялар ({{ sessions.count }})</h3>
-    </div>
-
-    <div class="flex justify-between items-center">
-        <div class="relative max-w-xs w-full">
-            <input 
-                type="text"
-                placeholder="Іздеу..."
-                class="w-full pl-9 pr-4 py-2 rounded-xl border border-border-200 focus:ring-2 focus:ring-primary-600"
-            >
-            <svg
-                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                class="lucide lucide-search-icon lucide-search absolute top-2.5 start-2.5 text-muted">
-                <path d="m21 21-4.34-4.34" />
-                <circle cx="11" cy="11" r="8" />
-            </svg>
+<div class="grid gap-4">
+    <div class="space-y-2">
+        <div class="">
+            <h3 class="font-medium text-lg">Сессиялар ({{ sessions.count }})</h3>
         </div>
 
-        <div class="flex items-start gap-1">
-            <div x-data="{ open: false, selected: 'Басталған' }" class="relative">
-                <button
-                    @click="open = !open"
-                    class="w-full flex gap-1 justify-between items-center px-4 py-2 border border-border-200 bg-white rounded-xl cursor-pointer focus:ring-2 focus:ring-primary-600"
+        <div class="flex justify-between items-center">
+            <div class="relative max-w-xs w-full">
+                <input 
+                    type="text"
+                    placeholder="Іздеу..."
+                    class="w-full pl-9 pr-4 py-2 rounded-xl border border-border-200 focus:ring-2 focus:ring-primary-600"
                 >
-                    <span x-text="selected"></span>
-                    <svg 
-                        :class="open && 'rotate-180'"
-                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-chevron-down-icon lucide-chevron-down transform transition-all">
-                        <path d="m6 9 6 6 6-6" />
-                    </svg>
-                </button>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                    class="lucide lucide-search-icon lucide-search absolute top-2.5 start-2.5 text-muted">
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                </svg>
+            </div>
 
-                <!-- Dropdown -->
-                <div
-                    x-show="open"
-                    @click.outside="open = false"
-                    class="absolute w-full mt-2 bg-white shadow rounded-xl border border-border-200 z-20"
-                >
-                    <div class="p-2 text-subtle">
-                        <div
-                            @click="selected = 'Басталған'; open = false"
-                            class="px-4 py-2 rounded-xl hover:bg-secondary-100 cursor-pointer"
-                        >
-                            Басталған
-                        </div>
-                        <div
-                            @click="selected = 'Аяқталған'; open = false"
-                            class="px-4 py-2 rounded-xl hover:bg-secondary-100 cursor-pointer"
-                        >
-                            Аяқталған
+            <div class="flex items-start gap-1">
+                <div x-data="{ open: false, selected: 'Басталған' }" class="relative">
+                    <button
+                        @click="open = !open"
+                        class="w-full flex gap-1 justify-between items-center px-4 py-2 border border-border-200 bg-white rounded-xl cursor-pointer focus:ring-2 focus:ring-primary-600"
+                    >
+                        <span x-text="selected"></span>
+                        <svg 
+                            :class="open && 'rotate-180'"
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chevron-down-icon lucide-chevron-down transform transition-all">
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div
+                        x-show="open"
+                        @click.outside="open = false"
+                        class="absolute w-full mt-2 bg-white shadow rounded-xl border border-border-200 z-20"
+                    >
+                        <div class="p-2 text-subtle">
+                            <div
+                                @click="selected = 'Басталған'; open = false"
+                                class="px-4 py-2 rounded-xl hover:bg-secondary-100 cursor-pointer"
+                            >
+                                Басталған
+                            </div>
+                            <div
+                                @click="selected = 'Аяқталған'; open = false"
+                                class="px-4 py-2 rounded-xl hover:bg-secondary-100 cursor-pointer"
+                            >
+                                Аяқталған
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +70,54 @@
 
     <div class="grid gap-2">
         {% for item in sessions %}
-            <div class="h-14 bg-primary-100 rounded-xl"></div>
+            <a 
+                href="{% url 'dashboard:session' pk=game_task.pk session_id=item.pk %}"
+                target="_blank"
+                class="flex items-center justify-between py-2 border-b border-border-200 group"
+            >
+                <div class="flex gap-4 items-start">
+                    <div class="aspect-square p-4 flex justify-center items-center rounded-xl bg-primary-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-component-icon lucide-component">
+                            <path
+                                d="M15.536 11.293a1 1 0 0 0 0 1.414l2.376 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z" />
+                            <path
+                                d="M2.297 11.293a1 1 0 0 0 0 1.414l2.377 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414L6.088 8.916a1 1 0 0 0-1.414 0z" />
+                            <path
+                                d="M8.916 17.912a1 1 0 0 0 0 1.415l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.415l-2.377-2.376a1 1 0 0 0-1.414 0z" />
+                            <path
+                                d="M8.916 4.674a1 1 0 0 0 0 1.414l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z" />
+                        </svg>
+                    </div>
+                    <div class="relative">
+                        <h4 class="font-medium">{{ item.game_task.name }}</h4>
+                        <div class="inline-flex items-center gap-1 py-1 px-2 rounded-xl bg-amber-100 text-amber-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader">
+                                <path d="M12 2v4" />
+                                <path d="m16.2 7.8 2.9-2.9" />
+                                <path d="M18 12h4" />
+                                <path d="m16.2 16.2 2.9 2.9" />
+                                <path d="M12 18v4" />
+                                <path d="m4.9 19.1 2.9-2.9" />
+                                <path d="M2 12h4" />
+                                <path d="m4.9 4.9 2.9 2.9" />
+                            </svg>
+                            <span class="font-medium text-xs">{{ item.get_status_display }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="p-2 rounded-xl hidden cursor-pointer group-hover:flex hover:bg-primary-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="19" cy="12" r="1" />
+                        <circle cx="5" cy="12" r="1" />
+                    </svg>
+                </button>
+            </a>
         {% empty %}
             <div class="grid gap-2 items-center text-muted py-16">
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"

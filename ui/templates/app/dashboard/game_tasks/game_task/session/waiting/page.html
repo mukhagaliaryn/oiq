@@ -5,33 +5,47 @@
 
 {% block base %}
 <div class="max-w-screen-md w-full mx-auto space-y-6 py-16">
-    <div class="w-48 mx-auto">
-        <img src="{% static 'images/logo.svg' %}" alt="" class="w-full">
-    </div> 
     <div class="grid gap-4 text-center">
         <div class="space-y-2">
             <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black">
                 {{ game_task.name }}
             </h1>
-            <p class="text-sm text-muted">
-                Статус: {{ session.get_status_display }}
-            </p>
+            <div class="flex justify-center">
+                <div class="flex gap-2 py-1 px-3 rounded-xl bg-amber-100 text-amber-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader">
+                        <path d="M12 2v4" />
+                        <path d="m16.2 7.8 2.9-2.9" />
+                        <path d="M18 12h4" />
+                        <path d="m16.2 16.2 2.9 2.9" />
+                        <path d="M12 18v4" />
+                        <path d="m4.9 19.1 2.9-2.9" />
+                        <path d="M2 12h4" />
+                        <path d="m4.9 4.9 2.9 2.9" />
+                    </svg>
+                    <span class="font-medium">{{ session.get_status_display }}</span>
+                </div>
+            </div>
         </div>
 
         <form
             method="post"
-            action="{% url 'dashboard:session_start' game_task.id session.id %}"
+            action="{% url 'dashboard:session_start' pk=game_task.id session_id=session.id %}"
             class="flex justify-center"
         >
             {% csrf_token %}
-            <button
+            <button 
                 type="submit"
-                class="
-                    flex px-4 py-2 rounded-xl bg-primary-600 text-white font-medium transition-all cursor-pointer hover:bg-primary-800
-                    active:scale-95 focus:ring-4 focus:ring-primary-300     
-                "
-            >
-                Сессияны бастау
+                class="relative grid cursor-pointer group"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                <span class="
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                    group-hover:bg-primary-500 group-active:translate-y-1.5
+                    "
+                >
+                    Сессияны бастау
+                </span>
             </button>
         </form>
     </div>

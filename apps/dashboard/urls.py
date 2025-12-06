@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import dashboard, account, game_task, gt_session
+from .views import dashboard, account, game_task, gt_session as gt
 
 app_name = 'dashboard'
 
@@ -30,24 +30,35 @@ urlpatterns = [
 
     # game_task_session
     # ------------------------------------------------------------------------------------------------------------------
-    path(
-        'game-tasks/<int:pk>/sessions/create/',
-        gt_session.game_task_session_create_view,
-        name='session_create'
-    ),
+    path('game-tasks/<int:pk>/sessions/create/', gt.gt_session_create_view, name='session_create'),
+    path('game-tasks/<int:pk>/sessions/<int:session_id>/', gt.gt_session_view, name='session'),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/waiting/',
-        gt_session.game_task_session_waiting_view,
+        gt.game_task_session_waiting_view,
         name='session_waiting'
     ),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/participants/',
-        gt_session.game_task_session_participants_fragment,
+        gt.gt_session_participants_fragment,
         name='session_participants_fragment'
     ),
-    path(
-        'game-tasks/<int:pk>/sessions/<int:session_id>/start/',
-        gt_session.game_task_session_start_view,
+    path('game-tasks/<int:pk>/sessions/<int:session_id>/start/',
+        gt.gt_session_start_action,
         name='session_start'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/active/',
+        gt.gt_session_active_view,
+        name='session_active',
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/finish/',
+        gt.gt_session_finish_action,
+        name='session_finish',
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/finished/',
+        gt.gt_session_finished_view,
+        name='session_finished',
     ),
 ]

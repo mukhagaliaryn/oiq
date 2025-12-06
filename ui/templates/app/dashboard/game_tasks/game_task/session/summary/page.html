@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ game_task.name }} – Қорытынды{% endblock title %}
+
+
+{% block base %}
+<div class="max-w-screen-2xl mx-auto py-8 space-y-6">
+    {# Header #}
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2">
+                <h1 class="text-2xl font-semibold text-slate-900">
+                    {{ game_task.name }} – Нәтижелер
+                </h1>
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-0.5 text-xs font-medium text-slate-600">
+                    Сессия аяқталды
+                </span>
+            </div>
+            <p class="text-sm text-slate-500">
+                Пән: {{ game_task.subject.name|default:"—" }} · PIN: {{ session.pin_code }}
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+            <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
+                <span class="text-xs text-slate-400 uppercase tracking-wide">Ұзақтығы</span>
+                <span class="text-sm font-medium text-slate-800">
+                    {{ session.duration }} мин
+                </span>
+            </div>
+            <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
+                <span class="text-xs text-slate-400 uppercase tracking-wide">Басталды</span>
+                <span class="text-sm font-medium text-slate-800">
+                    {{ session.started_at|time:"H:i" }}
+                    <span class="text-xs text-slate-400">({{ session.started_at|date:"d.m.Y" }})</span>
+                </span>
+            </div>
+            <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
+                <span class="text-xs text-slate-400 uppercase tracking-wide">Аяқталды</span>
+                <span class="text-sm font-medium text-slate-800">
+                    {{ session.finished_at|time:"H:i"|default:"—" }}
+                    {% if session.finished_at %}
+                        <span class="text-xs text-slate-400">({{ session.finished_at|date:"d.m.Y" }})</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {# Summary + Top 3 #}
+    <div class="grid gap-6 lg:grid-cols-3">
+        {# Left: summary cards #}
+        <div class="space-y-3">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                    Жалпы қатысушылар
+                </p>
+                <p class="mt-1 text-2xl font-semibold text-slate-900">
+                    {{ total_participants|default:"0" }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                        Аяқтағандар
+                    </p>
+                    <p class="mt-1 text-lg font-semibold text-slate-900">
+                        {{ finished_count|default:"0" }}
+                        <span class="text-xs text-slate-400">
+                            / {{ total_participants|default:"0" }}
+                        </span>
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                        Орташа ұпай
+                    </p>
+                    <p class="mt-1 text-lg font-semibold text-slate-900">
+                        {% if avg_score %}
+                            {{ avg_score|floatformat:1 }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p class="mb-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+                    Кері байланыс (оқытушыға)
+                </p>
+                <p class="text-sm text-slate-600">
+                    Бұл сессия бойынша:
+                    <br>
+                    – қай сұрақтар ең қиын болды?  
+                    – орташа ұпай күткен деңгейге сай ма?  
+                    <br>
+                    Осы талдауды негізге алып, келесі сабақта қысқа қайталау
+                    немесе қосымша түсіндіру жасауға болады.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-2 pt-1">
+                <a
+                    href="{% url 'dashboard:game_task_detail' pk=game_task.pk %}"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                    GameTask бетіне оралу
+                </a>
+                <a
+                    href="{% url 'dashboard:game_task_detail' pk=game_task.pk %}#sessions"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                >
+                    Жаңа сессия бастау
+                </a>
+            </div>
+        </div>
+
+        {# Center + Right: Top 3 + Full table #}
+        <div class="lg:col-span-2 space-y-4">
+            {# Top 3 podium #}
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <p class="mb-3 text-sm font-semibold text-slate-800">
+                    Үздік 3 қатысушы
+                </p>
+
+                {% with top3=participants|slice:":3" %}
+                    {% if top3 %}
+                        <div class="flex items-end justify-center gap-4">
+                            {# 2-орын #}
+                            <div class="flex flex-col items-center gap-2">
+                                {% if top3|length > 1 %}
+                                    <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                                        {{ top3.1.nickname }}
+                                    </div>
+                                    <div class="flex h-20 w-14 items-end justify-center rounded-t-xl bg-slate-100">
+                                        <span class="mb-2 text-lg font-semibold text-slate-700">
+                                            2
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">
+                                        {{ top3.1.score }} ұпай
+                                    </p>
+                                {% else %}
+                                    <div class="h-20 w-14 rounded-t-xl bg-slate-50"></div>
+                                {% endif %}
+                            </div>
+
+                            {# 1-орын #}
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                                    {{ top3.0.nickname|default:"—" }}
+                                </div>
+                                <div class="flex h-24 w-16 items-end justify-center rounded-t-xl bg-amber-100">
+                                    <span class="mb-2 text-xl font-bold text-amber-900">
+                                        1
+                                    </span>
+                                </div>
+                                <p class="text-xs text-amber-900 font-medium">
+                                    {{ top3.0.score|default:"0" }} ұпай
+                                </p>
+                            </div>
+
+                            {# 3-орын #}
+                            <div class="flex flex-col items-center gap-2">
+                                {% if top3|length > 2 %}
+                                    <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                                        {{ top3.2.nickname }}
+                                    </div>
+                                    <div class="flex h-16 w-14 items-end justify-center rounded-t-xl bg-slate-100">
+                                        <span class="mb-2 text-lg font-semibold text-slate-700">
+                                            3
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-500">
+                                        {{ top3.2.score }} ұпай
+                                    </p>
+                                {% else %}
+                                    <div class="h-16 w-14 rounded-t-xl bg-slate-50"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-sm text-slate-500">
+                            Қатысушылар жоқ.
+                        </p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            {# Full results table #}
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between">
+                    <h2 class="text-sm font-semibold text-slate-800">
+                        Толық нәтижелер
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Ұпай бойынша сұрыпталған
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-400">
+                                <th class="py-2 pr-4">#</th>
+                                <th class="py-2 pr-4">Қатысушы</th>
+                                <th class="py-2 pr-4 text-right">Ұпай</th>
+                                <th class="py-2 pr-4 text-right">Дұрыс жауап</th>
+                                <th class="py-2 pr-4 text-right">Уақыты</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% if participants %}
+                                {% for p in participants %}
+                                    <tr class="hover:bg-slate-50/80">
+                                        <td class="py-2 pr-4 text-xs text-slate-500">
+                                            {{ forloop.counter }}
+                                        </td>
+                                        <td class="py-2 pr-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-600">
+                                                    {{ p.nickname|first|upper }}
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-slate-800">
+                                                        {{ p.nickname }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 pr-4 text-right text-sm font-semibold text-slate-800">
+                                            {{ p.score }}
+                                        </td>
+                                        <td class="py-2 pr-4 text-right text-sm text-slate-700">
+                                            {{ p.correct_count }}
+                                        </td>
+                                        <td class="py-2 pr-4 text-right text-xs text-slate-500">
+                                            {% if p.finished_at %}
+                                                {{ p.finished_at|time:"H:i:s" }}
+                                            {% else %}
+                                                Аяқтамады
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="py-4 text-center text-sm text-slate-500">
+                                        Қатысушылар нәтижесі жоқ.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

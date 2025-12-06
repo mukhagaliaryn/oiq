@@ -4,6 +4,34 @@
 
 {% block base %}
     <div class="flex items-center justify-center h-screen">
-        <h1 class="text-2xl font-black">{{ participant.nickname }}</h1>
+        {% if status == 'active' %}
+            {# ... ойын контенті ... #}
+            <h1 class="text-2xl font-black">{{ participant.nickname }}</h1>
+            <form
+                method="post"
+                action="{% url 'main:session_finish_participant' participant.token %}"
+                class="mt-6"
+            >
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                >
+                    Аяқтау және нәтижені көру
+                </button>
+            </form>
+        {% elif status == 'finished' %}
+            <div class="mt-6 text-center">
+                <p class="text-sm text-slate-600 mb-3">
+                    Сессия аяқталды. Сіздің нәтижеңізбен танысыңыз.
+                </p>
+                <a
+                    href="{% url 'main:session_result' participant.token %}"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                    Менің нәтижем
+                </a>
+            </div>
+        {% endif %}
     </div>
 {% endblock base %}

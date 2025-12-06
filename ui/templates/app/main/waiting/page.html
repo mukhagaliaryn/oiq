@@ -1,0 +1,36 @@
+{% extends 'layouts/gt_layout.html' %}
+{% load static %}
+
+
+{% block title %}Күтіп отырмыз...{% endblock title %}
+
+
+{% block gt_layout %}
+<div class="w-full max-w-md p-6 bg-white rounded-2xl shadow border border-gray-200 space-y-4 text-center">
+    <h1 class="text-xl md:text-2xl font-black">
+        {{ game_task.name }}
+    </h1>
+    <p class="text-sm text-muted">
+        Оқытушы ойын сессиясын бастамады.<br>
+        Сәл күте тұрыңыз...
+    </p>
+
+    <div class="flex justify-center gap-2 items-center">
+        <span class="w-8 h-8 flex justify-center items-center border-2 border-primary-300 rounded-full text-lg font-black text-white bg-primary-600">
+            {{ participant.nickname|first }}
+        </span>
+        <h1 class="text-xl font-black">{{ participant.nickname }}</span>
+    </div>
+
+    <div class="mt-4 flex justify-center">
+        <div class="w-8 h-8 border-4 border-secondary-300 border-t-primary-600 rounded-full animate-spin"></div>
+    </div>
+
+    <div 
+        id="session-waiting-poller" 
+        hx-get="{% url 'main:session_waiting_poll' participant.token %}"
+        hx-trigger="load, every 5s" 
+        hx-swap="none"
+    ></div>
+</div>
+{% endblock gt_layout %}
