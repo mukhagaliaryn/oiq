@@ -10,7 +10,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
 
     path('', include('apps.main.urls')),
-    path('d/', include('apps.dashboard.urls')),
+    path('dashboard/', include('apps.dashboard.urls')),
 ]
 
 

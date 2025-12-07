@@ -1,0 +1,170 @@
+{# Алғашқы үштік #}
+<div class="w-full max-w-5xl mx-auto space-y-4">
+    <h2 class="text-xl md:text-2xl font-black text-center">Алғашқы үштік</h2>
+
+    {% with top3=participants|slice:":3" %}
+        {% if top3 %}
+            <div class="grid gap-4 grid-cols-1 sm:grid-cols-3">
+                <!-- 1) Ортада – 1-орын -->
+                <div class="sm:order-2 space-y-2 border border-border-200 rounded-xl text-center p-8 bg-secondary-50">
+                    <div class="
+                        w-24 h-24 mx-auto flex justify-center items-center rounded-full border-4 border-primary-300 bg-primary-600 
+                        text-white text-4xl font-black
+                    ">
+                        {{ top3.0.nickname|first|upper }}
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="text-xl md:text-2xl font-black">
+                            {{ top3.0.nickname }}
+                        </h2>
+
+                        <p class="text-sm font-semibold text-amber-600">
+                            {{ top3.0.score }} ұпай · {{ top3.0.correct_count }} дұрыс
+                        </p>
+
+                        <div class="text-amber-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" class="mx-auto">
+                                <path fill-rule="evenodd"
+                                    d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.22 49.22 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294А5.266 5.266 0 0 1 3.16 5.337..."
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2) Сол жақ – 2-орын -->
+                <div class="sm:order-1 space-y-2 border border-border-200 rounded-xl text-center p-8">
+                    {% if top3|length > 1 %}
+                        <div class="
+                            w-20 h-20 mx-auto flex justify-center items-center rounded-full border-4 border-primary-100 bg-primary-50 
+                            text-primary-700 text-3xl font-black
+                        ">
+                            {{ top3.1.nickname|first|upper }}
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-lg md:text-xl font-black">
+                                {{ top3.1.nickname }}
+                            </h2>
+
+                            <p class="text-sm font-medium text-slate-600">
+                                {{ top3.1.score }} ұпай · {{ top3.1.correct_count }} дұрыс
+                            </p>
+
+                            <div class="text-slate-300">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" class="mx-auto">
+                                    <path fill-rule="evenodd"
+                                        d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 0 0-.584.859 6.753 6.753 0 0 0 6.138 5.6 6.73 6.73 0 0 0 2.743 1.346A6.707 6.707 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 0 1-1.112-3.173 6.73 6.73 0 0 0 2.743-1.347 6.753 6.753 0 0 0 6.139-5.6.75.75 0 0 0-.585-.858 47.077 47.077 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744 49.22 49.22 0 0 0-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 0 0-.657.744Zm0 2.629c0 1.196.312 2.32.857 3.294А5.266 5.266 0 0 1 3.16 5.337..."
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-sm text-muted">2-орын әлі бос.</div>
+                    {% endif %}
+                </div>
+
+                <!-- 3) Оң жақ – 3-орын -->
+                <div class="sm:order-3 space-y-2 border border-border-200 rounded-xl text-center p-8">
+                    {% if top3|length > 2 %}
+                        <div class="
+                            w-20 h-20 mx-auto flex justify-center items-center rounded-full border-4 border-primary-100 bg-primary-50 
+                            text-primary-700 text-3xl font-black
+                        ">
+                            {{ top3.2.nickname|first|upper }}
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-lg md:text-xl font-black">
+                                {{ top3.2.nickname }}
+                            </h2>
+
+                            <p class="text-sm font-medium text-slate-600">
+                                {{ top3.2.score }} ұпай · {{ top3.2.correct_count }} дұрыс
+                            </p>
+
+                            <div class="text-amber-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" class="mx-auto">
+                                    <path fill-rule="evenodd" d="M5.166 2.621v.858..." clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-muted">3-орын әлі бос.</div>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center text-muted py-8">
+                Қатысушылар қосылған жоқ.
+            </p>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- {# Толық таблица #} -->
+<div class="space-y-8 mt-10">
+    <table class="min-w-full text-left">
+        <thead>
+            <tr class="border-b border-border-200 tracking-wide">
+                <th class="py-2 pr-4">#</th>
+                <th class="py-2 pr-4">Қатысушы</th>
+                <th class="py-2 pr-4">Ұпай</th>
+                <th class="py-2 pr-4">Дұрыс жауап</th>
+                <th class="py-2 pr-4">Күйі</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-secondary-100">
+            {% if participants %}
+                {% for p in participants %}
+                    <tr class="hover:bg-primary-50/80">
+                        <td class="py-2 pr-4 text-xs text-subtle">
+                            {{ forloop.counter }}
+                        </td>
+                        <td class="py-2 pr-4">
+                            <div class="flex items-center gap-2">
+                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 font-bold">
+                                    {{ p.nickname|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="font-bold">
+                                        {{ p.nickname }}
+                                    </p>
+                                    {% if p.started_at %}
+                                        <p class="text-xs text-muted">
+                                            кірді: {{ p.started_at|time:"H:i:s" }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-2 pr-4 text-center text-sm font-semibold text-slate-800">
+                            {{ p.score }}
+                        </td>
+                        <td class="py-2 pr-4 text-center text-sm text-slate-700">
+                            {{ p.correct_count }}
+                        </td>
+                        <td class="py-2 pr-4 text-right">
+                            {% if p.is_finished %}
+                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                                    Аяқтады
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center rounded-full bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-500">
+                                    Жолда
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="py-8 text-center text-muted">
+                        Қатысушылар қосылған жоқ.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>

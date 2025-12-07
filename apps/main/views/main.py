@@ -128,7 +128,7 @@ def gt_session_waiting_poll_view(request, token):
     return HttpResponse(status=204)
 
 
-# game_task_session_play page
+# gt_session_play page
 # ----------------------------------------------------------------------------------------------------------------------
 def gt_session_play_view(request, token):
     participant = get_object_or_404(

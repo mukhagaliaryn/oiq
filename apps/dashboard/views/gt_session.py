@@ -4,6 +4,7 @@ from django.db.models import Avg
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from core.models import GameTask, GameTaskSession
 
 
@@ -50,7 +51,7 @@ def get_owned_session_or_404(user, pk, session_id):
         GameTask,
         pk=pk,
         owner=user,
-        status='published',  # қажет болса жұмсарта аласың
+        status='published',
     )
     session = get_object_or_404(
         GameTaskSession.objects.select_related('game_task'),
@@ -148,6 +149,29 @@ def gt_session_active_view(request, pk, session_id):
     return render(request, 'app/dashboard/game_tasks/game_task/session/active/page.html', context)
 
 
+# gt_session_active_leaderboard_fragment
+@login_required
+def gt_session_active_leaderboard_fragment(request, pk, session_id):
+    user = request.user
+    game_task, session = get_owned_session_or_404(user, pk, session_id)
+
+    if not session.is_active():
+        return redirect('teacher:session', pk=pk, session_id=session.pk)
+
+    participants = (
+        session.participants
+        .all()
+        .order_by('-score', '-correct_count', 'finished_at', 'started_at', 'pk')
+    )
+
+    context = {
+        'session': session,
+        'game_task': game_task,
+        'participants': participants,
+    }
+    return render(request, 'app/dashboard/game_tasks/game_task/session/active/_leaderboard.html', context)
+
+
 # gt_session_finish_action
 @login_required
 def gt_session_finish_action(request, pk, session_id):
@@ -196,3 +220,15 @@ def gt_session_finished_view(request, pk, session_id):
         'app/dashboard/game_tasks/game_task/session/summary/page.html',
         context
     )
+
+
+# game_task_delete action
+# ----------------------------------------------------------------------------------------------------------------------
+@login_required
+@require_POST
+def gt_session_delete_action(request, pk, session_id):
+    user = request.user
+    game_task, session = get_owned_session_or_404(user, pk, session_id)
+    session.delete()
+    messages.success(request, 'Ойын тапсырмасы жойылды!')
+    return redirect('dashboard:game_task_detail', pk=pk)

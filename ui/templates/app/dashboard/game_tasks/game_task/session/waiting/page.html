@@ -4,86 +4,125 @@
 {% block title %}{{ game_task.name }} – Waiting room{% endblock title %}
 
 {% block base %}
-<div class="max-w-screen-md w-full mx-auto space-y-6 py-16">
-    <div class="grid gap-4 text-center">
-        <div class="space-y-2">
+<div class="w-full min-h-screen relative flex justify-center items-center p-4">
+    <div class="max-w-3xl w-full mx-auto space-y-6">
+        <img src="{% static 'images/logo.svg' %}" alt="" class="w-36 flex mx-auto" />
+        <div class="grid gap-4 text-center">
             <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black">
                 {{ game_task.name }}
             </h1>
-            <div class="flex justify-center">
-                <div class="flex gap-2 py-1 px-3 rounded-xl bg-amber-100 text-amber-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader">
-                        <path d="M12 2v4" />
-                        <path d="m16.2 7.8 2.9-2.9" />
-                        <path d="M18 12h4" />
-                        <path d="m16.2 16.2 2.9 2.9" />
-                        <path d="M12 18v4" />
-                        <path d="m4.9 19.1 2.9-2.9" />
-                        <path d="M2 12h4" />
-                        <path d="m4.9 4.9 2.9 2.9" />
-                    </svg>
-                    <span class="font-medium">{{ session.get_status_display }}</span>
-                </div>
-            </div>
-        </div>
 
-        <form
-            method="post"
-            action="{% url 'dashboard:session_start' pk=game_task.id session_id=session.id %}"
-            class="flex justify-center"
-        >
-            {% csrf_token %}
-            <button 
-                type="submit"
-                class="relative grid cursor-pointer group"
-            >  
-                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
-                <span class="
-                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
-                    group-hover:bg-primary-500 group-active:translate-y-1.5
-                    "
+            <div class="flex gap-2 justify-center">
+                <form
+                    method="post"
+                    action="{% url 'dashboard:session_start' pk=game_task.id session_id=session.id %}"
+                    class="flex justify-center"
                 >
-                    Сессияны бастау
-                </span>
-            </button>
-        </form>
-    </div>
-
-    <div class="flex gap-4">
-        <div class="space-y-4">
-            <div class="p-6 border space-y-2 border-border-200 rounded-xl">
-                <h4 class="font-medium">PIN код</h4>
-                <h1 class="text-5xl font-black tracking-widest">{{ session.pin_code }}</h1>
-            </div>
-
-            <div class="p-6 border space-y-2 border-border-200 rounded-xl">
-                <h4 class="font-medium">Қатысушылар үшін сілтеме</h4>
-                <div class="break-all border border-border-200 rounded-xl p-2 bg-primary-50 text-subtle">
-                    {{ join_url }}
-                </div>
-                <!-- {# QR кодты кейін JS/қызмет арқылы жасаймыз (мысалы, QR сервер, немесе JS-библиотека) #} -->
-                <div id="qr-code"></div>
+                    {% csrf_token %}
+                    <button 
+                        type="submit"
+                        class="relative grid cursor-pointer group"
+                    >  
+                        <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                        <span class="
+                            relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                            group-hover:bg-primary-500 group-active:translate-y-1.5
+                            "
+                        >
+                            Сессияны бастау
+                        </span>
+                    </button>
+                </form>
             </div>
         </div>
 
-        <div class="flex-1 p-6 border border-border-200 rounded-xl">
-            <div class="flex items-center justify-between mb-2">
-                <h4 class="font-medium">Қатысушылар</h4>
+        <div class="flex items-start gap-4">
+            <!-- Кіру сілтемелері -->
+            <div class="space-y-4">
+                <div class="p-4 border space-y-2 border-border-200 rounded-xl">
+                    <h4 class="text-base font-bold">PIN код</h4>
+                    <h1 class="text-5xl font-black tracking-widest">{{ session.pin_code }}</h1>
+                </div>
+
+                <div class="p-4 border space-y-2 border-border-200 rounded-xl">
+                    <h4 class="text-base font-bold">Қатысушылар үшін сілтеме</h4>
+                    <div 
+                        x-data="{ 
+                            copied: false, 
+                            copy() {
+                                navigator.clipboard.writeText($refs.link.value);
+                                this.copied = true;
+                                setTimeout(() => this.copied = false, 1500);
+                            }     
+                        }"
+                        class="relative"
+                    >
+                        <input 
+                            type="text"
+                            name="link"
+                            readonly
+                            x-ref="link"
+                            value="{{ join_url }}"
+                            class="py-2 pr-10 pl-4 rounded-xl border border-border-200"
+                        >
+                        <button
+                            type="button"
+                            @click="copy()"
+                            class="absolute top-0.5 right-0.5 p-2 rounded-xl text-muted cursor-pointer hover:bg-primary-50"
+                        >
+                            <svg
+                                x-show="!copied" 
+                                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </svg>
+                            <svg
+                                x-show="copied" 
+                                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-4 border space-y-2 border-border-200 rounded-xl">
+                    <h4 class="text-base font-bold">QR кодты сканерлеңіз:</h4>
+                    <input type="hidden" id="join-url" value="{{ join_url }}">
+                    <canvas id="qr-code"></canvas>
+                    <script>
+                        const qr = new QRious({
+                            element: document.getElementById('qr-code'),
+                            value: "{{ join_url }}",
+                            size: 264,
+                            level: "H"
+                        });
+                    </script>
+                </div>
             </div>
 
-            <div
-                id="participants-list"
-                hx-get="{% url 'dashboard:session_participants_fragment' game_task.id session.id %}"
-                hx-trigger="load, every 5s"
-                hx-target="#participants-list"
-                hx-swap="innerHTML"
-            >
-                <div class="grid gap-2 text-center">
-                    <p class="text-sm text-muted">Қатысушылар күтілуде...</p>
+            <!-- Қатысушылар -->
+            <div class="flex-1 grid items-start border border-border-200 rounded-xl">
+                <div class="flex items-start justify-between px-4 py-2">
+                    <h4 class="text-base font-bold">Қатысушылар</h4>
+                </div>
+
+                <div
+                    id="participants-list"
+                    hx-get="{% url 'dashboard:session_participants_fragment' game_task.id session.id %}"
+                    hx-trigger="load, every 5s"
+                    hx-target="#participants-list"
+                    hx-swap="innerHTML"
+                    class="flex-1 w-full h-[548px] overflow-y-auto px-4 py-2"
+                >
+                    <div class="flex justify-center items-center h-full">
+                        <p class="text-muted">Қатысушылар күтілуде...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock base %}

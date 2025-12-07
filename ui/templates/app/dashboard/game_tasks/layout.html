@@ -9,7 +9,7 @@
                 href="{% url 'dashboard:game_tasks' %}" 
                 class="
                     flex items-center gap-2 px-4 py-2 transition-all border-b-4 hover:bg-primary-50 active:scale-95
-                    {% if request.path == '/d/game-tasks/' %}border-b-primary-600{% else %}border-transparent{% endif %}
+                    {% if request.path == '/dashboard/game-tasks/' %}border-b-primary-600{% else %}border-transparent{% endif %}
                 "
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -28,7 +28,7 @@
                 href="{% url 'dashboard:game_task_drafts' %}" 
                 class="
                     flex items-center gap-2 px-4 py-2 transition-all border-b-4 hover:bg-primary-50 active:scale-95
-                    {% if request.path == '/d/game-tasks/drafts/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
+                    {% if request.path == '/dashboard/game-tasks/drafts/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
                 "
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -49,7 +49,7 @@
                 href="{% url 'dashboard:game_task_archives' %}" 
                 class="
                     flex items-center gap-2 px-4 py-2 transition-all border-b-4 hover:bg-primary-50 active:scale-95
-                    {% if request.path == '/d/game-tasks/archives/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
+                    {% if request.path == '/dashboard/game-tasks/archives/' %}border-primary-600 bg-primary-50{% else %}border-transparent{% endif %}    
                 "
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"

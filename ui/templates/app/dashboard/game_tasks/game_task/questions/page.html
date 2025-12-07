@@ -5,10 +5,6 @@
 
 {% block layout %}
 <div class="grid gap-4">
-    <div class="">
-        <h3 class="font-medium text-lg">Сұрақтар ({{ questions.count }})</h3>
-    </div>
-    
     <div class="grid gap-2" x-data="{ open: null }">
         {% for item in questions %}
             <div class="border border-border-200 rounded-xl ">

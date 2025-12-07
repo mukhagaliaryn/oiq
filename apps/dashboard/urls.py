@@ -24,14 +24,16 @@ urlpatterns = [
     path('game-tasks/<int:pk>/edit/step/questions/', game_task.game_task_step_questions, name='game_task_step_questions'),
     path('game-tasks/<int:pk>/edit/step/settings/', game_task.game_task_step_settings, name='game_task_step_settings'),
     path('game-tasks/<int:pk>/publish/', game_task.game_task_publish_view, name='game_task_publish'),
+    path('game-tasks/<int:pk>/delete/', game_task.game_task_delete_action, name='game_task_delete'),
 
     path('game-tasks/<int:pk>/', game_task.game_task_detail_view, name='game_task_detail'),
     path('game-tasks/<int:pk>/questions/', game_task.game_task_questions_view, name='game_task_questions'),
 
-    # game_task_session
+    # gt_session
     # ------------------------------------------------------------------------------------------------------------------
-    path('game-tasks/<int:pk>/sessions/create/', gt.gt_session_create_view, name='session_create'),
+    # pages...
     path('game-tasks/<int:pk>/sessions/<int:session_id>/', gt.gt_session_view, name='session'),
+    path('game-tasks/<int:pk>/sessions/create/', gt.gt_session_create_view, name='session_create'),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/waiting/',
         gt.game_task_session_waiting_view,
@@ -43,8 +45,8 @@ urlpatterns = [
         name='session_participants_fragment'
     ),
     path('game-tasks/<int:pk>/sessions/<int:session_id>/start/',
-        gt.gt_session_start_action,
-        name='session_start'
+         gt.gt_session_start_action,
+         name='session_start'
     ),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/active/',
@@ -52,13 +54,25 @@ urlpatterns = [
         name='session_active',
     ),
     path(
-        'game-tasks/<int:pk>/sessions/<int:session_id>/finish/',
-        gt.gt_session_finish_action,
-        name='session_finish',
+        'game-tasks/<int:pk>/sessions/<int:session_id>/active/leaderboard/',
+        gt.gt_session_active_leaderboard_fragment,
+        name='session_active_leaderboard',
     ),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/finished/',
         gt.gt_session_finished_view,
         name='session_finished',
+    ),
+
+    # actions...
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/delete/',
+        gt.gt_session_delete_action,
+        name='session_delete'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/finish/',
+        gt.gt_session_finish_action,
+        name='session_finish',
     ),
 ]

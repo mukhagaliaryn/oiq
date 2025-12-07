@@ -8,42 +8,111 @@
     {% if game_tasks %}
         <div class="grid">
             {% for item in game_tasks %}
-                <a 
-                    href="{% url 'teacher:game_task_detail' item.pk %}"
-                    class="flex justify-between items-center gap-4 p-2 border-b border-border-200 transition-all group hover:bg-primary-50"
-                >
-                    <div class="aspect-square rounded-xl p-2 flex justify-center items-center bg-primary-50">
-                        <lord-icon
-                            src="https://cdn.lordicon.com/xzvgfwwv.json"
-                            trigger="hover"
-                            colors="primary:#ebe6ef,secondary:#4f46e5"
-                            style="width: 48px; height: 48px;">
-                        </lord-icon>
+                <div x-data="{ open: false, confirmDelete: false }" id="gt-{{ item.id }}"  class="relative">
+                    <a 
+                        href="{% url 'dashboard:game_task_detail' item.pk %}"
+                        class="flex justify-between items-center gap-4 p-2 border-b border-border-200 transition-all group"
+                    >
+                        <div class="aspect-square rounded-xl p-2 flex justify-center items-center bg-primary-50">
+                            <lord-icon
+                                src="https://cdn.lordicon.com/xzvgfwwv.json"
+                                trigger="hover"
+                                colors="primary:#ebe6ef,secondary:#4f46e5"
+                                style="width: 48px; height: 48px;">
+                            </lord-icon>
+                        </div>
+
+                        <div class="flex-1 grid gap-1">
+                            <h4 class="font-medium text-base">#{{ item.id }} {{ item }}</h4>
+                            <div class="flex">
+                                <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
+                                    <span>{{ item.activity.get_activity_type_display }}: </span>
+                                    <span>{{ item.activity.name }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            x-on:click.prevent="open = !open"
+                            type="button"
+                            class="hidden p-2 rounded-xl cursor-pointer transition-all text-muted group-hover:flex hover:bg-primary-50 active:scale-95 focus:ring-2 focus:ring-primary-600"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical">
+                                <circle cx="12" cy="12" r="1" />
+                                <circle cx="12" cy="5" r="1" />
+                                <circle cx="12" cy="19" r="1" />
+                            </svg>
+                        </button>
+                    </a>
+
+                    <!-- Әрекеттер -->
+                    <div
+                        x-show="open"
+                        x-transition
+                        x-on:click.outside="open = false"
+                        class="absolute top-16 right-0 w-40 bg-white border border-border-200 rounded-xl shadow-xs z-30"
+                    >
+                        <ul class="p-2">
+                            <li>
+                                <button 
+                                    @click.prevent="open = false; confirmDelete = true"
+                                    class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-destructive hover:bg-red-100"
+                                >
+                                    Жою
+                                </a>
+                            </li>
+                        </ul>
                     </div>
 
-                    <div class="flex-1 grid gap-1">
-                        <h4 class="font-medium text-base">#{{ item.id }} {{ item }}</h4>
-                        <div class="flex">
-                            <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
-                                <span>{{ item.activity.get_activity_type_display }}: </span>
-                                <span>{{ item.activity.name }}</span>
+                    <!-- Жоюды растау -->
+                    <div
+                        x-show="confirmDelete"
+                        x-transition.opacity
+                        x-cloak
+                        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                        @keydown.escape.window="confirmDelete = false"
+                    >
+                        <div class="grid gap-4 bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-medium">
+                                    Жоюды растау
+                                </h3>
+                                <p class="text-muted">
+                                    Шынымен жойғыңыз келе ме? Бұл әрекет қайтарылмайды.
+                                </p>
+                            </div>
+                            
+                            <div class="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    @click="confirmDelete = false"
+                                    class="flex px-4 py-2 font-medium rounded-xl border border-border-200 hover:bg-secondary-100 cursor-pointer"
+                                >
+                                    Болдырмау
+                                </button>
+                                <form
+                                    hx-post="{% url 'dashboard:game_task_delete' item.id %}"
+                                    method="post"
+                                    hx-on::after-request="
+                                        document.getElementById('gt-{{ item.id }}').remove();
+                                        showFlash('Ойын тапсырмасы өшірілді!', 'success');
+                                    "
+                                    hx-swap="none"
+                                >
+                                    {% csrf_token %}
+                                    <button
+                                        type="submit"
+                                        class="flex px-4 py-2 font-medium rounded-xl bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                                    >
+                                        Иә, жою
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-
-                    <button 
-                        type="button"
-                        class="hidden p-2 rounded-xl cursor-pointer transition-all text-muted group-hover:flex hover:bg-primary-100 active:scale-95 focus:ring-2 focus:ring-primary-600"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical">
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="12" cy="5" r="1" />
-                            <circle cx="12" cy="19" r="1" />
-                        </svg>
-                    </button>
-                </a>
+                </div>
             {% endfor %}
         </div>
     {% else %}

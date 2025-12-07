@@ -4,73 +4,74 @@
 {% block title %}{{ game_task.name }} – Leaderboard{% endblock title %}
 
 {% block base %}
-<div class="max-w-screen-2xl mx-auto py-8 space-y-6">
-    {# Header / Info #}
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div class="space-y-1">
-            <div class="inline-flex items-center gap-2">
-                <h1 class="text-2xl font-semibold text-slate-900">
-                    {{ game_task.name }}
-                </h1>
-                <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-medium text-emerald-700">
-                    LIVE
-                </span>
+<div class="w-full">
+    <header class="sticky top-0 border-b border-border-200">
+        <div class="w-full max-w-7xl mx-auto flex justify-between items-center p-4">
+            <div class="w-24 flex">
+                <img src="{% static 'images/logo.svg' %}" alt="" class="w-full" />
             </div>
-            <p class="text-sm text-slate-500">
-                Пән: {{ game_task.subject.name|default:"—" }} · Белсенді сессия
-            </p>
-        </div>
 
-        <div class="flex flex-wrap items-center gap-3 text-sm">
-            <div class="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 border border-slate-200">
-                <span class="text-xs uppercase tracking-wide text-slate-400">PIN</span>
-                <span class="font-mono text-lg font-semibold tracking-widest text-slate-800">
-                    {{ session.pin_code }}
-                </span>
-            </div>
-            <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
-                <span class="text-xs text-slate-400 uppercase tracking-wide">Ұзақтығы</span>
-                <span class="text-sm font-medium text-slate-800">
-                    {{ session.duration }} мин
-                </span>
-            </div>
-            <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
-                <span class="text-xs text-slate-400 uppercase tracking-wide">Басталды</span>
-                <span class="text-sm font-medium text-slate-800">
-                    {{ session.started_at|time:"H:i" }} 
-                    <span class="text-xs text-slate-400">({{ session.started_at|date:"d.m.Y" }})</span>
-                </span>
-            </div>
-            {# Егер кейін deadline property қолдансаң, мұнда қалған уақытты көрсетесің #}
+            <form
+                method="post"
+                action="{% url 'dashboard:session_finish' pk=session.game_task.pk session_id=session.pk %}"
+                class="flex justify-center"
+            >
+                {% csrf_token %}
+                <button 
+                    type="submit"
+                    class="relative grid cursor-pointer group"
+                >  
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                    <span class="
+                        relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                        group-hover:bg-primary-500 group-active:translate-y-1.5
+                        "
+                    >
+                        Сессияны аяқтау
+                    </span>
+                </button>
+            </form>
         </div>
-    </div>
+    </header>
 
-    {# Top section: stats + podium #}
-    <div class="grid gap-6 lg:grid-cols-3">
-        {# Left: quick stats #}
-        <div class="space-y-3">
-            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
-                            Қатысушылар
-                        </p>
-                        <p class="mt-1 text-2xl font-semibold text-slate-900">
-                            {{ participants|length|default:"0" }}
-                        </p>
-                    </div>
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="9" cy="7" r="3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+    <div class="max-w-7xl mx-auto space-y-16 p-4">
+        <div class="flex justify-between pt-16">
+            <div class="space-y-1">
+                <div class="inline-flex items-center gap-2">
+                    <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black">
+                        {{ game_task.name }}
+                    </h1>
+                    <div class="inline-flex gap-1 items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                        <span class="w-2 h-2 rounded-full bg-emerald-700"></span>
+                        <span>LIVE</span>
                     </div>
                 </div>
+                <p class="text-sm text-slate-500">
+                    Пән: {{ game_task.subject.name|default:"—" }} · Белсенді сессия
+                </p>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-3 gap-3">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                                Қатысушылар
+                            </p>
+                            <p class="mt-1 text-2xl font-semibold text-slate-900">
+                                {{ participants|length|default:"0" }}
+                            </p>
+                        </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="9" cy="7" r="3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
                 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
                         Аяқтағандар
@@ -93,173 +94,34 @@
                 </div>
             </div>
 
-            <form
-                method="post"
-                action="{% url 'dashboard:session_finish' pk=session.game_task.pk session_id=session.pk %}"
-                class="pt-1"
-            >
-                {% csrf_token %}
-                <button
-                    type="submit"
-                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-medium text-rose-700 hover:bg-rose-100 transition"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="5" y="5" width="14" height="14" rx="1.5" stroke-width="1.7"/>
-                    </svg>
-                    Сессияны аяқтау
-                </button>
-            </form>
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+                <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
+                    <span class="text-xs text-slate-400 uppercase tracking-wide">Ұзақтығы</span>
+                    <span class="text-sm font-medium text-slate-800">
+                        {{ session.duration }} мин
+                    </span>
+                </div>
+                <div class="flex flex-col px-3 py-2 rounded-xl border border-slate-200 bg-slate-50">
+                    <span class="text-xs text-slate-400 uppercase tracking-wide">Басталды</span>
+                    <span class="text-sm font-medium text-slate-800">
+                        {{ session.started_at|time:"H:i" }} 
+                        <span class="text-xs text-slate-400">({{ session.started_at|date:"d.m.Y" }})</span>
+                    </span>
+                </div>
+            </div>
         </div>
 
-        {# Center + Right: podium + table header #}
-        <div class="lg:col-span-2 space-y-4">
-            {# Podium (top 3) #}
-            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p class="mb-3 text-sm font-semibold text-slate-800">
-                    Үздік 3 қатысушы
-                </p>
-
-                {% with top3=participants|slice:":3" %}
-                    {% if top3 %}
-                        <div class="flex items-end justify-center gap-4">
-                            {# 2-орын #}
-                            <div class="flex flex-col items-center gap-2">
-                                {% if top3|length > 1 %}
-                                    <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                                        {{ top3.1.nickname }}
-                                    </div>
-                                    <div class="flex h-20 w-14 items-end justify-center rounded-t-xl bg-slate-100">
-                                        <span class="mb-2 text-lg font-semibold text-slate-700">
-                                            2
-                                        </span>
-                                    </div>
-                                    <p class="text-xs text-slate-500">
-                                        {{ top3.1.score }} ұпай
-                                    </p>
-                                {% else %}
-                                    <div class="h-20 w-14 rounded-t-xl bg-slate-50"></div>
-                                {% endif %}
-                            </div>
-
-                            {# 1-орын #}
-                            <div class="flex flex-col items-center gap-2">
-                                <div class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-                                    {{ top3.0.nickname|default:"—" }}
-                                </div>
-                                <div class="flex h-24 w-16 items-end justify-center rounded-t-xl bg-amber-100">
-                                    <span class="mb-2 text-xl font-bold text-amber-900">
-                                        1
-                                    </span>
-                                </div>
-                                <p class="text-xs text-amber-900 font-medium">
-                                    {{ top3.0.score|default:"0" }} ұпай
-                                </p>
-                            </div>
-
-                            {# 3-орын #}
-                            <div class="flex flex-col items-center gap-2">
-                                {% if top3|length > 2 %}
-                                    <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                                        {{ top3.2.nickname }}
-                                    </div>
-                                    <div class="flex h-16 w-14 items-end justify-center rounded-t-xl bg-slate-100">
-                                        <span class="mb-2 text-lg font-semibold text-slate-700">
-                                            3
-                                        </span>
-                                    </div>
-                                    <p class="text-xs text-slate-500">
-                                        {{ top3.2.score }} ұпай
-                                    </p>
-                                {% else %}
-                                    <div class="h-16 w-14 rounded-t-xl bg-slate-50"></div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% else %}
-                        <p class="text-sm text-slate-500">
-                            Әзірге қатысушылар жоқ.
-                        </p>
-                    {% endif %}
-                {% endwith %}
-            </div>
-
-            {# Full leaderboard table #}
-            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div class="mb-3 flex items-center justify-between">
-                    <h2 class="text-sm font-semibold text-slate-800">
-                        Қатысушылар тізімі
-                    </h2>
-                    <p class="text-xs text-slate-400">
-                        Рейтинг ұпайға қарай сұрыпталған
-                    </p>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-left text-sm">
-                        <thead>
-                            <tr class="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-400">
-                                <th class="py-2 pr-4">#</th>
-                                <th class="py-2 pr-4">Қатысушы</th>
-                                <th class="py-2 pr-4 text-right">Ұпай</th>
-                                <th class="py-2 pr-4 text-right">Дұрыс жауап</th>
-                                <th class="py-2 pr-4 text-right">Күйі</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            {% if participants %}
-                                {% for p in participants %}
-                                    <tr class="hover:bg-slate-50/80">
-                                        <td class="py-2 pr-4 text-xs text-slate-500">
-                                            {{ forloop.counter }}
-                                        </td>
-                                        <td class="py-2 pr-4">
-                                            <div class="flex items-center gap-2">
-                                                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-600">
-                                                    {{ p.nickname|first|upper }}
-                                                </div>
-                                                <div>
-                                                    <p class="text-sm font-medium text-slate-800">
-                                                        {{ p.nickname }}
-                                                    </p>
-                                                    {% if p.started_at %}
-                                                        <p class="text-xs text-slate-400">
-                                                            кірді: {{ p.started_at|time:"H:i:s" }}
-                                                        </p>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-2 pr-4 text-right text-sm font-semibold text-slate-800">
-                                            {{ p.score }}
-                                        </td>
-                                        <td class="py-2 pr-4 text-right text-sm text-slate-700">
-                                            {{ p.correct_count }}
-                                        </td>
-                                        <td class="py-2 pr-4 text-right">
-                                            {% if p.is_finished %}
-                                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                                                    Аяқтады
-                                                </span>
-                                            {% else %}
-                                                <span class="inline-flex items-center rounded-full bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-500">
-                                                    Жолда
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr>
-                                    <td colspan="5" class="py-4 text-center text-sm text-slate-500">
-                                        Қатысушылар қосылған жоқ.
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
+        <div
+            id="leaderboard-container"
+            hx-get="{% url 'dashboard:session_active_leaderboard' pk=game_task.pk session_id=session.pk %}"
+            hx-trigger="load, every 5s"
+            hx-swap="innerHTML"
+        >
+            <div class="py-16 text-center text-muted">
+                Жүктелуде...
             </div>
         </div>
     </div>
 </div>
+
 {% endblock base %}

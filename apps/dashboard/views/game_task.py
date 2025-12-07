@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models.aggregates import Count
 from django.shortcuts import render, redirect, get_object_or_404
-from requests import session
+from django.views.decorators.http import require_POST
 
 from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic, GameTaskSession
-from core.utils.decorators import role_required
 
 
-# Game task create
+# GameTask CREATE
 # ----------------------------------------------------------------------------------------------------------------------
 # game_task_create
 @login_required
@@ -33,6 +33,8 @@ def game_task_create_view(request):
     return redirect('dashboard:game_task_edit', pk=game_task.pk)
 
 
+# GameTask EDIT
+# ----------------------------------------------------------------------------------------------------------------------
 # get_game_task_current_step
 def get_game_task_current_step(game_task: GameTask) -> str:
     if game_task.activity_id is None:
@@ -269,16 +271,39 @@ def game_task_publish_view(request, pk):
     return redirect('dashboard:game_task_step_settings', pk=game_task.pk)
 
 
-# Game task detail page
+# game_task_delete action
+@login_required
+@require_POST
+def game_task_delete_action(request, pk):
+    game_task = get_object_or_404(GameTask, id=pk, owner=request.user)
+    game_task.delete()
+    messages.success(request, 'Ойын тапсырмасы жойылды!')
+    return redirect('dashboard:game_tasks')
+
+
+# GameTask DETAIL
 # ----------------------------------------------------------------------------------------------------------------------
+# game_task_detail page
 @login_required
 def game_task_detail_view(request, pk):
-    game_task = get_object_or_404(GameTask, id=pk)
+    user = request.user
+    game_task = (
+        GameTask.objects
+        .filter(owner=user, pk=pk)
+        .annotate(
+            total_participants=Count('sessions__participants', distinct=True)
+        )
+        .select_related('activity', 'subject')
+        .prefetch_related('questions', 'sessions')
+        .get()
+    )
     sessions = GameTaskSession.objects.filter(game_task=game_task)
+    questions = GameTaskQuestion.objects.filter(game_task=game_task)
 
     context = {
         'game_task': game_task,
         'sessions': sessions,
+        'questions': questions,
     }
     return render(request, 'app/dashboard/game_tasks/game_task/page.html', context)
 
@@ -287,11 +312,23 @@ def game_task_detail_view(request, pk):
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_questions_view(request, pk):
-    game_task = get_object_or_404(GameTask, id=pk)
+    user = request.user
+    game_task = (
+        GameTask.objects
+        .filter(owner=user, pk=pk)
+        .annotate(
+            total_participants=Count('sessions__participants', distinct=True)
+        )
+        .select_related('activity', 'subject')
+        .prefetch_related('questions', 'sessions')
+        .get()
+    )
+    sessions = GameTaskSession.objects.filter(game_task=game_task)
     questions = GameTaskQuestion.objects.filter(game_task=game_task)
 
     context = {
         'game_task': game_task,
-        'questions': questions,
+        'sessions': sessions,
+        'questions': questions
     }
     return render(request, 'app/dashboard/game_tasks/game_task/questions/page.html', context)

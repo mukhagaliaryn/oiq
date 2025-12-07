@@ -1,4 +1,4 @@
-<div class="grid gap-4">
+<div x-data="{ name: '{{ game_task.name|escapejs }}' }" class="grid gap-4">
     <h2 class="font-medium text-xl">Атауы мен сипаттамасы</h2>
 
     <div class="flex items-center justify-between border-b border-border-200">
@@ -19,37 +19,34 @@
 
     <div class="flex gap-8 items-start flex-col lg:flex-row">
         <!-- Сол жақ: форма -->
-        <div class="flex-1 grid gap-4 items-start">
-            <h4 class="font-medium">Негізгі ақпарат</h4>
-
-            <form
-                id="settings-form"
-                hx-post="{% url 'dashboard:game_task_step_settings' pk=game_task.pk %}"
-                hx-target="#step-container"
-                hx-swap="innerHTML"
-                class="grid gap-4 text-sm"
-            >
-                {% csrf_token %}
-                <label class="grid gap-1">
-                    <span class="font-medium">Ойын атауы <span class="text-red-500">*</span></span>
-                    <input
-                        type="text"
-                        name="name"
-                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
-                        value="{{ game_task.name }}"
-                        required
-                    >
-                </label>
-                <label class="grid gap-1">
-                    <span class="font-medium">Қысқаша сипаттама (Маңызды емес)</span>
-                    <textarea
-                        name="description"
-                        rows="4"
-                        class="w-full border border-border-200 rounded-xl p-2 focus:ring-2 focus:ring-primary-600"
-                    >{{ game_task.description|default_if_none:'' }}</textarea>
-                </label>
-            </form>
-        </div>
+        <form
+            id="settings-form"
+            hx-post="{% url 'dashboard:game_task_step_settings' pk=game_task.pk %}"
+            hx-target="#step-container"
+            hx-swap="innerHTML"
+            class="flex-1 grid gap-4"
+        >
+            {% csrf_token %}
+            <label class="grid gap-1">
+                <span class="font-medium">Ойын атауы <span class="text-red-500">*</span></span>
+                <input
+                    type="text"
+                    name="name"
+                    class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                    value="{{ game_task.name }}"
+                    x-model="name"
+                    required
+                >
+            </label>
+            <label class="grid gap-1">
+                <span class="font-medium">Қысқаша сипаттама (Маңызды емес)</span>
+                <textarea
+                    name="description"
+                    rows="4"
+                    class="w-full border border-border-200 rounded-xl p-2 focus:ring-2 focus:ring-primary-600"
+                >{{ game_task.description|default_if_none:'' }}</textarea>
+            </label>
+        </form>
 
         <!-- Оң жақ: финалдық блок (publish) -->
         <div class="grid gap-4 items-start w-full lg:max-w-sm">
@@ -95,6 +92,7 @@
                     "
                     x-show="!stepSettingsDone"
                     @click="stepSettingsDone = true"
+                    :disabled="!name || name.trim() === ''"
                 >
                     Сақтау
                 </button>

@@ -85,7 +85,7 @@
                                 href="{% url 'dashboard:dashboard' %}"
                                 class="
                                     flex gap-2 items-center rounded-xl whitespace-nowrap transition-all active:scale-95
-                                    {% if request.path == '/d/' %}bg-primary-600 text-white hover:bg-primary-600{% else %}hover:bg-primary-50{% endif %}
+                                    {% if request.path == '/dashboard/' %}bg-primary-600 text-white hover:bg-primary-600{% else %}hover:bg-primary-50{% endif %}
                                 "
                                 :class="sidebarCollapsed ? 'p-2 justify-center': 'px-4 py-2'"
                             >
@@ -102,7 +102,7 @@
                                 href="{% url 'dashboard:game_tasks' %}"
                                 class="
                                     flex gap-2 items-center rounded-xl whitespace-nowrap transition-all active:scale-95
-                                    {% if request.path == '/d/game-tasks/' %}bg-primary-600 text-white hover:bg-primary-600{% else %}hover:bg-primary-50{% endif %}
+                                    {% if request.path == '/dashboard/game-tasks/' %}bg-primary-600 text-white hover:bg-primary-600{% else %}hover:bg-primary-50{% endif %}
                                 "
                                 :class="sidebarCollapsed ? 'p-2 justify-center': 'px-4 py-2'"
                             >

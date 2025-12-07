@@ -1,7 +1,7 @@
 {% if participants %}
     <ul class="space-y-2">
         {% for p in participants %}
-            <li class="flex items-center justify-between rounded-xl border border-border-200 py-2 px-4">
+            <li class="flex items-center justify-between rounded-xl border border-border-200 py-2 px-4 hover:bg-primary-50">
                 <div class="flex gap-2 items-center">
                     <h4 class="font-bold">{{ forloop.counter }}.</h4>
                     <div class="flex gap-2 items-center">
@@ -11,22 +11,39 @@
                         <h4 class="font-bold">{{ p.nickname }}</h4>
                     </div>
                 </div>
-             
-                <span class="text-xs text-muted">
-                    {% if p.started_at %}
-                        Кірген уақыт: {{ p.started_at|date:"H:i:s" }}
-                    {% else %}
-                        жаңа қосылды
-                    {% endif %}
-                </span>
+                
+                <div class="flex gap-1 items-center text-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-clock-plus-icon lucide-clock-plus">
+                        <path d="M12 6v6l3.644 1.822" />
+                        <path d="M16 19h6" />
+                        <path d="M19 16v6" />
+                        <path d="M21.92 13.267a10 10 0 1 0-8.653 8.653" />
+                    </svg>
+                    <span class="text-xs">
+                        {% if p.started_at %}
+                            {{ p.started_at|date:"H:i" }}
+                        {% else %}
+                            жаңа қосылды
+                        {% endif %}
+                    </span>
+                </div>
+
             </li>
         {% endfor %}
     </ul>
 {% else %}
-    <div class="grid text-center py-8">
-        <p class="text-muted">
-            Әзірге ешкім қосылған жоқ.
-        </p>
+    <div class="grid gap-2 items-center h-full">
+        <div class="text-center text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users mx-auto">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <circle cx="9" cy="7" r="4" />
+            </svg>
+            <span>Әзірге ешкім қосылған жоқ.</span>
+        </div>
     </div>
-
 {% endif %}
