@@ -3,36 +3,28 @@
 {% block title %}{{ participant.nickname }}{% endblock %}
 
 {% block base %}
-    <div class="flex items-center justify-center h-screen">
-        {% if status == 'active' %}
-            <div class="grid gap-2 text-center">
-                <h1 class="text-2xl font-black">{{ participant.nickname }}</h1>
-                <form
-                    method="post"
-                    action="{% url 'main:session_finish_participant' participant.token %}"
-                    class="mt-6"
-                >
-                    {% csrf_token %}
-                    <button
-                        type="submit"
-                        class="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition"
-                    >
-                        Аяқтау және нәтижені көру
-                    </button>
-                </form>
-            </div>
-        {% elif status == 'finished' %}
-            <div class="mt-6 text-center">
-                <p class="text-sm text-slate-600 mb-3">
-                    Сессия аяқталды. Сіздің нәтижеңізбен танысыңыз.
+<div class="min-h-screen flex justify-center items-center bg-slate-50">
+    <div class="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-border-200 p-6 space-y-4">
+        <div class="flex justify-between items-center text-sm text-slate-500">
+            <div>
+                <p class="font-medium text-slate-700">{{ game_task.name }}</p>
+                <p class="text-xs text-slate-400">
+                    Сұрақ {{ index }} / {{ total_questions }}
                 </p>
-                <a
-                    href="{% url 'main:session_result' participant.token %}"
-                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
-                >
-                    Менің нәтижем
-                </a>
             </div>
-        {% endif %}
+            <div>
+                {% if session.status == 'active' %}
+                <span
+                    class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                    Ойын жүріп жатыр
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="question-container">
+            {% include "app/main/play/_question.html" %}
+        </div>
     </div>
+</div>
 {% endblock base %}

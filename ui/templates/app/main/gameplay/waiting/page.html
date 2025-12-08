@@ -28,7 +28,7 @@
 
     <div 
         id="session-waiting-poller" 
-        hx-get="{% url 'main:session_waiting_poll' participant.token %}"
+        hx-get="{% url 'main:gameplay_waiting_poll' participant.token %}"
         hx-trigger="load, every 5s" 
         hx-swap="none"
     ></div>

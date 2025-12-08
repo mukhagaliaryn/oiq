@@ -1,0 +1,190 @@
+{% extends 'layouts/gt_layout.html' %}
+{% load static %}
+
+{% block title %}Ойын сессиясына қосылу{% endblock title %}
+
+{% block gt_layout %}
+<a 
+    href="{% url 'main:main' %}" 
+    class="absolute top-4 left-4 grid group"
+>  
+    <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
+    <span class="
+        relative w-full px-4 py-2 rounded-xl bg-white border border-border-300 font-medium 
+        group-hover:bg-secondary-50 group-active:translate-y-1.5
+        "
+    >
+        Басты бет
+    </span>
+</a>
+
+<div class="w-full sm:max-w-xs space-y-4">
+    <img src="{% static 'images/logo.svg' %}" alt="" class="w-36 flex mx-auto" />
+
+    <div class="bg-white rounded-2xl space-y-4">
+        <h1 class="text-xl md:text-2xl font-black text-center">Ойынға қосылу</h1>
+        {% if error %}
+            <div class="flex justify-center">
+                <div class="flex justify-center items-center gap-2 px-4 py-2 text-xs rounded-xl bg-red-50 text-destructive">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                    </svg>
+                    <span>{{ error }}</span>
+                </div>
+            </div>
+            
+        {% endif %}
+        <form 
+            method="post" 
+            id="join-form"
+            novalidate 
+            class="grid gap-4" 
+        >
+            {% csrf_token %}
+
+            <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-rectangle-ellipsis-icon lucide-rectangle-ellipsis absolute top-2.5 start-2.5 text-muted">
+                    <rect width="20" height="12" x="2" y="6" rx="2" />
+                    <path d="M12 12h.01" />
+                    <path d="M17 12h.01" />
+                    <path d="M7 12h.01" />
+                </svg>
+                <input
+                    type="text"
+                    id="pin-input"
+                    name="pin"
+                    value="{{ pin_prefill }}"
+                    maxlength="8"
+                    inputmode="numeric"
+                    class="w-full border border-border-300 rounded-xl ps-10 pe-4 py-2 focus:ring-2 focus:ring-primary-600"
+                    placeholder="PIN код"
+                    required
+                >
+                <p 
+                    id="pin-error"
+                    class="text-center text-xs mt-1 {% if field_errors.pin %}text-destructive{% else %}text-destructive hidden{% endif %}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                    </svg>
+                    <span>{{ field_errors.pin }}</span>
+                </p>
+            </div>
+            <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-user-icon lucide-circle-user absolute top-2.5 start-2.5 text-muted">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="10" r="3" />
+                    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                </svg>
+                <input
+                    type="text"
+                    id="nickname-input"
+                    name="nickname"
+                    maxlength="20"
+                    class="w-full border border-border-300 rounded-xl ps-10 pe-4 py-2 focus:ring-2 focus:ring-primary-600"
+                    placeholder="Есіміңіз (никнейм)"
+                    required
+                >
+                <p 
+                    id="nickname-error"
+                    class="text-center text-xs mt-1 {% if field_errors.nickname %}text-destructive{% else %}text-destructive hidden{% endif %}"
+                >
+                    {{ field_errors.nickname }}
+                </p>
+            </div>
+
+            <button 
+                type="submit"
+                id="join-submit"
+                class="relative grid cursor-pointer group"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                <span class="
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                    group-hover:bg-primary-500 group-active:translate-y-1.5
+                    "
+                >
+                    Кіру
+                </span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock gt_layout %}
+
+
+{% block js %}
+<script>
+    (function () {
+        const form = document.getElementById('join-form');
+        const pinInput = document.getElementById('pin-input');
+        const nickInput = document.getElementById('nickname-input');
+        const pinError = document.getElementById('pin-error');
+        const nickError = document.getElementById('nickname-error');
+        const submitBtn = document.getElementById('join-submit');
+
+        if (!form) return;
+
+        function showError(el, errorEl, message) {
+            if (!errorEl) return;
+            if (message) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+                el.classList.add('border-red-500');
+            } else {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+                el.classList.remove('border-red-500');
+            }
+        }
+
+        form.addEventListener('submit', function (e) {
+            let hasError = false;
+
+            const pin = (pinInput.value || '').trim();
+            const nickname = (nickInput.value || '').trim();
+
+            // PIN validation (front)
+            if (!pin) {
+                showError(pinInput, pinError, 'PIN кодты енгізіңіз.');
+                hasError = true;
+            } else {
+                showError(pinInput, pinError, '');
+            }
+
+            const allowedPattern = /^[0-9A-Za-zА-Яа-яӘәІіҢңҒғҮүҰұҚқӨөЫыЁё ._'-]+$/u;
+
+            if (!nickname) {
+                showError(nickInput, nickError, 'Есіміңізді енгізіңіз.');
+                hasError = true;
+            } else if (nickname.length > 20) {
+                showError(nickInput, nickError, 'Есім ең көп дегенде 20 таңба болуы керек.');
+                hasError = true;
+            } else if (!allowedPattern.test(nickname)) {
+                showError(nickInput, nickError, 'Есім тек әріп, цифра және қарапайым белгілерден тұруы керек.');
+                hasError = true;
+            } else {
+                showError(nickInput, nickError, '');
+            }
+
+            if (hasError) {
+                e.preventDefault();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+        });
+    })();
+</script>
+{% endblock js %}

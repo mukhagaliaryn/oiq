@@ -144,6 +144,9 @@ class Participant(models.Model):
     finished_at = models.DateTimeField(_('Finished at'), blank=True, null=True)
     is_finished = models.BooleanField(_('Is finished'), default=False)
 
+    current_question_id = models.PositiveIntegerField(_('Current question ID'), null=True, blank=True)
+    current_started_at = models.DateTimeField(_('Current question started at'), null=True, blank=True)
+
     class Meta:
         verbose_name = _('Participant')
         verbose_name_plural = _('Participants')

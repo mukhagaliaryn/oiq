@@ -1,0 +1,82 @@
+{# app/main/play/_question.html #}
+
+<h2 class="text-lg font-semibold text-slate-900 mb-4">
+    {{ question.body|safe }}
+</h2>
+
+<form
+    method="post"
+    action="{% url 'main:session_answer' participant.token %}"
+    hx-post="{% url 'main:session_answer' participant.token %}"
+    hx-target="#question-container"
+    hx-swap="innerHTML"
+    class="space-y-3"
+>
+    {% csrf_token %}
+
+    {% if options %}
+        {# question_type-ке байланысты radio / checkbox таңдай аласың #}
+        {% with q_type=question.question_type|default:"simple" %}
+            {% if q_type == "multiple" %}
+                {% for opt in options %}
+                    <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                        <input
+                            type="checkbox"
+                            name="options"
+                            value="{{ opt.id }}"
+                            class="mt-1"
+                        >
+                        <span class="text-sm text-slate-800">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </label>
+                {% endfor %}
+            {% else %}
+                {% for opt in options %}
+                    <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                        <input
+                            type="radio"
+                            name="options"
+                            value="{{ opt.id }}"
+                            class="mt-1"
+                        >
+                        <span class="text-sm text-slate-800">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </label>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    {% else %}
+        <p class="text-sm text-slate-500">
+            Бұл сұраққа жауап нұсқалары анықталмаған.
+        </p>
+    {% endif %}
+
+    <button
+        type="submit"
+        class="w-full mt-4 rounded-xl bg-primary-600 text-white py-2.5 text-sm font-medium hover:bg-primary-700 active:scale-95 transition"
+    >
+        Жауап беру
+    </button>
+</form>
+
+{% if last_answer_correct is not None %}
+  <div class="mb-3 rounded-xl border px-3 py-2 text-sm
+              {% if last_answer_correct %}
+                  border-emerald-200 bg-emerald-50 text-emerald-800
+              {% else %}
+                  border-rose-200 bg-rose-50 text-rose-800
+              {% endif %}
+  ">
+    {% if last_answer_correct %}
+      ✅ Дұрыс жауап бердіңіз!
+    {% else %}
+      ❌ Бұл жолы қате жауап бердіңіз.
+    {% endif %}
+  </div>
+{% endif %}
+
+<p class="mt-2 text-xs text-slate-400 text-right">
+    Сұрақ {{ index }} / {{ total_questions }}
+</p>

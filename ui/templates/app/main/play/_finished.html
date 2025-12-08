@@ -1,0 +1,20 @@
+{# app/main/play/_finished.html #}
+
+<div class="py-10 text-center space-y-3">
+    <p class="text-lg font-semibold text-slate-900">
+        Ойын аяқталды 🎉
+    </p>
+    <p class="text-sm text-slate-600">
+        Сіз барлық сұрақтарға жауап бердіңіз.
+    </p>
+    <p class="text-sm text-slate-600">
+        Дұрыс жауап саны: <span class="font-semibold">{{ participant.correct_count }}</span>
+    </p>
+
+    <a
+        href="{% url 'main:session_result' participant.token %}"
+        class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+    >
+        Менің нәтижемді көру
+    </a>
+</div>
