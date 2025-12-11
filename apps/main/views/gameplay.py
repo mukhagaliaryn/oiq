@@ -5,6 +5,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
+
+from apps.main.services.gameplay_play import calculate_question_score
 from apps.main.services.gameplay_session_join import get_joinable_session_by_pin, get_unique_nickname_for_session
 from core.models import Participant, QuestionAttempt, TestAnswer, Option
 
@@ -231,47 +233,75 @@ def gameplay_play_view(request, token):
     return render(request, 'app/main/gameplay/play/page.html', context)
 
 
-# gt_session_answer_view
+# gameplay_answer_action
 @require_POST
 def gameplay_answer_action(request, token):
+    # ----------------------------
+    # 1) Participant + Security
+    # ----------------------------
     participant = get_object_or_404(
-        Participant.objects.select_related('session', 'session__game_task'),
+        Participant.objects.select_related("session", "session__game_task"),
         token=token,
     )
+
+    # Token браузерден ме?
+    session_token = request.session.get("current_game_participant_token")
+    if session_token != str(participant.token):
+        resp = HttpResponse()
+        resp["HX-Redirect"] = reverse("main:gameplay_join")
+        return resp
+
     session = participant.session
     game_task = session.game_task
 
+    # ----------------------------
+    # 2) Session статустары
+    # ----------------------------
     if session.is_pending():
-        return redirect('main:gameplay_waiting', token=token)
-    if session.is_finished():
-        return redirect('main:gameplay_result', token=token)
+        resp = HttpResponse()
+        resp["HX-Redirect"] = reverse("main:gameplay_waiting", kwargs={"token": token})
+        return resp
+
+    if session.is_time_over() or session.is_finished():
+        resp = HttpResponse()
+        resp["HX-Redirect"] = reverse("main:gameplay_result", kwargs={"token": token})
+        return resp
 
     if participant.is_finished:
-        return redirect('main:session_result', token=token)
+        resp = HttpResponse()
+        resp["HX-Redirect"] = reverse("main:gameplay_result", kwargs={"token": token})
+        return resp
 
+    # ----------------------------
+    # 3) Сұрақты анықтау
+    # ----------------------------
     questions_qs = (
-        game_task.questions
-        .select_related('question')
-        .order_by('order', 'pk')
+        game_task.questions.select_related("question").order_by("order", "pk")
     )
     questions = list(questions_qs)
     total_questions = len(questions)
 
     attempts_count = participant.attempts.count()
 
+    # Егер ойын біткен болса:
     if attempts_count >= total_questions:
-        if not participant.is_finished:
-            participant.is_finished = True
-            participant.finished_at = timezone.now()
-            participant.save(update_fields=['is_finished', 'finished_at'])
-        return redirect('main:session_result', token=token)
+        participant.is_finished = True
+        participant.finished_at = timezone.now()
+        participant.save(update_fields=["is_finished", "finished_at"])
 
+        return render(
+            request,
+            "app/main/gameplay/play/_finished.html",
+            {"participant": participant, "session": session, "game_task": game_task},
+        )
+
+    # Ағымдағы сұрақ:
     current_gtq = questions[attempts_count]
     current_question = current_gtq.question
 
-    selected_ids = request.POST.getlist('options')
-    selected_ids = [int(pk) for pk in selected_ids if pk.isdigit()]
-
+    # ----------------------------
+    # 4) time_spent есептеу
+    # ----------------------------
     now = timezone.now()
     if participant.current_started_at:
         delta = now - participant.current_started_at
@@ -279,24 +309,45 @@ def gameplay_answer_action(request, token):
     else:
         time_spent = 0
 
-    correct_options_qs = current_question.options.filter(is_correct=True)
-    correct_ids = set(correct_options_qs.values_list('id', flat=True))
+    # ----------------------------
+    # 5) Қолданушы таңдаған опциялар
+    # ----------------------------
+    selected_ids = request.POST.getlist("options")
+    selected_ids = [int(pk) for pk in selected_ids if pk.isdigit()]
     selected_set = set(selected_ids)
 
+    correct_ids = set(
+        current_question.options.filter(is_correct=True).values_list("id", flat=True)
+    )
+
+    # ----------------------------
+    # 6) is_correct логикасы
+    # ----------------------------
     if not correct_ids:
         is_correct = False
     else:
-        q_type = getattr(current_question, 'question_type', 'simple')
+        q_type = current_question.variant.code if current_question.variant else "single"
 
-        if q_type == 'multiple':
-            is_correct = (selected_set == correct_ids)
+        if q_type == "multiple":
+            is_correct = selected_set == correct_ids
         else:
             is_correct = (
-                len(selected_set) == 1 and
-                list(selected_set)[0] in correct_ids
+                len(selected_set) == 1 and list(selected_set)[0] in correct_ids
             )
 
-    score_delta = 1 if is_correct else 0
+    # ----------------------------
+    # 7) Scoring (Kahoot-style)
+    # ----------------------------
+    score_result = calculate_question_score(
+        question=current_question,
+        is_correct=is_correct,
+        time_spent=time_spent,
+    )
+    score_delta = score_result.score
+
+    # ----------------------------
+    # 8) Attempt сақтау
+    # ----------------------------
     attempt = QuestionAttempt.objects.create(
         participant=participant,
         question=current_question,
@@ -310,61 +361,175 @@ def gameplay_answer_action(request, token):
         selected_options_qs = Option.objects.filter(id__in=selected_ids)
         test_answer.selected_options.set(selected_options_qs)
 
-    update_fields = ['current_question_id', 'current_started_at']
+    # ----------------------------
+    # 9) Participant жаңарту
+    # ----------------------------
     participant.current_question_id = None
     participant.current_started_at = None
 
     if is_correct:
         participant.correct_count += 1
-        participant.score += 1
-        update_fields.extend(['correct_count', 'score'])
+        participant.score += score_delta
 
-    participant.save(update_fields=update_fields)
+    participant.save(
+        update_fields=[
+            "current_question_id",
+            "current_started_at",
+            "correct_count",
+            "score",
+        ]
+    )
 
+    # ----------------------------
+    # 10) Бұл соңғы сұрақ па?
+    # ----------------------------
     attempts_count += 1
-    is_htmx = bool(request.headers.get('HX-Request'))
 
     if attempts_count >= total_questions:
+        participant.is_finished = True
+        participant.finished_at = timezone.now()
+        participant.save(update_fields=["is_finished", "finished_at"])
+
+        # Финалдық partial
+        return render(
+            request,
+            "app/main/gameplay/play/_finished.html",
+            {"participant": participant, "session": session, "game_task": game_task},
+        )
+
+    # ----------------------------
+    # 11) REVIEW MODE → _review.html
+    # ----------------------------
+    options = current_question.options.all()
+
+    context = {
+        "participant": participant,
+        "session": session,
+        "game_task": game_task,
+        "question": current_question,
+        "options": options,
+        "index": attempts_count,  # index review-де маңызды емес, new question fragment өзі береді
+        "total_questions": total_questions,
+        "selected_ids": selected_ids,
+        "correct_ids": correct_ids,
+        "last_answer_correct": is_correct,
+    }
+
+    return render(request, "app/main/gameplay/play/_review.html", context)
+
+# gameplay_question_fragment
+@require_GET
+def gameplay_question_fragment(request, token):
+    """
+    Бір сұрақтық фрагментті қайтарады.
+    - Алғашқы жүктеу кезінде де, review-дан кейін auto-next кезінде де осы шақырылады.
+    - Егер сессия немесе қатысушы бітсе, finished partial немесе redirect береді.
+    """
+    participant = get_object_or_404(
+        Participant.objects.select_related('session', 'session__game_task'),
+        token=token,
+    )
+
+    # 🔒 Security: бұл токен дәл осы браузерге тиесілі ме?
+    session_token = request.session.get('current_game_participant_token')
+    if session_token != str(participant.token):
+        # Бұл view әдетте HTMX-пен шақырылады, сондықтан HX-Redirect қолданамыз
+        resp = HttpResponse()
+        resp['HX-Redirect'] = reverse('main:gameplay_join')
+        return resp
+
+    session = participant.session
+    game_task = session.game_task
+
+    # 🧾 Статустарды тексеру
+    if session.is_pending():
+        # Ойын әлі басталмаған → waiting бетіне
+        resp = HttpResponse()
+        resp['HX-Redirect'] = reverse('main:gameplay_waiting', kwargs={'token': token})
+        return resp
+
+    if session.is_time_over() or session.is_finished():
+        # Уақыты бітті немесе сессия аяқталды → result
+        resp = HttpResponse()
+        resp['HX-Redirect'] = reverse('main:gameplay_result', kwargs={'token': token})
+        return resp
+
+    if participant.is_finished:
+        # Қатысушы өз ойынын аяқтап қойған
+        resp = HttpResponse()
+        resp['HX-Redirect'] = reverse('main:gameplay_result', kwargs={'token': token})
+        return resp
+
+    # ❓ Сұрақтар тізімі
+    questions_qs = (
+        game_task.questions
+        .select_related('question')
+        .order_by('order', 'pk')
+    )
+    questions = list(questions_qs)
+    total_questions = len(questions)
+
+    if total_questions == 0:
+        # Сұрақ жоқ → бірден аяқталды деп есептейміз
+        participant.is_finished = True
+        participant.finished_at = timezone.now()
+        participant.save(update_fields=['is_finished', 'finished_at'])
+
+        return render(request, 'app/main/gameplay/play/_finished.html', {
+            'participant': participant,
+            'session': session,
+            'game_task': game_task,
+        })
+
+    # Қанша сұраққа жауап берді?
+    attempts_count = participant.attempts.count()
+
+    if attempts_count >= total_questions:
+        # Барлық сұрақ біткен → finished
         if not participant.is_finished:
             participant.is_finished = True
             participant.finished_at = timezone.now()
             participant.save(update_fields=['is_finished', 'finished_at'])
 
-        if is_htmx:
-            return render(request, 'app/main/gameplay/play/_finished.html', {
-                'participant': participant,
-                'session': session,
-                'game_task': game_task,
-            })
+        return render(request, 'app/main/gameplay/play/_finished.html', {
+            'participant': participant,
+            'session': session,
+            'game_task': game_task,
+        })
 
-        return redirect('main:session_result', token=token)
+    # 🔹 Ағымдағы сұрақ – attempts_count индексі
+    current_gtq = questions[attempts_count]
+    current_question = current_gtq.question
 
-    next_gtq = questions[attempts_count]
-    next_question = next_gtq.question
+    # 🕒 Бұл сұрақты қашан бастады – time_spent үшін керек
+    if participant.current_question_id != current_question.id:
+        participant.current_question_id = current_question.id
+        participant.current_started_at = timezone.now()
+        participant.save(update_fields=['current_question_id', 'current_started_at'])
 
-    participant.current_question_id = next_question.id
-    participant.current_started_at = timezone.now()
-    participant.save(update_fields=['current_question_id', 'current_started_at'])
-
-    options = getattr(next_question, 'options', None)
+    # 🔘 Варианттар (тест үшін)
+    options = getattr(current_question, 'options', None)
     if options is not None:
-        options = options.all()
+        options = options.all().order_by('?')
 
     context = {
         'participant': participant,
         'session': session,
         'game_task': game_task,
-        'question': next_question,
-        'gtq': next_gtq,
+        'question': current_question,
+        'gtq': current_gtq,
         'options': options,
         'index': attempts_count + 1,
         'total_questions': total_questions,
-        'last_answer_correct': is_correct,
-    }
-    if is_htmx:
-        return render(request, 'app/main/gameplay/play/_question.html', context)
 
-    return redirect('main:session_play', token=token)
+        # Review режимінен айырмашылық үшін:
+        'last_answer_correct': None,
+        # Қаласаң, future үшін:
+        # 'question_limit': current_question.question_limit,
+        # 'level': current_question.level,
+    }
+
+    return render(request, 'app/main/gameplay/play/_question.html', context)
 
 
 # gameplay_result_view
@@ -380,6 +545,7 @@ def gameplay_result_view(request, token):
     if session.is_pending():
         return redirect('main:gameplay_waiting', token=token)
 
+    # 🧮 Лидерборд статистикасы (сенің бар кодың)
     participants_qs = (
         session.participants
         .all()
@@ -398,6 +564,15 @@ def gameplay_result_view(request, token):
     finished_count = participants_qs.filter(is_finished=True).count()
     avg_score = participants_qs.aggregate(avg=Avg('score'))['avg']
 
+    # 🔎 Жеке сұрақтар бойынша нәтижелер
+    attempts = (
+        QuestionAttempt.objects
+        .filter(participant=participant)
+        .select_related('question')
+        .prefetch_related('test_answers__selected_options', 'question__options')
+        .order_by('pk')  # немесе 'created_at', егер өріс бар болса
+    )
+
     context = {
         'participant': participant,
         'session': session,
@@ -406,6 +581,8 @@ def gameplay_result_view(request, token):
         'total_participants': total,
         'finished_count': finished_count,
         'avg_score': avg_score,
+
+        'attempts': attempts,  # 🔥 жаңа
     }
     return render(request, 'app/main/gameplay/result/page.html', context)
 

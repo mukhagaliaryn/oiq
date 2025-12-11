@@ -22,8 +22,16 @@
             </div>
         </div>
 
-        <div id="question-container">
-            {% include "app/main/play/_question.html" %}
+        <div id="question-container"
+            class="bg-white rounded-2xl p-4">
+            <div
+                hx-get="{% url 'main:gameplay_question' participant.token %}"
+                hx-trigger="load"
+                hx-target="#question-container"
+                hx-swap="innerHTML"
+            >
+                <p class="text-sm text-slate-500">Сұрақ жүктелуде...</p>
+            </div>
         </div>
     </div>
 </div>

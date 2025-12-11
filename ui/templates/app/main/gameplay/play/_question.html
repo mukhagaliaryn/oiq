@@ -1,57 +1,80 @@
-{# app/main/play/_question.html #}
-
+{# 1) Сұрақ мәтіні #}
 <h2 class="text-lg font-semibold text-slate-900 mb-4">
     {{ question.body|safe }}
 </h2>
 
+{# 2) Прогресс #}
+<p class="mb-3 text-xs text-slate-500 text-right">
+    Сұрақ {{ index }} / {{ total_questions }}
+</p>
+
+{# 3) Жауап беру формасы #}
 <form
     method="post"
-    action="{% url 'main:session_answer' participant.token %}"
-    hx-post="{% url 'main:session_answer' participant.token %}"
+    action="{% url 'main:gameplay_answer' participant.token %}"
+    hx-post="{% url 'main:gameplay_answer' participant.token %}"
     hx-target="#question-container"
     hx-swap="innerHTML"
     class="space-y-3"
 >
     {% csrf_token %}
 
-    {% if options %}
-        {# question_type-ке байланысты radio / checkbox таңдай аласың #}
-        {% with q_type=question.question_type|default:"simple" %}
-            {% if q_type == "multiple" %}
-                {% for opt in options %}
-                    <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
-                        <input
-                            type="checkbox"
-                            name="options"
-                            value="{{ opt.id }}"
-                            class="mt-1"
-                        >
-                        <span class="text-sm text-slate-800">
-                            {{ opt.answer|safe }}
-                        </span>
-                    </label>
-                {% endfor %}
+    {% with q_format=question.format.code v_code=question.variant.code|default_if_none:"" %}
+        
+        {% if q_format == "test" %}
+            {% if options %}
+                {# Multiple choice #}
+                {% if v_code == "multiple" %}
+                    {% for opt in options %}
+                        <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                            <input
+                                type="checkbox"
+                                name="options"
+                                value="{{ opt.id }}"
+                                class="mt-1"
+                            >
+                            <span class="text-sm text-slate-800">
+                                {{ opt.answer|safe }}
+                            </span>
+                        </label>
+                    {% endfor %}
+
+                {# Single choice #}
+                {% else %}
+                    {% for opt in options %}
+                        <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                            <input
+                                type="radio"
+                                name="options"
+                                value="{{ opt.id }}"
+                                class="mt-1"
+                            >
+                            <span class="text-sm text-slate-800">
+                                {{ opt.answer|safe }}
+                            </span>
+                        </label>
+                    {% endfor %}
+                {% endif %}
+
             {% else %}
-                {% for opt in options %}
-                    <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
-                        <input
-                            type="radio"
-                            name="options"
-                            value="{{ opt.id }}"
-                            class="mt-1"
-                        >
-                        <span class="text-sm text-slate-800">
-                            {{ opt.answer|safe }}
-                        </span>
-                    </label>
-                {% endfor %}
+                <p class="text-sm text-slate-500">Бұл тест сұраққа жауап нұсқалары анықталмаған.</p>
             {% endif %}
-        {% endwith %}
-    {% else %}
-        <p class="text-sm text-slate-500">
-            Бұл сұраққа жауап нұсқалары анықталмаған.
-        </p>
-    {% endif %}
+
+        {% elif q_format == "open" %}
+            <textarea
+                name="answer"
+                rows="3"
+                class="w-full border border-border-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary-600"
+                placeholder="Жауабыңызды жазыңыз..."
+            ></textarea>
+
+        {% else %}
+            <p class="text-sm text-slate-500">
+                Бұл форматтағы сұрақ әзірге конфигурацияланбаған ({{ q_format }}).
+            </p>
+        {% endif %}
+
+    {% endwith %}
 
     <button
         type="submit"
@@ -60,23 +83,3 @@
         Жауап беру
     </button>
 </form>
-
-{% if last_answer_correct is not None %}
-  <div class="mb-3 rounded-xl border px-3 py-2 text-sm
-              {% if last_answer_correct %}
-                  border-emerald-200 bg-emerald-50 text-emerald-800
-              {% else %}
-                  border-rose-200 bg-rose-50 text-rose-800
-              {% endif %}
-  ">
-    {% if last_answer_correct %}
-      ✅ Дұрыс жауап бердіңіз!
-    {% else %}
-      ❌ Бұл жолы қате жауап бердіңіз.
-    {% endif %}
-  </div>
-{% endif %}
-
-<p class="mt-2 text-xs text-slate-400 text-right">
-    Сұрақ {{ index }} / {{ total_questions }}
-</p>

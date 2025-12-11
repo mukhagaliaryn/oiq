@@ -1,0 +1,79 @@
+<div class="mb-3 rounded-xl border px-3 py-2 text-sm
+    {% if last_answer_correct %}
+        border-emerald-200 bg-emerald-50 text-emerald-800
+    {% else %}
+        border-rose-200 bg-rose-50 text-rose-800
+    {% endif %}
+">
+    {% if last_answer_correct %}
+        ✅ Дұрыс жауап!
+    {% else %}
+        ❌ Қате жауап!
+    {% endif %}
+</div>
+
+{# 2) Сұрақ #}
+<h2 class="text-lg font-semibold text-slate-900 mb-4">
+    {{ question.body|safe }}
+</h2>
+
+{# 3) Прогресс #}
+<p class="mb-3 text-xs text-slate-500 text-right">
+    Сұрақ {{ index }} / {{ total_questions }}
+</p>
+
+{# 4) Опцияларды бояу #}
+<div class="space-y-3">
+
+    {% for opt in options %}
+        {% with opt_id=opt.id %}
+            {% if opt_id in correct_ids and opt_id in selected_ids %}
+                {% with color="border-emerald-400 bg-emerald-50 text-emerald-900" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                        <input disabled type="checkbox" class="mt-1"
+                            {% if opt_id in selected_ids %} checked {% endif %}
+                        >
+                        <span class="text-sm">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+
+            {% elif opt_id in correct_ids %}
+                {% with color="border-emerald-300 bg-white text-emerald-700" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                        <input disabled type="checkbox" class="mt-1">
+                        <span class="text-sm">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+
+            {% elif opt_id in selected_ids %}
+                {% with color="border-rose-400 bg-rose-50 text-rose-900" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                        <input disabled type="checkbox" class="mt-1" checked>
+                        <span class="text-sm">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+
+            {% else %}
+                {% with color="border-border-200 bg-white text-slate-800" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                        <input disabled type="checkbox" class="mt-1">
+                        <span class="text-sm">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+
+</div>
+
+{# 5) Auto-next #}
+<div class="mt-4 text-xs text-slate-400 text-right">
+    Келесі сұрақ жүктелуде...
+</div>
+
+<div
+    hx-get="{% url 'main:gameplay_question' participant.token %}"
+    hx-trigger="load delay:1500ms"
+    hx-target="#question-container"
+    hx-swap="innerHTML"
+></div>

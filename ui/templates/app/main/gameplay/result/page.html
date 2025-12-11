@@ -41,18 +41,18 @@
             </p>
             <p class="text-sm text-slate-700">
                 {% if position %}
-                Сіз <span class="font-semibold">{{ position }}</span>-орындасыз
-                <span class="text-slate-500 text-xs">/ {{ total_participants }} қатысушының ішінде</span>.
+                    Сіз <span class="font-semibold">{{ position }}</span>-орындасыз
+                    <span class="text-slate-500 text-xs">/ {{ total_participants }} қатысушының ішінде</span>.
                 {% else %}
-                Орныңыз анықталмады.
+                    Орныңыз анықталмады.
                 {% endif %}
             </p>
             <p class="mt-2 text-xs text-slate-500">
                 Жалпы орташа ұпай:
                 {% if avg_score %}
-                <span class="font-medium text-slate-700">{{ avg_score|floatformat:1 }}</span>
+                    <span class="font-medium text-slate-700">{{ avg_score|floatformat:1 }}</span>
                 {% else %}
-                —
+                    —
                 {% endif %}
                 · Аяқтағандар:
                 <span class="font-medium text-slate-700">
@@ -72,6 +72,99 @@
                 Нәтижеіңізді жақсарту үшін қай сұрақтарда қате жібергеніңізді талдап көріңіз.
             </p>
         </div>
+
+        {# 🔥 ЖАҢА БӨЛІМ: Жеке сұрақтар #}
+        {% if attempts %}
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 max-h-96 overflow-y-auto">
+                <p class="text-xs uppercase tracking-wide text-slate-400 font-medium mb-1">
+                    Сұрақтар бойынша нәтиже
+                </p>
+
+                {% for attempt in attempts %}
+                    {% with q=attempt.question %}
+                        <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-xs font-medium text-slate-500">
+                                    Сұрақ {{ forloop.counter }}
+                                </p>
+                                <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium
+                                    {% if attempt.is_correct %}
+                                        bg-emerald-50 text-emerald-700 border border-emerald-200
+                                    {% else %}
+                                        bg-rose-50 text-rose-700 border border-rose-200
+                                    {% endif %}
+                                ">
+                                    {% if attempt.is_correct %}
+                                        ✅ Дұрыс
+                                    {% else %}
+                                        ❌ Қате
+                                    {% endif %}
+                                    · {{ attempt.score_delta }}
+                                </span>
+                            </div>
+
+                            <div class="text-sm text-slate-900">
+                                {{ q.body|safe }}
+                            </div>
+
+                            {# Варианттар (test сұрақтар үшін) #}
+                            {% with selected_options=attempt.testanswer.selected_options.all %}
+                                {% if q.options.all %}
+                                    <div class="mt-2 space-y-1.5">
+                                        {% for opt in q.options.all %}
+                                            {% if opt.is_correct and opt in selected_options %}
+                                                {% with color="border-emerald-400 bg-emerald-50 text-emerald-900" %}
+                                                    <div class="flex items-start gap-2 border rounded-xl px-3 py-1.5 text-xs {{ color }}">
+                                                        <span class="mt-0.5">●</span>
+                                                        <span class="leading-snug">
+                                                            {{ opt.answer|safe }}
+                                                        </span>
+                                                    </div>
+                                                {% endwith %}
+
+                                            {% elif opt.is_correct %}
+                                                {% with color="border-emerald-300 bg-white text-emerald-700" %}
+                                                    <div class="flex items-start gap-2 border rounded-xl px-3 py-1.5 text-xs {{ color }}">
+                                                        <span class="mt-0.5">○</span>
+                                                        <span class="leading-snug">
+                                                            {{ opt.answer|safe }}
+                                                        </span>
+                                                    </div>
+                                                {% endwith %}
+
+                                            {% elif opt in selected_options %}
+                                                {% with color="border-rose-400 bg-rose-50 text-rose-900" %}
+                                                    <div class="flex items-start gap-2 border rounded-xl px-3 py-1.5 text-xs {{ color }}">
+                                                        <span class="mt-0.5">●</span>
+                                                        <span class="leading-snug">
+                                                            {{ opt.answer|safe }}
+                                                        </span>
+                                                    </div>
+                                                {% endwith %}
+
+                                            {% else %}
+                                                {% with color="border-slate-200 bg-white text-slate-800" %}
+                                                    <div class="flex items-start gap-2 border rounded-xl px-3 py-1.5 text-xs {{ color }}">
+                                                        <span class="mt-0.5">○</span>
+                                                        <span class="leading-snug">
+                                                            {{ opt.answer|safe }}
+                                                        </span>
+                                                    </div>
+                                                {% endwith %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
+                            <p class="mt-1 text-[11px] text-slate-400">
+                                Уақыт: {{ attempt.time_spent }} с · Ұпай: {{ attempt.score_delta }}
+                            </p>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <div class="pt-1 flex justify-center">
             <p class="text-xs text-slate-400">
