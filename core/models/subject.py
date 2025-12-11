@@ -114,6 +114,7 @@ class Question(models.Model):
         related_name='questions', verbose_name=_('Variant')
     )
     level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
+    question_limit = models.PositiveSmallIntegerField(_('Question Limit (min)'), default=30)
     date_in = models.DateField(_('Date in'), auto_now_add=True)
 
     class Meta:

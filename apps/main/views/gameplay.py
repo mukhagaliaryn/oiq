@@ -161,16 +161,16 @@ def gameplay_waiting_poll_fragment(request, token):
 
 # gameplay_play page
 # ----------------------------------------------------------------------------------------------------------------------
+@require_GET
 def gameplay_play_view(request, token):
     participant = get_object_or_404(
         Participant.objects.select_related('session', 'session__game_task'),
         token=token,
     )
+
     session_token = request.session.get('current_game_participant_token')
     if session_token != str(participant.token):
-        resp = HttpResponse()
-        resp['HX-Redirect'] = reverse('main:gameplay_join')
-        return resp
+        return redirect('main:gameplay_join')
 
     session = participant.session
     game_task = session.game_task
@@ -178,7 +178,7 @@ def gameplay_play_view(request, token):
     if session.is_pending():
         return redirect('main:gameplay_waiting', token=token)
 
-    if session.is_finished():
+    if session.is_time_over() or session.is_finished():
         return redirect('main:gameplay_result', token=token)
 
     if participant.is_finished:
@@ -191,8 +191,14 @@ def gameplay_play_view(request, token):
     )
     questions = list(questions_qs)
     total_questions = len(questions)
-    attempts_count = participant.attempts.count()
 
+    if total_questions == 0:
+        participant.is_finished = True
+        participant.finished_at = timezone.now()
+        participant.save(update_fields=['is_finished', 'finished_at'])
+        return redirect('main:gameplay_result', token=token)
+
+    attempts_count = participant.attempts.count()
     if attempts_count >= total_questions:
         if not participant.is_finished:
             participant.is_finished = True
