@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.translation import gettext_lazy as _
-
 from core.forms.subject import QuestionForm, OptionForm
 from core.models import Subject, Chapter, Topic, Question, QuestionFormat, QuestionVariant, Option
 from core.admin.mixins import LinkedAdminMixin
@@ -24,10 +23,11 @@ class ChapterInline(LinkedAdminMixin, admin.TabularInline):
 @register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ( 'name', 'order', )
+    search_fields = ('name', )
     inlines = (ChapterInline, )
 
 
-# Subject admin
+# Chapter admin
 # ----------------------------------------------------------------------------------------------------------------------
 # TopicInline
 class TopicInline(LinkedAdminMixin, admin.TabularInline):
@@ -44,6 +44,8 @@ class TopicInline(LinkedAdminMixin, admin.TabularInline):
 @register(Chapter)
 class ChapterAdmin(LinkedAdminMixin, admin.ModelAdmin):
     list_display = ( 'title', 'order', )
+    list_filter = ('subject', )
+    search_fields = ('title', 'subject__name', )
     inlines = (TopicInline, )
     readonly_fields = ('detail_link', )
 

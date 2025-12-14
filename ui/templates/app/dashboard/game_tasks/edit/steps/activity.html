@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h2 class="font-medium text-xl">Интерактив түрін таңдау:</h2>
+    <h2 class="font-black text-xl">Интерактив түрін таңдау:</h2>
 
     <form
         x-data="{ selectedActivity: '{{ game_task.activity_id|default_if_none:'' }}' }"
@@ -12,7 +12,7 @@
 
         {% if games %}
             <div class="grid gap-2">
-                <h4 class="font-medium">Ойын түрлері</h4>
+                <h4 class="font-black">Ойын түрлері</h4>
 
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in games %}
@@ -64,7 +64,7 @@
 
         {% if simulators %}
             <div class="grid gap-4">
-                <h3 class="text-lg font-medium">Симуляторлар</h3>
+                <h4 class="font-black">Симуляторлар</h4>
 
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in simulators %}

@@ -1,21 +1,5 @@
 <div x-data="{ name: '{{ game_task.name|escapejs }}' }" class="grid gap-4">
-    <h2 class="font-medium text-xl">Атауы мен сипаттамасы</h2>
-
-    <div class="flex items-center justify-between border-b border-border-200">
-        <div class="flex gap-2 py-2">
-            <span>Интерактив түрі:</span>
-            {% if game_task.activity %}
-                <span class="font-medium">{{ game_task.activity.name }}</span>
-            {% else %}
-                <span class="italic text-muted">таңдалмаған</span>
-            {% endif %}
-        </div>
-
-        <div class="flex gap-2 py-2">
-            <span>Таңдалған сұрақтар:</span>
-            <span class="font-medium">{{ selected_questions_count }}</span>
-        </div>
-    </div>
+    <h2 class="font-black text-xl">Атауы мен сипаттамасы</h2>
 
     <div class="flex gap-8 items-start flex-col lg:flex-row">
         <!-- Сол жақ: форма -->

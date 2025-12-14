@@ -61,6 +61,7 @@
         </div>
     </div> -->
 
+    <!-- Сессиялар -->
     <div class="grid gap-2">
         {% for item in sessions %}
             <div 
@@ -139,7 +140,7 @@
                     <button 
                         x-on:click.prevent="open = !open"
                         type="button" 
-                        class="p-2 rounded-xl hidden cursor-pointer group-hover:flex hover:bg-primary-50"
+                        class="hidden p-2 rounded-xl cursor-pointer transition-all text-muted group-hover:flex hover:bg-primary-50 active:scale-95 focus:flex focus:ring-2 focus:ring-primary-600"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">

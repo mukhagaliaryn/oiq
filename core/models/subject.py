@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils.html import strip_tags
 
 
 # Subject
@@ -114,7 +113,7 @@ class Question(models.Model):
         related_name='questions', verbose_name=_('Variant')
     )
     level = models.CharField(_('Level'), choices=LEVEL, max_length=16, default='easy')
-    question_limit = models.PositiveSmallIntegerField(_('Question Limit (min)'), default=30)
+    question_limit = models.PositiveSmallIntegerField(_('Question limit (sec)'), default=30)
     date_in = models.DateField(_('Date in'), auto_now_add=True)
 
     class Meta:
@@ -122,7 +121,7 @@ class Question(models.Model):
         verbose_name_plural = _('Questions')
 
     def __str__(self):
-        return f'#{self.pk}-question'
+        return _('#{}-question').format(self.pk)
 
 
 # Question variants
@@ -141,4 +140,4 @@ class Option(models.Model):
         verbose_name_plural = _('Options')
 
     def __str__(self):
-        return f'#{self.pk}-option'
+        return _('#{}-option').format(self.pk)

@@ -3,7 +3,7 @@
 {% block title %}{{ game_task }}{% endblock title %}
 
 {% block dashboard_layout %}
-<div class="max-w-screen-lg w-full mx-auto p-4">
+<div class="max-w-5xl w-full mx-auto p-4">
     <div class="flex items-start justify-between py-8">
         <div class="flex items-start gap-4">
             <div class="w-36 h-36 flex justify-center items-center rounded-xl bg-primary-50">
@@ -15,7 +15,7 @@
                 </lord-icon>
             </div>
             <div class="grid gap-2 items-start">
-                <h1 class="text-xl md:text-2xl font-medium">{{ game_task.name }}</h1>
+                <h2 class="text-xl md:text-2xl font-black">{{ game_task.name }}</h2>
                 <div class="flex">
                     <div class="flex gap-1 items-center bg-primary-100 py-1 px-2 rounded-xl text-primary-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -30,7 +30,7 @@
                             <path
                                 d="M9 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2.172a2 2 0 0 1-.586 1.414l-1.56 1.56a1.207 1.207 0 0 1-1.708 0l-1.56-1.56A2 2 0 0 1 9 5.172z" />
                         </svg>
-                        <span class="block text-sm">{{ game_task.activity.get_activity_type_display }}</span>
+                        <span class="block text-xs">{{ game_task.activity.get_activity_type_display }}</span>
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div class="grid gap-2">
+        <div class="grid gap-4">
             <form
                 method="post"
                 action="{% url 'dashboard:session_create' game_task.id %}"
@@ -75,41 +75,50 @@
 
                 <button
                     type="submit"
-                    class="
-                        w-full flex items-center gap-2 px-4 py-2 rounded-xl font-medium bg-primary-600 text-white cursor-pointer transition-all 
-                        hover:bg-primary-700 active:scale-95 focus:ring-2 focus:ring-primary-300
-                    "
+                    class="relative grid group cursor-pointer"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus">
-                        <path d="M12 2a10 10 0 0 1 7.38 16.75" />
-                        <path d="M12 8v8" />
-                        <path d="M16 12H8" />
-                        <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
-                        <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
-                        <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
-                        <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
-                    </svg>
-                    <span>Жаңа сессия</span>
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                    <span class="
+                        relative w-full flex gap-2 justify-center items-center px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                        group-hover:bg-primary-500 group-active:translate-y-1.5
+                        "
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus">
+                            <path d="M12 2a10 10 0 0 1 7.38 16.75" />
+                            <path d="M12 8v8" />
+                            <path d="M16 12H8" />
+                            <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
+                            <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
+                            <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
+                            <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
+                        </svg>
+                        Жаңа сессия
+                    </span>
                 </button>
             </form>
+
             <div x-data="{ open: false, confirmDelete: false }" id="gt_{{ game_task.id }}" class="relative">
                 <button
                     x-on:click.prevent="open = !open"
                     type="button"
-                    class="
-                        w-full cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl font-medium border border-border-200 bg-white transition-all 
-                        hover:shadow active:scale-95 focus:ring-2 focus:ring-secondary-200
-                    "
+                    class="relative grid group w-full cursor-pointer"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings">
-                        <path
-                            d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    <span>Баптаулар</span>
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
+                    <span class="
+                        relative w-full flex gap-2 justify-center px-4 py-2 rounded-xl bg-white border border-border-300 font-medium 
+                        group-hover:bg-secondary-50 group-active:translate-y-1.5
+                        "
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings">
+                            <path
+                                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        Баптаулар
+                    </span>
                 </button>
 
                 <!-- Әрекеттер -->
@@ -180,22 +189,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <a 
-                href="#"
-                class="
-                    flex items-center gap-2 px-4 py-2 rounded-xl font-medium border border-border-200 bg-white transition-all 
-                    hover:shadow active:scale-95 focus:ring-2 focus:ring-secondary-200
-                "
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-presentation-icon lucide-presentation">
-                    <path d="M2 3h20" />
-                    <path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3" />
-                    <path d="m7 21 5-5 5 5" />
-                </svg>
-                <span>Демонстрация</span>
-            </a> -->
         </div>
     </div>
 

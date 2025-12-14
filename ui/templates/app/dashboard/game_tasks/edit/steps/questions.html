@@ -1,8 +1,8 @@
 <div class="grid gap-4">
-    <h2 class="font-medium text-xl">Сұрақтарды генерациялау:</h2>
+    <h2 class="font-black text-xl">Сұрақтарды генерациялау:</h2>
 
     {% if error_message %}
-        <div class="flex gap-2 items-center px-4 py-2 rounded-xl text-sm bg-amber-50 text-amber-500">
+        <div class="flex gap-2 items-center justify-center px-4 py-2 rounded-xl text-sm bg-amber-50 text-amber-500">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info">
                 <circle cx="12" cy="12" r="10" />
@@ -13,27 +13,9 @@
         </div>
     {% endif %}
 
-    <div class="flex items-center justify-between border-b border-border-200">
-        <div class="flex gap-2 py-2">
-            <span>Интерактив түрі:</span>
-            {% if game_task.activity %}
-                <span class="font-medium">{{ game_task.activity.name }}</span>
-            {% else %}
-                <span class="italic text-muted">таңдалмаған</span>
-            {% endif %}
-        </div>
-
-        <div class="flex gap-2 py-2">
-            <span>Таңдалған сұрақтар:</span>
-            <span class="font-medium">{{ selected_questions|length }}</span>
-        </div>
-    </div>
-
     <div class="flex items-start flex-col lg:flex-row gap-8">
         <!-- Сол жақ: фильтр + генерация -->
         <div class="grid gap-4 w-full lg:max-w-sm">
-            <h4 class="font-medium">Фильтр арқылы генерация</h4>
-
             <form
                 x-data
                 hx-post="{% url 'dashboard:game_task_step_questions' pk=game_task.pk %}"
@@ -151,8 +133,6 @@
 
         <!-- Оң жақ: генерацияланған сұрақтардың тізімі -->
         <div class="flex-1 w-full grid gap-4">
-            <h4 class="font-medium">Генерацияланған сұрақтар</h4>
-
             <div class="h-[460px] overflow-y-auto grid gap-2">
                 {% for item in selected_questions %}
                     <div class="flex items-start justify-between px-4 py-2 border border-border-200 rounded-xl">

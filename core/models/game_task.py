@@ -78,9 +78,9 @@ class GameTaskSession(models.Model):
         related_name='sessions', verbose_name=_('Game Task')
     )
     status = models.CharField(_('Status'), max_length=16, choices=STATUS, default='pending')
-    started_at = models.DateTimeField(null=True, blank=True)
-    finished_at = models.DateTimeField(null=True, blank=True)
-    duration = models.PositiveIntegerField(_('Duration (minutes)'), default=0)
+    started_at = models.DateTimeField(_('Started at'), null=True, blank=True)
+    finished_at = models.DateTimeField(_('Finished at'), null=True, blank=True)
+    duration = models.PositiveIntegerField(_('Duration (min)'), default=0)
     pin_code = models.CharField(_('PIN code'), max_length=8, editable=False, unique=True, null=True)
 
     class Meta:
@@ -88,7 +88,7 @@ class GameTaskSession(models.Model):
         verbose_name_plural = _('Game Task Sessions')
 
     def __str__(self):
-        return f'{self.game_task} ({self.status})'
+        return f'{self.game_task} ({self.get_status_display()})'
 
     @property
     def deadline(self):
@@ -143,7 +143,6 @@ class Participant(models.Model):
     started_at = models.DateTimeField(_('Started at'), blank=True, null=True)
     finished_at = models.DateTimeField(_('Finished at'), blank=True, null=True)
     is_finished = models.BooleanField(_('Is finished'), default=False)
-
     current_question_id = models.PositiveIntegerField(_('Current question ID'), null=True, blank=True)
     current_started_at = models.DateTimeField(_('Current question started at'), null=True, blank=True)
 
@@ -166,7 +165,7 @@ class QuestionAttempt(models.Model):
         related_name='attempts', verbose_name=_('Question')
     )
     is_correct = models.BooleanField(_('Is correct'), null=True, blank=True)
-    score_delta = models.IntegerField(_('Score delta'), default=0)
+    score = models.IntegerField(_('Score'), default=0)
     time_spent = models.PositiveIntegerField(_('Time spent (seconds)'), default=0)
     answered_at = models.DateTimeField(_('Answered at'), auto_now_add=True)
 

@@ -8,5 +8,6 @@ from core.models import Activity
 class ActivityAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'activity_type', 'order', )
     list_filter = ('activity_type', )
+    search_fields = ('name', 'slug', 'activity_type', )
 
     filter_horizontal = ('question_formats', )

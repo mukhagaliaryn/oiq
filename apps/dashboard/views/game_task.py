@@ -3,13 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-
 from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic, GameTaskSession
 
 
-# GameTask CREATE
+# game_task_create page
 # ----------------------------------------------------------------------------------------------------------------------
-# game_task_create
 @login_required
 def game_task_create_view(request):
     user = request.user
@@ -22,7 +20,6 @@ def game_task_create_view(request):
         if last_draft:
             return redirect('dashboard:game_task_edit', pk=last_draft.pk)
 
-
     game_task = GameTask.objects.create(
         name='',
         owner=user,
@@ -33,7 +30,7 @@ def game_task_create_view(request):
     return redirect('dashboard:game_task_edit', pk=game_task.pk)
 
 
-# GameTask EDIT
+# game_task_edit page
 # ----------------------------------------------------------------------------------------------------------------------
 # get_game_task_current_step
 def get_game_task_current_step(game_task: GameTask) -> str:
@@ -46,7 +43,6 @@ def get_game_task_current_step(game_task: GameTask) -> str:
     return 'settings'
 
 
-# game_task_edit
 @login_required
 def game_task_edit_view(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
@@ -82,16 +78,13 @@ def game_task_step_activity(request, pk):
 
         return redirect('dashboard:game_task_step_questions', pk=game_task.pk)
 
-    return render(
-        request,
-        'app/dashboard/game_tasks/edit/steps/activity.html',
-        {
-            'game_task': game_task,
-            'activities': activities,
-            'games': games,
-            'simulators': simulators,
-        }
-    )
+    context = {
+        'game_task': game_task,
+        'activities': activities,
+        'games': games,
+        'simulators': simulators,
+    }
+    return render(request, 'app/dashboard/game_tasks/edit/steps/activity.html', context)
 
 
 # game_task_step_questions
@@ -126,7 +119,6 @@ def game_task_step_questions(request, pk):
         topic_id = None
 
     error_message = None
-
     if request.method == 'POST':
         if not subject_id:
             error_message = 'Алдымен пәнді таңдаңыз.'
@@ -212,11 +204,7 @@ def game_task_step_questions(request, pk):
         'current_topic_id': topic_id,
         'error_message': error_message,
     }
-    return render(
-        request,
-        'app/dashboard/game_tasks/edit/steps/questions.html',
-        context
-    )
+    return render(request, 'app/dashboard/game_tasks/edit/steps/questions.html', context)
 
 
 # game_task_step_settings
@@ -281,9 +269,8 @@ def game_task_delete_action(request, pk):
     return redirect('dashboard:game_tasks')
 
 
-# GameTask DETAIL
-# ----------------------------------------------------------------------------------------------------------------------
 # game_task_detail page
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_detail_view(request, pk):
     user = request.user
@@ -308,7 +295,7 @@ def game_task_detail_view(request, pk):
     return render(request, 'app/dashboard/game_tasks/game_task/page.html', context)
 
 
-# Game task questions page
+# game_task_questions page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_questions_view(request, pk):

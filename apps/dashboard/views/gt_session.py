@@ -61,10 +61,10 @@ def get_owned_session_or_404(user, pk, session_id):
     return game_task, session
 
 
-# gt_session redirect action
+# gt_session_action
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-def gt_session_view(request, pk, session_id):
+def gt_session_action(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
 
@@ -86,11 +86,11 @@ def gt_session_view(request, pk, session_id):
 def game_task_session_waiting_view(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
-
     if not session.is_pending():
         return redirect('teacher:session', pk=pk, session_id=session.pk)
 
     join_url = request.build_absolute_uri(f"/join/?pin={session.pin_code}")
+
     context = {
         'session': session,
         'game_task': game_task,
