@@ -34,7 +34,7 @@ urlpatterns = [
     path('game-tasks/<int:pk>/sessions/create/', gt_session.gt_session_create_view, name='session_create'),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/waiting/',
-        gt_session.game_task_session_waiting_view,
+        gt_session.gt_session_waiting_view,
         name='session_waiting'
     ),
     path(

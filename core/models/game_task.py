@@ -3,6 +3,7 @@ import uuid
 import random
 import string
 from datetime import timedelta
+from django.db.models.aggregates import Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -35,6 +36,9 @@ class GameTask(models.Model):
     class Meta:
         verbose_name = _('Game Task')
         verbose_name_plural = _('Game Tasks')
+
+    def get_total_duration(self):
+        return self.questions.aggregate(total=Sum('question__question_limit')).get('total') or 0
 
     def __str__(self):
         return self.name
@@ -72,6 +76,10 @@ class GameTaskSession(models.Model):
         ('active', _('Active')),
         ('finished', _('Finished')),
     )
+    SESSION_LIMIT = (
+        ('limited', _('Limited')),
+        ('limitless', _('Limitless')),
+    )
 
     game_task = models.ForeignKey(
         GameTask, on_delete=models.CASCADE,
@@ -80,7 +88,8 @@ class GameTaskSession(models.Model):
     status = models.CharField(_('Status'), max_length=16, choices=STATUS, default='pending')
     started_at = models.DateTimeField(_('Started at'), null=True, blank=True)
     finished_at = models.DateTimeField(_('Finished at'), null=True, blank=True)
-    duration = models.PositiveIntegerField(_('Duration (min)'), default=0)
+    duration = models.PositiveIntegerField(_('Duration (sec)'), default=0)
+    session_limit = models.CharField(_('Session limit'), max_length=16, choices=SESSION_LIMIT, default='limited')
     pin_code = models.CharField(_('PIN code'), max_length=8, editable=False, unique=True, null=True)
 
     class Meta:
@@ -93,8 +102,24 @@ class GameTaskSession(models.Model):
     @property
     def deadline(self):
         if self.started_at and self.duration:
-            return self.started_at + timedelta(minutes=self.duration)
+            return self.started_at + timedelta(seconds=self.duration)
         return None
+
+    @property
+    def remaining_seconds(self) -> int:
+        if self.session_limit != 'limited':
+            return 0
+        if not self.started_at:
+            return int(self.duration or 0)
+        dl = self.deadline
+        if not dl:
+            return 0
+        return max(0, int((dl - timezone.now()).total_seconds()))
+
+    @property
+    def remaining_mm_ss(self) -> str:
+        m, s = divmod(self.remaining_seconds, 60)
+        return f'{m}:{s:02d}'
 
     def is_time_over(self) -> bool:
         dl = self.deadline
