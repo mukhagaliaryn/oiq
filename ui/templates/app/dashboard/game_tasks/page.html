@@ -5,7 +5,7 @@
 {% block game_tasks_layout %}
     {% if game_tasks %}
         <div class="space-y-4">
-            <div class="flex justify-between items-center">
+            <div class="flex gap-4 justify-between items-center">
                 <div class="relative max-w-xs w-full">
                     <input 
                         type="text"
@@ -48,7 +48,11 @@
 
             <div class="grid">
                 {% for item in game_tasks %}
-                    <div x-data="{ open: false, confirmDelete: false }" id="gt-{{ item.id }}" class="relative">
+                    <div 
+                        x-data="{ open: false, confirmDelete: false }" 
+                        id="gt-{{ item.id }}" 
+                        class="relative"
+                    >
                         <a 
                             href="{% url 'dashboard:game_task_detail' item.pk %}"
                             class="flex justify-between items-center gap-4 p-2 border-b border-border-200 transition-all group"
@@ -63,7 +67,7 @@
                             </div>
 
                             <div class="flex-1 grid gap-1">
-                                <h4 class="font-medium text-base">{{ item.name }}</h4>
+                                <h4 class="font-bold">{{ item.name }}</h4>
                                 <div class="flex">
                                     <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
                                         <span>{{ item.activity.get_activity_type_display }}: </span>
@@ -95,12 +99,20 @@
                         >
                             <ul class="p-2">
                                 <li>
+                                    <a 
+                                        href="{% url 'dashboard:game_task_edit' pk=item.pk %}"
+                                        class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-subtle hover:bg-secondary-100"
+                                    >
+                                        Өзгерту
+                                    </a>
+                                </li>
+                                <li>
                                     <button 
                                         @click.prevent="open = false; confirmDelete = true"
                                         class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-destructive hover:bg-red-100"
                                     >
                                         Жою
-                                    </a>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -115,14 +127,11 @@
                         >
                             <div class="grid gap-4 bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
                                 <div class="space-y-2">
-                                    <h3 class="text-lg font-medium">
-                                        Жоюды растау
-                                    </h3>
+                                    <h3 class="font-black text-xl line-clamp-1">Жоюды растау</h3>
                                     <p class="text-muted">
                                         Шынымен жойғыңыз келе ме? Бұл әрекет қайтарылмайды.
                                     </p>
                                 </div>
-                                
                                 <div class="flex justify-end gap-2">
                                     <button
                                         type="button"
@@ -160,7 +169,7 @@
             <div class="grid gap-2 py-16">
                 <lord-icon
                     src="https://cdn.lordicon.com/ikagbcik.json"
-                    trigger="loop"
+                    trigger="in"
                     colors="primary:#f5f5f5,secondary:#d4d4d4"
                     style="width:128px; height:128px"
                     class="mx-auto"    

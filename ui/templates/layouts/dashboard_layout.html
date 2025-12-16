@@ -207,9 +207,9 @@
                 class="sticky top-0 h-14 z-20 flex items-center bg-white transition-all duration-200 border-border-50"
                 :class="headerScrolled ? 'border-b border-border-200' : 'border-b-0'"
             >
-                <div class="max-w-screen-2xl px-4 flex justify-between">
+                <div class="max-w-screen-2xl w-full px-4 flex items-center justify-between">
                     <button 
-                        class="md:hidden flex items-center justify-center p-2 rounded-xl transition-all cursor-pointer hover:bg-primary-200 hover:text-primary-600 active:scale-95"
+                        class="md:hidden flex items-center justify-center p-2 rounded-xl transition-all cursor-pointer hover:bg-primary-50 hover:text-primary-600 active:scale-95"
                         @click="sidebarOpen = true"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -219,6 +219,15 @@
                             <path d="M4 19h16" />
                         </svg>
                     </button>
+
+                    <a 
+                        href="{% url 'dashboard:dashboard' %}"
+                        class="inline-block md:hidden rounded-xl transition-all active:scale-95"
+                    >
+                        <img src="{% static 'images/logo.svg' %}" class="w-16" alt="">
+                    </a>
+
+                    <span></span>
                 </div>
             </header>
 

@@ -130,6 +130,14 @@
                 >
                     <ul class="p-2">
                         <li>
+                            <a 
+                                href="{% url 'dashboard:game_task_edit' pk=game_task.pk %}"
+                                class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-subtle hover:bg-secondary-100"
+                            >
+                                Өзгерту
+                            </a>
+                        </li>
+                        <li>
                             <button 
                                 @click.prevent="open = false; confirmDelete = true"
                                 class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-destructive hover:bg-red-100"
@@ -150,9 +158,7 @@
                 >
                     <div class="grid gap-4 bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
                         <div class="space-y-2">
-                            <h3 class="text-lg font-medium">
-                                Жоюды растау
-                            </h3>
+                            <h3 class="font-black text-xl line-clamp-1">Жоюды растау</h3>
                             <p class="text-muted">
                                 Шынымен жойғыңыз келе ме? Бұл әрекет қайтарылмайды.
                             </p>

@@ -1,8 +1,6 @@
 {% extends 'layouts/dashboard_layout.html' %}
 
-
 {% block title %}Ойын тапсырмасын өңдеу{% endblock %}
-
 
 {% block dashboard_layout %}
     <div 
@@ -14,11 +12,11 @@
             stepSettingsDone: {% if step_settings_done %}true{% else %}false{% endif %}
         }"
     >
-        <div class="flex items-center gap-4 border-b border-border-200 pb-3 text-sm">
+        <div class="flex items-center gap-4 border-b border-border-200 pb-4">
             <!-- 1. Интерактивтер -->
             <div class="flex items-center gap-2">
                 <div
-                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    class="w-8 h-8 flex items-center justify-center rounded-full border"
                     :class="stepActivityDone
                         ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                         : 'bg-secondary-100 text-muted border-border-200'"
@@ -31,7 +29,7 @@
                         <path d="M20 6 9 17l-5-5" />
                     </svg>
                 </div>
-                <span :class="stepActivityDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                <span :class="stepActivityDone ? 'text-emerald-700 font-bold' : 'text-muted'"
                 >
                     Интерактивтер
                 </span>
@@ -42,7 +40,7 @@
             <!-- 2. Сұрақтар -->
             <div class="flex items-center gap-2">
                 <div
-                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    class="w-8 h-8 flex items-center justify-center rounded-full border"
                     :class="stepQuestionsDone
                         ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                         : 'bg-secondary-100 text-muted border-border-200'"
@@ -55,7 +53,7 @@
                         <path d="M20 6 9 17l-5-5" />
                     </svg>
                 </div>
-                <span :class="stepQuestionsDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                <span :class="stepQuestionsDone ? 'text-emerald-700 font-bold' : 'text-muted'"
                 >
                     Сұрақтар
                 </span>
@@ -66,7 +64,7 @@
             <!-- 3. Баптаулар -->
             <div class="flex items-center gap-2">
                 <div
-                    class="w-8 h-8 flex items-center justify-center text-xs rounded-full border"
+                    class="w-8 h-8 flex items-center justify-center rounded-full border"
                     :class="stepSettingsDone
                         ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                         : 'bg-secondary-100 text-muted border-border-200'"
@@ -79,7 +77,7 @@
                         <path d="M20 6 9 17l-5-5" />
                     </svg>
                 </div>
-                <span :class="stepSettingsDone ? 'text-emerald-700 font-medium' : 'text-muted'"
+                <span :class="stepSettingsDone ? 'text-emerald-700 font-bold' : 'text-muted'"
                 >
                     Баптаулар
                 </span>

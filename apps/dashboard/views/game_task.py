@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+
+from apps.dashboard.services.game_task_edit import get_game_task_current_step
+from apps.dashboard.services.game_task_step_questions import generate_questions_for_game_task, \
+    replace_game_task_questions
 from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic, GameTaskSession
 
 
@@ -16,7 +20,10 @@ def game_task_create_view(request):
 
     if draft_count >= 3:
         last_draft = drafts.first()
-        messages.warning(request, 'Сізде 3 аяқталмаған ойын тапсырмасы бар. Алдымен солардың бірін аяқтаңыз.')
+        messages.warning(
+            request,
+            'Сізде 3 аяқталмаған ойын тапсырмасы бар. Алдымен солардың бірін аяқтаңыз.'
+        )
         if last_draft:
             return redirect('dashboard:game_task_edit', pk=last_draft.pk)
 
@@ -32,21 +39,9 @@ def game_task_create_view(request):
 
 # game_task_edit page
 # ----------------------------------------------------------------------------------------------------------------------
-# get_game_task_current_step
-def get_game_task_current_step(game_task: GameTask) -> str:
-    if game_task.activity_id is None:
-        return 'activity'
-    if not game_task.questions.exists():
-        return 'questions'
-    if not game_task.name:
-        return 'settings'
-    return 'settings'
-
-
 @login_required
 def game_task_edit_view(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
-
     current_step = get_game_task_current_step(game_task)
     step_activity_done = game_task.activity_id is not None
     step_questions_done = game_task.questions.exists()
@@ -91,6 +86,7 @@ def game_task_step_activity(request, pk):
 @login_required
 def game_task_step_questions(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
+
     base_qs = Question.objects.all()
     if game_task.activity:
         formats = game_task.activity.question_formats.all()
@@ -101,6 +97,9 @@ def game_task_step_questions(request, pk):
     subject_id = request.GET.get('subject_id') or request.POST.get('subject_id')
     chapter_id = request.GET.get('chapter_id') or request.POST.get('chapter_id')
     topic_id = request.GET.get('topic_id') or request.POST.get('topic_id')
+
+    selected_levels = []
+    error_message = None
 
     if not subject_id and game_task.subject_id:
         subject_id = str(game_task.subject_id)
@@ -118,14 +117,13 @@ def game_task_step_questions(request, pk):
         topics = Topic.objects.none()
         topic_id = None
 
-    error_message = None
     if request.method == 'POST':
         if not subject_id:
             error_message = 'Алдымен пәнді таңдаңыз.'
         else:
             if game_task.subject_id != int(subject_id):
                 game_task.subject_id = subject_id
-                game_task.save()
+                game_task.save(update_fields=['subject'])
 
             qs = base_qs.filter(topic__chapter__subject_id=subject_id)
             if chapter_id:
@@ -139,59 +137,23 @@ def game_task_step_questions(request, pk):
             except ValueError:
                 total_count = 0
 
-            if total_count <= 0:
-                error_message = 'Сұрақ санын дұрыс енгізіңіз.'
-            else:
-                if not selected_levels:
-                    level_codes = ['easy', 'medium', 'hard']
-                else:
-                    level_codes = selected_levels
+            result = generate_questions_for_game_task(
+                game_task=game_task,
+                qs=qs,
+                total_count=total_count,
+                selected_levels=selected_levels or None,
+            )
+            if result.picked:
+                replace_game_task_questions(game_task=game_task, questions=result.picked)
 
-                base_part = total_count // len(level_codes)
-                remainder = total_count % len(level_codes)
-
-                level_to_target_count = {}
-                for idx, code in enumerate(level_codes):
-                    extra = 1 if idx < remainder else 0
-                    level_to_target_count[code] = base_part + extra
-
-                GameTaskQuestion.objects.filter(game_task=game_task).delete()
-                picked_questions = []
-                total_picked = 0
-
-                for level_code in level_codes:
-                    need = level_to_target_count.get(level_code, 0)
-                    if need <= 0:
-                        continue
-
-                    qs_level = qs.filter(level=level_code)
-                    for q in qs_level.order_by('?')[:need]:
-                        picked_questions.append(q)
-                        total_picked += 1
-
-                if total_picked == 0:
-                    error_message = 'Берілген фильтр бойынша сұрақ табылмады.'
-                else:
-                    if total_picked < total_count:
-                        error_message = (
-                            f'Берілген фильтр бойынша тек {total_picked} сұрақ табылды. '
-                            f'Қалғаны базада жоқ.'
-                        )
-
-                    level_priority = {'easy': 0, 'medium': 1, 'hard': 2}
-                    picked_questions.sort(
-                        key=lambda q: (level_priority.get(q.level, 99), q.id)
-                    )
-                    order = 1
-                    for q in picked_questions:
-                        GameTaskQuestion.objects.create(game_task=game_task, question=q, order=order)
-                        order += 1
+            error_message = result.warning
 
     selected_questions = (
         GameTaskQuestion.objects.filter(game_task=game_task)
-        .select_related('question', 'question__topic', 'question__topic__chapter', )
+        .select_related('question', 'question__topic', 'question__topic__chapter')
         .order_by('order')
     )
+
     context = {
         'game_task': game_task,
         'subjects': subjects,
@@ -203,6 +165,7 @@ def game_task_step_questions(request, pk):
         'current_chapter_id': chapter_id,
         'current_topic_id': topic_id,
         'error_message': error_message,
+        'selected_levels': selected_levels
     }
     return render(request, 'app/dashboard/game_tasks/edit/steps/questions.html', context)
 
@@ -211,7 +174,6 @@ def game_task_step_questions(request, pk):
 @login_required
 def game_task_step_settings(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
-
     selected_questions_count = game_task.questions.count()
     can_publish = False
 
@@ -231,7 +193,6 @@ def game_task_step_settings(request, pk):
 
     context = {
         'game_task': game_task,
-        'selected_questions_count': selected_questions_count,
         'can_publish': can_publish,
     }
     return render(request, 'app/dashboard/game_tasks/edit/steps/settings.html', context)
@@ -253,7 +214,7 @@ def game_task_publish_view(request, pk):
 
         game_task.status = 'published'
         game_task.save()
-        messages.success(request, 'Ойын тапсырмасы сәтті сақталды!')
+        messages.success(request, 'Ойын тапсырмасы сақталды!')
 
         return redirect('dashboard:game_task_detail', pk=game_task.pk)
     return redirect('dashboard:game_task_step_settings', pk=game_task.pk)

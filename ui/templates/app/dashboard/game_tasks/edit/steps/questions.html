@@ -34,7 +34,7 @@
                         hx-swap="innerHTML"
                         hx-trigger="change"
                     >
-                        <option value="">Пәнді таңдаңыз</option>
+                        <option value="">-- Пәнді таңдаңыз --</option>
                         {% for s in subjects %}
                             <option value="{{ s.id }}"
                                     {% if current_subject_id and current_subject_id|add:'0' == s.id|add:'0' %}selected{% endif %}>
@@ -48,7 +48,7 @@
                     <span class="font-medium">Бөлім (Маңызды емес)</span>
                     <select
                         name="chapter_id"
-                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600 disabled:bg-secondary-100 disabled:text-muted"
                         {% if not current_subject_id %}disabled{% endif %}
                         hx-get="{% url 'dashboard:game_task_step_questions' pk=game_task.pk %}"
                         hx-target="#step-container"
@@ -70,7 +70,7 @@
                     <span class="font-medium">Тақырып (Маңызды емес)</span>
                     <select
                         name="topic_id"
-                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
+                        class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600 disabled:bg-secondary-100 disabled:text-muted"
                         {% if not current_chapter_id %}disabled{% endif %}
                     >
                         <option value="">Барлық тақырыптар</option>
@@ -86,15 +86,28 @@
                 <!-- Деңгейлер -->
                 <div class="grid gap-1">
                     <span class="font-medium">Деңгей:</span>
-                    <div class="flex flex-wrap gap-4">
+                    <div class="flex flex-wrap gap-2">
                         {% for code, label in levels %}
-                            <label class="flex items-center gap-2">
-                                <input 
-                                    type="checkbox" 
-                                    name="levels" 
-                                    value="{{ code }}" 
-                                    class="rounded-xl border-secondary-300 p-2">
-                                <span>{{ label }}</span>
+                            <label class="relative flex items-center gap-2 p-2 rounded-xl cursor-pointer select-none hover:bg-primary-50 has-checked:bg-primary-50">
+                                <input
+                                    type="checkbox"
+                                    name="levels"
+                                    value="{{ code }}"
+                                    class="peer sr-only"
+                                    {% if code in selected_levels %}checked{% endif %}
+                                />
+                                <span
+                                    class="
+                                        flex items-center justify-center w-5 h-5 rounded-md border border-border-200 bg-white
+                                        text-transparent transition-all peer-checked:bg-primary-600 peer-checked:border-primary-600 peer-checked:text-white
+                                    "
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                </span>
+                                <span class="text-sm font-medium text-secondary-700 peer-checked:text-primary-700">{{ label }}</span>
                             </label>
                         {% endfor %}
                     </div>
@@ -102,7 +115,7 @@
 
                 <!-- Сұрақ саны -->
                 <label class="grid gap-1">
-                    <span class="font-medium">Сұрақ саны:</span>
+                    <span class="font-bold">Сұрақ саны:</span>
                     <input 
                         type="number" 
                         name="count" 
@@ -133,11 +146,11 @@
 
         <!-- Оң жақ: генерацияланған сұрақтардың тізімі -->
         <div class="flex-1 w-full grid gap-4">
-            <div class="h-[460px] overflow-y-auto grid gap-2">
+            <div class="h-[460px] overflow-y-auto space-y-2">
                 {% for item in selected_questions %}
                     <div class="flex items-start justify-between px-4 py-2 border border-border-200 rounded-xl">
                         <div class="grid gap-2">
-                            <div class="flex gap-1 font-medium text-sm">
+                            <div class="flex gap-1 items-center font-medium">
                                 <span>{{ item.order }}.</span>
                                 <h5 class="line-clamp-1">{{ item.question.body|safe }}</h5>
                             </div>
@@ -159,8 +172,8 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="border border-dashed border-border-200 rounded-xl flex justify-center items-center">
-                        <span class="text-muted text-sm">Әзірге сұрақтар генерацияланған жоқ.</span>
+                    <div class="h-full border border-dashed border-border-200 rounded-xl flex justify-center items-center">
+                        <span class="text-muted">Әзірге сұрақтар генерацияланған жоқ.</span>
                     </div>
                 {% endfor %}
             </div>
