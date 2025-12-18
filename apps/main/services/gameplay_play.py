@@ -1,7 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.utils import timezone
+from core.models import Participant
 
 
+# Scoring жүйесі
+# ----------------------------------------------------------------------------------------------------------------------
 @dataclass
 class ScoreResult:
     score: int
@@ -9,8 +16,8 @@ class ScoreResult:
     time_spent: int
 
 
-BASE_MAX_SCORE = 1000  # өте жылдам және дұрыс жауап
-BASE_MIN_SCORE = 500   # өте баяу болса да, дұрыс жауап үшін минималды бонус
+BASE_MAX_SCORE = 1000
+BASE_MIN_SCORE = 500
 
 
 def calculate_question_score(
@@ -50,7 +57,7 @@ def calculate_question_score(
     # МОДЕЛЬДЕ: question_limit = PositiveSmallIntegerField(default=30)
     # Біз оны СЕКУНД деп қабылдаймыз.
     # Егер реально minutes сақтағың келсе, answer view-да алдын ала * 60 жасайсың.
-    t_limit = getattr(question, "question_limit", None) or 0
+    t_limit = getattr(question, 'question_limit', None) or 0
 
     # Егер лимит 0 немесе теріс болса – speed бонус қолданбаймыз, тек мин. бонус
     if t_limit <= 0:
@@ -82,3 +89,56 @@ def calculate_question_score(
         is_correct=True,
         time_spent=time_spent,
     )
+
+
+# Helpers (ортақ guard / redirect / queries)
+# ----------------------------------------------------------------------------------------------------------------------
+def hx_redirect(url: str) -> HttpResponse:
+    resp = HttpResponse()
+    resp['HX-Redirect'] = url
+    return resp
+
+
+def session_token_matches(request, participant: Participant) -> bool:
+    return request.session.get('current_game_participant_token') == str(participant.token)
+
+
+def cleanup_session_token_if_matches(request, participant: Participant) -> None:
+    if request.session.get('current_game_participant_token') == str(participant.token):
+        request.session.pop('current_game_participant_token', None)
+
+
+def get_participant_or_redirect(request, token, *, for_htmx: bool):
+    participant = get_object_or_404(
+        Participant.objects.select_related('session', 'session__game_task'),
+        token=token,
+    )
+    if not session_token_matches(request, participant):
+        url = reverse('main:gameplay_join')
+        return None, (hx_redirect(url) if for_htmx else redirect('main:gameplay_join'))
+    return participant, None
+
+
+def guard_session_state(participant: Participant, *, token, for_htmx: bool):
+    session = participant.session
+    if session.is_pending():
+        url = reverse('main:gameplay_waiting', kwargs={'token': token})
+        return None, (hx_redirect(url) if for_htmx else redirect('main:gameplay_waiting', token=token))
+    if session.is_time_over() or session.is_finished() or participant.is_finished:
+        url = reverse('main:gameplay_result', kwargs={'token': token})
+        return None, (hx_redirect(url) if for_htmx else redirect('main:gameplay_result', token=token))
+
+    return session, None
+
+
+def load_questions(game_task):
+    return list(
+        game_task.questions.select_related('question').order_by('order', 'pk')
+    )
+
+
+def finish_participant(participant: Participant):
+    if not participant.is_finished:
+        participant.is_finished = True
+        participant.finished_at = timezone.now()
+        participant.save(update_fields=['is_finished', 'finished_at'])

@@ -1,11 +1,11 @@
 from django.db import models
 import uuid
-import random
-import string
 from datetime import timedelta
 from django.db.models.aggregates import Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from core.services.game_task import generate_pin_code
 
 
 # GameTask
@@ -65,11 +65,6 @@ class GameTaskQuestion(models.Model):
 
 
 # GameTaskSession model
-def generate_pin_code(length: int = 6) -> str:
-    digits = string.digits
-    return ''.join(random.choice(digits) for _ in range(length))
-
-
 class GameTaskSession(models.Model):
     STATUS = (
         ('pending', _('Pending')),

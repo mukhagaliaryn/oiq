@@ -3,36 +3,35 @@
 {% block title %}{{ participant.nickname }}{% endblock %}
 
 {% block base %}
-<div class="min-h-screen flex justify-center items-center bg-slate-50">
-    <div class="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-border-200 p-6 space-y-4">
-        <div class="flex justify-between items-center text-sm text-slate-500">
+<div class="h-screen">
+    <header class="sticky top-0 z-10 w-full bg-white border-b border-border-200">
+        <div class="flex justify-between items-center p-4">
             <div>
-                <p class="font-medium text-slate-700">{{ game_task.name }}</p>
+                <h3 class="font-bold text-xl">{{ game_task.name }}</h3>
                 <p class="text-xs text-slate-400">
                     Сұрақ {{ index }} / {{ total_questions }}
                 </p>
             </div>
-            <div>
-                {% if session.status == 'active' %}
-                <span
-                    class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                    Ойын жүріп жатыр
-                </span>
-                {% endif %}
-            </div>
-        </div>
 
-        <div id="question-container"
-            class="bg-white rounded-2xl p-4">
-            <div
-                hx-get="{% url 'main:gameplay_question' participant.token %}"
-                hx-trigger="load"
-                hx-target="#question-container"
-                hx-swap="innerHTML"
-            >
-                <p class="text-sm text-slate-500">Сұрақ жүктелуде...</p>
+
+        </div>
+    </header>
+
+    <div class="h-full flex justify-center items-center">
+        <div class="w-full max-w-2xl p-4">
+            <div id="question-container"
+                class="bg-white rounded-2xl p-4">
+                <div
+                    hx-get="{% url 'main:gameplay_question' participant.token %}"
+                    hx-trigger="load"
+                    hx-target="#question-container"
+                    hx-swap="innerHTML"
+                >
+                    <p class="text-muted">Сұрақ жүктелуде...</p>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 {% endblock base %}
