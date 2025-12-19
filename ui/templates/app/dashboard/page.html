@@ -39,7 +39,7 @@
                             </span>
                         </a>
                     {% elif draft_count < 3 %}
-                        <div x-data="{ open: false }" class="relative w-full">
+                        <div x-data="{ open: false }">
                             <button
                                 type="button"
                                 @click="open = true"
@@ -55,15 +55,19 @@
                                 </span>
                             </button>
 
-                            <div x-show="open" class="fixed inset-0 z-40 bg-black/50"></div>
+                            
                             <!-- Модаль терезе -->
                             <div
                                 x-show="open"
                                 x-cloak
                                 @keydown.escape.window="open = false"
-                                class="fixed inset-0 z-50 p-4 flex items-center justify-center"
+                                @click="open = false"
+                                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                             >
-                                <div class="w-full max-w-md grid bg-white rounded-xl shadow">
+                                <div 
+                                    @click.stop 
+                                    class="w-full max-w-md grid bg-white rounded-xl shadow"
+                                >
                                     <div class="relative flex items-center p-4 border-b border-border-200">
                                         <h3 class="font-black text-xl line-clamp-1">Аяқталмаған ойын тапсырмалары</h3>
                                         <button

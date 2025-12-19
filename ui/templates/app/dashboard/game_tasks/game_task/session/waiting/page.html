@@ -80,9 +80,9 @@
                     <button 
                         x-on:click.prevent="settings = !settings"
                         type="button" 
-                        class="p-2 rounded-xl cursor-pointer hover:bg-primary-50"
+                        class="p-2 rounded-xl cursor-pointer hover:bg-primary-50 active:scale-90"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings">
                             <path
                                 d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
@@ -99,7 +99,10 @@
                         @close-settings.window="settings = false"
                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     >
-                        <div class="grid gap-4 bg-white text-left rounded-2xl shadow-lg w-full max-w-md p-6">
+                        <div 
+                            @click.stop
+                            class="grid gap-4 bg-white text-left rounded-2xl shadow-lg w-full max-w-md p-6"
+                        >
                             <h3 class="text-xl font-black">Баптаулар</h3>
                             <form
                                 method="post"
@@ -129,9 +132,16 @@
                                 <div class="flex justify-end gap-2">
                                     <button
                                         type="submit"
-                                        class="flex px-4 py-2 font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 cursor-pointer"
+                                        class="relative grid cursor-pointer group"
                                     >
-                                        Сақтау
+                                        <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                                        <span class="
+                                            relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                                            group-hover:bg-primary-500 group-active:translate-y-1.5
+                                            "
+                                        >
+                                            Сақтау
+                                        </span>
                                     </button>
                                 </div>
                             </form>
