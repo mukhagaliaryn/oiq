@@ -36,6 +36,14 @@
   --breakpoint-3xl: 1920px;
 
   --text-normal: 15px;
+  /* 
+    h1 - 4xl 
+    h2 - 2xl
+    h3 - xl
+    h4 - lg
+    h5 - base
+    h6 - normal  
+  */
 
   --font-roboto: "Roboto", "sans-serif";
   --font-inter: "Inter", sans-serif;

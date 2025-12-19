@@ -158,9 +158,9 @@
             <div class="space-y-2">
                 <a 
                     href="{% url 'dashboard:game_tasks' %}" 
-                    class="inline-flex items-center pl-3 pr-1 py-1 rounded-xl text-subtle transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
+                    class="inline-flex items-center pl-3 pr-1 py-1 rounded-xl transition-all hover:bg-primary-50 hover:text-primary-600 active:scale-95"
                 >
-                    <h4>Ойын тапсырмалары</h4>
+                    <h5 class="text-base font-bold">Ойын тапсырмалары</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                         class="lucide lucide-chevron-right-icon lucide-chevron-right">
@@ -198,7 +198,7 @@
                                     ></lord-icon>
                                 </div>
                                 <div class="space-y-2 p-2">
-                                    <h4 class="font-bold line-clamp-1">{{ item.name }}</h4>
+                                    <h6 class="font-bold line-clamp-1">{{ item.name }}</h6>
                                     <div class="flex">
                                         <div class="px-2 py-1 text-xs rounded-xl border border-border-200 text-muted">
                                             <span class="inline-block">{{ item.activity.get_activity_type_display }}: </span>

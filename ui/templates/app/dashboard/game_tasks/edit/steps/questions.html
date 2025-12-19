@@ -25,7 +25,7 @@
             >
                 {% csrf_token %}
                 <label class="grid gap-1">
-                    <span class="font-medium">Пән <span class="text-red-500">*</span></span>
+                    <span class="font-bold">Пән <span class="text-red-500">*</span></span>
                     <select
                         name="subject_id"
                         class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600"
@@ -45,7 +45,7 @@
                 </label>
 
                 <label class="grid gap-1 w-full">
-                    <span class="font-medium">Бөлім (Маңызды емес)</span>
+                    <span class="font-bold">Бөлім (Маңызды емес)</span>
                     <select
                         name="chapter_id"
                         class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600 disabled:bg-secondary-100 disabled:text-muted"
@@ -67,7 +67,7 @@
                 </label>
 
                 <label class="grid gap-1">
-                    <span class="font-medium">Тақырып (Маңызды емес)</span>
+                    <span class="font-bold">Тақырып (Маңызды емес)</span>
                     <select
                         name="topic_id"
                         class="w-full border border-border-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary-600 disabled:bg-secondary-100 disabled:text-muted"
@@ -85,7 +85,7 @@
 
                 <!-- Деңгейлер -->
                 <div class="grid gap-1">
-                    <span class="font-medium">Деңгей:</span>
+                    <span class="font-bold">Деңгей:</span>
                     <div class="flex flex-wrap gap-2">
                         {% for code, label in levels %}
                             <label class="relative flex items-center gap-2 p-2 rounded-xl cursor-pointer select-none hover:bg-primary-50 has-checked:bg-primary-50">
@@ -152,24 +152,26 @@
                         <div class="grid gap-2">
                             <div class="flex gap-1 items-center font-medium">
                                 <span>{{ item.order }}.</span>
-                                <h5 class="line-clamp-1">{{ item.question.body|safe }}</h5>
+                                <h6 class="line-clamp-1">{{ item.question.body|safe }}</h6>
                             </div>
-                            <div class="flex">
-                                <span class="flex px-1.5 py-0.5 text-xs border border-border-200 rounded-xl text-muted">
-                                    {{ item.question.variant }}
+                            <div class="flex gap-1">
+                                <span class="flex gap-1 items-center px-1.5 py-0.5 text-xs border border-border-200 rounded-xl text-muted">
+                                    {{ item.question.format }} <span class="w-0.5 h-0.5 rounded-full bg-muted"></span> {{ item.question.variant }}
+                                </span>
+                                <span class="flex px-1.5 py-0.5 border border-border-200 rounded-xl text-xs text-muted">
+                                    {{ item.question.question_limit }}сек
                                 </span>
                             </div>
                         </div>
                         
-                        <div class="flex">
-                            {% if item.question.level == 'easy' %}
-                                <span class="rounded-lg px-2 py-1 text-xs bg-green-100 text-green-600">{{ item.question.get_level_display }}</span>
-                            {% elif item.question.level == 'medium' %}
-                                <span class="rounded-lg px-2 py-1 text-xs bg-amber-100 text-amber-600">{{ item.question.get_level_display }}</span>
-                            {% elif item.question.level == 'hard' %}
-                                <span class="rounded-lg px-2 py-1 text-xs bg-red-100 text-red-600">{{ item.question.get_level_display }}</span>
-                            {% endif %}
-                        </div>
+                        <span class="
+                            flex rounded-xl px-1.5 py-0.5 text-xs border
+                            {% if item.question.level == 'easy' %}border-green-200 bg-green-100 text-green-600
+                            {% elif item.question.level == 'medium' %}border-amber-200 bg-amber-100 text-amber-600
+                            {% elif item.question.level == 'hard' %}border-red-200 bg-red-100 text-red-600{% endif %}
+                        ">
+                            {{ item.question.get_level_display }}
+                        </span>
                     </div>
                 {% empty %}
                     <div class="h-full border border-dashed border-border-200 rounded-xl flex justify-center items-center">

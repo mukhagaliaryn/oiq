@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Avg
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -8,11 +9,11 @@ from apps.dashboard.services.gt_session import get_owned_session_or_404
 from core.models import GameTask, GameTaskSession
 
 
-# game_task_session_create page
+# game_task_session_create action
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
 @require_POST
-def gt_session_create_view(request, pk):
+def gt_session_create_action(request, pk):
     user = request.user
     game_task = get_object_or_404(GameTask, pk=pk, owner=user, status='published')
     pending_sessions_count = GameTaskSession.objects.filter(game_task=game_task, status='pending').count()
@@ -33,10 +34,32 @@ def gt_session_create_view(request, pk):
     return redirect('dashboard:session_waiting', pk=pk, session_id=session.pk)
 
 
-# gt_session_action
+# gt_session_settings action
+@login_required
+@require_POST
+def gt_session_settings_action(request, pk, session_id):
+    user = request.user
+    game_task, session = get_owned_session_or_404(user, pk, session_id)
+    session_limit = request.POST.get('session_limit', 'limited')
+    session.session_limit = session_limit
+    session.save(update_fields=['session_limit'])
+    return HttpResponse(status=204)
+
+
+# game_task_delete action
+@login_required
+@require_POST
+def gt_session_delete_action(request, pk, session_id):
+    user = request.user
+    game_task, session = get_owned_session_or_404(user, pk, session_id)
+    session.delete()
+    return HttpResponse(status=204)
+
+
+# gt_session_route action
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-def gt_session_action(request, pk, session_id):
+def gt_session_route_action(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
 
@@ -62,7 +85,6 @@ def gt_session_waiting_view(request, pk, session_id):
         return redirect('dashboard:session', pk=pk, session_id=session.pk)
 
     join_url = request.build_absolute_uri(f"/join/?pin={session.pin_code}")
-
     context = {
         'session': session,
         'game_task': game_task,
@@ -183,15 +205,3 @@ def gt_session_finished_view(request, pk, session_id):
         'avg_score': avg_score,
     }
     return render(request, 'app/dashboard/game_tasks/game_task/session/summary/page.html', context)
-
-
-# game_task_delete action
-# ----------------------------------------------------------------------------------------------------------------------
-@login_required
-@require_POST
-def gt_session_delete_action(request, pk, session_id):
-    user = request.user
-    game_task, session = get_owned_session_or_404(user, pk, session_id)
-    session.delete()
-    messages.success(request, 'Ойын тапсырмасы жойылды!')
-    return redirect('dashboard:game_task_detail', pk=pk)

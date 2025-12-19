@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h2 class="font-black text-xl">Интерактив түрін таңдау:</h2>
+    <h3 class="font-black text-xl">Интерактив түрін таңдау:</h3>
 
     <form
         x-data="{ selectedActivity: '{{ game_task.activity_id|default_if_none:'' }}' }"
@@ -12,8 +12,7 @@
 
         {% if games %}
             <div class="grid gap-2">
-                <h4 class="font-black">Ойын түрлері</h4>
-
+                <h5 class="font-bold text-base">Ойын түрлері</h5>
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in games %}
                         <label 
@@ -64,7 +63,7 @@
 
         {% if simulators %}
             <div class="grid gap-4">
-                <h4 class="font-black">Симуляторлар</h4>
+                <h5 class="font-bold">Симуляторлар</h5>
 
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {% for item in simulators %}
@@ -72,7 +71,7 @@
                             class="block cursor-pointer"
                             x-data="{ checked: {% if game_task.activity_id == item.id %}'true'{% else %}'false'{% endif %} }"
                         >
-                            <input 
+                            <input
                                 type="radio" name="activity_id" value="{{ item.id }}"
                                 class="hidden peer"
                                 x-model="selectedActivity"

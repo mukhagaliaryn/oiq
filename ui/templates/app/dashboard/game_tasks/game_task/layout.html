@@ -71,8 +71,6 @@
                 target="_blank"
             >
                 {% csrf_token %}
-                <input type="hidden" name="duration" value="10">
-
                 <button
                     type="submit"
                     class="relative grid group cursor-pointer"
@@ -200,12 +198,12 @@
 
     <div class="grid gap-4">
         <nav class="flex">
-            {% url 'dashboard:game_task_detail' pk=game_task.pk as game_task_detail %}
+            {% url 'dashboard:game_task_detail' pk=game_task.id as game_task_detail %}
             <a 
                 href="{{ game_task_detail }}" 
                 class=
                 "
-                    flex gap-2 items-center px-4 py-2 border-b-4 transition-all 
+                    flex gap-1 items-center px-4 py-2 border-b-4 transition-all 
                     {% if request.path == game_task_detail %}border-b-primary-600 hover:bg-primary-50{% else %}border-b-transparent hover:bg-primary-50{% endif %}
                 "
             >
@@ -217,8 +215,7 @@
                     <path d="M7 16h12" />
                     <path d="M7 6h3" />
                 </svg>
-                <span>Сессиялар</span>
-
+                <span class="font-medium">Сессиялар</span>
                 <span class="font-medium">({{ sessions.count }})</span>
             </a>
 
@@ -226,7 +223,7 @@
             <a 
                 href="{{ game_task_questions }}" 
                 class="
-                    flex gap-2 items-center px-4 py-2 border-b-4 transition-all 
+                    flex gap-1 items-center px-4 py-2 border-b-4 transition-all 
                     {% if request.path == game_task_questions %}border-b-primary-600 hover:bg-primary-50{% else %}border-b-transparent hover:bg-primary-50{% endif %}    
                 "
             >
@@ -237,7 +234,7 @@
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                     <path d="M12 17h.01" />
                 </svg>
-                <span>Сұрақтар</span>
+                <span class="font-medium">Сұрақтар</span>
                 <span class="font-medium">({{ questions.count }})</span>
             </a>
         </nav>

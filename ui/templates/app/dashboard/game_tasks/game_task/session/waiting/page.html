@@ -1,16 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ game_task.name }} – Күту бөлмесі{% endblock title %}
+{% block title %}#{{ session.id }} - {{ game_task.name }} – Күту бөлмесі{% endblock title %}
 
 {% block base %}
 <div class="w-full min-h-screen relative flex justify-center items-center p-4">
-    <div class="max-w-3xl w-full mx-auto space-y-6">
+    <div class="max-w-3xl w-full mx-auto space-y-8">
         <img src="{% static 'images/logo.svg' %}" alt="" class="w-36 flex mx-auto" />
         <div class="grid gap-4 text-center">
-            <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black">
-                {{ game_task.name }}
-            </h1>
+            <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black">#{{ session.id }} - {{ game_task.name }}</h1>
 
             <div class="flex gap-2 items-center justify-center">
                 <div class="inline-flex items-center gap-1 py-2 px-4 rounded-full border border-border-200">
@@ -50,13 +48,13 @@
                         <path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" />
                     </svg>
                     <div class="flex flex-col text-left">
-                        <span class="text-muted text-xs">Таймер</span>
+                        <span class="text-muted text-xs">Лимит түрі</span>
                         <span class="font-bold">{{ session.get_session_limit_display }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex gap-2 justify-center">
+            <div class="flex gap-2 items-center justify-center">
                 <form
                     method="post"
                     action="{% url 'dashboard:session_start' pk=game_task.id session_id=session.id %}"
@@ -77,19 +75,84 @@
                         </span>
                     </button>
                 </form>
+
+                <div x-data="{ settings: false }">
+                    <button 
+                        x-on:click.prevent="settings = !settings"
+                        type="button" 
+                        class="p-2 rounded-xl cursor-pointer hover:bg-primary-50"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings">
+                            <path
+                                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </button>
+
+                    <div
+                        x-show="settings"
+                        x-transition.opacity
+                        x-cloak
+                        @keydown.escape.window="settings = false"
+                        @click="settings = false"
+                        @close-settings.window="settings = false"
+                        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                    >
+                        <div class="grid gap-4 bg-white text-left rounded-2xl shadow-lg w-full max-w-md p-6">
+                            <h3 class="text-xl font-black">Баптаулар</h3>
+                            <form
+                                method="post"
+                                hx-post="{% url 'dashboard:session_settings' pk=game_task.id session_id=session.id %}"
+                                hx-on::after-request="
+                                    showFlash('Сессия сақталды!', 'success');
+                                    window.dispatchEvent(new CustomEvent('close-settings'));
+                                "
+                                class="space-y-4"
+                            >
+                                {% csrf_token %}
+                                <div class="space-y-2">
+                                    <div class="grid">
+                                        <label for="session_limit" class="font-bold">Таймер</label>
+                                        <span class="text-xs text-muted">Уақытқа шектеу қою</span>
+                                    </div>
+                                    
+                                    <select 
+                                        name="session_limit" 
+                                        id="session_limit" 
+                                        class="w-full px-4 py-2 rounded-xl border border-border-200"
+                                    >
+                                        <option value="limited" {% if session.session_limit == 'limited' %}selected{% endif %}>Шектеулі</option>
+                                        <option value="limitless" {% if session.session_limit == 'limitless' %}selected{% endif %}>Шексіз</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button
+                                        type="submit"
+                                        class="flex px-4 py-2 font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 cursor-pointer"
+                                    >
+                                        Сақтау
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="flex items-start gap-4">
             <!-- Кіру сілтемелері -->
             <div class="space-y-4">
+                <!-- ПИН код -->
                 <div class="p-4 border space-y-2 border-border-200 rounded-xl">
-                    <h4 class="text-base font-bold">PIN код</h4>
+                    <h5 class="text-base font-bold">PIN код</h5>
                     <h1 class="text-5xl font-black tracking-widest">{{ session.pin_code }}</h1>
                 </div>
 
+                <!-- Сілтемені көшіріп алу -->
                 <div class="p-4 border space-y-2 border-border-200 rounded-xl">
-                    <h4 class="text-base font-bold">Қатысушылар үшін сілтеме</h4>
+                    <h5 class="text-base font-bold">Қатысушылар үшін сілтеме</h5>
                     <div 
                         x-data="{ 
                             copied: false, 
@@ -131,8 +194,9 @@
                     </div>
                 </div>
 
+                <!-- QR -->
                 <div class="p-4 border space-y-2 border-border-200 rounded-xl">
-                    <h4 class="text-base font-bold">QR кодты сканерлеңіз:</h4>
+                    <h5 class="text-base font-bold">QR кодты сканерлеңіз:</h5>
                     <input type="hidden" id="join-url" value="{{ join_url }}">
                     <canvas id="qr-code"></canvas>
                     <script>
@@ -148,7 +212,7 @@
 
             <!-- Қатысушылар -->
             <div class="flex-1 grid items-start border border-border-200 rounded-xl">
-                <div class="flex items-start justify-between px-4 py-2">
+                <div class="flex items-start justify-between px-4 pb-2 pt-4">
                     <h4 class="text-base font-bold">Қатысушылар</h4>
                 </div>
 

@@ -65,12 +65,12 @@
     <div class="grid gap-2">
         {% for item in sessions %}
             <div 
-                x-data="{ open: false, confirmDelete: false }" 
+                x-data="{ open: false, settings: false, confirmDelete: false }" 
                 id="gt_session_{{ item.id }}" 
                 class="relative"
             >
                 <a
-                    href="{% url 'dashboard:session' pk=item.game_task.pk session_id=item.pk %}"
+                    href="{% url 'dashboard:session_route' pk=item.game_task.id session_id=item.id %}"
                     target="_blank"
                     class="flex items-center justify-between py-2 border-b border-border-200 group"
                 >
@@ -86,17 +86,13 @@
                             </svg>
                         </div>
                         <div class="relative">
-                            <h4 class="font-bold">#{{ item.pk }} - {{ item.game_task.name }}</h4>
+                            <h4 class="font-bold">#{{ item.id }} - {{ game_task.name }}</h4>
                             <div 
                                 class="
                                     inline-flex items-center gap-1 py-1 px-2 rounded-xl
-                                    {% if item.status == 'pending' %}
-                                        bg-amber-100 text-amber-500
-                                    {% elif item.status == 'active' %}
-                                        bg-blue-100 text-blue-600
-                                    {% elif item.status == 'finished' %}
-                                        bg-green-100 text-green-600
-                                    {% endif %}    
+                                    {% if item.status == 'pending' %}bg-amber-100 text-amber-500
+                                    {% elif item.status == 'active' %}bg-blue-100 text-blue-600
+                                    {% elif item.status == 'finished' %}bg-green-100 text-green-600{% endif %}    
                                 "
                             >
                                 {% if item.status == 'pending' %}
@@ -161,6 +157,14 @@
                     <ul class="p-2">
                         <li>
                             <button 
+                                @click.prevent="open = false; settings = true"
+                                class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-subtle hover:bg-secondary-100"
+                            >
+                                Баптаулар
+                            </a>
+                        </li>
+                        <li>
+                            <button 
                                 @click.prevent="open = false; confirmDelete = true"
                                 class="flex w-full px-4 py-2 rounded-xl cursor-pointer text-destructive hover:bg-red-100"
                             >
@@ -168,6 +172,55 @@
                             </a>
                         </li>
                     </ul>
+                </div>
+
+                <!-- Баптаулар -->
+                <div
+                    x-show="settings"
+                    x-transition.opacity
+                    x-cloak
+                    @keydown.escape.window="settings = false"
+                    @click="settings = false"
+                    @close-settings.window="settings = false"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                >
+                    <div class="grid gap-4 bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
+                        <h3 class="text-xl font-black">Баптаулар</h3>
+                        <form
+                            method="post"
+                            hx-post="{% url 'dashboard:session_settings' pk=game_task.id session_id=item.id %}"
+                            hx-on::after-request="
+                                showFlash('Сессия сақталды!', 'success');
+                                window.dispatchEvent(new CustomEvent('close-settings'));
+                            "
+                            class="space-y-4"
+                        >
+                            {% csrf_token %}
+                            <div class="space-y-2">
+                                <div class="grid">
+                                    <label for="session_limit" class="font-bold">Таймер</label>
+                                    <span class="text-xs text-muted">Уақытқа шектеу қою</span>
+                                </div>
+                                
+                                <select 
+                                    name="session_limit" 
+                                    id="session_limit" 
+                                    class="w-full px-4 py-2 rounded-xl border border-border-200"
+                                >
+                                    <option value="limited" {% if item.session_limit == 'limited' %}selected{% endif %}>Шектеулі</option>
+                                    <option value="limitless" {% if item.session_limit == 'limitless' %}selected{% endif %}>Шексіз</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-end gap-2">
+                                <button
+                                    type="submit"
+                                    class="flex px-4 py-2 font-medium rounded-xl bg-primary-600 text-white hover:bg-primary-700 cursor-pointer"
+                                >
+                                    Сақтау
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Жоюды растау -->
@@ -180,9 +233,7 @@
                 >
                     <div class="grid gap-4 bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
                         <div class="space-y-2">
-                            <h3 class="text-lg font-medium">
-                                Жоюды растау
-                            </h3>
+                            <h3 class="text-xl font-black">Жоюды растау</h3>
                             <p class="text-muted">
                                 Шынымен жойғыңыз келе ме? Бұл әрекет қайтарылмайды.
                             </p>
@@ -219,8 +270,8 @@
             </div>
         {% empty %}
             <div class="grid gap-2 items-center text-muted py-16">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-chart-bar-increasing-icon lucide-chart-bar-increasing mx-auto">
                     <path d="M3 3v16a2 2 0 0 0 2 2h16" />
                     <path d="M7 11h8" />

@@ -30,8 +30,16 @@ urlpatterns = [
 
     # gt_session
     # ------------------------------------------------------------------------------------------------------------------
-    path('game-tasks/<int:pk>/sessions/<int:session_id>/', gt_session.gt_session_action, name='session'),
-    path('game-tasks/<int:pk>/sessions/create/', gt_session.gt_session_create_view, name='session_create'),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/',
+        gt_session.gt_session_route_action,
+        name='session_route'
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/create/',
+        gt_session.gt_session_create_action,
+        name='session_create'
+    ),
     path(
         'game-tasks/<int:pk>/sessions/<int:session_id>/waiting/',
         gt_session.gt_session_waiting_view,
@@ -70,5 +78,10 @@ urlpatterns = [
         'game-tasks/<int:pk>/sessions/<int:session_id>/finish/',
         gt_session.gt_session_finish_action,
         name='session_finish',
+    ),
+    path(
+        'game-tasks/<int:pk>/sessions/<int:session_id>/settings/',
+        gt_session.gt_session_settings_action,
+        name='session_settings',
     ),
 ]
