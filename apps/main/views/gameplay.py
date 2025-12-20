@@ -6,11 +6,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
-from apps.main.services.gameplay_play import calculate_question_score, cleanup_session_token_if_matches, \
-    get_participant_or_redirect, hx_redirect, guard_session_state, load_questions, finish_participant
-from apps.main.services.gameplay_session_join import get_joinable_session_by_pin, get_unique_nickname_for_session
+from apps.main.services.gameplay import cleanup_session_token_if_matches, get_participant_or_redirect, \
+    hx_redirect, guard_session_state, load_questions, finish_participant
+from apps.main.services.gameplay_play import calculate_question_score
+from apps.main.services.gameplay_join import get_joinable_session_by_pin, get_unique_nickname_for_session, \
+    join_validation
 from core.models import Participant, QuestionAttempt, TestAnswer, Option
-
 
 
 # gameplay_join page
@@ -29,14 +30,12 @@ def gameplay_join_view(request):
             )
         if participant:
             session = participant.session
-            if session.is_time_over() or session.is_finished():
-                cleanup_session_token_if_matches(request, participant)
-            else:
-                if session.is_pending():
-                    return redirect('main:gameplay_waiting', token=participant.token)
-                if session.is_active():
-                    return redirect('main:gameplay_play', token=participant.token)
-                cleanup_session_token_if_matches(request, participant)
+            if session.is_pending():
+                return redirect('main:gameplay_waiting', token=participant.token)
+            if session.is_active():
+                return redirect('main:gameplay_play', token=participant.token)
+
+            cleanup_session_token_if_matches(request, participant)
 
         pin_prefill = (request.GET.get('pin') or '').strip()
         context = {
@@ -47,21 +46,7 @@ def gameplay_join_view(request):
         return render(request, 'app/main/gameplay/join/page.html', context)
 
     # -------------------- POST --------------------
-    pin_code = ' '.join(((request.POST.get('pin') or '').strip()).split())
-    nickname = ' '.join(((request.POST.get('nickname') or '').strip()).split())
-
-    errors = {}
-    if not pin_code:
-        errors['pin'] = 'PIN кодты енгізіңіз.'
-    if not nickname:
-        errors['nickname'] = 'Есіміңізді (никнейм) енгізіңіз.'
-    else:
-        if len(nickname) > 20:
-            errors['nickname'] = 'Есім ең көп дегенде 20 таңба болуы керек.'
-        allowed_pattern = r"^[0-9A-Za-zА-Яа-яӘәІіҢңҒғҮүҰұҚқӨөЫыЁё ._'-]+$"
-        if not re.fullmatch(allowed_pattern, nickname):
-            errors['nickname'] = 'Есім тек әріп, цифра және қарапайым белгілерден тұруы керек.'
-
+    pin_code, nickname, errors = join_validation(request.POST.get('pin'), request.POST.get('nickname'))
     if errors:
         context = {
             'pin_prefill': pin_code,
@@ -81,10 +66,8 @@ def gameplay_join_view(request):
 
     token = request.session.get('current_game_participant_token')
     participant = None
-
     if token:
         participant = Participant.objects.filter(token=token, session=session).first()
-
     if not participant:
         final_nickname = get_unique_nickname_for_session(session, nickname)
         participant = Participant.objects.create(session=session, nickname=final_nickname)
@@ -103,7 +86,6 @@ def gameplay_waiting_view(request, token):
 
     session = participant.session
     game_task = session.game_task
-
     if session.is_time_over() or session.is_finished():
         cleanup_session_token_if_matches(request, participant)
         return redirect('main:gameplay_join')
@@ -145,10 +127,9 @@ def gameplay_waiting_poll_fragment(request, token):
 @require_GET
 def gameplay_play_view(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=False)
+    session, guard = guard_session_state(participant, token=token, for_htmx=False)
     if err:
         return err
-
-    session, guard = guard_session_state(participant, token=token, for_htmx=False)
     if guard:
         return guard
 
@@ -180,10 +161,9 @@ def gameplay_play_view(request, token):
 @require_GET
 def gameplay_question_fragment(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=True)
+    session, guard = guard_session_state(participant, token=token, for_htmx=True)
     if err:
         return err
-
-    session, guard = guard_session_state(participant, token=token, for_htmx=True)
     if guard:
         return guard
 
@@ -237,10 +217,9 @@ def gameplay_question_fragment(request, token):
 @require_POST
 def gameplay_answer_action(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=True)
+    session, guard = guard_session_state(participant, token=token, for_htmx=True)
     if err:
         return err
-
-    session, guard = guard_session_state(participant, token=token, for_htmx=True)
     if guard:
         return guard
 
