@@ -1,0 +1,146 @@
+<!-- Ұпай көрсеткіші -->
+<span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
+
+<!-- Прогресс көрсеткіші -->
+{% if total_questions > 0 %}
+  {% widthratio index total_questions 100 as progress_percent %}
+{% else %}
+  {% with progress_percent=0 %}{% endwith %}
+{% endif %}
+
+<span id="ui-progress-text" hx-swap-oob="innerHTML">
+  {{ index }}/{{ total_questions }}
+</span>
+<div 
+    id="ui-progress-bar"
+    hx-swap-oob="outerHTML"
+    class="h-full bg-primary-600 transition-[width] duration-300"
+    style="width: {{ progress_percent }}%;">
+</div>
+
+<!-- Таймер көрсеткіші -->
+<span
+    id="ui-timer" 
+    hx-swap-oob="outerHTML"
+    class="font-bold w-12 text-center"
+    data-seconds="0"
+>
+    --:--
+</span>
+
+
+<!-- Нәтиже блогы -->
+<div class="grid gap-8">
+    <h4 class="text-lg font-medium mb-4">{{ question.body|safe }}</h4>
+    <div class="space-y-4">
+        <div class="space-y-2">
+            {% for opt in options %}
+                {% with opt_id=opt.id %}
+                    {% if opt_id in correct_ids and opt_id in selected_ids %}
+                        {% with color="border-emerald-400 bg-emerald-50 text-emerald-900" %}
+                            <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                                <input disabled type="checkbox" class="mt-1"
+                                    {% if opt_id in selected_ids %} checked {% endif %}
+                                >
+                                <span class="text-sm">{{ opt.answer|safe }}</span>
+                            </div>
+                        {% endwith %}
+
+                    {% elif opt_id in correct_ids %}
+                        {% with color="border-emerald-300 bg-white text-emerald-700" %}
+                            <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                                <input disabled type="checkbox" class="mt-1">
+                                <span class="text-sm">{{ opt.answer|safe }}</span>
+                            </div>
+                        {% endwith %}
+
+                    {% elif opt_id in selected_ids %}
+                        {% with color="border-rose-400 bg-rose-50 text-rose-900" %}
+                            <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                                <input disabled type="checkbox" class="mt-1" checked>
+                                <span class="text-sm">{{ opt.answer|safe }}</span>
+                            </div>
+                        {% endwith %}
+
+                    {% else %}
+                        {% with color="border-border-200 bg-white text-slate-800" %}
+                            <div class="flex items-start gap-2 border rounded-xl px-3 py-2 {{ color }}">
+                                <input disabled type="checkbox" class="mt-1">
+                                <span class="text-sm">{{ opt.answer|safe }}</span>
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-center">
+            {% if index >= total_questions %}
+                <span class="text-center text-muted">Ойын аяқталды</span>
+            {% else %}
+                <span class="text-center text-muted">Келесі сұрақ жүктелуде...</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div
+        hx-get="{% url 'main:gameplay_question' participant.token %}"
+        hx-trigger="load delay:2000ms"
+        hx-target="#question-container"
+        hx-swap="innerHTML"
+    ></div>
+</div>
+
+<!-- alert(Нәтиже) -->
+<div class="fixed bottom-0 left-0 w-full z-10 transition-all">
+    <div class="
+        flex gap-2 justify-center items-center p-8 animate-[slideUpFade_100ms_ease-out]
+        {% if last_answer_correct is True %}
+            border-emerald-200 bg-emerald-50 text-emerald-800
+        {% elif last_answer_correct is False %}
+            border-red-200 bg-red-50 text-red-800
+        {% else %}
+            border-slate-200 bg-slate-50 text-slate-600
+        {% endif %}
+        "
+    >
+        {% if last_answer_correct is True %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-xl font-bold">Дұрыс жауап!</span>
+            <span class="text-sm font-semibold">
+                +{{ score_delta }} балл
+            </span>
+        {% elif last_answer_correct is False %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-xl font-bold">Қате жауап!</span>
+        {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-xl font-bold">Жауап берілмеді!</span>
+        {% endif %}
+    </div>
+</div>
+<style>
+    @keyframes slideUpFade {
+        from {
+            transform: translateY(24px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>

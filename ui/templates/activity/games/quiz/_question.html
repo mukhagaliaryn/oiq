@@ -1,0 +1,113 @@
+<!-- Ұпай көрсеткіші -->
+<span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
+
+<!-- Прогресс көрсеткіші -->
+{% if total_questions > 0 %}
+  {% widthratio index total_questions 100 as progress_percent %}
+{% else %}
+  {% with progress_percent=0 %}{% endwith %}
+{% endif %}
+
+<span id="ui-progress-text" hx-swap-oob="innerHTML">
+  {{ index }}/{{ total_questions }}
+</span>
+<div 
+    id="ui-progress-bar"
+    hx-swap-oob="outerHTML"
+    class="h-full bg-primary-600 transition-[width] duration-300"
+    style="width: {{ progress_percent }}%;">
+</div>
+
+<!-- Таймер көрсеткіші -->
+<span
+    id="ui-timer" 
+    hx-swap-oob="outerHTML"
+    data-seconds="{{ remaining_seconds }}"
+    class="font-bold w-12 text-center"
+>
+    --:--
+</span>
+
+
+<!-- Сұрақ блогы -->
+<div class="grid gap-8">
+    <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
+    <form
+        id="answer-form"
+        method="post"
+        action="{% url 'main:gameplay_answer' participant.token %}"
+        hx-post="{% url 'main:gameplay_answer' participant.token %}"
+        hx-target="#question-container"
+        hx-swap="innerHTML"
+        class="w-full space-y-4"
+    >
+        {% csrf_token %}
+        <div class="space-y-2">
+            {% with q_format=question.format.code v_code=question.variant.code|default_if_none:"" %}
+                <!-- Тест -->
+                {% if q_format == "test" %}
+                    {% if options %}
+                        <!-- Көпжауапты -->
+                        {% if v_code == "multiple" %}
+                            {% for opt in options %}
+                                <label class="w-full flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                                    <input
+                                        type="checkbox"
+                                        name="options"
+                                        value="{{ opt.id }}"
+                                        class="mt-1 block w-full"
+                                    >
+                                    <span class="block">
+                                        {{ opt.answer|safe }}
+                                    </span>
+                                </label>
+                            {% endfor %}
+
+                        <!-- Біржауапты -->
+                        {% else %}
+                            {% for opt in options %}
+                                <label class="flex items-start gap-2 border border-border-200 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-50">
+                                    <input
+                                        type="radio"
+                                        name="options"
+                                        value="{{ opt.id }}"
+                                        class="mt-1"
+                                    >
+                                    <span class="block">
+                                        {{ opt.answer|safe }}
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        {% endif %}
+                    {% else %}
+                        <div class="flex py-8 justify-center">
+                            <span class="text-muted">Бұл тест сұраққа жауап нұсқалары анықталмаған.</span>
+                        </div>
+                    {% endif %}
+                
+                <!-- Басқа форматтар... -->
+                {% elif q_format == "open" %}
+                        ...
+                {% else %}
+                    <div class="flex py-8 justify-center">
+                        <span class="text-muted">Бұл форматтағы сұрақ әзірге конфигурацияланбаған ({{ q_format }}).</span>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <button
+            type="submit"
+            class="relative w-full grid cursor-pointer group"
+        >
+            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+            <span class="
+                relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                group-hover:bg-primary-500 group-active:translate-y-1.5
+                "
+            >
+                Жауап беру
+            </span>
+        </button>
+    </form>
+</div>

@@ -1,5 +1,8 @@
 from __future__ import annotations
+import random
+from django.db.models import Case, When, IntegerField
 from dataclasses import dataclass
+from django.template.loader import select_template
 
 
 # Scoring жүйесі
@@ -38,3 +41,55 @@ def calculate_question_score(*, question, is_correct: bool, time_spent: int) -> 
 
     return ScoreResult(score=score_int, is_correct=True, time_spent=time_spent)
 
+
+
+# resolve_activity_template
+# ----------------------------------------------------------------------------------------------------------------------
+def resolve_activity_template(activity, name: str) -> str:
+    fallback_group = 'games'
+    fallback_slug = 'quiz'
+    if activity and activity.activity_type == 'simulator':
+        group = 'simulators'
+    else:
+        group = 'games'
+
+    slug = activity.slug if activity else fallback_slug
+    candidates = [
+        f"activity/{group}/{slug}/{name}",
+        f"activity/{fallback_group}/{fallback_slug}/{name}",
+    ]
+    return select_template(candidates).template.name
+
+
+# Fixed options
+# ----------------------------------------------------------------------------------------------------------------------
+def _opt_order_key(participant, question_id: int) -> str:
+    return f"opt_order:{participant.token}:{question_id}"
+
+
+def get_or_create_options_in_fixed_order(request, participant, question):
+    key = _opt_order_key(participant, question.id)
+    order = request.session.get(key)
+    ids = list(question.options.values_list('id', flat=True))
+    if not ids:
+        return question.options.none(), []
+
+    if not order:
+        order = ids[:]
+        random.shuffle(order)
+        request.session[key] = order
+        request.session.modified = True
+    else:
+        ids_set = set(ids)
+        order = [i for i in order if i in ids_set]
+        for i in ids:
+            if i not in set(order):
+                order.append(i)
+        request.session[key] = order
+        request.session.modified = True
+
+    whens = [When(id=pk, then=pos) for pos, pk in enumerate(order)]
+    qs = question.options.filter(id__in=order).order_by(
+        Case(*whens, default=9999, output_field=IntegerField())
+    )
+    return qs, order
