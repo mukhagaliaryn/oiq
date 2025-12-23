@@ -12,7 +12,6 @@ from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject,
 # game_task_create page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-@require_POST
 def game_task_create_action(request):
     user = request.user
     drafts = GameTask.objects.filter(owner=user, status='draft').order_by('-id')
