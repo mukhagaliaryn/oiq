@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from core.forms.subject import QuestionForm, OptionForm
 from core.models import Subject, Chapter, Topic, Question, QuestionFormat, QuestionVariant, Option
@@ -110,13 +111,20 @@ class OptionInline(admin.TabularInline):
 # QuestionAdmin
 @register(Question)
 class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
-    list_display = ( '__str__', 'format', 'variant', 'topic', )
+    list_display = ( 'preview', 'format', 'variant', 'topic', )
     list_filter = ('format', 'variant', 'level', )
+    search_fields = ('body', )
     readonly_fields = ('detail_link', )
     form = QuestionForm
 
+    def preview(self, obj):
+        html = obj.body or ''
+        return mark_safe(f"<div class='preview'>{html}</div>")
+
     def detail_link(self, obj):
         return self.parent_link(obj, 'topic')
+
+    preview.short_description = _('Preview')
     detail_link.short_description = _('Topic')
 
     def get_inline_instances(self, request, obj=None):
@@ -132,4 +140,8 @@ class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
         return inline_instances
 
     class Media:
-        js = ('scripts/admin/format_variant.js', )
+        js = (
+            'scripts/admin/format_variant.js',
+            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+            'admin/scripts/admin/mathjax-typeset.js',
+        )

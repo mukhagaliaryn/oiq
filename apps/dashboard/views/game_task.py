@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-
 from apps.dashboard.services.game_task_edit import get_game_task_current_step
 from apps.dashboard.services.game_task_step_questions import generate_questions_for_game_task, \
     replace_game_task_questions
@@ -13,7 +12,8 @@ from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject,
 # game_task_create page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
-def game_task_create_view(request):
+@require_POST
+def game_task_create_action(request):
     user = request.user
     drafts = GameTask.objects.filter(owner=user, status='draft').order_by('-id')
     draft_count = drafts.count()
@@ -27,13 +27,7 @@ def game_task_create_view(request):
         if last_draft:
             return redirect('dashboard:game_task_edit', pk=last_draft.pk)
 
-    game_task = GameTask.objects.create(
-        name='',
-        owner=user,
-        subject=None,
-        activity=None,
-        status='draft'
-    )
+    game_task = GameTask.objects.create(name='', owner=user, subject=None, activity=None, status='draft')
     return redirect('dashboard:game_task_edit', pk=game_task.pk)
 
 
@@ -86,14 +80,12 @@ def game_task_step_activity(request, pk):
 @login_required
 def game_task_step_questions(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
-
     base_qs = Question.objects.all()
     if game_task.activity:
         formats = game_task.activity.question_formats.all()
         base_qs = base_qs.filter(format__in=formats)
 
     subjects = Subject.objects.all()
-
     subject_id = request.GET.get('subject_id') or request.POST.get('subject_id')
     chapter_id = request.GET.get('chapter_id') or request.POST.get('chapter_id')
     topic_id = request.GET.get('topic_id') or request.POST.get('topic_id')
@@ -238,9 +230,7 @@ def game_task_detail_view(request, pk):
     game_task = (
         GameTask.objects
         .filter(owner=user, pk=pk)
-        .annotate(
-            total_participants=Count('sessions__participants', distinct=True)
-        )
+        .annotate(total_participants=Count('sessions__participants', distinct=True))
         .select_related('activity', 'subject')
         .prefetch_related('questions', 'sessions')
         .get()
@@ -264,9 +254,7 @@ def game_task_questions_view(request, pk):
     game_task = (
         GameTask.objects
         .filter(owner=user, pk=pk)
-        .annotate(
-            total_participants=Count('sessions__participants', distinct=True)
-        )
+        .annotate(total_participants=Count('sessions__participants', distinct=True))
         .select_related('activity', 'subject')
         .prefetch_related('questions', 'sessions')
         .get()

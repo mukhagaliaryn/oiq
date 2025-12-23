@@ -18,7 +18,7 @@ urlpatterns = [
 
     # game_task
     # ------------------------------------------------------------------------------------------------------------------
-    path('game-tasks/create/', gt.game_task_create_view, name='game_task_create'),
+    path('game-tasks/create/', gt.game_task_create_action, name='game_task_create'),
     path('game-tasks/<int:pk>/edit/', gt.game_task_edit_view, name='game_task_edit'),
     path('game-tasks/<int:pk>/edit/step/activity/', gt.game_task_step_activity, name='game_task_step_activity'),
     path('game-tasks/<int:pk>/edit/step/questions/', gt.game_task_step_questions, name='game_task_step_questions'),

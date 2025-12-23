@@ -3,10 +3,10 @@
 {% block title %}{{ game_task }}{% endblock title %}
 
 {% block dashboard_layout %}
-<div class="max-w-5xl w-full mx-auto p-4">
-    <div class="flex items-start justify-between py-8">
-        <div class="flex items-start gap-4">
-            <div class="w-36 h-36 flex justify-center items-center rounded-xl bg-primary-50">
+<div class="w-full max-w-5xl mx-auto p-4">
+    <div class="grid gap-4 lg:flex lg:items-start lg:justify-between py-8">
+        <div class="grid lg:flex lg:items-start lg:justify-start gap-4">
+            <div class="w-36 h-36 flex justify-center items-center rounded-xl bg-primary-50 mx-auto lg:mx-0">
                 <lord-icon
                     src="https://cdn.lordicon.com/xzvgfwwv.json"
                     trigger="loop"
@@ -15,8 +15,8 @@
                 </lord-icon>
             </div>
             <div class="grid gap-2 items-start">
-                <h2 class="text-xl md:text-2xl font-black">{{ game_task.name }}</h2>
-                <div class="flex">
+                <h2 class="text-xl md:text-2xl font-black text-center lg:text-left">{{ game_task.name }}</h2>
+                <div class="flex justify-center lg:justify-start">
                     <div class="flex gap-1 items-center bg-primary-100 py-1 px-2 rounded-xl text-primary-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -33,7 +33,7 @@
                         <span class="block text-xs">{{ game_task.activity.get_activity_type_display }}</span>
                     </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 justify-center lg:justify-start">
                     <div class="flex items-center text-muted text-xs gap-1 py-1 px-2 rounded-xl bg-secondary-100">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 {% if game_task.description %}
-                    <div class="max-w-sm w-full text-muted">
+                    <div class="max-w-sm w-full text-muted mx-auto text-center lg:mx-0 lg:text-left">
                         {{ game_task.description|safe }}
                     </div>
                 {% endif %}
@@ -73,7 +73,7 @@
                 {% csrf_token %}
                 <button
                     type="submit"
-                    class="relative grid group cursor-pointer"
+                    class="relative grid w-full cursor-pointer group"
                 >
                     <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
                     <span class="
@@ -101,7 +101,7 @@
                 <button
                     x-on:click.prevent="open = !open"
                     type="button"
-                    class="relative grid group w-full cursor-pointer"
+                    class="relative grid w-full cursor-pointer group"
                 >
                     <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
                     <span class="
@@ -197,7 +197,7 @@
     </div>
 
     <div class="grid gap-4">
-        <nav class="flex">
+        <nav class="flex overflow-x-auto">
             {% url 'dashboard:game_task_detail' pk=game_task.id as game_task_detail %}
             <a 
                 href="{{ game_task_detail }}" 
