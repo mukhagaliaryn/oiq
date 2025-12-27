@@ -139,12 +139,8 @@ def gameplay_play_view(request, token):
 
     game_task = session.game_task
     total_questions = game_task.questions.count()
-    if total_questions == 0:
-        finish_participant(participant)
-        return redirect('main:gameplay_result', token=token)
-
     attempts_count = participant.attempts.count()
-    if attempts_count >= total_questions:
+    if total_questions == 0 or attempts_count >= total_questions:
         finish_participant(participant)
         return redirect('main:gameplay_result', token=token)
 
@@ -174,15 +170,16 @@ def gameplay_question_fragment(request, token):
     questions = load_questions(game_task)
     total_questions = len(questions)
     attempts_count = participant.attempts.count()
-
     if total_questions == 0 or attempts_count >= total_questions:
         finish_participant(participant)
-        tpl = resolve_activity_template(game_task.activity, '_finished.html')
-        return render(request, tpl, {
+        context = {
             'participant': participant,
             'session': session,
-            'game_task': game_task
-        })
+            'game_task': game_task,
+            'total_questions': total_questions
+        }
+        tpl = resolve_activity_template(game_task.activity, '_finished.html')
+        return render(request, tpl, context)
 
     current_gtq = questions[attempts_count]
     current_question = current_gtq.question
@@ -198,7 +195,6 @@ def gameplay_question_fragment(request, token):
         question=current_question,
         gtq=current_gtq,
     )
-
     question_limit = getattr(current_question, 'question_limit', 0) or 0
     q_format = current_question.format.code if current_question.format else 'test'
     started_at = participant.current_started_at or timezone.now()
@@ -209,8 +205,8 @@ def gameplay_question_fragment(request, token):
         'participant': participant,
         'session': session,
         'game_task': game_task,
-        'question': current_question,
         'gtq': current_gtq,
+        'question': current_question,
         'index': attempts_count + 1,
         'total_questions': total_questions,
         'question_limit': question_limit,
@@ -235,7 +231,6 @@ def gameplay_answer_action(request, token):
 
     game_task = session.game_task
     is_timeout = request.POST.get('timeout') == '1'
-
     try:
         with transaction.atomic():
             participant = (
@@ -254,12 +249,14 @@ def gameplay_answer_action(request, token):
 
             if total_questions == 0 or attempts_count >= total_questions:
                 finish_participant(participant)
-                tpl = resolve_activity_template(game_task.activity, '_finished.html')
-                return render(request, tpl, {
+                context = {
                     'participant': participant,
                     'session': session,
-                    'game_task': game_task
-                })
+                    'game_task': game_task,
+                    'total_questions': total_questions
+                }
+                tpl = resolve_activity_template(game_task.activity, '_finished.html')
+                return render(request, tpl, context)
 
             current_gtq = questions[attempts_count]
             current_question = current_gtq.question
@@ -291,7 +288,6 @@ def gameplay_answer_action(request, token):
                 attempt=attempt,
                 payload=result.payload,
             )
-
             participant.current_question_id = None
             participant.current_started_at = None
             if result.is_correct:
@@ -312,7 +308,10 @@ def gameplay_answer_action(request, token):
         payload=result.payload,
     )
     format_ctx = handler.get_question_context(
-        request=request, participant=participant, question=current_question, gtq=current_gtq
+        request=request,
+        participant=participant,
+        question=current_question,
+        gtq=current_gtq
     )
     q_format = current_question.format.code if current_question.format else 'test'
 
@@ -320,19 +319,18 @@ def gameplay_answer_action(request, token):
         'participant': participant,
         'session': session,
         'game_task': game_task,
-        'question': current_question,
         'gtq': current_gtq,
+        'question': current_question,
         'index': attempts_count + 1,
         'total_questions': total_questions,
         'answered': result.answered,
         'last_answer_correct': result.is_correct if result.answered else None,
         'score_delta': result.score_delta if result.is_correct is True else 0,
-        **format_ctx,
-        **review_ctx,
         'remaining_seconds': 0,
         'result_template': f"./partials/{q_format}/_results.html",
+        **format_ctx,
+        **review_ctx,
     }
-
     tpl = resolve_activity_template(game_task.activity, '_review.html')
     return render(request, tpl, context)
 

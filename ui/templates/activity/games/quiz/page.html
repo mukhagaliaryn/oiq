@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ participant.nickname }} - {{ game_task.name }}{% endblock %}
 
 {% block base %}
 <div class="min-h-screen flex justify-center items-center">
+    <!-- Басы -->
     <header class="fixed left-0 top-0 z-10 w-full bg-white border-b border-border-200">
         <div class="max-w-5xl mx-auto flex justify-between items-center gap-4 p-4">
-            <!-- Ұпай көрсеткіші -->
+            <!-- Ұпай -->
             <div class="flex items-center gap-2 py-2 px-4 rounded-xl bg-secondary-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-amber-500"
                     viewBox="0 0 24 24" fill="currentColor">
@@ -17,7 +19,7 @@
                 <span id="ui-score" class="font-bold">{{ participant.score }}</span>
             </div>
             
-            <!-- Прогресс көрсеткіші -->
+            <!-- Прогресс -->
             <div class="flex-1 flex flex-col gap-1">
                 <div class="flex justify-between text-xs text-subtle">
                     <span>Сұрақ</span>
@@ -33,7 +35,7 @@
                 </div>
             </div>
 
-            <!-- Таймер көрсеткіші -->
+            <!-- Таймер -->
             <div class="flex items-center gap-2 pe-2 ps-4 py-2 rounded-xl bg-secondary-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -47,6 +49,7 @@
         </div>
     </header>
 
+    <!-- Сұрақ бөлімі -->
     <main class="w-full pt-24 px-4">
         <div id="question-container" class="max-w-xl mx-auto">
             <div 
@@ -63,6 +66,45 @@
     </main>
 </div>
 
+<!-- Сигналдар -->
+<div id="sounds">
+    <span id="ui-sfx-signal" data-kind="none" class="hidden"></span>
+    <audio id="sfx-success" preload="auto">
+        <source src="{% static 'sounds/success.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-error" preload="auto">
+        <source src="{% static 'sounds/error.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-finish" preload="auto">
+        <source src="{% static 'sounds/finish.mp3' %}" type="audio/mpeg">
+    </audio>
+</div>
+
+
+<script>
+    (function () {
+        function play(kind) {
+            let el = null;
+            if (kind === "success") el = document.getElementById("sfx-success");
+            if (kind === "error") el = document.getElementById("sfx-error");
+            if (kind === "finish") el = document.getElementById("sfx-finish");
+
+            if (!el) return;
+            el.currentTime = 0;
+            el.play().catch(() => { });
+        }
+
+        document.addEventListener("htmx:afterSwap", () => {
+            const sig = document.getElementById("ui-sfx-signal");
+            if (!sig) return;
+            const kind = sig.dataset.kind;
+            if (kind && kind !== "none") {
+                play(kind);
+                sig.dataset.kind = "none";
+            }
+        });
+    })();
+</script>
 <script>
     (function () {
         function renderTimer(el, seconds) {

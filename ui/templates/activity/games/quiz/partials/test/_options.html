@@ -1,13 +1,13 @@
 {% if options %}
     <!-- Көпжауапты -->
-    {% if v_code == "multiple" %}
+    {% if variant == "multiple" %}
         {% for opt in options %}
             <label class="block relative cursor-pointer">
                 <input type="checkbox" name="options" value="{{ opt.id }}" class="sr-only peer" />
                 
                 <span class="
                     absolute top-1/2 -translate-y-1/2 left-3 flex items-center justify-center h-5 w-5 rounded-md
-                    border border-secondary-200 bg-white transition
+                    border border-border-200 bg-white transition
                     peer-checked:bg-primary-600 peer-checked:border-primary-600
                 ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -34,7 +34,7 @@
                 
                 <span class="
                     block absolute top-1/2 -translate-y-1/2 left-3 shrink-0 h-5 w-5 rounded-full 
-                    border border-secondary-200 bg-white transition
+                    border border-border-200 bg-white transition
                     peer-checked:border-2 peer-checked:border-primary-600
                     after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-primary-600
                     after:scale-0 after:opacity-0 after:transition

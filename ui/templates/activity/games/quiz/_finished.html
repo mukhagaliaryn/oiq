@@ -1,18 +1,56 @@
-<div class="py-10 text-center space-y-3">
-    <p class="text-lg font-semibold text-slate-900">
-        Ойын аяқталды 🎉
-    </p>
-    <p class="text-sm text-slate-600">
-        Сіз барлық сұрақтарға жауап бердіңіз.
-    </p>
-    <p class="text-sm text-slate-600">
-        Дұрыс жауап саны: <span class="font-semibold">{{ participant.correct_count }}</span>
-    </p>
+<!-- Сигнал -->
+<span id="ui-sfx-signal" hx-swap-oob="true" data-kind="finish" class="hidden"></span>
 
-    <a
-        href="{% url 'main:gameplay_result' participant.token %}"
-        class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
-    >
-        Менің нәтижемді көру
-    </a>
+<!-- Қорытынды бөлімі -->
+<div class="py-10 text-center space-y-4">
+    <div class="text-center">
+        <dotlottie-wc
+            src="https://lottie.host/5a62aa41-05da-481b-87b6-4966f9a53c56/XBDs8HVz5d.lottie"
+            style="width: 160px; height: 160px;"
+            autoplay
+            class="mx-auto"
+        ></dotlottie-wc>
+        <h4 class="text-lg font-bold">Ойын аяқталды!</h4>
+    </div>
+    
+    <div class="flex gap-2 justify-center">
+        <div class="grid gap-2 text-center p-4 border border-border-200 rounded-xl">
+            <span class="block text-muted">Дұрыс жауаптар:</span>
+            <div class="flex gap-2 items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" class="text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                        clip-rule="evenodd" />
+                </svg>
+                <h4 class="text-lg font-bold">{{ participant.correct_count }}/<span class="text-muted">{{ total_questions }}</span></h4>
+            </div>
+        </div>
+        <div class="grid gap-2 text-center p-4 border border-border-200 rounded-xl">
+            <span class="block text-muted">Жалпы ұпай:</span>
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" class="text-amber-500">
+                    <path fill-rule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                        clip-rule="evenodd" />
+                </svg>
+                <h4 class="text-lg font-bold">{{ participant.score }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center">
+        <a
+            href="{% url 'main:gameplay_result' participant.token %}"
+            class="relative grid cursor-pointer group"
+        >
+            
+            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+            <span class="
+                relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                group-hover:bg-primary-500 group-active:translate-y-1.5
+                "
+            >
+                Нәтижемді көру
+            </span>
+        </a>
+    </div>
 </div>

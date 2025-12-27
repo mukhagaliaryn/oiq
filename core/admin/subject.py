@@ -142,6 +142,6 @@ class QuestionAdmin(LinkedAdminMixin, admin.ModelAdmin):
     class Media:
         js = (
             'scripts/admin/format_variant.js',
-            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
             'admin/scripts/admin/mathjax-typeset.js',
+            'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
         )

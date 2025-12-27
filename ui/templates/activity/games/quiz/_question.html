@@ -1,35 +1,38 @@
-<!-- Ұпай көрсеткіші -->
-<span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
+<!-- Көрсеткіштер -->
+<div class="relative">
+    <!-- Ұпай -->
+    <span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
+    <!-- Прогресс -->
+    <div class="relative">
+        {% if total_questions > 0 %}
+            {% widthratio index total_questions 100 as progress_percent %}
+        {% else %}
+            {% with progress_percent=0 %}{% endwith %}
+        {% endif %}
 
-<!-- Прогресс көрсеткіші -->
-{% if total_questions > 0 %}
-  {% widthratio index total_questions 100 as progress_percent %}
-{% else %}
-  {% with progress_percent=0 %}{% endwith %}
-{% endif %}
-
-<span id="ui-progress-text" hx-swap-oob="innerHTML">
-  {{ index }}/{{ total_questions }}
-</span>
-<div 
-    id="ui-progress-bar"
-    hx-swap-oob="true"
-    class="h-full bg-primary-600 transition-[width] duration-300"
-    style="--w: {{ progress_percent }}%; width: var(--w);">
+        <span id="ui-progress-text" hx-swap-oob="innerHTML">
+            {{ index }}/{{ total_questions }}
+        </span>
+        <div 
+            id="ui-progress-bar"
+            hx-swap-oob="true"
+            class="h-full bg-primary-600 transition-[width] duration-300"
+            style="--w: {{ progress_percent }}%; width: var(--w);">
+        </div>
+    </div>
+    <!-- Таймер -->
+    <span
+        id="ui-timer" 
+        hx-swap-oob="true"
+        data-seconds="{{ remaining_seconds }}"
+        class="font-bold w-12 text-center"
+    >
+        --:--
+    </span>
 </div>
 
-<!-- Таймер көрсеткіші -->
-<span
-    id="ui-timer" 
-    hx-swap-oob="true"
-    data-seconds="{{ remaining_seconds }}"
-    class="font-bold w-12 text-center"
->
-    --:--
-</span>
 
-
-<!-- Сұрақ блогы -->
+<!-- Сұрақ бөлімі -->
 <div class="grid gap-8">
     <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
     <form
@@ -43,7 +46,7 @@
     >
         {% csrf_token %}
         <div class="space-y-2">
-            {% with q_format=question.format.code v_code=question.variant.code|default_if_none:"" %}
+            {% with variant=question.variant.code|default_if_none:"" %}
                 {% include option_template %}
             {% endwith %}
         </div>
