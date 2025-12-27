@@ -43,7 +43,7 @@ def calculate_question_score(*, question, is_correct: bool, time_spent: int) -> 
 
 
 
-# resolve_activity_template
+# Activity шаблон жүйесі
 # ----------------------------------------------------------------------------------------------------------------------
 def resolve_activity_template(activity, name: str) -> str:
     fallback_group = 'games'

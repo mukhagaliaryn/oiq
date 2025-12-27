@@ -1,0 +1,161 @@
+<!-- Көпжауапты -->
+{% if v_code == "multiple" %}
+    {% for opt in options %}
+        {% with opt_id=opt.id %}
+            {% if opt_id in correct_ids and opt_id in selected_ids %}
+                {% with color="border-emerald-400 bg-emerald-50 text-emerald-900" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            flex items-center justify-center h-5 w-5 shrink-0 rounded-md border bg-white transition
+                            {% if opt_id in selected_ids %}border-border-300 bg-border-300
+                            {% else %}border-border-200 bg-white{% endif %}
+                        ">
+                            <svg class="
+                                text-white transition
+                                {% if opt_id in selected_ids %}opacity-100 scale-100{% else %}opacity-0 scale-75{% endif %}
+                            " 
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                        </span>
+                        <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+            {% elif opt_id in correct_ids %}
+                {% with color="border-emerald-300 bg-white text-emerald-700" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            flex items-center justify-center h-5 w-5 shrink-0 rounded-md border bg-white transition
+                            {% if opt_id in selected_ids %}border-border-300 bg-border-300
+                            {% else %}border-border-200 bg-white{% endif %}
+                        ">
+                            <svg class="
+                                text-white transition
+                                {% if opt_id in selected_ids %}opacity-100 scale-100{% else %}opacity-0 scale-75{% endif %}
+                            " 
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                        </span>
+                        <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+
+            {% elif opt_id in selected_ids %}
+                {% with color="border-rose-400 bg-rose-50 text-rose-900" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            flex items-center justify-center h-5 w-5 shrink-0 rounded-md border bg-white transition
+                            {% if opt_id in selected_ids %}border-border-300 bg-border-300
+                            {% else %}border-border-200 bg-white{% endif %}
+                        ">
+                            <svg class="
+                                text-white transition
+                                {% if opt_id in selected_ids %}opacity-100 scale-100{% else %}opacity-0 scale-75{% endif %}
+                            " 
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                        </span>
+                        <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+            {% else %}
+                {% with color="border-border-200 bg-white text-slate-800" %}
+                    <div class="flex items-start gap-2 border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            flex items-center justify-center h-5 w-5 shrink-0 rounded-md border bg-white transition
+                            {% if opt_id in selected_ids %}border-border-300 bg-border-300
+                            {% else %}border-border-200 bg-white{% endif %}
+                        ">
+                            <svg class="
+                                text-white transition
+                                {% if opt_id in selected_ids %}opacity-100 scale-100{% else %}opacity-0 scale-75{% endif %}
+                            " 
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                        </span>
+                        <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                    </div>
+                {% endwith %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+
+<!-- Біржауапты -->
+{% else %}
+    {% for opt in options %}
+        {% with opt_id=opt.id %}
+            {% if opt_id in correct_ids and opt_id in selected_ids %}
+                {% with color="border-emerald-400 bg-emerald-50 text-emerald-900" %}
+                    <div class="relative flex items-start border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border bg-white transition
+                            {% if opt_id in selected_ids %}border-2 border-border-300
+                            {% else %}border border-border-200{% endif %}
+                            after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-secondary-300 after:transition
+                            {% if opt_id in selected_ids %}after:scale-100 after:opacity-100
+                            {% else %}after:scale-0 after:opacity-0{% endif %}
+                        "></span>
+                        <span class="block ml-6 leading-relaxed">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </div>
+                {% endwith %}
+            {% elif opt_id in correct_ids %}
+                {% with color="border-emerald-300 bg-white text-emerald-700" %}
+                    <div class="relative flex items-start border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border bg-white transition
+                            {% if opt_id in selected_ids %}border-2 border-border-300
+                            {% else %}border border-border-200{% endif %}
+                            after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-secondary-300 after:transition
+                            {% if opt_id in selected_ids %}after:scale-100 after:opacity-100
+                            {% else %}after:scale-0 after:opacity-0{% endif %}
+                        "></span>
+                        <span class="block ml-6 leading-relaxed">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </div>
+                {% endwith %}
+            {% elif opt_id in selected_ids %}
+                {% with color="border-rose-400 bg-rose-50 text-rose-900" %}
+                    <div class="relative flex items-start border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border bg-white transition
+                            {% if opt_id in selected_ids %}border-2 border-border-300
+                            {% else %}border border-border-200{% endif %}
+                            after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-secondary-300 after:transition
+                            {% if opt_id in selected_ids %}after:scale-100 after:opacity-100
+                            {% else %}after:scale-0 after:opacity-0{% endif %}
+                        "></span>
+                        <span class="block ml-6 leading-relaxed">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </div>
+                {% endwith %}
+            {% else %}
+                {% with color="border-border-200 bg-white text-slate-800" %}
+                    <div class="relative flex items-start border rounded-xl px-4 py-2 {{ color }}">
+                        <span class="
+                            block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border bg-white transition
+                            {% if opt_id in selected_ids %}border-2 border-border-300
+                            {% else %}border border-border-200{% endif %}
+                            after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-secondary-300 after:transition
+                            {% if opt_id in selected_ids %}after:scale-100 after:opacity-100
+                            {% else %}after:scale-0 after:opacity-0{% endif %}
+                        "></span>
+                        <span class="block ml-6 leading-relaxed">
+                            {{ opt.answer|safe }}
+                        </span>
+                    </div>
+                {% endwith %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+{% endif %}

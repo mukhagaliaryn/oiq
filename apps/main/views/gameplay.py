@@ -5,15 +5,16 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
+from core.models import Participant, QuestionAttempt
 from apps.main.services.gameplay import cleanup_session_token_if_matches, get_participant_or_redirect, \
     hx_redirect, guard_session_state, load_questions, finish_participant
-from apps.main.services.gameplay_play import calculate_question_score, resolve_activity_template, \
-    get_or_create_options_in_fixed_order
+from apps.main.services.gameplay_play import resolve_activity_template
 from apps.main.services.gameplay_join import get_joinable_session_by_pin, get_unique_nickname_for_session, \
     join_validation
-from core.models import Participant, QuestionAttempt, TestAnswer, Option
+from apps.main.handlers.gameplay.registry import get_handler_for_question
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # gameplay_join page
 # ----------------------------------------------------------------------------------------------------------------------
 @require_http_methods(['GET', 'POST'])
@@ -76,6 +77,7 @@ def gameplay_join_view(request):
     return redirect('main:gameplay_waiting', token=participant.token)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # gameplay_waiting page
 # ----------------------------------------------------------------------------------------------------------------------
 @require_GET
@@ -105,6 +107,7 @@ def gameplay_waiting_view(request, token):
 
 
 # gameplay_waiting_poll
+# ----------------------------------------------------------------------------------------------------------------------
 @require_GET
 def gameplay_waiting_poll_fragment(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=True)
@@ -122,6 +125,7 @@ def gameplay_waiting_poll_fragment(request, token):
     return HttpResponse(status=204)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # gameplay_play page
 # ----------------------------------------------------------------------------------------------------------------------
 @require_GET
@@ -156,6 +160,7 @@ def gameplay_play_view(request, token):
 
 
 # gameplay_question_fragment
+# ----------------------------------------------------------------------------------------------------------------------
 @require_GET
 def gameplay_question_fragment(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=True)
@@ -176,21 +181,26 @@ def gameplay_question_fragment(request, token):
         return render(request, tpl, {
             'participant': participant,
             'session': session,
-            'game_task': game_task,
+            'game_task': game_task
         })
 
     current_gtq = questions[attempts_count]
     current_question = current_gtq.question
-
     if participant.current_question_id != current_question.id:
         participant.current_question_id = current_question.id
         participant.current_started_at = timezone.now()
         participant.save(update_fields=['current_question_id', 'current_started_at'])
 
-    options_qs, options_order = get_or_create_options_in_fixed_order(request, participant, current_question)
-    options = list(options_qs)
+    handler = get_handler_for_question(current_question)
+    format_ctx = handler.get_question_context(
+        request=request,
+        participant=participant,
+        question=current_question,
+        gtq=current_gtq,
+    )
 
     question_limit = getattr(current_question, 'question_limit', 0) or 0
+    q_format = current_question.format.code if current_question.format else 'test'
     started_at = participant.current_started_at or timezone.now()
     elapsed = int((timezone.now() - started_at).total_seconds())
     remaining_seconds = max(0, question_limit - max(0, elapsed))
@@ -201,17 +211,19 @@ def gameplay_question_fragment(request, token):
         'game_task': game_task,
         'question': current_question,
         'gtq': current_gtq,
-        'options': options,
         'index': attempts_count + 1,
         'total_questions': total_questions,
         'question_limit': question_limit,
         'remaining_seconds': remaining_seconds,
+        **format_ctx,
+        'option_template': f"./partials/{q_format}/_options.html",
     }
     tpl = resolve_activity_template(game_task.activity, '_question.html')
     return render(request, tpl, context)
 
 
 # gameplay_answer_action
+# ----------------------------------------------------------------------------------------------------------------------
 @require_POST
 def gameplay_answer_action(request, token):
     participant, err = get_participant_or_redirect(request, token, for_htmx=True)
@@ -223,6 +235,7 @@ def gameplay_answer_action(request, token):
 
     game_task = session.game_task
     is_timeout = request.POST.get('timeout') == '1'
+
     try:
         with transaction.atomic():
             participant = (
@@ -238,93 +251,88 @@ def gameplay_answer_action(request, token):
             questions = load_questions(game_task)
             total_questions = len(questions)
             attempts_count = participant.attempts.count()
-            if attempts_count >= total_questions:
+
+            if total_questions == 0 or attempts_count >= total_questions:
                 finish_participant(participant)
-                context = {
+                tpl = resolve_activity_template(game_task.activity, '_finished.html')
+                return render(request, tpl, {
                     'participant': participant,
                     'session': session,
                     'game_task': game_task
-                }
-                tpl = resolve_activity_template(game_task.activity, '_finished.html')
-                return render(request, tpl, context)
+                })
 
             current_gtq = questions[attempts_count]
             current_question = current_gtq.question
-
             now = timezone.now()
-            if participant.current_started_at:
-                time_spent = int((now - participant.current_started_at).total_seconds())
-            else:
-                time_spent = 0
+            time_spent = int((now - participant.current_started_at).total_seconds()) if participant.current_started_at else 0
             if time_spent < 0:
                 time_spent = 0
 
-            selected_ids = [int(pk) for pk in request.POST.getlist('options') if pk.isdigit()]
-            if is_timeout:
-                selected_ids = []
-
-            allowed_ids = set(current_question.options.values_list('id', flat=True))
-            selected_ids = [i for i in selected_ids if i in allowed_ids]
-            selected_set = set(selected_ids)
-            correct_ids = set(current_question.options.filter(is_correct=True).values_list('id', flat=True))
-
-            if not correct_ids:
-                is_correct = False
-            else:
-                q_type = current_question.variant.code if current_question.variant else 'single'
-                if q_type == 'multiple':
-                    is_correct = (selected_set == correct_ids)
-                else:
-                    one = next(iter(selected_set), None)
-                    is_correct = (len(selected_set) == 1 and one in correct_ids)
-
-            score_result = calculate_question_score(
+            handler = get_handler_for_question(current_question)
+            result = handler.parse_and_grade(
+                request=request,
+                participant=participant,
                 question=current_question,
-                is_correct=is_correct,
+                gtq=current_gtq,
+                is_timeout=is_timeout,
                 time_spent=time_spent,
             )
-            score_delta = score_result.score
             attempt = QuestionAttempt.objects.create(
                 participant=participant,
                 question=current_question,
-                is_correct=is_correct,
-                score=score_delta,
+                is_correct=(result.is_correct is True),
+                score=result.score_delta,
                 time_spent=time_spent,
             )
-
-            test_answer = TestAnswer.objects.create(attempt=attempt)
-            if selected_ids:
-                test_answer.selected_options.set(Option.objects.filter(id__in=selected_ids))
+            handler.save_answer(
+                participant=participant,
+                question=current_question,
+                gtq=current_gtq,
+                attempt=attempt,
+                payload=result.payload,
+            )
 
             participant.current_question_id = None
             participant.current_started_at = None
-            if is_correct:
+            if result.is_correct:
                 participant.correct_count += 1
-                participant.score += score_delta
-            answered = bool(selected_ids) and not is_timeout
+                participant.score += result.score_delta
 
             participant.save(update_fields=['current_question_id', 'current_started_at', 'correct_count', 'score'])
 
     except IntegrityError:
         return hx_redirect(reverse('main:gameplay_question', kwargs={'token': token}))
 
-    options_qs, options_order = get_or_create_options_in_fixed_order(request, participant, current_question)
-    options = list(options_qs)
+    handler = get_handler_for_question(current_question)
+    review_ctx = handler.get_review_context(
+        request=request,
+        participant=participant,
+        question=current_question,
+        gtq=current_gtq,
+        payload=result.payload,
+    )
+    format_ctx = handler.get_question_context(
+        request=request, participant=participant, question=current_question, gtq=current_gtq
+    )
+    q_format = current_question.format.code if current_question.format else 'test'
 
     context = {
         'participant': participant,
         'session': session,
         'game_task': game_task,
         'question': current_question,
-        'options': options,
+        'gtq': current_gtq,
         'index': attempts_count + 1,
         'total_questions': total_questions,
-        'selected_ids': selected_ids,
-        'correct_ids': correct_ids,
-        'last_answer_correct': is_correct if answered else None,
-        'answered': answered,
-        'score_delta': score_delta if is_correct else 0,
+        'answered': result.answered,
+        'last_answer_correct': result.is_correct if result.answered else None,
+        'score_delta': result.score_delta if result.is_correct is True else 0,
+        **format_ctx,
+        **review_ctx,
+        'remaining_seconds': 0,
+        'result_template': f"./partials/{q_format}/_results.html",
     }
+
     tpl = resolve_activity_template(game_task.activity, '_review.html')
     return render(request, tpl, context)
 
@@ -345,7 +353,8 @@ def gameplay_finish_action(request, token):
     return redirect('main:gameplay_result', token=token)
 
 
-# gameplay_result_view
+# ----------------------------------------------------------------------------------------------------------------------
+# gameplay_result page
 # ----------------------------------------------------------------------------------------------------------------------
 @require_GET
 def gameplay_result_view(request, token):
