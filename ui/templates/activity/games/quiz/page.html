@@ -91,6 +91,7 @@
 
             if (!el) return;
             el.currentTime = 0;
+            el.volume = 0.5;
             el.play().catch(() => { });
         }
 

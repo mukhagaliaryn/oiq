@@ -234,7 +234,7 @@ def game_task_detail_view(request, pk):
         .prefetch_related('questions', 'sessions')
         .get()
     )
-    sessions = GameTaskSession.objects.filter(game_task=game_task)
+    sessions = GameTaskSession.objects.filter(game_task=game_task).order_by('-id')
     questions = GameTaskQuestion.objects.filter(game_task=game_task)
 
     context = {
