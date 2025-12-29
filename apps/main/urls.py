@@ -13,7 +13,9 @@ urlpatterns= [
     path('play/<uuid:token>/answer/', gameplay.gameplay_answer_action, name='gameplay_answer'),
     path('play/<uuid:token>/question/', gameplay.gameplay_question_fragment, name='gameplay_question'),
     path('play/<uuid:token>/finish/', gameplay.gameplay_finish_action, name='gameplay_finish'),
-    path('play/<uuid:token>/result/', gameplay.gameplay_result_view, name='gameplay_result'),
+    path('result/<uuid:token>/', gameplay.gameplay_result_view, name='gameplay_result'),
+    path('result/<slug:token>/poll/', gameplay.gameplay_result_poll_fragment, name='gameplay_result_poll'),
+    path('triumph/<slug:token>/', gameplay.gameplay_triumph_view, name='gameplay_triumph'),
 
     # auth views...
     path('login/', auth.login_view, name='login'),

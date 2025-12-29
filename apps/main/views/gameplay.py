@@ -140,9 +140,6 @@ def gameplay_play_view(request, token):
     game_task = session.game_task
     total_questions = game_task.questions.count()
     attempts_count = participant.attempts.count()
-    if total_questions == 0 or attempts_count >= total_questions:
-        finish_participant(participant)
-        return redirect('main:gameplay_result', token=token)
 
     context = {
         'participant': participant,
@@ -397,3 +394,64 @@ def gameplay_result_view(request, token):
         'attempts': attempts,
     }
     return render(request, 'app/main/gameplay/result/page.html', context)
+
+
+# gameplay_result_poll
+# ----------------------------------------------------------------------------------------------------------------------
+@require_GET
+def gameplay_result_poll_fragment(request, token):
+    participant, err = get_participant_or_redirect(request, token, for_htmx=True)
+    if err:
+        return err
+
+    session = participant.session
+    ready = session.is_finished() or session.is_time_over()
+    if ready:
+        return hx_redirect(reverse('main:gameplay_triumph', kwargs={'token': token}))
+
+    return HttpResponse(status=204)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# gameplay_triumph page
+# ----------------------------------------------------------------------------------------------------------------------
+@require_GET
+def gameplay_triumph_view(request, token):
+    participant, err = get_participant_or_redirect(request, token, for_htmx=False)
+    if err:
+        return err
+
+    session = participant.session
+    game_task = session.game_task
+
+    if session.is_pending():
+        return redirect('main:gameplay_waiting', token=token)
+
+    participants_qs = (
+        session.participants
+        .all()
+        .order_by('-score', '-correct_count', 'finished_at')
+    )
+    participants = list(participants_qs)
+    avg_score = participants_qs.aggregate(avg=Avg('score'))['avg']
+
+    top3 = participants[:3]
+    visual_order = []
+    by_place = {i + 1: p for i, p in enumerate(top3)}
+
+    if 2 in by_place:
+        visual_order.append({'place': 2, 'p': by_place[2]})
+    if 1 in by_place:
+        visual_order.append({'place': 1, 'p': by_place[1]})
+    if 3 in by_place:
+        visual_order.append({'place': 3, 'p': by_place[3]})
+
+    context = {
+        'participant': participant,
+        'session': session,
+        'game_task': game_task,
+        'winners': visual_order,
+        'participants': participants,
+        'avg_score': avg_score,
+    }
+    return render(request, 'app/main/gameplay/triumph/page.html', context)

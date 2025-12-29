@@ -1,0 +1,60 @@
+{% with ta=attempt.test_answers.first %}
+    {% if q.options.all %}
+        {% with selected_options=ta.selected_options.all %}
+            <div class="mt-2 space-y-1.5">
+                {% for opt in q.options.all %}
+                    {% if opt.is_correct %}
+                        <div class="
+                            flex items-start gap-2 border border-border-200 rounded-xl px-4 py-2
+                            text-white bg-emerald-600
+                        ">
+                            <div class="p-1 border border-border-200 bg-white rounded-md flex items-center justify-center text-emerald-600">
+                                {% if opt in selected_options %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <span class="leading-snug">{{ opt.answer|safe }}</span>
+                        </div>
+                    {% elif opt in selected_options %}
+                        <div class="
+                            flex items-start gap-2 border border-border-200 rounded-xl px-4 py-2
+                            text-white bg-red-600
+                        ">
+                            <div class="p-1 border border-border-200 bg-white rounded-md flex items-center justify-center text-red-600">
+                                {% if opt in selected_options %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <span class="leading-snug">{{ opt.answer|safe }}</span>
+                        </div>
+                    {% else %}
+                        <div class="flex items-start gap-2 border border-border-200 rounded-xl px-4 py-2">
+                            <div class="p-1 border border-border-200 bg-white rounded-md flex items-center justify-center text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
+                            </div>
+                            <span class="leading-snug">{{ opt.answer|safe }}</span>
+                        </div>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        {% endwith %}
+        {% if ta.selected_options.count == 0 %}
+            <p class="text-center text-xs text-muted">Қатысушы жауап бермеген.</p>
+        {% endif %}
+    {% endif %}
+{% endwith %}
