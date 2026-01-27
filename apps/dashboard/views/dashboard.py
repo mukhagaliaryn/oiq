@@ -16,7 +16,12 @@ def dashboard_view(request):
         .order_by('-pk')[:4]
     )
 
-    drafts = GameTask.objects.filter(owner=user, status='draft').order_by('-id')
+    drafts = (
+        GameTask.objects
+        .filter(owner=user, status='draft')
+        .select_related('activity', 'subject')
+        .order_by('-pk')
+    )
     draft_count = drafts.count()
     last_draft = drafts.first()
 

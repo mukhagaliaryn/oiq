@@ -27,7 +27,7 @@
         data-seconds="{{ remaining_seconds }}"
         class="font-bold w-12 text-center"
     >
-        --:--
+        {% if show_timer %}--:--{% else %}Infinity{% endif %}
     </span>
 </div>
 

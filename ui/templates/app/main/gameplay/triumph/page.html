@@ -5,6 +5,20 @@
 
 {% block base %}
 <div class="min-h-screen flex items-center justify-center py-8 px-4">
+    <a 
+        href="{% url 'main:gameplay_join' %}" 
+        class="absolute top-4 left-4 grid group"
+    >  
+        <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
+        <span class="
+            relative w-full px-4 py-2 rounded-xl bg-white border border-border-300 font-medium 
+            group-hover:bg-secondary-50 group-active:translate-y-1.5
+            "
+        >
+            Басты бет
+        </span>
+    </a>
+
     <div class="w-full max-w-md space-y-8">
         <!-- 🏆 TOP 3 -->
         <div class="grid grid-cols-3 gap-2">

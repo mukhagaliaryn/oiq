@@ -16,6 +16,7 @@ class GameTask(models.Model):
         ('published', _('Published')),
         ('archived', _('Archived')),
     )
+
     name = models.CharField(_('Name'), max_length=128)
     owner = models.ForeignKey(
         'core.User', on_delete=models.CASCADE,
@@ -74,6 +75,9 @@ class GameTaskSession(models.Model):
         ('limited', _('Limited')),
         ('limitless', _('Limitless')),
     )
+    class PlayMode(models.TextChoices):
+        SPEED = 'speed', _('Speed')
+        CLASSIC = 'classic', _('Classic')
 
     game_task = models.ForeignKey(
         GameTask, on_delete=models.CASCADE,
@@ -84,6 +88,12 @@ class GameTaskSession(models.Model):
     finished_at = models.DateTimeField(_('Finished at'), null=True, blank=True)
     duration = models.PositiveIntegerField(_('Duration (sec)'), default=0)
     session_limit = models.CharField(_('Session limit'), max_length=16, choices=SESSION_LIMIT, default='limited')
+    play_mode = models.CharField(
+        _('Play mode'),
+        max_length=16,
+        choices=PlayMode.choices,
+        default=PlayMode.SPEED
+    )
     pin_code = models.CharField(_('PIN code'), max_length=8, editable=False, unique=True, null=True)
 
     class Meta:

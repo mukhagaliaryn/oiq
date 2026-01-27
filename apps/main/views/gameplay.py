@@ -147,6 +147,7 @@ def gameplay_play_view(request, token):
         'game_task': game_task,
         'index': attempts_count + 1,
         'total_questions': total_questions,
+        'show_timer': (getattr(session, 'play_mode', 'speed') == 'speed')
     }
     tpl = resolve_activity_template(game_task.activity, 'page.html')
     return render(request, tpl, context)
@@ -192,11 +193,16 @@ def gameplay_question_fragment(request, token):
         question=current_question,
         gtq=current_gtq,
     )
+    play_mode = getattr(session, 'play_mode', 'speed')
     question_limit = getattr(current_question, 'question_limit', 0) or 0
     q_format = current_question.format.code if current_question.format else 'test'
     started_at = participant.current_started_at or timezone.now()
     elapsed = int((timezone.now() - started_at).total_seconds())
-    remaining_seconds = max(0, question_limit - max(0, elapsed))
+    if play_mode == 'classic':
+        remaining_seconds = 0
+        question_limit = 0
+    else:
+        remaining_seconds = max(0, question_limit - max(0, elapsed))
 
     context = {
         'participant': participant,
@@ -208,6 +214,7 @@ def gameplay_question_fragment(request, token):
         'total_questions': total_questions,
         'question_limit': question_limit,
         'remaining_seconds': remaining_seconds,
+        'show_timer': (play_mode == 'speed'),
         **format_ctx,
         'option_template': f"./partials/{q_format}/_options.html",
     }

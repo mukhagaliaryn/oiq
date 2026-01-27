@@ -46,7 +46,13 @@ class TestHandler(BaseHandler):
                 one = next(iter(selected_set), None)
                 is_correct = (len(selected_set) == 1 and one in correct_ids)
 
-        score = calculate_question_score(question=question, is_correct=is_correct, time_spent=time_spent).score
+        mode = getattr(participant.session, 'play_mode', 'speed')
+        score = calculate_question_score(
+            question=question,
+            is_correct=is_correct,
+            time_spent=time_spent,
+            mode=mode
+        ).score
         score_delta = score if is_correct else 0
 
         return AnswerResult(

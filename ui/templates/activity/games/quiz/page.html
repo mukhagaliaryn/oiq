@@ -44,7 +44,9 @@
                     <line x1="12" x2="15" y1="14" y2="11" />
                     <circle cx="12" cy="14" r="8" />
                 </svg>
-                <span id="ui-timer" class="font-bold w-12 text-center" data-seconds="0">--:--</span>
+                <span id="ui-timer" class="font-bold w-12 text-center" data-seconds="0">
+                    {% if show_timer %}--:--{% else %}Infinity{% endif %}
+                </span>
             </div>
         </div>
     </header>
@@ -107,6 +109,7 @@
         });
     })();
 </script>
+
 <script>
     (function () {
         function renderTimer(el, seconds) {

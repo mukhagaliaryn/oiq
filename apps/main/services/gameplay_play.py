@@ -18,9 +18,12 @@ BASE_MAX_SCORE = 1000
 BASE_MIN_SCORE = 500
 
 
-def calculate_question_score(*, question, is_correct: bool, time_spent: int) -> ScoreResult:
+def calculate_question_score(*, question, is_correct: bool, time_spent: int, mode: str = 'speed') -> ScoreResult:
     if not is_correct:
         return ScoreResult(score=0, is_correct=False, time_spent=time_spent)
+
+    if mode == 'classic':
+        return ScoreResult(score=BASE_MAX_SCORE, is_correct=True, time_spent=time_spent)
 
     t_limit = getattr(question, 'question_limit', None) or 0
     if t_limit <= 0:
@@ -30,17 +33,11 @@ def calculate_question_score(*, question, is_correct: bool, time_spent: int) -> 
         time_spent = 0
 
     speed = (t_limit - time_spent) / float(t_limit)
-    if speed < 0:
-        speed = 0.0
-    elif speed > 1:
-        speed = 1.0
+    if speed < 0: speed = 0.0
+    elif speed > 1: speed = 1.0
 
-    # 5) Финалдық ұпай
     score_float = BASE_MIN_SCORE + (BASE_MAX_SCORE - BASE_MIN_SCORE) * speed
-    score_int = int(round(score_float))
-
-    return ScoreResult(score=score_int, is_correct=True, time_spent=time_spent)
-
+    return ScoreResult(score=int(round(score_float)), is_correct=True, time_spent=time_spent)
 
 
 # Activity шаблон жүйесі

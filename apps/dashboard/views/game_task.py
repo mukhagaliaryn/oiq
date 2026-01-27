@@ -9,6 +9,7 @@ from apps.dashboard.services.game_task_step_questions import generate_questions_
 from core.models import GameTask, Activity, Question, GameTaskQuestion, Subject, Chapter, Topic, GameTaskSession
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_create page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
@@ -30,6 +31,7 @@ def game_task_create_action(request):
     return redirect('dashboard:game_task_edit', pk=game_task.pk)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_edit page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
@@ -51,6 +53,7 @@ def game_task_edit_view(request, pk):
 
 
 # game_task_step_activity
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_step_activity(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
@@ -76,6 +79,7 @@ def game_task_step_activity(request, pk):
 
 
 # game_task_step_questions
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_step_questions(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
@@ -162,6 +166,7 @@ def game_task_step_questions(request, pk):
 
 
 # game_task_step_settings
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_step_settings(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
@@ -190,6 +195,7 @@ def game_task_step_settings(request, pk):
 
 
 # game_task_publish_view
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def game_task_publish_view(request, pk):
     game_task = get_object_or_404(GameTask, pk=pk, owner=request.user)
@@ -221,6 +227,7 @@ def game_task_delete_action(request, pk):
     return redirect('dashboard:game_tasks')
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_detail page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
@@ -245,6 +252,7 @@ def game_task_detail_view(request, pk):
     return render(request, 'app/dashboard/game_tasks/game_task/page.html', context)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_questions page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required

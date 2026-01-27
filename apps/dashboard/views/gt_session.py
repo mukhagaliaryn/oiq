@@ -9,7 +9,7 @@ from apps.dashboard.services.gt_session import get_owned_session_or_404
 from core.models import GameTask, GameTaskSession
 
 
-# game_task_session_create action
+# gt_session_create action
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
 @require_POST
@@ -35,18 +35,23 @@ def gt_session_create_action(request, pk):
 
 
 # gt_session_settings action
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 @require_POST
 def gt_session_settings_action(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     session_limit = request.POST.get('session_limit', 'limited')
+    # play_mode = request.POST.get('play_mode', 'speed')
+
     session.session_limit = session_limit
-    session.save(update_fields=['session_limit'])
+    session.play_mode = session.game_task.activity.play_mode
+    session.save(update_fields=['session_limit', 'play_mode'])
     return HttpResponse(status=204)
 
 
 # game_task_delete action
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 @require_POST
 def gt_session_delete_action(request, pk, session_id):
@@ -55,6 +60,8 @@ def gt_session_delete_action(request, pk, session_id):
     session.delete()
     return HttpResponse(status=204)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 # gt_session_route action
 # ----------------------------------------------------------------------------------------------------------------------
@@ -75,6 +82,7 @@ def gt_session_route_action(request, pk, session_id):
     return redirect(url_name, pk=pk, session_id=session.pk)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_session_waiting page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
@@ -94,6 +102,7 @@ def gt_session_waiting_view(request, pk, session_id):
 
 
 # gt_session_participants fragment
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def gt_session_participants_fragment(request, pk, session_id):
     user = request.user
@@ -111,6 +120,7 @@ def gt_session_participants_fragment(request, pk, session_id):
 
 
 # gt_session_start_action
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def gt_session_start_action(request, pk, session_id):
     user = request.user
@@ -126,6 +136,7 @@ def gt_session_start_action(request, pk, session_id):
     return redirect('dashboard:session_active', pk=game_task.pk,  session_id=session.pk)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # game_task_session_active page
 # ----------------------------------------------------------------------------------------------------------------------
 @login_required
@@ -150,6 +161,7 @@ def gt_session_active_view(request, pk, session_id):
 
 
 # gt_session_active_leaderboard_fragment
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 def gt_session_active_leaderboard_fragment(request, pk, session_id):
     user = request.user
@@ -171,6 +183,7 @@ def gt_session_active_leaderboard_fragment(request, pk, session_id):
 
 
 # gt_session_finish_action
+# ----------------------------------------------------------------------------------------------------------------------
 @login_required
 @require_POST
 def gt_session_finish_action(request, pk, session_id):
