@@ -21,14 +21,23 @@
         </div>
     </div>
     <!-- Таймер -->
-    <span
-        id="ui-timer" 
-        hx-swap-oob="true"
-        data-seconds="{{ remaining_seconds }}"
-        class="font-bold w-12 text-center"
-    >
-        {% if show_timer %}--:--{% else %}Infinity{% endif %}
-    </span>
+    {% if show_timer %}
+        <span
+            id="ui-timer"
+            hx-swap-oob="true"
+            data-seconds="{{ remaining_seconds }}"
+            class="font-bold w-12 text-center"
+        >
+            --:--
+        </span>
+    {% else %}
+        <span
+            hx-swap-oob="true"
+            class="font-bold w-12 text-center"
+        >
+            ∞
+        </span>
+    {% endif %}
 </div>
 
 

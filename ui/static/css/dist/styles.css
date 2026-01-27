@@ -44,7 +44,6 @@
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
-    --breakpoint-md: 768px;
     --breakpoint-2xl: 1536px;
     --container-xs: 20rem;
     --container-sm: 24rem;
@@ -539,6 +538,9 @@
   .w-5 {
     width: calc(var(--spacing) * 5);
   }
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
   .w-8 {
     width: calc(var(--spacing) * 8);
   }
@@ -592,9 +594,6 @@
   }
   .max-w-screen-2xl {
     max-width: var(--breakpoint-2xl);
-  }
-  .max-w-screen-md {
-    max-width: var(--breakpoint-md);
   }
   .max-w-sm {
     max-width: var(--container-sm);

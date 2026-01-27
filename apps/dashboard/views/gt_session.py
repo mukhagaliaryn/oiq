@@ -146,11 +146,17 @@ def gt_session_active_view(request, pk, session_id):
     if not session.is_active():
         return redirect('dashboard:session', pk=game_task.pk, session_id=session.pk)
 
-    if session.is_time_over() and not session.is_finished():
-        session.status = 'finished'
-        session.finished_at = timezone.now()
-        session.save(update_fields=['status', 'finished_at'])
-        return redirect('dashboard:session_finished', pk=pk, session_id=session.pk)
+    is_speed = (session.play_mode == 'speed')
+    is_global_limited = (session.session_limit == 'limited')
+
+    if is_speed and is_global_limited:
+        if session.is_time_over() and not session.is_finished():
+            session.status = 'finished'
+            session.finished_at = timezone.now()
+            session.save(update_fields=['status', 'finished_at'])
+            return redirect('dashboard:session_finished', pk=pk, session_id=session.pk)
+    else:
+        pass
 
     context = {
         'session': session,

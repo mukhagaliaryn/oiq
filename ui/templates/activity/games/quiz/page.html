@@ -44,9 +44,18 @@
                     <line x1="12" x2="15" y1="14" y2="11" />
                     <circle cx="12" cy="14" r="8" />
                 </svg>
-                <span id="ui-timer" class="font-bold w-12 text-center" data-seconds="0">
-                    {% if show_timer %}--:--{% else %}Infinity{% endif %}
-                </span>
+                {% if show_timer %}
+                    <span id="ui-timer" class="font-bold w-12 text-center" data-seconds="0">
+                        --:--
+                    </span>
+                {% else %}
+                    <span class="grid w-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-infinity-icon lucide-infinity">
+                            <path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" />
+                        </svg>
+                    </span>
+                {% endif %}
             </div>
         </div>
     </header>
