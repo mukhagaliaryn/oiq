@@ -28,7 +28,7 @@
                         <span class="font-bold">{{ session.get_status_display }}</span>
                     </div>
                 </div>
-
+                
                 <div class="inline-flex items-center gap-1 py-2 px-4 rounded-full border border-border-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer">
@@ -38,18 +38,24 @@
                     </svg>
                     <div class="flex flex-col text-left">
                         <span class="text-muted text-xs">Таймер</span>
-                        <span class="font-bold">{{ session.remaining_mm_ss }}</span>
+                        <span class="font-bold">
+                            {% if session.play_mode == 'speed' %}
+                                {{ session.remaining_mm_ss }}
+                            {% else %}
+                                Шектеусіз
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
-
+                
                 <div class="inline-flex items-center gap-1 py-2 px-4 rounded-full border border-border-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-infinity-icon lucide-infinity">
                         <path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" />
                     </svg>
                     <div class="flex flex-col text-left">
-                        <span class="text-muted text-xs">Лимит түрі</span>
-                        <span class="font-bold">{{ session.get_session_limit_display }}</span>
+                        <span class="text-muted text-xs">Ойын режимі</span>
+                        <span class="font-bold">{{ session.get_play_mode_display }}</span>
                     </div>
                 </div>
             </div>

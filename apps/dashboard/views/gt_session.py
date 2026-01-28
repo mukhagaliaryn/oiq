@@ -29,6 +29,7 @@ def gt_session_create_action(request, pk):
     session = GameTaskSession.objects.create(
         game_task=game_task,
         duration=game_task.get_total_duration(),
+        play_mode=game_task.activity.play_mode,
         status='pending',
     )
     return redirect('dashboard:session_waiting', pk=pk, session_id=session.pk)
@@ -42,11 +43,9 @@ def gt_session_settings_action(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     session_limit = request.POST.get('session_limit', 'limited')
-    # play_mode = request.POST.get('play_mode', 'speed')
 
     session.session_limit = session_limit
-    session.play_mode = session.game_task.activity.play_mode
-    session.save(update_fields=['session_limit', 'play_mode'])
+    session.save(update_fields=['session_limit'])
     return HttpResponse(status=204)
 
 
@@ -62,6 +61,7 @@ def gt_session_delete_action(request, pk, session_id):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+
 
 # gt_session_route action
 # ----------------------------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ def gt_session_waiting_view(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     if not session.is_pending():
-        return redirect('dashboard:session', pk=pk, session_id=session.pk)
+        return redirect('dashboard:session_route', pk=pk, session_id=session.pk)
 
     join_url = request.build_absolute_uri(f"/join/?pin={session.pin_code}")
     context = {
@@ -144,12 +144,10 @@ def gt_session_active_view(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     if not session.is_active():
-        return redirect('dashboard:session', pk=game_task.pk, session_id=session.pk)
+        return redirect('dashboard:session_route', pk=game_task.pk, session_id=session.pk)
 
     is_speed = (session.play_mode == 'speed')
-    is_global_limited = (session.session_limit == 'limited')
-
-    if is_speed and is_global_limited:
+    if is_speed:
         if session.is_time_over() and not session.is_finished():
             session.status = 'finished'
             session.finished_at = timezone.now()
@@ -173,7 +171,7 @@ def gt_session_active_leaderboard_fragment(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     if not session.is_active():
-        return redirect('dashboard:session', pk=pk, session_id=session.pk)
+        return redirect('dashboard:session_route', pk=pk, session_id=session.pk)
 
     participants = session.participants.all().order_by('-score', '-correct_count', 'finished_at', 'started_at', 'pk')
     finished_count = participants.filter(is_finished=True).count()
@@ -210,7 +208,7 @@ def gt_session_finished_view(request, pk, session_id):
     user = request.user
     game_task, session = get_owned_session_or_404(user, pk, session_id)
     if not session.is_finished():
-        return redirect('dashboard:session', pk=pk, session_id=session.pk)
+        return redirect('dashboard:session_route', pk=pk, session_id=session.pk)
 
     participants = session.participants.all().order_by('-score', '-correct_count', 'finished_at')
     finished_count = participants.filter(is_finished=True).count()

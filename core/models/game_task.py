@@ -110,8 +110,6 @@ class GameTaskSession(models.Model):
         return None
 
     def is_timed(self) -> bool:
-        if self.session_limit != 'limited':
-            return False
         return self.play_mode == self.PlayMode.SPEED
 
     @property
