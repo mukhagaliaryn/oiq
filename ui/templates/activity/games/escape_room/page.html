@@ -1,0 +1,602 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ participant.nickname }} - {{ game_task.name }}{% endblock %}
+
+{% block base %}
+<div class="min-h-screen flex items-center justify-center">
+    <!-- Frame -->
+    <div 
+        id="frame" 
+        class="
+            relative w-screen h-screen overflow-hidden
+            md:h-[90vh] md:w-auto md:aspect-[9/16]
+            md:rounded-3xl md:shadow-2xl
+        "
+    >
+        <header id="gameplay-header" class="absolute w-full top-0 p-2">
+            <div class="flex gap-2 items-center justify-between">
+                <!-- Ұпай -->
+                <div class="flex items-center gap-2 py-2 px-4 rounded-xl bg-secondary-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-amber-500"
+                        viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span id="ui-score" class="font-bold">{{ participant.score }}</span>
+                </div>
+
+                <!-- Прогресс -->
+                <div class="flex-1">
+                    <div class="w-full h-4 rounded-full bg-secondary-200/50 overflow-hidden">
+                        <div
+                            id="ui-progress-bar"
+                            class="h-full bg-primary-600 transition-[width] duration-300"
+                            style="width: 0%"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+        </header>
+        <canvas id="game" class="block w-full h-full"></canvas>
+    </div>
+</div>
+
+<div id="modal" class="absolute inset-0 hidden items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl p-4 text-center w-[90%] max-w-sm">
+        <div id="modalText" class="text-lg font-semibold"></div>
+        <button id="modalBtn" class="mt-4 px-4 py-2 rounded-xl bg-slate-900 text-white">
+            OK
+        </button>
+    </div>
+</div>
+
+
+<!-- Сигналдар -->
+<div id="sounds">
+    <span id="ui-sfx-signal" data-kind="none" class="hidden"></span>
+    <audio id="sfx-success" preload="auto">
+        <source src="{% static 'sounds/success.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-error" preload="auto">
+        <source src="{% static 'sounds/error.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-finish" preload="auto">
+        <source src="{% static 'sounds/finish.mp3' %}" type="audio/mpeg">
+    </audio>
+</div>
+
+<script>
+    const frame = document.getElementById("frame");
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    // Modal (alert орнына)
+    // ------------------------------------------------------------------------
+    const modal = document.getElementById("modal");
+    const modalText = document.getElementById("modalText");
+    const modalBtn = document.getElementById("modalBtn");
+
+    let gamePaused = false;
+
+    function openModal(text) {
+        modalText.textContent = text;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        gamePaused = true;
+    }
+    function closeModal() {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        gamePaused = false;
+    }
+    if (modalBtn) modalBtn.addEventListener("click", closeModal);
+    if (modal) modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+    // Constants
+    // ------------------------------------------------------------------------
+    const WORLD_W = 1080;
+    const WORLD_H = 1920;
+
+    const WALL_MIN_X = 150;
+    const WALL_MIN_Y = 170;
+
+    // Performance knobs
+    // ------------------------------------------------------------------------
+    const FPS = 30;
+    const FRAME_MS = 1000 / FPS;
+
+    // Background
+    // ------------------------------------------------------------------------
+    const bg = new Image();
+    const baseSrc = '/static/images/activity/games/escape_room/'
+    bg.src = baseSrc + "assets/bg.svg";
+
+    // Objects
+    // ------------------------------------------------------------------------
+    let pendingAction = null; // { type, x, y }
+    const objects = [
+        { id: "door", src: `${baseSrc}assets/door.svg`, x: 480, y: 20, w: 277, h: 313, solid: false },
+        { id: "drawer", src: `${baseSrc}assets/drawer.svg`, x: 850, y: 194, w: 167, h: 167, solid: false },
+        { id: "plant", src: `${baseSrc}assets/plant.svg`, x: 149, y: 192, w: 167, h: 167, solid: false },
+        { id: "key", src: `${baseSrc}assets/key.svg`, x: 799, y: 120, w: 46, h: 49, solid: false },
+
+        // obstacles (solid = true by default)
+        { id: "table", src: `${baseSrc}assets/table.svg`, x: 873, y: 942, w: 403, h: 520 },
+        { id: "chair1", src: `${baseSrc}assets/chair.svg`, x: 975, y: 832, w: 113, h: 128, solid: false },
+        { id: "chair2", src: `${baseSrc}assets/chair.svg`, x: 768, y: 1016, w: 113, h: 128 },
+        { id: "chair3", src: `${baseSrc}assets/chair.svg`, x: 768, y: 1226, w: 113, h: 128 },
+        { id: "chair4", src: `${baseSrc}assets/chair.svg`, x: 981, y: 1446, w: 113, h: 128, solid: false },
+        { id: "pc-table", src: `${baseSrc}assets/pc-table.svg`, x: 147, y: 1599, w: 241, h: 343 },
+        { id: "pc-chair", src: `${baseSrc}assets/pc-chair.svg`, x: 352, y: 1680, w: 220, h: 220 },
+    ];
+
+    const objImages = {};
+    for (const o of objects) {
+        const im = new Image();
+        im.src = o.src;
+        objImages[o.id] = im;
+    }
+
+    // Player
+    // ------------------------------------------------------------------------
+    const playerImgs = {
+        stand: new Image(),
+        walk1: new Image(),
+        walk2: new Image(),
+    };
+    playerImgs.stand.src = `${baseSrc}assets/player/player_stand.png`;
+    playerImgs.walk1.src = `${baseSrc}assets/player/player_walk1.png`;
+    playerImgs.walk2.src = `${baseSrc}assets/player/player_walk2.png`;
+
+    const player = {
+        x: 0,
+        y: 0,
+        w: 159,
+        h: 219,
+        targetX: null,
+        targetY: null,
+        speed: 520,
+        facing: "right",  // right => flip draw
+        state: "stand",
+        anim: 0,
+        frame: "stand",
+    };
+
+    // click effect
+    const clickFx = []; // {x,y,t}
+
+    // Cover transform + static layer
+    // ------------------------------------------------------------------------
+    let coverT = null; // {scale,dx,dy}
+
+    let staticCanvas = null;
+    let staticCtx = null;
+    let staticReady = false;
+
+    function getCoverTransform() {
+        const cw = canvas.clientWidth;
+        const ch = canvas.clientHeight;
+
+        const scale = Math.max(cw / WORLD_W, ch / WORLD_H);
+        const dw = WORLD_W * scale;
+        const dh = WORLD_H * scale;
+        const dx = (cw - dw) / 2;
+        const dy = (ch - dh) / 2;
+
+        return { scale, dx, dy };
+    }
+
+    function buildStaticLayer() {
+        coverT = getCoverTransform();
+
+        staticCanvas = document.createElement("canvas");
+        staticCanvas.width = canvas.clientWidth;
+        staticCanvas.height = canvas.clientHeight;
+        staticCtx = staticCanvas.getContext("2d");
+
+        staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+
+        // bg
+        staticCtx.drawImage(
+            bg,
+            coverT.dx,
+            coverT.dy,
+            WORLD_W * coverT.scale,
+            WORLD_H * coverT.scale
+        );
+
+        // objects
+        for (const o of objects) {
+            const im = objImages[o.id];
+            if (!im || !im.complete) continue;
+
+            const sx = coverT.dx + o.x * coverT.scale;
+            const sy = coverT.dy + o.y * coverT.scale;
+            staticCtx.drawImage(im, sx, sy, o.w * coverT.scale, o.h * coverT.scale);
+        }
+
+        staticReady = true;
+    }
+
+    // Resize (DPR clamp)
+    // ------------------------------------------------------------------------
+    function resize() {
+        const r = frame.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.floor(r.width * dpr);
+        canvas.height = Math.floor(r.height * dpr);
+        canvas.style.width = Math.floor(r.width) + "px";
+        canvas.style.height = Math.floor(r.height) + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", () => {
+        resize();
+        buildStaticLayer();
+    });
+
+    // World/Screen helpers
+    // ------------------------------------------------------------------------
+    function screenToWorld(screenX, screenY) {
+        if (!coverT) return { x: 0, y: 0 };
+        return {
+            x: (screenX - coverT.dx) / coverT.scale,
+            y: (screenY - coverT.dy) / coverT.scale,
+        };
+    }
+
+    function rectsIntersect(a, b) {
+        return (
+            a.x < b.x + b.w &&
+            a.x + a.w > b.x &&
+            a.y < b.y + b.h &&
+            a.y + a.h > b.y
+        );
+    }
+
+    function applyWalls(nx, ny) {
+        const minX = WALL_MIN_X;
+        const minY = WALL_MIN_Y;
+        const maxX = WORLD_W - player.w;
+        const maxY = WORLD_H - player.h;
+
+        nx = Math.max(minX, Math.min(maxX, nx));
+        ny = Math.max(minY, Math.min(maxY, ny));
+        return { nx, ny };
+    }
+
+    function getObstacles() {
+        const obs = [];
+        for (const o of objects) {
+            if (o.solid === false) continue;
+            obs.push({ x: o.x, y: o.y, w: o.w, h: o.h });
+        }
+        return obs;
+    }
+
+    function tryMove(nx, ny, obstacles) {
+        ({ nx, ny } = applyWalls(nx, ny));
+
+        let blockedX = false;
+        let blockedY = false;
+
+        // X
+        let test = { x: nx, y: player.y, w: player.w, h: player.h };
+        for (const o of obstacles) {
+            if (rectsIntersect(test, o)) {
+                nx = player.x;
+                blockedX = true;
+                break;
+            }
+        }
+
+        // Y
+        test = { x: nx, y: ny, w: player.w, h: player.h };
+        for (const o of obstacles) {
+            if (rectsIntersect(test, o)) {
+                ny = player.y;
+                blockedY = true;
+                break;
+            }
+        }
+
+        return { nx, ny, blockedX, blockedY };
+    }
+
+    // Pending action runner (modal)
+    // ------------------------------------------------------------------------
+    function runPendingActionIfTargetMatch(tx, ty) {
+        if (!pendingAction) return;
+        if (Math.hypot(pendingAction.x - tx, pendingAction.y - ty) > 12) return;
+
+        if (pendingAction.type === "door") openModal("🚪 Door clicked!");
+        if (pendingAction.type === "key") openModal("🗝 Key clicked!");
+        pendingAction = null;
+    }
+
+    // Click handler
+    // ------------------------------------------------------------------------
+    canvas.addEventListener("click", (e) => {
+        if (gamePaused) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const sx = e.clientX - rect.left;
+        const sy = e.clientY - rect.top;
+
+        const w = screenToWorld(sx, sy);
+        const clickBox = { x: w.x, y: w.y, w: 1, h: 1 };
+
+        // duал аймағына click болмасын
+        if (w.x < WALL_MIN_X || w.y < WALL_MIN_Y) return;
+
+        // click fx
+        clickFx.push({ x: w.x, y: w.y, t: 0 });
+
+        // door/key click бірінші өңделсін
+        for (const o of objects) {
+            if (o.id !== "door" && o.id !== "key") continue;
+            if (!rectsIntersect(clickBox, o)) continue;
+
+            let tx = o.x + o.w / 2 - player.w / 2;
+            let ty = o.y + o.h - player.h;
+
+            // өте маңызды: duалға кіріп кетпесін
+            ({ nx: tx, ny: ty } = applyWalls(tx, ty));
+
+            player.targetX = tx;
+            player.targetY = ty;
+
+            pendingAction = { type: o.id, x: tx, y: ty };
+            return;
+        }
+
+        // solid obstacle үстіне тікелей target қойма (қаласаң)
+        for (const o of objects) {
+            if (o.solid === false) continue;
+            if (rectsIntersect(clickBox, o)) return;
+        }
+
+        // жай жүру
+        player.targetX = w.x - player.w / 2;
+        player.targetY = w.y - player.h / 2;
+    });
+
+    // Update player (бір frame dt секунд)
+    // ------------------------------------------------------------------------
+    function updatePlayer(dt) {
+        if (player.targetX == null || player.targetY == null) {
+            player.state = "stand";
+            player.frame = "stand";
+            player.anim = 0;
+            return;
+        }
+
+        const dx = player.targetX - player.x;
+        const dy = player.targetY - player.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < 2) {
+            runPendingActionIfTargetMatch(player.targetX, player.targetY);
+
+            player.x = player.targetX;
+            player.y = player.targetY;
+            player.targetX = null;
+            player.targetY = null;
+
+            player.state = "stand";
+            player.frame = "stand";
+            player.anim = 0;
+            return;
+        }
+
+        // facing (сенің логикаң: dx>0 => left, dx<0 => right)
+        if (dx > 0) player.facing = "left";
+        else if (dx < 0) player.facing = "right";
+
+        const vx = (dx / dist) * player.speed;
+        const vy = (dy / dist) * player.speed;
+
+        const nx = player.x + vx * dt;
+        const ny = player.y + vy * dt;
+
+        const obstacles = getObstacles();
+        const moved = tryMove(nx, ny, obstacles);
+
+        const prevX = player.x;
+        const prevY = player.y;
+
+        player.x = moved.nx;
+        player.y = moved.ny;
+
+        // blocked stop (action ОРЫНДАЛМАЙДЫ)
+        const wantX = Math.abs(player.targetX - prevX) > 0.5;
+        const wantY = Math.abs(player.targetY - prevY) > 0.5;
+
+        if ((wantX && moved.blockedX) || (wantY && moved.blockedY)) {
+            player.targetX = null;
+            player.targetY = null;
+            player.state = "stand";
+            player.frame = "stand";
+            player.anim = 0;
+            return;
+        }
+
+        // snap stop (action ОРЫНДАЛАДЫ)
+        const rdx = player.targetX - player.x;
+        const rdy = player.targetY - player.y;
+        const rdist = Math.hypot(rdx, rdy);
+        const stopDist = Math.max(2, player.speed * dt);
+
+        if (rdist <= stopDist) {
+            runPendingActionIfTargetMatch(player.targetX, player.targetY);
+
+            player.x = player.targetX;
+            player.y = player.targetY;
+            player.targetX = null;
+            player.targetY = null;
+
+            player.state = "stand";
+            player.frame = "stand";
+            player.anim = 0;
+            return;
+        }
+
+        // full stuck stop (action ОРЫНДАЛМАЙДЫ)
+        if (Math.abs(player.x - prevX) < 0.01 && Math.abs(player.y - prevY) < 0.01) {
+            player.targetX = null;
+            player.targetY = null;
+            player.state = "stand";
+            player.frame = "stand";
+            player.anim = 0;
+            return;
+        }
+
+        // walk anim
+        player.state = "walk";
+        player.anim += dt;
+        if (player.anim >= 0.12) {
+            player.anim = 0;
+            player.frame = (player.frame === "walk1") ? "walk2" : "walk1";
+        }
+        if (player.frame !== "walk1" && player.frame !== "walk2") player.frame = "walk1";
+    }
+
+    // Render (static + player + clickFx)
+    // ------------------------------------------------------------------------
+    function render(dt) {
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+        // static layer
+        if (staticReady) {
+            ctx.drawImage(staticCanvas, 0, 0);
+        } else {
+            // fallback: бір рет болса да bg көрінсін
+            coverT = getCoverTransform();
+            ctx.drawImage(bg, coverT.dx, coverT.dy, WORLD_W * coverT.scale, WORLD_H * coverT.scale);
+        }
+
+        const t = coverT || getCoverTransform();
+
+        // player draw
+        const px = t.dx + player.x * t.scale;
+        const py = t.dy + player.y * t.scale;
+        const pw = player.w * t.scale;
+        const ph = player.h * t.scale;
+
+        const sprite =
+            player.frame === "walk1" ? playerImgs.walk1 :
+                player.frame === "walk2" ? playerImgs.walk2 :
+                    playerImgs.stand;
+
+        if (sprite.complete) {
+            if (player.facing === "right") {
+                ctx.save();
+                ctx.translate(px + pw, py);
+                ctx.scale(-1, 1);
+                ctx.drawImage(sprite, 0, 0, pw, ph);
+                ctx.restore();
+            } else {
+                ctx.drawImage(sprite, px, py, pw, ph);
+            }
+        }
+
+        // click fx
+        for (let i = clickFx.length - 1; i >= 0; i--) {
+            const fx = clickFx[i];
+            fx.t += dt;
+
+            if (fx.t > 0.35) {
+                clickFx.splice(i, 1);
+                continue;
+            }
+
+            const p = {
+                x: t.dx + fx.x * t.scale,
+                y: t.dy + fx.y * t.scale
+            };
+
+            const r = (18 + fx.t * 140) * t.scale;
+            const a = 1 - fx.t / 0.35;
+
+            ctx.save();
+            ctx.globalAlpha = a;
+            ctx.lineWidth = 3 * t.scale;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    // Main loop (FPS limiter)
+    // ------------------------------------------------------------------------
+    let acc = 0;
+    let lastTs = 0;
+
+    function loop(ts) {
+        if (!lastTs) lastTs = ts;
+        const delta = ts - lastTs;
+        lastTs = ts;
+
+        acc += delta;
+
+        while (acc >= FRAME_MS) {
+            if (!gamePaused) updatePlayer(FRAME_MS / 1000);
+            acc -= FRAME_MS;
+        }
+
+        render(FRAME_MS / 1000);
+        requestAnimationFrame(loop);
+    }
+
+    // Start
+    // ------------------------------------------------------------------------
+    function setInitialPlayerPos() {
+        player.x = (WORLD_W - player.w) - 20;
+        player.y = (WORLD_H - player.h) - 20;
+
+        // дуал clamp (қауіпсіздік)
+        const p = applyWalls(player.x, player.y);
+        player.x = p.nx;
+        player.y = p.ny;
+    }
+
+    // applyWalls қайтарымы {nx,ny} болғандықтан, жоғарыдағы setInitialPlayerPos-та түзетеміз:
+    function applyWalls(nx, ny) {
+        const minX = WALL_MIN_X;
+        const minY = WALL_MIN_Y;
+        const maxX = WORLD_W - player.w;
+        const maxY = WORLD_H - player.h;
+
+        nx = Math.max(minX, Math.min(maxX, nx));
+        ny = Math.max(minY, Math.min(maxY, ny));
+        return { nx, ny };
+    }
+
+    // applyWalls функциясын қайта анықтадық -> оны жоғарыда қолданатындар үшін OK (JS hoist емес, соңғысы үстем)
+    // Сондықтан applyWalls-ты төменде қалдырмай, жоғарыда бір-ақ рет ұстағың келсе, осы блокты жоғарыға көтер.
+
+    // Қайталап: applyWalls-ты бір-ақ рет болсын десең, осы соңғы applyWalls-ты жоғарыдағысын өшіріп соның орнына қой.
+
+    bg.onload = () => {
+        resize();
+        coverT = getCoverTransform();
+
+        // бастапқы позиция
+        player.x = (WORLD_W - player.w) - 20;
+        player.y = (WORLD_H - player.h) - 20;
+        ({ nx: player.x, ny: player.y } = applyWalls(player.x, player.y));
+
+        // SVG-лар жүктеліп үлгермесе static бос болуы мүмкін.
+        // Бірақ сенде көбіне бәрі кешікпей келеді. Қажет болса, buildStaticLayer() қайта шақырылады.
+        buildStaticLayer();
+
+        requestAnimationFrame(loop);
+    };
+</script>
+{% endblock base %}
