@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class Activity(models.Model):
     class ActivityType(models.TextChoices):
         GAME = 'game', _('Game')
-        LIMITLESS = 'simulator', _('Simulator')
+        SIMULATOR = 'simulator', _('Simulator')
 
     class PlayMode(models.TextChoices):
         SPEED = 'speed', _('Speed')
@@ -43,5 +43,5 @@ class Activity(models.Model):
 
     def save(self, *args, **kwargs):
         if self.activity_type == 'simulator':
-            self.play_mode = 'classic'
+            self.play_mode = self.PlayMode.CLASSIC
         super().save(*args, **kwargs)
