@@ -109,9 +109,14 @@ class GameTaskSession(models.Model):
             return self.started_at + timedelta(seconds=self.duration)
         return None
 
+    def is_timed(self) -> bool:
+        if self.session_limit != 'limited':
+            return False
+        return self.play_mode == self.PlayMode.SPEED
+
     @property
     def remaining_seconds(self) -> int:
-        if self.session_limit != 'limited':
+        if not self.is_timed():
             return 0
         if not self.started_at:
             return int(self.duration or 0)
@@ -126,6 +131,8 @@ class GameTaskSession(models.Model):
         return f'{m}:{s:02d}'
 
     def is_time_over(self) -> bool:
+        if not self.is_timed():
+            return False
         dl = self.deadline
         if not dl:
             return False
