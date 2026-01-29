@@ -5,11 +5,14 @@
 
 {% block base %}
 <div class="min-h-screen flex items-center justify-center">
-    <div id="frame" class="
+    <div 
+        id="frame" 
+        class="
             relative w-screen h-screen overflow-hidden
             md:h-[90vh] md:w-auto md:aspect-[9/16]
             md:rounded-3xl md:shadow-2xl
-        ">
+        "
+    >
         <canvas id="game" class="block w-full h-full"></canvas>
     </div>
 </div>
@@ -48,11 +51,11 @@
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
 
-        // ===========================================================================
+         // ===========================================================================
         // URLs
         // ===========================================================================
         const ER_URL_QUESTION = "{% url 'main:gameplay_question' participant.token %}";
-        const ER_URL_RESULT = "{% url 'main:gameplay_result' participant.token %}";
+        const ER_URL_RESULT   = "{% url 'main:gameplay_result' participant.token %}";
 
         // ===========================================================================
         // Modal
@@ -423,7 +426,8 @@
                 openDoorLockedModal();
                 return;
             }
-            window.location.href = state.resultUrl || ER_URL_RESULT;
+            // finish: result page
+            window.location.href = ER_URL_RESULT;
         }
 
         const interactables = objects.filter(o => o.interactable && o.id !== "door");
@@ -470,7 +474,6 @@
             if (cache.innerHTML.trim()) {
                 qc.innerHTML = cache.innerHTML;
                 cache.innerHTML = "";
-                if (window.htmx) htmx.process(qc);
             } else {
                 htmx.ajax("GET", ER_URL_QUESTION, { target: "#question-container", swap: "innerHTML" });
             }
@@ -1004,34 +1007,6 @@
                         swap: "innerHTML"
                     });
                 }, 550);
-            }
-        });
-
-
-        document.addEventListener("htmx:beforeOnLoad", (e) => {
-            const xhr = e.detail.xhr;
-
-            const hxRedirect = xhr.getResponseHeader("HX-Redirect");
-            const hxLocation = xhr.getResponseHeader("HX-Location");
-
-            const targetUrl = hxRedirect || hxLocation;
-            if (!targetUrl) return;
-
-            if (String(targetUrl).includes("/result/") || String(targetUrl).includes("/results/")) {
-                e.preventDefault();
-                e.detail.shouldSwap = false;
-
-                state.doorUnlocked = true;
-                state.activeObjectId = null;
-                state.resultUrl = targetUrl;
-
-                setTimeout(() => closeModal(), 150);
-                showModal({
-                    title: "✅ Дайын",
-                    bodyHTML: `<div class="text-slate-700">Барлық сұрақ аяқталды. Енді есікке бар.</div>`,
-                    primaryText: "OK",
-                    onPrimary: () => closeModal()
-                });
             }
         });
 

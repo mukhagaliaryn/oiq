@@ -1,0 +1,35 @@
+{# escape_room/_review.html #}
+
+<!-- SFX (OOB) -->
+<span
+    id="ui-sfx-signal"
+    hx-swap-oob="true"
+    class="hidden"
+    data-kind="{% if answered %}{% if last_answer_correct %}success{% else %}error{% endif %}{% else %}error{% endif %}">
+</span>
+
+<!-- EscapeRoom state (OOB) -->
+<span
+    id="er-state"
+    hx-swap-oob="true"
+    class="hidden"
+    data-stage="review"
+    data-index="{{ index }}"
+    data-total="{{ total_questions }}"
+    data-score="{{ participant.score }}"
+    data-correct="{{ participant.correct_count }}"
+></span>
+
+<div class="grid gap-6">
+    <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
+
+    <div class="space-y-2">
+        {% with variant=question.variant.code|default_if_none:"" %}
+            {% include result_template %}
+        {% endwith %}
+    </div>
+
+    <div class="text-center text-sm text-slate-500">
+        Жауап сақталды. Бөлмені ары қарай зертте!
+    </div>
+</div>

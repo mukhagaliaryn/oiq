@@ -1,0 +1,104 @@
+<!-- Көпжауапты -->
+{% if variant == "multiple" %}
+    {% for opt in options %}
+        {% with opt_id=opt.id %}
+            {% if opt_id in correct_ids and opt_id in selected_ids %}
+                <div class="flex items-center gap-2 border rounded-xl px-4 py-2 border-emerald-600 bg-emerald-600 text-white">
+                    <span class="
+                        flex items-center justify-center h-5 w-5 shrink-0 rounded-md border border-white bg-white text-emerald-600 transition
+                    ">
+                        <svg 
+                            width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                    </span>
+                    <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% elif opt_id in correct_ids %}
+                <div class="flex items-center gap-2 border rounded-xl px-4 py-2 border-emerald-600 bg-emerald-600 text-white">
+                    <span class="
+                        flex items-center justify-center h-5 w-5 shrink-0 rounded-md border border-white bg-white text-emerald-600 transition
+                    ">
+                        <svg
+                            width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                    </span>
+                    <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% elif opt_id in selected_ids %}
+                <div class="flex items-start gap-2 border rounded-xl px-4 py-2 border-red-600 bg-red-600 text-white">
+                    <span class="
+                        flex items-center justify-center h-5 w-5 shrink-0 rounded-md border border-white bg-white text-red-600 transition
+                    ">
+                        <svg 
+                            width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                    </span>
+                    <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% else %}
+                <div class="flex items-start gap-2 border rounded-xl px-4 py-2 border-border-200 bg-white">
+                    <span class="
+                        flex items-center justify-center h-5 w-5 shrink-0 rounded-md border border-border-300 bg-white transition
+                    ">
+                        <svg class="{% if opt_id in selected_ids %}opacity-100 scale-100{% else %}opacity-0 scale-75{% endif %}" 
+                            width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                    </span>
+                    <span class="block leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+
+<!-- Біржауапты -->
+{% else %}
+    {% for opt in options %}
+        {% with opt_id=opt.id %}
+            {% if opt_id in correct_ids and opt_id in selected_ids %}
+                <div class="relative flex items-start rounded-xl px-4 py-2 border border-emerald-600 bg-emerald-600 text-white">
+                    <span class="
+                        absolute top-1/2 -translate-y-1/2 left-3 block h-5 w-5 rounded-full border-2 border-white bg-white transition
+                        after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-emerald-600 after:transition
+                    "></span>
+                    <span class="block ml-6 leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% elif opt_id in correct_ids %}
+                <div class="relative flex items-start rounded-xl px-4 py-2 border border-emerald-600 bg-emerald-600 text-white">
+                    <span class="
+                        absolute top-1/2 -translate-y-1/2 left-3 block h-5 w-5 rounded-full border-2 border-white bg-white transition
+                        after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-emerald-600 after:transition
+                    "></span>
+                    <span class="block ml-6 leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% elif opt_id in selected_ids %}
+                <div class="relative flex items-start rounded-xl px-4 py-2 border border-red-600 bg-red-600 text-white">
+                    <span class="
+                        block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border-2 border-white bg-white transition
+                        after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-red-600 after:transition
+                    "></span>
+                    <span class="block ml-6 leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% else %}
+                <div class="relative flex items-start rounded-xl px-4 py-2 border border-border-200 bg-white">
+                    <span class="
+                        block absolute top-1/2 -translate-y-1/2 left-3 h-5 w-5 rounded-full border border-border-300 bg-white transition
+                        after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-white after:transition
+                    "></span>
+                    <span class="block ml-6 leading-relaxed">{{ opt.answer|safe }}</span>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+{% endif %}

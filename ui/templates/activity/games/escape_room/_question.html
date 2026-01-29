@@ -1,0 +1,43 @@
+{# escape_room/_question.html #}
+
+<!-- EscapeRoom state (OOB) -->
+<span
+    id="er-state"
+    hx-swap-oob="true"
+    class="hidden"
+    data-stage="question"
+    data-index="{{ index }}"
+    data-total="{{ total_questions }}"
+    data-score="{{ participant.score }}"
+    data-correct="{{ participant.correct_count }}"
+></span>
+
+<div class="grid gap-6">
+    <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
+
+    <form
+        id="answer-form"
+        method="post"
+        action="{% url 'main:gameplay_answer' participant.token %}"
+        hx-post="{% url 'main:gameplay_answer' participant.token %}"
+        hx-target="#question-container"
+        hx-swap="innerHTML"
+        class="space-y-4"
+    >
+    {% csrf_token %}
+
+    <div class="space-y-2">
+        {% with variant=question.variant.code|default_if_none:"" %}
+        {% include option_template %}
+        {% endwith %}
+    </div>
+
+    <button type="submit" class="w-full px-4 py-2 rounded-xl bg-slate-900 text-white font-medium">
+        Жауап беру
+    </button>
+    </form>
+
+    <div class="text-xs text-slate-500">
+        Іздеу режимі: сұрақ тек “active” объектіден ғана шығады.
+    </div>
+</div>

@@ -1,0 +1,41 @@
+{# escape_room/_finished.html #}
+
+<!-- SFX (OOB) -->
+<span id="ui-sfx-signal" hx-swap-oob="true" class="hidden" data-kind="finish"></span>
+
+<!-- EscapeRoom state (OOB) -->
+<span
+    id="er-state"
+    hx-swap-oob="true"
+    class="hidden"
+    data-stage="finished"
+    data-finished="1"
+    data-score="{{ participant.score }}"
+    data-correct="{{ participant.correct_count }}"
+    data-total="{{ total_questions }}"
+></span>
+
+<!-- Қорытынды бөлімі -->
+<div class="py-6 text-center space-y-4">
+    <h4 class="text-lg font-bold">Ойын аяқталды!</h4>
+
+    <div class="flex gap-2 justify-center">
+        <div class="grid gap-2 text-center p-4 border border-slate-200 rounded-xl">
+            <span class="block text-slate-500">Дұрыс жауаптар:</span>
+            <h4 class="text-lg font-bold">
+                {{ participant.correct_count }}/<span class="text-slate-400">{{ total_questions }}</span>
+            </h4>
+        </div>
+        <div class="grid gap-2 text-center p-4 border border-slate-200 rounded-xl">
+            <span class="block text-slate-500">Жалпы ұпай:</span>
+            <h4 class="text-lg font-bold">{{ participant.score }}</h4>
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <a href="{% url 'main:gameplay_result' participant.token %}"
+            class="px-4 py-2 rounded-xl bg-slate-900 text-white font-medium">
+            Нәтижемді көру
+        </a>
+    </div>
+</div>
