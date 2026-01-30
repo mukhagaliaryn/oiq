@@ -10,6 +10,19 @@
             md:h-[90vh] md:w-auto md:aspect-[9/16]
             md:rounded-3xl md:shadow-2xl
         ">
+        <header 
+            id="gameplay-header"
+            class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none"
+        >
+            <!-- Прогресс -->
+            <div class="w-full h-3 rounded-full bg-secondary-200/50 overflow-hidden">
+                <div
+                    id="ui-progress-bar"
+                    class="h-full bg-primary-600 transition-[width] duration-300"
+                    style="width: 0%"
+                ></div>
+            </div>
+        </header>
         <canvas id="game" class="block w-full h-full"></canvas>
     </div>
 </div>
@@ -17,28 +30,71 @@
 <!-- Modal (UI only) -->
 <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999">
     <div class="bg-white rounded-2xl p-4 w-[92%] max-w-md">
-        <div id="modalTitle" class="text-lg font-semibold mb-2"></div>
-        <div id="modalBody" class="text-sm leading-relaxed"></div>
-
+        <div id="modalTitle" class="text-2xl font-bold mb-2 text-center"></div>
+        <div id="modalBody" class="text-sm leading-relaxed text-center"></div>
         <div id="modalFooter" class="mt-4 flex items-center justify-end gap-2">
-            <button id="modalClose" class="px-4 py-2 rounded-xl border border-slate-200">
-                Жабу
-            </button>
-            <button id="modalPrimary" class="hidden px-4 py-2 rounded-xl bg-slate-900 text-white">
-                OK
+            <button
+                id="modalPrimary"
+                class="relative w-full grid cursor-pointer group"
+            >
+                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                <span id="modalPrimaryText" class="
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                    group-hover:bg-primary-500 group-active:translate-y-1.5
+                    "
+                >
+                    Жарайды
+                </span>
             </button>
         </div>
     </div>
 </div>
 
-<!-- HTMX anchors (must ALWAYS exist; never inside modalBody HTML strings) -->
 <div id="er-anchors" class="hidden">
     <div id="question-container"></div>
     <div id="next-question-cache"></div>
     <span id="er-state" data-stage="none" data-finished="0"></span>
-    <span id="ui-sfx-signal" data-kind="none"></span>
 </div>
 
+<!-- Сигналдар -->
+<div id="sounds">
+    <span id="ui-sfx-signal" data-kind="none" class="hidden"></span>
+    <audio id="sfx-success" preload="auto">
+        <source src="{% static 'sounds/success.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-error" preload="auto">
+        <source src="{% static 'sounds/error.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-finish" preload="auto">
+        <source src="{% static 'sounds/finish.mp3' %}" type="audio/mpeg">
+    </audio>
+</div>
+
+<script>
+    (function () {
+        function play(kind) {
+            let el = null;
+            if (kind === "success") el = document.getElementById("sfx-success");
+            if (kind === "error") el = document.getElementById("sfx-error");
+            if (kind === "finish") el = document.getElementById("sfx-finish");
+
+            if (!el) return;
+            el.currentTime = 0;
+            el.volume = 0.5;
+            el.play().catch(() => { });
+        }
+
+        document.addEventListener("htmx:afterSwap", () => {
+            const sig = document.getElementById("ui-sfx-signal");
+            if (!sig) return;
+            const kind = sig.dataset.kind;
+            if (kind && kind !== "none") {
+                play(kind);
+                sig.dataset.kind = "none";
+            }
+        });
+    })();
+</script>
 <script>
     (() => {
         // ===========================================================================
@@ -60,12 +116,15 @@
         const modal = document.getElementById("modal");
         const modalTitle = document.getElementById("modalTitle");
         const modalBody = document.getElementById("modalBody");
-        const modalClose = document.getElementById("modalClose");
         const modalPrimary = document.getElementById("modalPrimary");
+        const modalPrimaryText = document.getElementById("modalPrimaryText");
 
         let gamePaused = false;
+        let modalManual = false;
 
-        function showModal({ title = "", bodyHTML = "", primaryText = "", onPrimary = null, mountNode = null }) {
+        function showModal({ title = "", bodyHTML = "", primaryText = "", onPrimary = null, mountNode = null, manual=false }) {
+            modalManual = manual;
+
             modalTitle.textContent = title;
             modalBody.innerHTML = "";
 
@@ -79,7 +138,7 @@
             modalPrimary.onclick = null;
 
             if (primaryText) {
-                modalPrimary.textContent = primaryText;
+                modalPrimaryText.textContent = primaryText;
                 modalPrimary.classList.remove("hidden");
                 if (typeof onPrimary === "function") modalPrimary.onclick = onPrimary;
             }
@@ -89,20 +148,23 @@
             gamePaused = true;
         }
 
-        function closeModal() {
+        function closeModal(force = false) {
+            if (modalManual && !force) return;
+            modalManual = false;
             const anchors = document.getElementById("er-anchors");
             const qc = document.getElementById("question-container");
             if (anchors && qc) {
                 qc.classList.add("hidden");
-                anchors.prepend(qc); // қайта орнына
+                anchors.prepend(qc);
             }
 
             modal.classList.add("hidden");
             modal.classList.remove("flex");
+
             gamePaused = false;
+            finishModalLoading = false;
         }
 
-        modalClose?.addEventListener("click", closeModal);
         modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
         // ===========================================================================
@@ -132,30 +194,12 @@
         }
 
         // ===========================================================================
-        // Mock questions (10) - test format
-        // ===========================================================================
-        const QUESTIONS = [
-            { text: "HTML деген не?", options: ["Деректер базасы", "Белгілеу тілі", "Операциялық жүйе", "Графикалық редактор"], correct: 1 },
-            { text: "CSS не үшін қолданылады?", options: ["Сервер жазу", "Дизайн/стиль беру", "DB құру", "Файл архивтеу"], correct: 1 },
-            { text: "JS қайда орындалады?", options: ["Тек серверде", "Тек деректер базасында", "Браузерде (және серверде де болуы мүмкін)", "Тек Excel-де"], correct: 2 },
-            { text: "HTTP статусы 404 нені білдіреді?", options: ["OK", "Unauthorized", "Not Found", "Server Error"], correct: 2 },
-            { text: "DOM деген не?", options: ["Файл форматы", "Құжат объект моделі", "Желі протоколы", "Графика кітапханасы"], correct: 1 },
-            { text: "Tailwind CSS деген?", options: ["Utility-first CSS framework", "Python framework", "DB engine", "OS"], correct: 0 },
-            { text: "Git негізгі мақсаты?", options: ["Сурет салу", "Нұсқа бақылау", "Видео монтаж", "Антивирус"], correct: 1 },
-            { text: "REST API деген?", options: ["UI кітапхана", "Архив форматы", "API архитектура стилі", "Браузер кеңейтімі"], correct: 2 },
-            { text: "Django деген?", options: ["Python web framework", "JS runtime", "Linux distro", "CSS preprocessor"], correct: 0 },
-            { text: "SQL не үшін?", options: ["Деректер базасымен жұмыс", "UI салу", "3D модельдеу", "Музыка жазу"], correct: 0 },
-        ];
-
-        const TOTAL_Q = QUESTIONS.length;
-
-        // ===========================================================================
         // Game state (classic)
         // ===========================================================================
         const state = {
             answeredCount: 0,
             currentQIndex: 0,
-            activeObjectId: null,   // әр сұрақта рандом 1 актив зат
+            activeObjectId: null,
             doorUnlocked: false,
             finished: false,
         };
@@ -187,7 +231,6 @@
         };
 
         // World objects
-        // NOTE: key removed
         const objects = [
             // door
             { id: "door", src: ASSETS.objects.door, x: 480, y: 20, w: 277, h: 313, solid: false, interactable: true },
@@ -195,15 +238,15 @@
             // interactable targets (we'll use these 4 for questions)
             { id: "drawer", src: ASSETS.objects.drawer, x: 850, y: 194, w: 167, h: 167, solid: false, interactable: true },
             { id: "plant", src: ASSETS.objects.plant, x: 149, y: 192, w: 167, h: 167, solid: false, interactable: true },
-            { id: "table", src: ASSETS.objects.table, x: 873, y: 942, w: 403, h: 520, interactable: true }, // solid by default
-            { id: "pc-table", src: ASSETS.objects.pcTable, x: 147, y: 1599, w: 241, h: 343, interactable: true }, // solid by default
+            { id: "pc-table", src: ASSETS.objects.pcTable, x: 147, y: 1599, w: 241, h: 343, interactable: true },
 
             // other obstacles
             { id: "chair1", src: ASSETS.objects.chair, x: 975, y: 832, w: 113, h: 128, solid: false },
-            { id: "chair2", src: ASSETS.objects.chair, x: 768, y: 1016, w: 113, h: 128 },
-            { id: "chair3", src: ASSETS.objects.chair, x: 768, y: 1226, w: 113, h: 128 },
+            { id: "chair2", src: ASSETS.objects.chair, x: 840, y: 1016, w: 113, h: 128, solid: false },
+            { id: "chair3", src: ASSETS.objects.chair, x: 820, y: 1226, w: 113, h: 128, solid: false },
             { id: "chair4", src: ASSETS.objects.chair, x: 981, y: 1446, w: 113, h: 128, solid: false },
-            { id: "pc-chair", src: ASSETS.objects.pcChair, x: 352, y: 1680, w: 220, h: 220 },
+            { id: "table", src: ASSETS.objects.table, x: 873, y: 942, w: 403, h: 520, interactable: true },
+            { id: "pc-chair", src: ASSETS.objects.pcChair, x: 352, y: 1720, w: 220, h: 220, solid: false },
         ];
 
         const player = {
@@ -211,21 +254,18 @@
             w: 159, h: 219,
             targetX: null, targetY: null,
             speed: 520,
-            facing: "right", // right => flip draw
+            facing: "right",
             anim: 0,
             frame: "stand",
 
-            detour: null,        // {x,y, finalX, finalY}
+            detour: null,
             detourTries: 0,
         };
 
         // ===========================================================================
         // Effects
         // ===========================================================================
-        // click ripple (global)
         const clickFx = []; // {x,y,t}
-
-        // object pulse when object clicked (distinct from ripple)
         const objectFx = []; // {id, x, y, w, h, t}
 
         function pushObjectFx(obj) {
@@ -235,7 +275,7 @@
         // ===========================================================================
         // Cover transform + Static Layer
         // ===========================================================================
-        let coverT = null; // {scale,dx,dy}
+        let coverT = null;
         let staticCanvas = null;
         let staticCtx = null;
         let staticReady = false;
@@ -253,7 +293,6 @@
 
         function buildStaticLayer(images) {
             coverT = getCoverTransform();
-
             staticCanvas = document.createElement("canvas");
             staticCanvas.width = canvas.clientWidth;
             staticCanvas.height = canvas.clientHeight;
@@ -278,7 +317,6 @@
                 const sy = coverT.dy + o.y * coverT.scale;
                 staticCtx.drawImage(im, sx, sy, o.w * coverT.scale, o.h * coverT.scale);
             }
-
             staticReady = true;
         }
 
@@ -298,7 +336,6 @@
             canvas.style.width = Math.floor(r.width) + "px";
             canvas.style.height = Math.floor(r.height) + "px";
 
-            // draw in CSS pixels
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
@@ -384,28 +421,20 @@
         }
 
         function getInteractionTarget(o) {
-            // Player object-ке "ішіне кірмей", сыртынан жақындайды.
-            // Кандидат нүктелер: top/bottom/left/right жақтарында.
-            const margin = 18; // объекттен қашықтық (px world)
+            const margin = 18;
             const px = player.x;
             const py = player.y;
 
             const candidates = [
-                // Top: объекттің үстінен
                 { tx: o.x + o.w / 2 - player.w / 2, ty: o.y - player.h - margin },
-                // Bottom: объекттің астынан
                 { tx: o.x + o.w / 2 - player.w / 2, ty: o.y + o.h + margin },
-                // Left: сол жағынан
                 { tx: o.x - player.w - margin, ty: o.y + o.h / 2 - player.h / 2 },
-                // Right: оң жағынан
                 { tx: o.x + o.w + margin, ty: o.y + o.h / 2 - player.h / 2 },
             ].map(p => {
-                // шекараға сыйғызу
                 const walled = applyWalls(p.tx, p.ty);
                 return { tx: walled.nx, ty: walled.ny };
             });
 
-            // Қайсысы player-ға ең жақын болса — соны таңдаймыз
             let best = candidates[0];
             let bestD = Infinity;
             for (const c of candidates) {
@@ -434,34 +463,6 @@
             }
         }
 
-        function renderQuestionHTML(q, qIndex) {
-            const opts = q.options.map((t, i) => {
-                return `
-                    <label class="flex items-start gap-2 p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50">
-                        <input type="radio" name="opt" value="${i}" class="mt-1">
-                        <span>${t}</span>
-                    </label>
-                `;
-            }).join("");
-
-            return `
-                <div class="text-slate-600 mb-2">Сұрақ ${qIndex + 1} / ${TOTAL_Q}</div>
-                    <div class="font-medium mb-3">${q.text}</div>
-                    <form id="quizForm" class="space-y-2">
-                        ${opts}
-                        <div class="pt-2 flex items-center justify-end gap-2">
-                        <button type="button" id="quizCancel" class="px-4 py-2 rounded-xl border border-slate-200">
-                            Кейін
-                        </button>
-                        <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 text-white">
-                            Жіберу
-                        </button>
-                        </div>
-                    </form>
-                <div id="quizMsg" class="mt-3 text-sm"></div>
-            `;
-        }
-
         function openQuestionModalHTMX() {
             const qc = document.getElementById("question-container");
             const cache = document.getElementById("next-question-cache");
@@ -478,55 +479,73 @@
             qc.classList.remove("hidden");
 
             showModal({
-                title: "Сұрақ",
+                title: "",
                 mountNode: qc,
                 primaryText: "",
                 onPrimary: null
             });
         }
 
+        let finishModalLoading = false;
+
+        function openFinishedModalHTMX() {
+            if (finishModalLoading) return;
+            finishModalLoading = true;
+
+            showModal({
+                title: "Ойын аяқталды",
+                bodyHTML: `<div class="text-center">Жүктелуде...</div>`,
+                primaryText: "OK",
+                manual: true,
+                onPrimary: () => closeModal(true),
+            });
+
+            const qc = document.getElementById("question-container");
+            const cache = document.getElementById("next-question-cache");
+
+            if (!qc) return;
+
+            modalBody.innerHTML = "";
+            modalBody.appendChild(qc);
+
+            qc.innerHTML = `<div class="py-6 text-center text-slate-600">Жүктелуде...</div>`;
+            qc.classList.remove("hidden");
+
+            if (cache) cache.innerHTML = "";
+            htmx.ajax("GET", ER_URL_QUESTION, { target: "#question-container", swap: "innerHTML" });
+        }
+
         function openUnavailableModal() {
             showModal({
-                title: "Бұл затта сұрақ жоқ",
-                bodyHTML: `<div class="text-slate-700">Қазір бұл жерден сұрақ табылмады немесе қолжетімді емес.</div>`,
-                primaryText: "OK",
+                title: "Бұл жерде сұрақ жоқ",
+                bodyHTML: `
+                    <div class="grid gap-2text-muted">
+                        <span>Қазір бұл жерден сұрақ табылмады немесе қолжетімді емес.</span>
+                        <img src="/static/images/activity/games/escape_room/assets/qm.png" class="w-16 mx-auto" />
+                    </div>`,
+                primaryText: "Жарайды",
                 onPrimary: () => closeModal()
             });
         }
 
         function openDoorLockedModal() {
             showModal({
-                title: "Есік",
-                bodyHTML: `<div class="text-slate-700">🚪 Есік құлыптаулы!</div>
-                <div class="text-slate-500 mt-2">Бөлмедегі сұрақтарға жауап беріп көр.</div>`,
+                title: "Есік құлыптаулы!",
+                bodyHTML: `
+                    <div class="grid gap-2 text-muted">
+                        <span>Бөлмедегі заттарда жасырылған сұрақтарға толық жауап бер.</span>
+                        <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
+                    </div>
+                `,
                 primaryText: "Түсіндім",
                 onPrimary: () => closeModal()
-            });
-        }
-
-        function openDoorFinishModal() {
-            showModal({
-                title: "Есік ашық",
-                bodyHTML: `<div class="text-slate-700">🎉 Барлық сұрақ аяқталды. Енді ойынды есіктен шығып аяқтайсың.</div>
-                <div class="text-slate-500 mt-2">Аяқтау батырмасын бас.</div>`,
-                primaryText: "Ойынды аяқтау",
-                onPrimary: () => {
-                    state.finished = true;
-                    closeModal();
-                    showModal({
-                        title: "Ойын аяқталды",
-                        bodyHTML: `<div class="text-slate-700">✅ Тест режимі: аяқталды.</div>`,
-                        primaryText: "Жабу",
-                        onPrimary: () => closeModal()
-                    });
-                }
             });
         }
 
         // ===========================================================================
         // Pending action runner
         // ===========================================================================
-        let pendingAction = null; // { kind:'object'|'door', objectId, tx, ty }
+        let pendingAction = null;
 
         function runPendingActionIfTargetMatch(tx, ty) {
             if (!pendingAction) return;
@@ -539,7 +558,6 @@
             }
 
             if (pendingAction.kind === "object") {
-                // question object vs not active
                 ensureActiveObject();
 
                 if (state.doorUnlocked) {
@@ -577,13 +595,10 @@
             const w = screenToWorld(sx, sy);
             const clickBox = { x: w.x, y: w.y, w: 1, h: 1 };
 
-            // avoid clicks out of playable bounds
             if (w.x < WALL_MIN_X || w.y < WALL_MIN_Y) return;
 
-            // click ripple (general)
             clickFx.push({ x: w.x, y: w.y, t: 0 });
 
-            // 1) Door click
             const doorObj = objects.find(o => o.id === "door");
             if (doorObj && rectsIntersect(clickBox, doorObj)) {
                 pushObjectFx(doorObj); // distinct effect
@@ -593,13 +608,12 @@
                 return;
             }
 
-            // 2) Interactable objects click (table, plant, drawer, pc-table)
             for (const o of objects) {
                 if (!o.interactable) continue;
                 if (o.id === "door") continue;
                 if (!rectsIntersect(clickBox, o)) continue;
 
-                pushObjectFx(o); // distinct effect for object click
+                pushObjectFx(o);
 
                 const { tx, ty } = getInteractionTarget(o);
                 player.targetX = tx; player.targetY = ty;
@@ -607,13 +621,11 @@
                 return;
             }
 
-            // 3) Don't set target directly into obstacles
             for (const o of objects) {
                 if (o.solid === false) continue;
                 if (rectsIntersect(clickBox, o)) return;
             }
 
-            // 4) Normal move
             player.targetX = w.x - player.w / 2;
             player.targetY = w.y - player.h / 2;
         });
@@ -622,38 +634,30 @@
         // Update
         // ===========================================================================
         function computeDetour(finalX, finalY, obstacles) {
-            // Ең жақын соғылған obstacle-ды табу үшін player rect-ті аламыз
             const pr = { x: player.x, y: player.y, w: player.w, h: player.h };
-
-            // Соғып тұрған obstacle-ды шамамен табамыз: player тұрған жерге жақын obstacle
-            // (ең мықтысы: moved кезінде intersect жасаған obstacle-ды қайтару, бірақ қазір жеңіл вариант)
             let nearest = null;
             let best = Infinity;
 
             for (const o of obstacles) {
-                // obstacle центрі
                 const cx = o.x + o.w / 2;
                 const cy = o.y + o.h / 2;
                 const d = Math.hypot((pr.x + pr.w / 2) - cx, (pr.y + pr.h / 2) - cy);
                 if (d < best) { best = d; nearest = o; }
             }
+
             if (!nearest) return null;
 
-            const margin = 26; // obstacle-дан қанша алыс өтеміз
-
-            // 4 кандидат: obstacle-дың сол/оң/үст/асты
+            const margin = 26;
             const cand = [
-                { x: nearest.x - player.w - margin, y: player.y }, // left
-                { x: nearest.x + nearest.w + margin, y: player.y }, // right
-                { x: player.x, y: nearest.y - player.h - margin }, // top
-                { x: player.x, y: nearest.y + nearest.h + margin }, // bottom
+                { x: nearest.x - player.w - margin, y: player.y },
+                { x: nearest.x + nearest.w + margin, y: player.y },
+                { x: player.x, y: nearest.y - player.h - margin },
+                { x: player.x, y: nearest.y + nearest.h + margin },
             ].map(p => {
                 const walled = applyWalls(p.x, p.y);
                 return { x: walled.nx, y: walled.ny };
             });
 
-            // Қай кандидат "final target"-қа жақынырақ жол береді — соны таңдаймыз
-            // Сонымен бірге ол нүкте obstacle-дың үстінде тұрмауы керек
             function isInsideAnyObstacle(x, y) {
                 const r = { x, y, w: player.w, h: player.h };
                 for (const o of obstacles) {
@@ -667,8 +671,6 @@
 
             for (const p of cand) {
                 if (isInsideAnyObstacle(p.x, p.y)) continue;
-
-                // бағалау: detour->final қашықтығы + current->detour қашықтығы
                 const score =
                     Math.hypot(p.x - player.x, p.y - player.y) +
                     Math.hypot(finalX - p.x, finalY - p.y);
@@ -696,13 +698,11 @@
 
             if (dist < 2) {
                 runPendingActionIfTargetMatch(player.targetX, player.targetY);
-
-                // Егер detour нүктеге жетсек — енді бастапқы final target-қа қайта барамыз
                 if (player.detour && Math.hypot(player.x - player.detour.x, player.y - player.detour.y) < 4) {
                     player.targetX = player.detour.finalX;
                     player.targetY = player.detour.finalY;
                     player.detour = null;
-                    return; // standing-қа түсірмей, әрі қарай жүре береді
+                    return;
                 }
 
                 player.x = player.targetX;
@@ -715,7 +715,6 @@
                 return;
             }
 
-            // facing
             if (dx > 0) player.facing = "left";
             else if (dx < 0) player.facing = "right";
 
@@ -734,12 +733,10 @@
             player.x = moved.nx;
             player.y = moved.ny;
 
-            // blocked stop -> cancel pending action too
             const wantX = Math.abs(player.targetX - prevX) > 0.5;
             const wantY = Math.abs(player.targetY - prevY) > 0.5;
 
             if ((wantX && moved.blockedX) || (wantY && moved.blockedY)) {
-                // Егер қазір detour-да емес болсақ — detour жасап көреміз
                 if (!player.detour && player.detourTries < 6) {
                     const finalX = player.targetX;
                     const finalY = player.targetY;
@@ -748,12 +745,8 @@
                     if (det) {
                         player.detour = { x: det.x, y: det.y, finalX, finalY };
                         player.detourTries += 1;
-
-                        // уақытша target detour-ға ауысады
                         player.targetX = det.x;
                         player.targetY = det.y;
-
-                        // pendingAction-ды жоғалтпаймыз! (есік/объект басқан кезде керек)
                         return;
                     }
                 }
@@ -842,7 +835,6 @@
                 ctx.drawImage(sprite, px, py, pw, ph);
             }
 
-            // click ripple FX (general)
             for (let i = clickFx.length - 1; i >= 0; i--) {
                 const fx = clickFx[i];
                 fx.t += dt;
@@ -865,7 +857,6 @@
                 ctx.restore();
             }
 
-            // object pulse FX (distinct)
             for (let i = objectFx.length - 1; i >= 0; i--) {
                 const fx = objectFx[i];
                 fx.t += dt;
@@ -932,12 +923,8 @@
         }
 
         async function start() {
-            // size canvas first
             resize();
-
-            // preload all images
             const bg = await loadImage(ASSETS.bg);
-
             const obj = {};
             await Promise.all(objects.map(async (o) => {
                 obj[o.id] = await loadImage(o.src);
@@ -951,18 +938,13 @@
 
             currentImages = { bg, obj, player: playerImgs };
 
-            // build static AFTER preload
             buildStaticLayer(currentImages);
-
-            // init state
             ensureActiveObject();
-
-            // init player
             setInitialPlayerPos();
-
-            // start loop
             requestAnimationFrame(loop);
         }
+
+        htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
 
         start().catch((err) => {
             console.error(err);
@@ -974,13 +956,7 @@
             });
         });
 
-
         document.addEventListener("htmx:afterSettle", (e) => {
-            if (e.target && e.target.id === "question-container") {
-                const slot = document.getElementById("er-modal-slot");
-                if (slot) slot.innerHTML = e.target.innerHTML;
-            }
-
             const st = document.getElementById("er-state");
             if (!st) return;
 
@@ -990,48 +966,45 @@
             if (stage === "finished" || finished) {
                 state.doorUnlocked = true;
                 state.activeObjectId = null;
-                setTimeout(closeModal, 200);
+
+                openFinishedModalHTMX();
                 return;
             }
 
             if (stage === "review") {
                 state.activeObjectId = pickRandomActiveObject(interactables);
-                setTimeout(closeModal, 500);
-
+                setTimeout(closeModal, 2000);
                 setTimeout(() => {
-                    htmx.ajax("GET", ER_URL_QUESTION, {
-                        target: "#next-question-cache",
-                        swap: "innerHTML"
-                    });
-                }, 550);
+                    htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
+                }, 2050);
             }
         });
 
-
         document.addEventListener("htmx:beforeOnLoad", (e) => {
             const xhr = e.detail.xhr;
-
             const hxRedirect = xhr.getResponseHeader("HX-Redirect");
             const hxLocation = xhr.getResponseHeader("HX-Location");
-
             const targetUrl = hxRedirect || hxLocation;
             if (!targetUrl) return;
 
-            if (String(targetUrl).includes("/result/") || String(targetUrl).includes("/results/")) {
+            if (String(targetUrl).includes("/result")) {
                 e.preventDefault();
                 e.detail.shouldSwap = false;
 
                 state.doorUnlocked = true;
-                state.activeObjectId = null;
                 state.resultUrl = targetUrl;
 
-                setTimeout(() => closeModal(), 150);
-                showModal({
-                    title: "✅ Дайын",
-                    bodyHTML: `<div class="text-slate-700">Барлық сұрақ аяқталды. Енді есікке бар.</div>`,
-                    primaryText: "OK",
-                    onPrimary: () => closeModal()
-                });
+                if (finishModalLoading) {
+                    const qc = document.getElementById("question-container");
+                    if (qc) {
+                        qc.innerHTML = `
+                            <div class="text-center">
+                                <p class="text-muted">Есіктен шыға берсең болады!</p>
+                            </div>
+                        `;
+                        qc.classList.remove("hidden");
+                    }
+                }
             }
         });
 
