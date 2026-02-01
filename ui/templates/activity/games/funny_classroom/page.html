@@ -19,6 +19,8 @@
         </header>
 
         <canvas id="game" class="block w-full h-full"></canvas>
+
+        <div id="popover-layer" class="absolute inset-0 z-[9998] pointer-events-none"></div>
     </div>
 </div>
 
@@ -100,6 +102,31 @@
         // ===========================================================================
         const ER_URL_QUESTION = "{% url 'main:gameplay_question' participant.token %}";
         const ER_URL_RESULT = "{% url 'main:gameplay_result' participant.token %}";
+        const SFX_BELL = "{% static 'sounds/bell.mp3' %}";
+        const SFX_CLASS = "{% static 'sounds/classroom.mp3' %}";
+
+
+        // ===========================================================================
+        // PlayAudio
+        // ===========================================================================
+        const participantNickname = "{{ participant.nickname|escapejs }}";
+        const bell = new Audio(SFX_BELL);
+        const ambience = new Audio(SFX_CLASS);
+        ambience.loop = false;
+        ambience.volume = 0.35;
+        bell.volume = 0.9;
+        let audioArmed = false;
+
+        async function playIntroAudio() {
+            try {
+                bell.currentTime = 0;
+                ambience.currentTime = 0;
+                await bell.play();
+                await ambience.play();
+            } catch (e) {
+                audioArmed = true;
+            }
+        }
 
         // ===========================================================================
         // Modal
@@ -144,6 +171,15 @@
             if (tPreload) { clearTimeout(tPreload); tPreload = null; }
         }
 
+        let tCallout = null;
+        let tCalloutRetry = null;
+
+        function clearFlowTimers() {
+            clearModalTimers();
+            if (tCallout) { clearTimeout(tCallout); tCallout = null; }
+            if (tCalloutRetry) { clearTimeout(tCalloutRetry); tCalloutRetry = null; }
+        }
+
         function closeModal(force = false) {
             if (modalManual && !force) return;
             modalManual = false;
@@ -174,7 +210,7 @@
         const FPS = 30;
         const FRAME_MS = 1000 / FPS;
 
-        const baseSrc = "/static/images/activity/games/escape_room";
+        const baseSrc = "/static/images/activity/games/funny_classroom";
 
         // ===========================================================================
         // Assets helpers (PRELOAD)
@@ -193,7 +229,13 @@
         // ===========================================================================
         const state = {
             activeObjectId: null,
-            doorUnlocked: false,
+            accessPlace: false,
+        };
+
+        const flow = {
+            movementEnabled: false,
+            introDone: false,
+            finished: false,
         };
 
         // ===========================================================================
@@ -202,16 +244,17 @@
         const ASSETS = {
             bg: `${baseSrc}/assets/bg.svg`,
             objects: {
-                door: `${baseSrc}/assets/door.svg`,
-                drawer: `${baseSrc}/assets/drawer.svg`,
-                shoesRack: `${baseSrc}/assets/shoes-rack.svg`,
-                table: `${baseSrc}/assets/table.svg`,
-                sister: `${baseSrc}/assets/sister.svg`,
-                mom: `${baseSrc}/assets/mom.svg`,
-                bro: `${baseSrc}/assets/bro.svg`,
+                plant: `${baseSrc}/assets/plant.svg`,
+                teacher: `${baseSrc}/assets/teacher.svg`,
+                desk: `${baseSrc}/assets/desk.svg`,
+                childrenDesk: `${baseSrc}/assets/children-desk.svg`,
                 chair: `${baseSrc}/assets/chair.svg`,
-                pcTable: `${baseSrc}/assets/pc-table.svg`,
-                pcChair: `${baseSrc}/assets/pc-chair.svg`,
+                sit1: `${baseSrc}/assets/sit-1.svg`,
+                sit2: `${baseSrc}/assets/sit-2.svg`,
+                sit3: `${baseSrc}/assets/sit-3.svg`,
+                sit4: `${baseSrc}/assets/sit-4.svg`,
+                sit5: `${baseSrc}/assets/sit-5.svg`,
+               
             },
             player: {
                 stand: `${baseSrc}/assets/player/player_stand.svg`,
@@ -221,21 +264,38 @@
         };
 
         const objects = [
-            { id: "door", src: ASSETS.objects.door, x: 480, y: 20, w: 277, h: 313, solid: false, interactable: true },
-            { id: "drawer", src: ASSETS.objects.drawer, x: 850, y: 194, w: 167, h: 167, solid: false, interactable: true },
-            { id: "shoesRack", src: ASSETS.objects.shoesRack, x: 195, y: 148, w: 229, h: 236, solid: false, interactable: true },
-            { id: "pc-table", src: ASSETS.objects.pcTable, x: 147, y: 1599, w: 241, h: 343, interactable: true },
-            { id: "sister", src: ASSETS.objects.sister, x: 963, y: 816, w: 114, h: 177 },
-            { id: "chair", src: ASSETS.objects.chair, x: 768, y: 1226, w: 113, h: 128, solid: false },
-            { id: "table", src: ASSETS.objects.table, x: 873, y: 942, w: 403, h: 520, interactable: true },
-            { id: "mom", src: ASSETS.objects.mom, x: 723, y: 840, w: 149, h: 223, interactable: true },
-            { id: "bro", src: ASSETS.objects.bro, x: 963, y: 1364, w: 114, h: 199, solid: false },
-            { id: "pc-chair", src: ASSETS.objects.pcChair, x: 352, y: 1720, w: 220, h: 220, solid: false },
+            { id: "plant", src: ASSETS.objects.plant, x: 160, y: 220, w: 167, h: 167, solid: false },
+            { id: "teacher", src: ASSETS.objects.teacher, x: 327, y: 488, w: 188, h: 259 },
+            { id: "desk", src: ASSETS.objects.desk, x: 192, y: 719, w: 500, h: 309 },
+
+            // desk 1
+            { id: "childrenDesk1", src: ASSETS.objects.childrenDesk, x: 192, y: 1080, w: 500, h: 384 },
+            { id: "sit1", src: ASSETS.objects.sit1, x: 220, y: 1120, w: 212, h: 309, interactable: true },
+            { id: "sit2", src: ASSETS.objects.sit2, x: 452, y: 1120, w: 212, h: 309, interactable: true },
+
+            // desk 2
+            { id: "childrenDesk2", src: ASSETS.objects.childrenDesk, x: 192, y: 1464, w: 500, h: 384 },
+            { id: "sit3", src: ASSETS.objects.sit1, x: 220, y: 1504, w: 212, h: 309, interactable: true },
+            { id: "sit4", src: ASSETS.objects.sit2, x: 452, y: 1504, w: 212, h: 309, interactable: true },
+
+            // desk 3
+            { id: "childrenDesk3", src: ASSETS.objects.childrenDesk, x: 192, y: 1848, w: 500, h: 384, interactable: true },
+
+            // player place
+            { id: "place", src: ASSETS.objects.childrenDesk, x: 892, y: 1080, w: 500, h: 384 },
+            { id: "chair", src: ASSETS.objects.chair, x: 969, y: 1313, w: 114, h: 116 },
+
+            // desk 5
+            { id: "childrenDesk5", src: ASSETS.objects.childrenDesk, x: 892, y: 1464, w: 500, h: 384 },
+            { id: "sit5", src: ASSETS.objects.sit5, x: 920, y: 1504, w: 160, h: 309, interactable: true },
+
+            // desk 6
+            { id: "childrenDesk6", src: ASSETS.objects.childrenDesk, x: 892, y: 1848, w: 500, h: 384 },
         ];
 
         const player = {
-            x: 20, y: 20,
-            w: 120, h: 186,
+            x: 715, y: 1183,
+            w: 154, h: 234,
             targetX: null, targetY: null,
             speed: 520,
             facing: "right",
@@ -360,7 +420,7 @@
             const obs = [];
             for (const o of objects) {
                 if (o.solid === false) continue;
-                if (o.id === "door") continue;
+                if (o.id === "place") continue;
                 obs.push({ x: o.x, y: o.y, w: o.w, h: o.h });
             }
             return obs;
@@ -409,18 +469,84 @@
             return best;
         }
 
+
+        // ===========================================================================
+        // Popover layer
+        // ===========================================================================
+        const popLayer = document.getElementById("popover-layer");
+
+        function worldToScreen(wx, wy) {
+            const t = coverT || getCoverTransform();
+            return {
+                x: t.dx + wx * t.scale,
+                y: t.dy + wy * t.scale,
+            };
+        }
+
+        // object-тің дәл үстінен шығару (top-center)
+        function getPopoverPointForObject(o) {
+            // object top center
+            const wx = o.x + o.w / 2;
+            const wy = o.y; // үсті
+            const p = worldToScreen(wx, wy);
+            return { x: p.x, y: p.y };
+        }
+
+        function showPopover({ text, x, y, ms = 1000, clickable = false, onClick = null }) {
+            if (!popLayer) return null;
+
+            const el = document.createElement("div");
+            el.className = [
+                "absolute -translate-x-1/2 -translate-y-full",
+                "bg-white/95 backdrop-blur",
+                "border border-slate-200 shadow-xl",
+                "rounded-2xl px-3 py-2 text-sm font-semibold whitespace-nowrap text-slate-900",
+                "max-w-[260px] text-center",
+                clickable ? "pointer-events-auto cursor-pointer hover:scale-[1.02] active:scale-[0.99]" : "pointer-events-none",
+            ].join(" ");
+
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.textContent = text;
+
+            if (clickable && typeof onClick === "function") {
+                el.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClick();
+                });
+            }
+
+            popLayer.appendChild(el);
+
+            let t = null;
+            if (ms && ms > 0) t = setTimeout(() => el.remove(), ms);
+
+            return { el, remove: () => { if (t) clearTimeout(t); el.remove(); } };
+        }
+
+        function showPopoverOnObject(objectId, text, ms = 1000, clickable = false, onClick = null) {
+            const o = objects.find(x => x.id === objectId);
+            if (!o) {
+                return showPopover({ text, x: canvas.clientWidth / 2, y: 120, ms, clickable, onClick });
+            }
+            const p = getPopoverPointForObject(o);
+            return showPopover({ text, x: p.x, y: p.y, ms, clickable, onClick });
+        }
+
+
         // ===========================================================================
         // Interaction / Quiz logic
         // ===========================================================================
-        function onDoorInteract() {
-            if (!state.doorUnlocked) {
-                openDoorLockedModal();
+        function onAccessPlaceInteract() {
+            if (!state.accessPlace) {
+                openAccessPlaceModal();
                 return;
             }
-            window.location.href = ER_URL_RESULT;
+            openFinishedModal();
         }
 
-        const interactables = objects.filter(o => o.interactable && o.id !== "door");
+        const interactables = objects.filter(o => o.interactable && o.id !== "place");
 
         function pickRandomActiveObject(list) {
             const idx = Math.floor(Math.random() * list.length);
@@ -467,12 +593,12 @@
             });
         }
 
-        function openDoorLockedModal() {
+        function openAccessPlaceModal() {
             showModal({
-                title: "Есік құлыптаулы!",
+                title: "Отыруға болмайды!",
                 bodyHTML: `
                     <div class="grid gap-2 text-muted">
-                        <span>Бөлмедегі заттарда жасырылған сұрақтарға толық жауап бер.</span>
+                        <span>Оқушылар қойған сұрақтарға толық жауап беру қажет.</span>
                         <img src="/static/images/activity/games/escape_room/assets/lock.png" class="w-16 mx-auto" />
                     </div>
                 `,
@@ -481,18 +607,29 @@
             });
         }
 
+        function playFinishAudio() {
+            try {
+                bell.currentTime = 0;
+                ambience.currentTime = 0;
+                bell.play().catch(() => { });
+                ambience.play().catch(() => { });
+            } catch (e) { }
+        }
+
         function openFinishedModal() {
+            playFinishAudio();
             showModal({
-                title: "Есік ашық!",
+                title: "Сабақ аяқталды!",
                 bodyHTML: `
                     <div class="grid gap-2 text-muted">
-                        <span>Барлық сұрақтарға толық жауап берілді. Бөлмеден шыға берсең болады</span>
-                        <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
+                        <span>Сабақ аяқталды. Нәтижені көруге болады.</span>
                     </div>
                 `,
-                primaryText: "OK",
+                primaryText: "Нәтижені көру",
                 manual: true,
-                onPrimary: () => closeModal(true),
+                onPrimary: () => {
+                    window.location.href = ER_URL_RESULT;
+                },
             });
         }
 
@@ -505,8 +642,8 @@
             if (!pendingAction) return;
             if (Math.hypot(pendingAction.tx - tx, pendingAction.ty - ty) > 12) return;
 
-            if (pendingAction.kind === "door") {
-                onDoorInteract();
+            if (pendingAction.kind === "place") {
+                onAccessPlaceInteract();
                 pendingAction = null;
                 return;
             }
@@ -526,7 +663,9 @@
         // Input
         // ===========================================================================
         canvas.addEventListener("pointerdown", (e) => {
+            if (audioArmed) { audioArmed = false; playIntroAudio(); }
             if (gamePaused) return;
+            if (!flow.movementEnabled) return;
 
             const rect = canvas.getBoundingClientRect();
             const sx = e.clientX - rect.left;
@@ -539,17 +678,17 @@
 
             clickFx.push({ x: w.x, y: w.y, t: 0 });
 
-            const doorObj = objects.find(o => o.id === "door");
-            if (doorObj && rectsIntersect(clickBox, doorObj)) {
-                pushObjectFx(doorObj);
-                const { tx, ty } = getInteractionTarget(doorObj);
+            const placeObj = objects.find(o => o.id === "place");
+            if (placeObj && rectsIntersect(clickBox, placeObj)) {
+                pushObjectFx(placeObj);
+                const { tx, ty } = getInteractionTarget(placeObj);
                 player.targetX = tx; player.targetY = ty;
-                pendingAction = { kind: "door", objectId: "door", tx, ty };
+                pendingAction = { kind: "place", objectId: "place", tx, ty };
                 return;
             }
 
             for (const o of objects) {
-                if (!o.interactable || o.id === "door") continue;
+                if (!o.interactable || o.id === "place") continue;
                 if (!rectsIntersect(clickBox, o)) continue;
 
                 pushObjectFx(o);
@@ -824,10 +963,48 @@
         // ===========================================================================
         // Start
         // ===========================================================================
-        function setInitialPlayerPos() {
-            player.x = (WORLD_W - player.w) - 20;
-            player.y = (WORLD_H - player.h) - 20;
-            ({ nx: player.x, ny: player.y } = applyWalls(player.x, player.y));
+        const teacherObjectId = "teacher";
+        const boardSpot = { x: 777, y: 482 };
+
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        function goTo(x, y) {
+            pendingAction = null;
+            player.detour = null;
+            player.detourTries = 0;
+            player.targetX = x;
+            player.targetY = y;
+        }
+
+        function waitUntilStopNear(x, y, tol = 16) {
+            return new Promise((resolve) => {
+                const tick = () => {
+                    const dx = player.x - x;
+                    const dy = player.y - y;
+                    const closeEnough = Math.hypot(dx, dy) <= tol;
+                    const stopped = (player.targetX == null && player.targetY == null);
+                    if (closeEnough && stopped) return resolve();
+                    requestAnimationFrame(tick);
+                };
+                tick();
+            });
+        }
+
+        async function runIntro() {
+            flow.movementEnabled = false;
+            playIntroAudio();
+
+            showPopoverOnObject(teacherObjectId, `${participantNickname}, тақтаға шық!`, 2000);
+            await sleep(1000);
+
+            goTo(boardSpot.x, boardSpot.y);
+            await waitUntilStopNear(boardSpot.x, boardSpot.y, 22);
+
+            showPopoverOnObject(teacherObjectId, "Ал сұрақ қойыңдар!", 2000);
+            await sleep(1000);
+
+            flow.introDone = true;
+            showRandomStudentCallout();
         }
 
         async function start() {
@@ -848,11 +1025,56 @@
 
             buildStaticLayer(currentImages);
             ensureActiveObject();
-            setInitialPlayerPos();
 
             htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
-
+            runIntro();
             requestAnimationFrame(loop);
+        }
+
+        let activeStudentPop = null;
+        let lastStudentId = null;
+        const studentIds = ["sit1", "sit2", "sit3", "sit4", "sit5"];
+
+        function clearStudentCallout() {
+            if (activeStudentPop) { activeStudentPop.remove(); activeStudentPop = null; }
+        }
+
+        function hasCachedQuestion() {
+            const cache = document.getElementById("next-question-cache");
+            return cache && cache.innerHTML.trim().length > 0;
+        }
+
+        function pickStudent() {
+            if (!studentIds.length) return null;
+            const pool = studentIds.filter(id => id !== lastStudentId);
+            const arr = pool.length ? pool : studentIds;
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function showRandomStudentCallout() {
+            if (flow.finished) return;
+            if (!flow.introDone) return;
+
+            if (!hasCachedQuestion()) {
+                tCalloutRetry = setTimeout(showRandomStudentCallout, 150);
+                return;
+            }
+
+            clearStudentCallout();
+            const sid = pickStudent();
+            lastStudentId = sid;
+
+            activeStudentPop = showPopoverOnObject(
+                sid,
+                "Менде сұрақ бар!",
+                0,
+                true,
+                () => {
+                    if (flow.finished) return;
+                    clearStudentCallout();
+                    openQuestionModalHTMX();
+                }
+            );
         }
 
         start().catch((err) => {
@@ -876,27 +1098,33 @@
             const finished = st.dataset.finished === "1";
 
             if (stage === "finished" || finished) {
-                state.doorUnlocked = true;
+                flow.finished = true;
+
+                state.accessPlace = true;
                 state.activeObjectId = null;
 
-                clearModalTimers();
+                clearFlowTimers();
+                clearStudentCallout();
 
                 const qc = document.getElementById("question-container");
                 if (qc) qc.classList.add("hidden");
 
+                flow.movementEnabled = true;
+
                 showModal({
-                    title: "Есік ашық!",
+                    title: "Мұғалім",
                     bodyHTML: `
-                        <div class="grid gap-2 text-muted">
-                            <span>Барлық сұрақтарға толық жауап берілді. Бөлмеден шыға берсең болады</span>
-                            <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
-                        </div>
-                    `,
-                    primaryText: "OK",
+                    <div class="grid gap-2 text-muted">
+                        <img src="/static/images/activity/games/funny_classroom/assets/good.png" class="w-16 mx-auto">
+                        <span>Жақсы, орныңа отыра ғой!</span>
+                    </div>`,
+                    primaryText: "Жақсы",
                     manual: true,
-                    onPrimary: () => closeModal(true)
+                    onPrimary: () => closeModal(true),
                 });
 
+                const cache = document.getElementById("next-question-cache");
+                if (cache) cache.innerHTML = "";
                 return;
             }
 
@@ -907,11 +1135,20 @@
                 tClose = setTimeout(() => closeModal(), 2000);
 
                 tPreload = setTimeout(() => {
+                    if (flow.finished) return;
+
                     htmx.ajax("GET", ER_URL_QUESTION, {
                         target: "#next-question-cache",
                         swap: "innerHTML"
                     });
+
+                    tCallout = setTimeout(() => {
+                        if (flow.finished) return;
+                        showRandomStudentCallout();
+                    }, 250);
                 }, 2050);
+
+                
             }
         });
 

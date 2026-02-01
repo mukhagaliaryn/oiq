@@ -10,30 +10,39 @@
             md:h-[90vh] md:w-auto md:aspect-[9/16]
             md:rounded-3xl md:shadow-2xl
         ">
-        <header id="gameplay-header" class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none">
+        <header 
+            id="gameplay-header"
+            class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none"
+        >
             <!-- Прогресс -->
             <div class="w-full h-3 rounded-full bg-secondary-200/50 overflow-hidden">
-                <div id="ui-progress-bar" class="h-full bg-primary-600 transition-[width] duration-300"
-                    style="width: 0%"></div>
+                <div
+                    id="ui-progress-bar"
+                    class="h-full bg-primary-600 transition-[width] duration-300"
+                    style="width: 0%"
+                ></div>
             </div>
         </header>
-
         <canvas id="game" class="block w-full h-full"></canvas>
     </div>
 </div>
 
-<!-- Модалды терезе -->
+<!-- Modal (UI only) -->
 <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999">
     <div class="bg-white rounded-2xl p-4 w-[92%] max-w-md">
         <div id="modalTitle" class="text-2xl font-bold mb-2 text-center"></div>
         <div id="modalBody" class="text-sm leading-relaxed text-center"></div>
         <div id="modalFooter" class="mt-4 flex items-center justify-end gap-2">
-            <button id="modalPrimary" class="relative w-full grid cursor-pointer group">
+            <button
+                id="modalPrimary"
+                class="relative w-full grid cursor-pointer group"
+            >
                 <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
                 <span id="modalPrimaryText" class="
-                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
                     group-hover:bg-primary-500 group-active:translate-y-1.5
-                ">
+                    "
+                >
                     Жарайды
                 </span>
             </button>
@@ -68,6 +77,7 @@
             if (kind === "success") el = document.getElementById("sfx-success");
             if (kind === "error") el = document.getElementById("sfx-error");
             if (kind === "finish") el = document.getElementById("sfx-finish");
+
             if (!el) return;
             el.currentTime = 0;
             el.volume = 0.5;
@@ -85,7 +95,6 @@
         });
     })();
 </script>
-
 <script>
     (() => {
         // ===========================================================================
@@ -113,14 +122,17 @@
         let gamePaused = false;
         let modalManual = false;
 
-        function showModal({ title = "", bodyHTML = "", primaryText = "", onPrimary = null, mountNode = null, manual = false }) {
+        function showModal({ title = "", bodyHTML = "", primaryText = "", onPrimary = null, mountNode = null, manual=false }) {
             modalManual = manual;
 
             modalTitle.textContent = title;
             modalBody.innerHTML = "";
 
-            if (mountNode) modalBody.appendChild(mountNode);
-            else modalBody.innerHTML = bodyHTML;
+            if (mountNode) {
+                modalBody.appendChild(mountNode);
+            } else {
+                modalBody.innerHTML = bodyHTML;
+            }
 
             modalPrimary.classList.add("hidden");
             modalPrimary.onclick = null;
@@ -136,18 +148,9 @@
             gamePaused = true;
         }
 
-        let tClose = null;
-        let tPreload = null;
-
-        function clearModalTimers() {
-            if (tClose) { clearTimeout(tClose); tClose = null; }
-            if (tPreload) { clearTimeout(tPreload); tPreload = null; }
-        }
-
         function closeModal(force = false) {
             if (modalManual && !force) return;
             modalManual = false;
-
             const anchors = document.getElementById("er-anchors");
             const qc = document.getElementById("question-container");
             if (anchors && qc) {
@@ -157,7 +160,9 @@
 
             modal.classList.add("hidden");
             modal.classList.remove("flex");
+
             gamePaused = false;
+            finishModalLoading = false;
         }
 
         modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
@@ -192,9 +197,17 @@
         // Game state (classic)
         // ===========================================================================
         const state = {
+            answeredCount: 0,
+            currentQIndex: 0,
             activeObjectId: null,
             doorUnlocked: false,
+            finished: false,
         };
+
+        function pickRandomActiveObject(interactables) {
+            const idx = Math.floor(Math.random() * interactables.length);
+            return interactables[idx].id;
+        }
 
         // ===========================================================================
         // Background + Objects + Player Sprites
@@ -220,6 +233,7 @@
             }
         };
 
+        // World objects
         const objects = [
             { id: "door", src: ASSETS.objects.door, x: 480, y: 20, w: 277, h: 313, solid: false, interactable: true },
             { id: "drawer", src: ASSETS.objects.drawer, x: 850, y: 194, w: 167, h: 167, solid: false, interactable: true },
@@ -241,6 +255,7 @@
             facing: "right",
             anim: 0,
             frame: "stand",
+
             detour: null,
             detourTries: 0,
         };
@@ -248,8 +263,8 @@
         // ===========================================================================
         // Effects
         // ===========================================================================
-        const clickFx = [];
-        const objectFx = [];
+        const clickFx = []; // {x,y,t}
+        const objectFx = []; // {id, x, y, w, h, t}
 
         function pushObjectFx(obj) {
             objectFx.push({ id: obj.id, x: obj.x, y: obj.y, w: obj.w, h: obj.h, t: 0 });
@@ -283,8 +298,16 @@
 
             staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 
-            staticCtx.drawImage(images.bg, coverT.dx, coverT.dy, WORLD_W * coverT.scale, WORLD_H * coverT.scale);
+            // bg
+            staticCtx.drawImage(
+                images.bg,
+                coverT.dx,
+                coverT.dy,
+                WORLD_W * coverT.scale,
+                WORLD_H * coverT.scale
+            );
 
+            // objects
             for (const o of objects) {
                 const im = images.obj[o.id];
                 if (!im) continue;
@@ -292,7 +315,6 @@
                 const sy = coverT.dy + o.y * coverT.scale;
                 staticCtx.drawImage(im, sx, sy, o.w * coverT.scale, o.h * coverT.scale);
             }
-
             staticReady = true;
         }
 
@@ -301,7 +323,7 @@
         // ===========================================================================
         let dpr = 1;
         let resizeRAF = null;
-        let currentImages = null;
+        let currentImages = null; // {bg, obj, player}
 
         function resize() {
             const r = frame.getBoundingClientRect();
@@ -360,6 +382,7 @@
             const obs = [];
             for (const o of objects) {
                 if (o.solid === false) continue;
+                // Door is not an obstacle
                 if (o.id === "door") continue;
                 obs.push({ x: o.x, y: o.y, w: o.w, h: o.h });
             }
@@ -372,14 +395,24 @@
             let blockedX = false;
             let blockedY = false;
 
+            // X
             let test = { x: nx, y: player.y, w: player.w, h: player.h };
             for (const o of obstacles) {
-                if (rectsIntersect(test, o)) { nx = player.x; blockedX = true; break; }
+                if (rectsIntersect(test, o)) {
+                    nx = player.x;
+                    blockedX = true;
+                    break;
+                }
             }
 
+            // Y
             test = { x: nx, y: ny, w: player.w, h: player.h };
             for (const o of obstacles) {
-                if (rectsIntersect(test, o)) { ny = player.y; blockedY = true; break; }
+                if (rectsIntersect(test, o)) {
+                    ny = player.y;
+                    blockedY = true;
+                    break;
+                }
             }
 
             return { nx, ny, blockedX, blockedY };
@@ -417,18 +450,15 @@
                 openDoorLockedModal();
                 return;
             }
-            window.location.href = ER_URL_RESULT;
+            window.location.href = state.resultUrl || ER_URL_RESULT;
         }
 
         const interactables = objects.filter(o => o.interactable && o.id !== "door");
 
-        function pickRandomActiveObject(list) {
-            const idx = Math.floor(Math.random() * list.length);
-            return list[idx].id;
-        }
-
         function ensureActiveObject() {
-            if (!state.activeObjectId) state.activeObjectId = pickRandomActiveObject(interactables);
+            if (!state.activeObjectId) {
+                state.activeObjectId = pickRandomActiveObject(interactables);
+            }
         }
 
         function openQuestionModalHTMX() {
@@ -454,14 +484,43 @@
             });
         }
 
+        let finishModalLoading = false;
+
+        function openFinishedModalHTMX() {
+            if (finishModalLoading) return;
+            finishModalLoading = true;
+
+            showModal({
+                title: "Ойын аяқталды",
+                bodyHTML: `<div class="text-center">Жүктелуде...</div>`,
+                primaryText: "OK",
+                manual: true,
+                onPrimary: () => closeModal(true),
+            });
+
+            const qc = document.getElementById("question-container");
+            const cache = document.getElementById("next-question-cache");
+
+            if (!qc) return;
+
+            modalBody.innerHTML = "";
+            modalBody.appendChild(qc);
+
+            qc.innerHTML = `<div class="py-6 text-center text-slate-600">Жүктелуде...</div>`;
+            qc.classList.remove("hidden");
+
+            if (cache) cache.innerHTML = "";
+            htmx.ajax("GET", ER_URL_QUESTION, { target: "#question-container", swap: "innerHTML" });
+        }
+
         function openUnavailableModal() {
             showModal({
                 title: "Бұл жерде сұрақ жоқ",
                 bodyHTML: `
-                <div class="grid gap-2text-muted">
-                    <span>Қазір бұл жерден сұрақ табылмады немесе қолжетімді емес.</span>
-                    <img src="/static/images/activity/games/escape_room/assets/qm.png" class="w-16 mx-auto" />
-                </div>`,
+                    <div class="grid gap-2text-muted">
+                        <span>Қазір бұл жерден сұрақ табылмады немесе қолжетімді емес.</span>
+                        <img src="/static/images/activity/games/escape_room/assets/qm.png" class="w-16 mx-auto" />
+                    </div>`,
                 primaryText: "Жарайды",
                 onPrimary: () => closeModal()
             });
@@ -478,21 +537,6 @@
                 `,
                 primaryText: "Түсіндім",
                 onPrimary: () => closeModal()
-            });
-        }
-
-        function openFinishedModal() {
-            showModal({
-                title: "Есік ашық!",
-                bodyHTML: `
-                    <div class="grid gap-2 text-muted">
-                        <span>Барлық сұрақтарға толық жауап берілді. Бөлмеден шыға берсең болады</span>
-                        <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
-                    </div>
-                `,
-                primaryText: "OK",
-                manual: true,
-                onPrimary: () => closeModal(true),
             });
         }
 
@@ -514,8 +558,22 @@
             if (pendingAction.kind === "object") {
                 ensureActiveObject();
 
-                if (pendingAction.objectId === state.activeObjectId) openQuestionModalHTMX();
-                else openUnavailableModal();
+                if (state.doorUnlocked) {
+                    showModal({
+                        title: "Есік ашық!",
+                        bodyHTML: `<div class="text-slate-700">Барлық сұрақ аяқталды. Есікті бас!</div>`,
+                        primaryText: "OK",
+                        onPrimary: () => closeModal()
+                    });
+                    pendingAction = null;
+                    return;
+                }
+
+                if (pendingAction.objectId === state.activeObjectId) {
+                    openQuestionModalHTMX();
+                } else {
+                    openUnavailableModal();
+                }
 
                 pendingAction = null;
                 return;
@@ -523,7 +581,7 @@
         }
 
         // ===========================================================================
-        // Input
+        // Input (pointerdown for desktop+mobile)
         // ===========================================================================
         canvas.addEventListener("pointerdown", (e) => {
             if (gamePaused) return;
@@ -541,7 +599,7 @@
 
             const doorObj = objects.find(o => o.id === "door");
             if (doorObj && rectsIntersect(clickBox, doorObj)) {
-                pushObjectFx(doorObj);
+                pushObjectFx(doorObj); // distinct effect
                 const { tx, ty } = getInteractionTarget(doorObj);
                 player.targetX = tx; player.targetY = ty;
                 pendingAction = { kind: "door", objectId: "door", tx, ty };
@@ -549,10 +607,12 @@
             }
 
             for (const o of objects) {
-                if (!o.interactable || o.id === "door") continue;
+                if (!o.interactable) continue;
+                if (o.id === "door") continue;
                 if (!rectsIntersect(clickBox, o)) continue;
 
                 pushObjectFx(o);
+
                 const { tx, ty } = getInteractionTarget(o);
                 player.targetX = tx; player.targetY = ty;
                 pendingAction = { kind: "object", objectId: o.id, tx, ty };
@@ -569,7 +629,7 @@
         });
 
         // ===========================================================================
-        // Movement (detour)
+        // Update
         // ===========================================================================
         function computeDetour(finalX, finalY, obstacles) {
             const pr = { x: player.x, y: player.y, w: player.w, h: player.h };
@@ -582,6 +642,7 @@
                 const d = Math.hypot((pr.x + pr.w / 2) - cx, (pr.y + pr.h / 2) - cy);
                 if (d < best) { best = d; nearest = o; }
             }
+
             if (!nearest) return null;
 
             const margin = 26;
@@ -597,7 +658,9 @@
 
             function isInsideAnyObstacle(x, y) {
                 const r = { x, y, w: player.w, h: player.h };
-                for (const o of obstacles) if (rectsIntersect(r, o)) return true;
+                for (const o of obstacles) {
+                    if (rectsIntersect(r, o)) return true;
+                }
                 return false;
             }
 
@@ -609,10 +672,16 @@
                 const score =
                     Math.hypot(p.x - player.x, p.y - player.y) +
                     Math.hypot(finalX - p.x, finalY - p.y);
-                if (score < bestScore) { bestScore = score; bestP = p; }
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestP = p;
+                }
             }
+
             return bestP;
         }
+
 
         function updatePlayer(dt) {
             if (player.targetX == null || player.targetY == null) {
@@ -627,7 +696,6 @@
 
             if (dist < 2) {
                 runPendingActionIfTargetMatch(player.targetX, player.targetY);
-
                 if (player.detour && Math.hypot(player.x - player.detour.x, player.y - player.detour.y) < 4) {
                     player.targetX = player.detour.finalX;
                     player.targetY = player.detour.finalY;
@@ -681,6 +749,7 @@
                     }
                 }
 
+                // detour табылмаса — бұрынғыша тоқтайды
                 player.targetX = null;
                 player.targetY = null;
                 player.detour = null;
@@ -692,6 +761,7 @@
                 return;
             }
 
+            // snap stop (action triggers)
             const rdx = player.targetX - player.x;
             const rdy = player.targetY - player.y;
             const rdist = Math.hypot(rdx, rdy);
@@ -710,6 +780,7 @@
                 return;
             }
 
+            // stuck stop
             if (Math.abs(player.x - prevX) < 0.01 && Math.abs(player.y - prevY) < 0.01) {
                 player.targetX = null;
                 player.targetY = null;
@@ -719,6 +790,7 @@
                 return;
             }
 
+            // walk anim
             player.anim += dt;
             if (player.anim >= 0.12) {
                 player.anim = 0;
@@ -733,10 +805,14 @@
         function render(dt) {
             ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
-            if (staticReady) ctx.drawImage(staticCanvas, 0, 0);
+            // static layer
+            if (staticReady) {
+                ctx.drawImage(staticCanvas, 0, 0);
+            }
 
             const t = coverT || getCoverTransform();
 
+            // player
             const px = t.dx + player.x * t.scale;
             const py = t.dy + player.y * t.scale;
             const pw = player.w * t.scale;
@@ -761,7 +837,10 @@
                 const fx = clickFx[i];
                 fx.t += dt;
 
-                if (fx.t > 0.35) { clickFx.splice(i, 1); continue; }
+                if (fx.t > 0.35) {
+                    clickFx.splice(i, 1);
+                    continue;
+                }
 
                 const p = { x: t.dx + fx.x * t.scale, y: t.dy + fx.y * t.scale };
                 const r = (18 + fx.t * 140) * t.scale;
@@ -780,7 +859,10 @@
                 const fx = objectFx[i];
                 fx.t += dt;
 
-                if (fx.t > 0.45) { objectFx.splice(i, 1); continue; }
+                if (fx.t > 0.45) {
+                    objectFx.splice(i, 1);
+                    continue;
+                }
 
                 const sx = t.dx + fx.x * t.scale;
                 const sy = t.dy + fx.y * t.scale;
@@ -794,6 +876,7 @@
                 ctx.globalAlpha = a;
                 ctx.lineWidth = 4 * t.scale;
                 ctx.beginPath();
+                // rounded-ish rectangle effect (simple)
                 ctx.rect(sx - pad, sy - pad, sw + pad * 2, sh + pad * 2);
                 ctx.stroke();
                 ctx.restore();
@@ -812,8 +895,9 @@
             lastTs = ts;
 
             acc += delta;
+
             while (acc >= FRAME_MS) {
-                if (!gamePaused) updatePlayer(FRAME_MS / 1000);
+                if (!gamePaused && !state.finished) updatePlayer(FRAME_MS / 1000);
                 acc -= FRAME_MS;
             }
 
@@ -832,11 +916,11 @@
 
         async function start() {
             resize();
-
             const bg = await loadImage(ASSETS.bg);
-
             const obj = {};
-            await Promise.all(objects.map(async (o) => { obj[o.id] = await loadImage(o.src); }));
+            await Promise.all(objects.map(async (o) => {
+                obj[o.id] = await loadImage(o.src);
+            }));
 
             const playerImgs = {
                 stand: await loadImage(ASSETS.player.stand),
@@ -849,11 +933,10 @@
             buildStaticLayer(currentImages);
             ensureActiveObject();
             setInitialPlayerPos();
-
-            htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
-
             requestAnimationFrame(loop);
         }
+
+        htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
 
         start().catch((err) => {
             console.error(err);
@@ -865,10 +948,7 @@
             });
         });
 
-        // ===========================================================================
-        // HTMX: stage handling
-        // ===========================================================================
-        document.addEventListener("htmx:afterSettle", () => {
+        document.addEventListener("htmx:afterSettle", (e) => {
             const st = document.getElementById("er-state");
             if (!st) return;
 
@@ -879,39 +959,45 @@
                 state.doorUnlocked = true;
                 state.activeObjectId = null;
 
-                clearModalTimers();
-
-                const qc = document.getElementById("question-container");
-                if (qc) qc.classList.add("hidden");
-
-                showModal({
-                    title: "Есік ашық!",
-                    bodyHTML: `
-                        <div class="grid gap-2 text-muted">
-                            <span>Барлық сұрақтарға толық жауап берілді. Бөлмеден шыға берсең болады</span>
-                            <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
-                        </div>
-                    `,
-                    primaryText: "OK",
-                    manual: true,
-                    onPrimary: () => closeModal(true)
-                });
-
+                openFinishedModalHTMX();
                 return;
             }
 
             if (stage === "review") {
                 state.activeObjectId = pickRandomActiveObject(interactables);
-
-                clearModalTimers();
-                tClose = setTimeout(() => closeModal(), 2000);
-
-                tPreload = setTimeout(() => {
-                    htmx.ajax("GET", ER_URL_QUESTION, {
-                        target: "#next-question-cache",
-                        swap: "innerHTML"
-                    });
+                setTimeout(closeModal, 2000);
+                setTimeout(() => {
+                    htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
                 }, 2050);
+            }
+        });
+
+        document.addEventListener("htmx:beforeOnLoad", (e) => {
+            const xhr = e.detail.xhr;
+            const hxRedirect = xhr.getResponseHeader("HX-Redirect");
+            const hxLocation = xhr.getResponseHeader("HX-Location");
+            const targetUrl = hxRedirect || hxLocation;
+            if (!targetUrl) return;
+
+            if (String(targetUrl).includes("/result")) {
+                e.preventDefault();
+                e.detail.shouldSwap = false;
+
+                state.doorUnlocked = true;
+                state.resultUrl = targetUrl;
+
+                if (finishModalLoading) {
+                    const qc = document.getElementById("question-container");
+                    if (qc) {
+                        qc.innerHTML = `
+                            <div class="grid gap-2 text-muted">
+                                <span>Барлық сұрақтарға толық жауап берілді. Ойынды аяқтау үшін есікке барыңыз!</span>
+                                <img src="/static/images/activity/games/escape_room/assets/key.png" class="w-16 mx-auto" />
+                            </div>
+                        `;
+                        qc.classList.remove("hidden");
+                    }
+                }
             }
         });
 
