@@ -5,22 +5,62 @@
 
 {% block base %}
 <div class="min-h-screen flex items-center justify-center">
-    <div id="frame" class="
+    <div 
+        id="frame"
+        class="
             relative w-screen h-screen overflow-hidden
             md:h-[90vh] md:w-auto md:aspect-[9/16]
             md:rounded-3xl md:shadow-2xl
-        ">
+        "
+    >
         <header id="gameplay-header" class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none">
+            <div class="max-w-5xl mx-auto flex justify-between items-center gap-2">
+            <!-- Ұпай -->
+            <div class="flex items-center gap-2 py-2 px-4 rounded-xl bg-secondary-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-amber-500"
+                    viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span id="ui-score" class="font-bold">{{ participant.score }}</span>
+            </div>
+            
             <!-- Прогресс -->
-            <div class="w-full h-3 rounded-full bg-secondary-200/50 overflow-hidden">
-                <div id="ui-progress-bar" class="h-full bg-primary-600 transition-[width] duration-300"
-                    style="width: 0%"></div>
+            <div class="w-full h-4 rounded-full bg-secondary-200/50 overflow-hidden">
+                <div
+                    id="ui-progress-bar"
+                    class="h-full bg-primary-600 transition-[width] duration-300"
+                    style="width: 0%"
+                ></div>
+            </div>
+
+            <!-- Таймер -->
+            <div class="flex items-center gap-2 pe-2 ps-4 py-2 rounded-xl bg-secondary-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-timer-icon lucide-timer">
+                    <line x1="10" x2="14" y1="2" y2="2" />
+                    <line x1="12" x2="15" y1="14" y2="11" />
+                    <circle cx="12" cy="14" r="8" />
+                </svg>
+                {% if show_timer %}
+                    <span id="ui-timer" class="font-bold w-12 text-center" data-seconds="0">
+                        --:--
+                    </span>
+                {% else %}
+                    <span class="grid w-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-infinity-icon lucide-infinity">
+                            <path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8" />
+                        </svg>
+                    </span>
+                {% endif %}
             </div>
         </header>
 
         <canvas id="game" class="block w-full h-full"></canvas>
-
-        <div id="popover-layer" class="absolute inset-0 z-[9998] pointer-events-none"></div>
+        <div id="popover-layer" class="absolute inset-0 z-9998 pointer-events-none"></div>
     </div>
 </div>
 
@@ -87,7 +127,66 @@
         });
     })();
 </script>
+<script>
+    (function () {
+        function renderTimer(el, seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            el.textContent = `${m}:${String(s).padStart(2, "0")}`;
+            if (seconds <= 5) el.classList.add("text-destructive");
+            else el.classList.remove("text-destructive");
+        }
 
+        function setupTimerFromDataset() {
+            const timer = document.getElementById('ui-timer');
+            const form = document.getElementById('answer-form');
+            if (!timer) return;
+
+            if (window.__qTimerInterval) {
+                clearInterval(window.__qTimerInterval);
+                window.__qTimerInterval = null;
+            }
+
+            let seconds = parseInt(timer.dataset.seconds || "0", 10);
+            if (!Number.isFinite(seconds) || seconds <= 0) {
+                timer.textContent = "--:--";
+                timer.classList.remove("text-destructive");
+                return;
+            }
+
+            renderTimer(timer, seconds);
+
+            window.__qTimerInterval = setInterval(() => {
+                seconds -= 1;
+                if (seconds <= 0) {
+                    clearInterval(window.__qTimerInterval);
+                    window.__qTimerInterval = null;
+
+                    if (form) {
+                        if (!form.querySelector('input[name="timeout"]')) {
+                            const inp = document.createElement('input');
+                            inp.type = "hidden";
+                            inp.name = "timeout";
+                            inp.value = "1";
+                            form.appendChild(inp);
+                        }
+
+                        form.querySelectorAll("input, textarea").forEach(x => {
+                            if (x.name === "csrfmiddlewaretoken" || x.type === "hidden") return;
+                            x.disabled = true;
+                        });
+                        form.requestSubmit();
+                    }
+                    return;
+                }
+                renderTimer(timer, seconds);
+            }, 1000);
+        }
+
+        document.addEventListener("DOMContentLoaded", setupTimerFromDataset);
+        document.addEventListener('htmx:afterSwap', setupTimerFromDataset);
+    })();
+</script>
 <script>
     (() => {
         // ===========================================================================
@@ -584,7 +683,7 @@
             showModal({
                 title: "Бұл жерде сұрақ жоқ",
                 bodyHTML: `
-                <div class="grid gap-2text-muted">
+                <div class="grid gap-2 text-muted">
                     <span>Қазір бұл жерден сұрақ табылмады немесе қолжетімді емес.</span>
                     <img src="/static/images/activity/games/escape_room/assets/qm.png" class="w-16 mx-auto" />
                 </div>`,

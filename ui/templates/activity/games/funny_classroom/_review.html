@@ -1,7 +1,8 @@
-<!-- ======================================================================= -->
 <!-- Көрсеткіштер -->
 <!-- ======================================================================= -->
 <div class="relative">
+    <!-- Ұпай -->
+    <span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
     <!-- Прогресс -->
     <div class="relative">
         {% if total_questions > 0 %}
@@ -9,24 +10,34 @@
         {% else %}
             {% with progress_percent=0 %}{% endwith %}
         {% endif %}
-        <div
+        <span id="ui-progress-text" hx-swap-oob="innerHTML">{{ index }}/{{ total_questions }}</span>
+        <div 
             id="ui-progress-bar"
             hx-swap-oob="true"
             class="h-full bg-primary-600 transition-[width] duration-300"
             style="--w: {{ progress_percent }}%; width: var(--w);">
         </div>
     </div>
-
-    <!-- SFX (OOB) -->
+    <!-- Таймер -->
     <span
-        id="ui-sfx-signal"
+        id="ui-timer" 
         hx-swap-oob="true"
-        class="hidden"
+        class="font-bold w-12 text-center"
+        data-seconds="0"
+    >
+        --:--
+    </span>
+    <!-- Сигнал -->
+    <span 
+        id="ui-sfx-signal"
+        hx-swap-oob="true" 
         data-kind="{% if answered %}{% if last_answer_correct %}success{% else %}error{% endif %}{% else %}error{% endif %}">
     </span>
 </div>
 
+
 <!-- EscapeRoom state (OOB) -->
+<!-- ======================================================================= -->
 <span
     id="er-state"
     hx-swap-oob="true"
@@ -53,6 +64,7 @@
 </div>
 
 <!-- alert(Нәтиже) -->
+<!-- ======================================================================= -->
 <div class="fixed bottom-0 left-0 w-full z-10 transition-all">
     <div class="
         flex gap-2 justify-center items-center p-8 animate-[slideUpFade_100ms_ease-out]

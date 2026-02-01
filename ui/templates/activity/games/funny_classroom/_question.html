@@ -1,7 +1,8 @@
-<!-- ======================================================================= -->
 <!-- Көрсеткіштер -->
 <!-- ======================================================================= -->
 <div class="relative">
+    <!-- Ұпай -->
+    <span id="ui-score" hx-swap-oob="innerHTML">{{ participant.score }}</span>
     <!-- Прогресс -->
     <div class="relative">
         {% if total_questions > 0 %}
@@ -9,6 +10,10 @@
         {% else %}
             {% with progress_percent=0 %}{% endwith %}
         {% endif %}
+
+        <span id="ui-progress-text" hx-swap-oob="innerHTML">
+            {{ index }}/{{ total_questions }}
+        </span>
         <div 
             id="ui-progress-bar"
             hx-swap-oob="true"
@@ -16,9 +21,28 @@
             style="--w: {{ progress_percent }}%; width: var(--w);">
         </div>
     </div>
+    <!-- Таймер -->
+    {% if show_timer %}
+        <span
+            id="ui-timer"
+            hx-swap-oob="true"
+            data-seconds="{{ remaining_seconds }}"
+            class="font-bold w-12 text-center"
+        >
+            --:--
+        </span>
+    {% else %}
+        <span
+            hx-swap-oob="true"
+            class="font-bold w-12 text-center"
+        >
+            ∞
+        </span>
+    {% endif %}
 </div>
 
 <!-- EscapeRoom state (OOB) -->
+<!-- ======================================================================= -->
 <span
     id="er-state"
     hx-swap-oob="true"
