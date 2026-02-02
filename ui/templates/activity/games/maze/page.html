@@ -24,14 +24,22 @@
     </div>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="absolute inset-0 hidden items-center justify-center bg-black/50 z-50">
-    <div class="bg-white rounded-2xl p-4 text-center w-[92%] max-w-sm">
-        <div id="modalTitle" class="text-lg font-semibold"></div>
-        <div id="modalBody" class="mt-2 text-sm text-slate-700"></div>
-        <button id="modalPrimary" class="mt-4 w-full px-4 py-2 rounded-xl bg-slate-900 text-white hidden">
-            OK
-        </button>
+<!-- Модалды терезе -->
+<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999">
+    <div class="bg-white rounded-2xl p-4 w-[92%] max-w-md">
+        <div id="modalTitle" class="text-2xl font-bold mb-2 text-center"></div>
+        <div id="modalBody" class="text-sm leading-relaxed"></div>
+        <div id="modalFooter" class="mt-4 flex items-center justify-end gap-2">
+            <button id="modalPrimary" class="relative w-full grid cursor-pointer group">
+                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                <span id="modalPrimaryText" class="
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium
+                    group-hover:bg-primary-500 group-active:translate-y-1.5
+                ">
+                    Жарайды
+                </span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -42,7 +50,7 @@
     <span id="er-state" data-stage="none" data-finished="0"></span>
 </div>
 
-<!-- Sounds (optional) -->
+<!-- Сигналдар -->
 <div id="sounds" class="hidden">
     <span id="ui-sfx-signal" data-kind="none"></span>
     <audio id="sfx-success" preload="auto">
@@ -60,7 +68,6 @@
 
 <script>
     (function () {
-        // plays UI sounds based on #ui-sfx-signal (optional)
         function play(kind) {
             let el = null;
             if (kind === "success") el = document.getElementById("sfx-success");
@@ -99,6 +106,7 @@
         const modalTitle = document.getElementById("modalTitle");
         const modalBody = document.getElementById("modalBody");
         const modalPrimary = document.getElementById("modalPrimary");
+        const modalPrimaryText = document.getElementById("modalPrimaryText");
 
         let gamePaused = false;
         let modalManual = false;
@@ -112,7 +120,7 @@
             else modalBody.innerHTML = bodyHTML;
 
             if (primaryText) {
-                modalPrimary.textContent = primaryText;
+                modalPrimaryText.textContent = primaryText;
                 modalPrimary.classList.remove("hidden");
                 modalPrimary.onclick = onPrimary || (() => closeModal(true));
             } else {
@@ -170,6 +178,7 @@
             wallTile: `${baseSrc}/assets/wall.svg`,
             objects: {
                 innerDoor: `${baseSrc}/assets/inner_door.svg`,
+                innerDoorOpen: `${baseSrc}/assets/inner_door_open.svg`,
                 finalDoor: `${baseSrc}/assets/finish_door.svg`,
                 question: `${baseSrc}/assets/question.svg`,
             },
@@ -355,6 +364,7 @@
             bg: null,
             wallTile: null,
             doorInner: null,
+            doorInnerOpen: null,
             doorFinal: null,
             questionIcon: null,
             playerStand: null,
@@ -380,41 +390,46 @@
             }
         }
 
+        function drawDoor(ctx, door) {
+            const p = worldToScreen(door.x, door.y);
+            const dw = door.w * coverT.scale;
+            const dh = door.h * coverT.scale;
+
+            if (door.kind === "innerDoor") {
+                const img = door.open ? images.doorInnerOpen : images.doorInner;
+                if (img) {
+                ctx.drawImage(img, p.x, p.y, dw, dh);
+                return;
+                }
+            }
+
+            if (door.kind === "finalDoor" && images.doorFinal) {
+                ctx.drawImage(images.doorFinal, p.x, p.y, dw, dh);
+                return;
+            }
+
+            ctx.fillStyle = door.kind === "finalDoor" ? "#16a34a" : "#0f172a";
+            ctx.fillRect(p.x, p.y, dw, dh);
+        }
+
         function buildStaticLayer() {
             const r = frame.getBoundingClientRect();
             staticCanvas.width = Math.round(r.width);
             staticCanvas.height = Math.round(r.height);
-
             staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
 
-            // bg
             if (images.bg) {
                 staticCtx.drawImage(images.bg, coverT.offsetX, coverT.offsetY, coverT.drawW, coverT.drawH);
             } else {
-                // fallback bg
                 staticCtx.fillStyle = "#f8fafc";
                 staticCtx.fillRect(0, 0, staticCanvas.width, staticCanvas.height);
             }
 
-            // walls
             for (const w of MAZE_WALLS) drawWallRect(staticCtx, images.wallTile, w);
 
-            // closed doors on static
-            for (const o of objects) {
-                if (o.open) continue;
-
-                const p = worldToScreen(o.x, o.y);
-                const dw = o.w * coverT.scale;
-                const dh = o.h * coverT.scale;
-
-                if (o.kind === "innerDoor" && images.doorInner) {
-                    staticCtx.drawImage(images.doorInner, p.x, p.y, dw, dh);
-                } else if (o.kind === "finalDoor" && images.doorFinal) {
-                    staticCtx.drawImage(images.doorFinal, p.x, p.y, dw, dh);
-                } else {
-                    // fallback
-                    staticCtx.fillStyle = "#0f172a";
-                    staticCtx.fillRect(p.x, p.y, dw, dh);
+            for (const door of objects) {
+                if (door.kind === "innerDoor" || door.kind === "finalDoor") {
+                    drawDoor(staticCtx, door);
                 }
             }
         }
@@ -532,23 +547,32 @@
             door2: { title: "Есікті ашу", question: "3 * 5 = ?", options: ["15", "20", "10"], correctIndex: 0 },
         };
 
+
+        function emitSignal(kind) {
+            const sig = document.getElementById("ui-sfx-signal");
+            if (!sig) return;
+            sig.dataset.kind = kind;
+            const ev = new Event("htmx:afterSwap");
+            document.dispatchEvent(ev);
+        }
+
         function openInnerDoorQuiz(doorObj) {
             const q = INNER_DOOR_QUIZZES[doorObj.id];
             if (!q) {
                 showModal({ 
                     title: "Сұрақ жоқ", 
-                    bodyHTML: "<div>Бұл есікке сұрақ бекітілмеген.</div>", 
-                    primaryText: "OK", 
+                    bodyHTML: `<div class="text-muted text-center">Бұл есікке сұрақ бекітілмеген.</div>`, 
+                    primaryText: "ОК", 
                     onPrimary: () => closeModal(true) 
                 });
                 return;
             }
 
             const root = document.createElement("div");
-            root.className = "grid gap-3 text-left";
+            root.className = "grid gap-4 text-left";
 
             const qt = document.createElement("div");
-            qt.className = "font-medium";
+            qt.className = "font-bold text-lg";
             qt.textContent = q.question;
             root.appendChild(qt);
 
@@ -558,16 +582,32 @@
             q.options.forEach((opt, idx) => {
                 const b = document.createElement("button");
                 b.type = "button";
-                b.className = "px-3 py-2 rounded-xl border hover:bg-slate-50";
+                b.className = "px-4 py-2 rounded-xl border border-border-200 text-left hover:bg-primary-50";
                 b.textContent = opt;
                 b.onclick = () => {
                     if (idx === q.correctIndex) {
                         doorObj.open = true;
                         doorObj.solid = false;
                         rebuildStaticLayer();
-                        showModal({ title: "Дұрыс!", bodyHTML: "<div>Есік ашылды ✅</div>", primaryText: "OK", onPrimary: () => closeModal(true) });
+                        emitSignal("success");
+                        showModal({ 
+                            title: "Дұрыс!", 
+                            bodyHTML: `
+                            <div class="grid gap-2 text-muted text-center">
+                                <img src="/static/images/activity/games/maze/assets/key.png" class="w-16 mx-auto" />
+                                <span>Сіз дұрыс жауап бердіңіз!</span>
+                            </div>`, 
+                            primaryText: "Есік ашу", 
+                            onPrimary: () => closeModal(true) 
+                        });
                     } else {
-                        showModal({ title: "Қате", bodyHTML: "<div>Тағы байқап көр.</div>", primaryText: "OK", onPrimary: () => closeModal(true) });
+                        emitSignal("error");
+                        showModal({ 
+                            title: "Қате", 
+                            bodyHTML: `<div class="text-muted text-center">Тағы байқап көр.</div>`, 
+                            primaryText: "Жақсы", 
+                            onPrimary: () => closeModal(true) 
+                        });
                     }
                 };
                 wrap.appendChild(b);
@@ -606,7 +646,11 @@
         function finalDoorLockedModal() {
             showModal({
                 title: "Есік құлыптаулы!",
-                bodyHTML: "<div>Барлық сұрақтарға жауап бермейінше соңғы есік ашылмайды.</div>",
+                bodyHTML: `
+                    <div class="grid gap-2 text-muted text-center">
+                        <img src="/static/images/activity/games/maze/assets/lock.png" class="w-16 mx-auto" />
+                        <span>Барлық сұрақтарға жауап бермейінше соңғы есік ашылмайды.</span>
+                    </div>`,
                 primaryText: "Түсіндім",
                 onPrimary: () => closeModal(true)
             });
@@ -625,7 +669,7 @@
             w: 56, h: 96,
             speed: 400,
             targetX: null, targetY: null,
-            facing: 1,  // 1 right, -1 left
+            facing: 1,
             frame: "stand",
             anim: 0,
         };
@@ -856,7 +900,8 @@
 
         function drawQuestionObject() {
             const q = objects.find(o => o.id === "question");
-            if (!q) return;
+            if (!q || q.hidden) return;
+
 
             const p = worldToScreen(q.x, q.y);
             const dw = q.w * coverT.scale;
@@ -944,16 +989,26 @@
 
             if (stage === "finished" || finished) {
                 state.finalUnlocked = true;
+                state.gameFinished = true;
 
                 const fd = objects.find(o => o.id === "final_door");
                 if (fd) { fd.open = true; fd.solid = false; }
+
+                const qIndex = objects.findIndex(o => o.id === "question");
+                if (qIndex !== -1) {
+                    objects.splice(qIndex, 1);
+                }
 
                 rebuildStaticLayer();
                 clearTimers();
 
                 showModal({
-                    title: "Дайын!",
-                    bodyHTML: "<div>Барлық сұрақтарға жауап берілді. Енді соңғы есіктен шыға аласың.</div>",
+                    title: "Ойынды аяқталды!",
+                    bodyHTML: `
+                    <div class="grid gap-2 text-center text-muted">
+                        <img src="/static/images/activity/games/maze/assets/finish_door.svg" class="w-16 mx-auto" />
+                        <span>Соңғы есіктен шығып кетіңіз!</span>
+                    </div>`,
                     primaryText: "OK",
                     manual: true,
                     onPrimary: () => closeModal(true),
@@ -1016,6 +1071,7 @@
             images.wallTile = await loadImage(ASSETS.wallTile);
 
             images.doorInner = await loadImage(ASSETS.objects.innerDoor);
+            images.doorInnerOpen = await loadImage(ASSETS.objects.innerDoorOpen);
             images.doorFinal = await loadImage(ASSETS.objects.finalDoor);
             images.questionIcon = await loadImage(ASSETS.objects.question);
 
