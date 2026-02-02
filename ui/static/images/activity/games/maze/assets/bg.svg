@@ -511,6 +511,7 @@
 <rect x="1024" y="704" width="64" height="64" fill="url(#pattern507_190_1302)"/>
 <rect x="1024" y="1472" width="64" height="64" fill="url(#pattern508_190_1302)"/>
 <rect x="1024" y="1856" width="64" height="64" fill="url(#pattern509_190_1302)"/>
+<rect width="1080" height="1920" fill="white" fill-opacity="0.3"/>
 </g>
 <defs>
 <pattern id="pattern0_190_1302" patternContentUnits="objectBoundingBox" width="1" height="1">
