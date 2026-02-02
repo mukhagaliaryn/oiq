@@ -1,0 +1,1042 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ participant.nickname }} - Maze{% endblock %}
+
+{% block base %}
+<div class="min-h-screen flex items-center justify-center">
+    <div 
+        id="frame" 
+        class="
+            relative w-screen h-screen overflow-hidden
+            md:h-[90vh] md:w-auto md:aspect-[9/16]
+            md:rounded-3xl md:shadow-2xl
+        "
+    >
+        <header id="gameplay-header" class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none">
+            <!-- Прогресс -->
+            <div class="w-full h-4 rounded-full bg-secondary-200/50 overflow-hidden">
+                <div id="ui-progress-bar" class="h-full bg-primary-600 transition-[width] duration-300"
+                    style="width: 0%"></div>
+            </div>
+        </header>
+        <canvas id="game" class="block w-full h-full"></canvas>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="absolute inset-0 hidden items-center justify-center bg-black/50 z-50">
+    <div class="bg-white rounded-2xl p-4 text-center w-[92%] max-w-sm">
+        <div id="modalTitle" class="text-lg font-semibold"></div>
+        <div id="modalBody" class="mt-2 text-sm text-slate-700"></div>
+        <button id="modalPrimary" class="mt-4 w-full px-4 py-2 rounded-xl bg-slate-900 text-white hidden">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- HTMX anchors -->
+<div id="er-anchors" class="hidden">
+    <div id="question-container" class="hidden"></div>
+    <div id="next-question-cache"></div>
+    <span id="er-state" data-stage="none" data-finished="0"></span>
+</div>
+
+<!-- Sounds (optional) -->
+<div id="sounds" class="hidden">
+    <span id="ui-sfx-signal" data-kind="none"></span>
+    <audio id="sfx-success" preload="auto">
+        <source src="{% static 'sounds/success.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-error" preload="auto">
+        <source src="{% static 'sounds/error.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-finish" preload="auto">
+        <source src="{% static 'sounds/finish.mp3' %}" type="audio/mpeg">
+    </audio>
+</div>
+
+
+
+<script>
+    (function () {
+        // plays UI sounds based on #ui-sfx-signal (optional)
+        function play(kind) {
+            let el = null;
+            if (kind === "success") el = document.getElementById("sfx-success");
+            if (kind === "error") el = document.getElementById("sfx-error");
+            if (kind === "finish") el = document.getElementById("sfx-finish");
+            if (!el) return;
+            el.currentTime = 0;
+            el.volume = 0.5;
+            el.play().catch(() => { });
+        }
+
+        document.addEventListener("htmx:afterSwap", () => {
+            const sig = document.getElementById("ui-sfx-signal");
+            if (!sig) return;
+            const kind = sig.dataset.kind;
+            if (kind && kind !== "none") {
+                play(kind);
+                sig.dataset.kind = "none";
+            }
+        });
+    })();
+</script>
+
+<script>
+    (() => {
+        // ===========================================================================
+        // URLs
+        // ===========================================================================
+        const ER_URL_QUESTION = "{% url 'main:gameplay_question' participant.token %}";
+        const ER_URL_RESULT = "{% url 'main:gameplay_result' participant.token %}";
+
+        // ===========================================================================
+        // Modal
+        // ===========================================================================
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const modalPrimary = document.getElementById("modalPrimary");
+
+        let gamePaused = false;
+        let modalManual = false;
+
+        function showModal({ title = "", bodyHTML = "", mountNode = null, primaryText = "", onPrimary = null, manual = false }) {
+            modalManual = manual;
+            modalTitle.textContent = title;
+
+            modalBody.innerHTML = "";
+            if (mountNode) modalBody.appendChild(mountNode);
+            else modalBody.innerHTML = bodyHTML;
+
+            if (primaryText) {
+                modalPrimary.textContent = primaryText;
+                modalPrimary.classList.remove("hidden");
+                modalPrimary.onclick = onPrimary || (() => closeModal(true));
+            } else {
+                modalPrimary.classList.add("hidden");
+                modalPrimary.onclick = null;
+            }
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            gamePaused = true;
+        }
+
+        function closeModal(force = false) {
+            if (modalManual && !force) return;
+            modalManual = false;
+
+            const qc = document.getElementById("question-container");
+            const anchors = document.getElementById("er-anchors");
+            if (qc && anchors) {
+                qc.classList.add("hidden");
+                anchors.prepend(qc);
+            }
+
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            gamePaused = false;
+        }
+
+        modalPrimary.addEventListener("click", (e) => e.stopPropagation());
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+        // ===========================================================================
+        // Canvas / World
+        // ===========================================================================
+        const frame = document.getElementById("frame");
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        const WORLD_W = 1080;
+        const WORLD_H = 1920;
+
+        const TILE = 64;
+        const T = 64;
+
+        const DEBUG_WALLS = false;     
+        const DEBUG_TARGET = false;
+
+        // ===========================================================================
+        // Assets (YOU will replace URLs)
+        // ===========================================================================
+        const baseSrc = "/static/images/activity/games/maze"
+
+        const ASSETS = {
+            bg: `${baseSrc}/assets/bg.svg`,
+            wallTile: `${baseSrc}/assets/wall.svg`,
+            objects: {
+                innerDoor: `${baseSrc}/assets/inner_door.svg`,
+                finalDoor: `${baseSrc}/assets/finish_door.svg`,
+                question: `${baseSrc}/assets/question.svg`,
+            },
+            player: {
+                stand: `${baseSrc}/assets/player/player_stand.svg`,
+                walk1: `${baseSrc}/assets/player/player_walk1.svg`,
+                walk2: `${baseSrc}/assets/player/player_walk2.svg`,
+            }
+        };
+
+
+        function loadImage(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null); // soft-fail
+                img.src = src;
+            });
+        }
+
+        // ===========================================================================
+        // Cover transform (same idea as escape_room)
+        // ===========================================================================
+        function getCoverTransform(frameW, frameH) {
+            const scale = Math.max(frameW / WORLD_W, frameH / WORLD_H);
+            const drawW = WORLD_W * scale;
+            const drawH = WORLD_H * scale;
+            const offsetX = (frameW - drawW) / 2;
+            const offsetY = (frameH - drawH) / 2;
+            return { scale, offsetX, offsetY, drawW, drawH };
+        }
+
+        let coverT = { scale: 1, offsetX: 0, offsetY: 0, drawW: WORLD_W, drawH: WORLD_H };
+
+        function resize() {
+            const r = frame.getBoundingClientRect();
+            coverT = getCoverTransform(r.width, r.height);
+
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.round(r.width * dpr);
+            canvas.height = Math.round(r.height * dpr);
+            canvas.style.width = r.width + "px";
+            canvas.style.height = r.height + "px";
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            rebuildStaticLayer();
+        }
+        window.addEventListener("resize", resize);
+
+        function worldToScreen(wx, wy) {
+            return { x: coverT.offsetX + wx * coverT.scale, y: coverT.offsetY + wy * coverT.scale };
+        }
+
+        function screenToWorld(sx, sy) {
+            return { x: (sx - coverT.offsetX) / coverT.scale, y: (sy - coverT.offsetY) / coverT.scale };
+        }
+
+        // ===========================================================================
+        // Walls: Rect list + helpers (you already filled them)
+        // ===========================================================================
+        const H = (x, y, len) => ({ x, y, w: len, h: T });
+        const V = (x, y, len) => ({ x, y, w: T, h: len });
+
+        const HT = (tx, ty, tlen) => H(tx * TILE, ty * TILE, tlen * TILE);
+        const VT = (tx, ty, tlen) => V(tx * TILE, ty * TILE, tlen * TILE);
+
+        const MAZE_WALLS = [
+            // border
+            H(0, 0, WORLD_W),
+            H(0, WORLD_H - T, WORLD_W),
+            V(0, 0, WORLD_H),
+            V(WORLD_W - T, 0, WORLD_H),
+            HT(1, 1, 15),
+
+            HT(1, 4, 8),
+            VT(11, 2, 9),
+            HT(12, 4, 2),
+            HT(1, 7, 2),
+            VT(5, 5, 5),
+            HT(8, 7, 3),
+            HT(14, 7, 2),
+            HT(12, 10, 2),
+            VT(13, 11, 6),
+            HT(5, 10, 4),
+            VT(8, 11, 2),
+            HT(3, 13, 8),
+            HT(3, 16, 10),
+            VT(6, 17, 2),
+            VT(9, 19, 2),
+            HT(12, 19, 2),
+            HT(1, 19, 2),
+            VT(3, 19, 4),
+            HT(4, 21, 6),
+            HT(6, 24, 5),
+            HT(3, 25, 13),
+            VT(13, 20, 6),
+
+            HT(1, 28, 13),
+        ];
+
+        // ===========================================================================
+        // Objects: doors (set your coordinates)
+        // ===========================================================================
+        const objects = [
+            { id: "question", kind: "question", x: 0, y: 0, w: 96, h: 96, solid: false, open: false },
+            { id: "door1", kind: "innerDoor", x: 64, y: 1024, w: 128, h: 64, solid: true, open: false },
+            { id: "door2", kind: "innerDoor", x: 640, y: 1216, w: 128, h: 64, solid: true, open: false },
+            { id: "final_door", kind: "finalDoor", x: 896, y: 1800, w: 120, h: 120, solid: true, open: false },
+        ];
+
+        // ===========================================================================
+        // Collision helpers
+        // ===========================================================================
+        function rectsIntersect(a, b) {
+            return (
+                a.x < b.x + b.w &&
+                a.x + a.w > b.x &&
+                a.y < b.y + b.h &&
+                a.y + a.h > b.y
+            );
+        }
+
+        function applyBounds(nx, ny, pw, ph) {
+            const minX = 0;
+            const minY = 0;
+            const maxX = WORLD_W - pw;
+            const maxY = WORLD_H - ph;
+            return {
+                nx: Math.max(minX, Math.min(maxX, nx)),
+                ny: Math.max(minY, Math.min(maxY, ny)),
+            };
+        }
+
+        function getObstacles() {
+            const obs = [];
+            for (const w of MAZE_WALLS) obs.push({ x: w.x, y: w.y, w: w.w, h: w.h });
+            for (const o of objects) {
+                if (!o.solid) continue;
+                if (o.open) continue;
+                obs.push({ x: o.x, y: o.y, w: o.w, h: o.h });
+            }
+            return obs;
+        }
+
+        function isWalkableTarget(tx, ty, pw, ph) {
+            const r = { x: tx, y: ty, w: pw, h: ph };
+            const obs = getObstacles();
+            return !obs.some(o => rectsIntersect(r, o));
+        }
+
+        function tryMove(nx, ny, obstacles, pw, ph, px, py) {
+            const bounded = applyBounds(nx, ny, pw, ph);
+            nx = bounded.nx;
+            ny = bounded.ny;
+
+            let blockedX = false;
+            let blockedY = false;
+
+            // X move
+            let test = { x: nx, y: py, w: pw, h: ph };
+            if (obstacles.some(o => rectsIntersect(test, o))) {
+                nx = px;
+                blockedX = true;
+            }
+
+            // Y move
+            test = { x: nx, y: ny, w: pw, h: ph };
+            if (obstacles.some(o => rectsIntersect(test, o))) {
+                ny = py;
+                blockedY = true;
+            }
+
+            return { nx, ny, blockedX, blockedY };
+        }
+
+        // ===========================================================================
+        // Static layer: bg + walls + closed doors
+        // ===========================================================================
+        let staticCanvas = document.createElement("canvas");
+        let staticCtx = staticCanvas.getContext("2d");
+
+        let images = {
+            bg: null,
+            wallTile: null,
+            doorInner: null,
+            doorFinal: null,
+            questionIcon: null,
+            playerStand: null,
+            playerWalk1: null,
+            playerWalk2: null,
+        };
+
+        function drawWallRect(ctx2, tileImg, rect) {
+            if (!tileImg) return;
+
+            const cols = Math.ceil(rect.w / TILE);
+            const rows = Math.ceil(rect.h / TILE);
+
+            const tileW = TILE * coverT.scale;
+            const tileH = TILE * coverT.scale;
+
+            const p = worldToScreen(rect.x, rect.y);
+
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    ctx2.drawImage(tileImg, p.x + x * tileW, p.y + y * tileH, tileW, tileH);
+                }
+            }
+        }
+
+        function buildStaticLayer() {
+            const r = frame.getBoundingClientRect();
+            staticCanvas.width = Math.round(r.width);
+            staticCanvas.height = Math.round(r.height);
+
+            staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+
+            // bg
+            if (images.bg) {
+                staticCtx.drawImage(images.bg, coverT.offsetX, coverT.offsetY, coverT.drawW, coverT.drawH);
+            } else {
+                // fallback bg
+                staticCtx.fillStyle = "#f8fafc";
+                staticCtx.fillRect(0, 0, staticCanvas.width, staticCanvas.height);
+            }
+
+            // walls
+            for (const w of MAZE_WALLS) drawWallRect(staticCtx, images.wallTile, w);
+
+            // closed doors on static
+            for (const o of objects) {
+                if (o.open) continue;
+
+                const p = worldToScreen(o.x, o.y);
+                const dw = o.w * coverT.scale;
+                const dh = o.h * coverT.scale;
+
+                if (o.kind === "innerDoor" && images.doorInner) {
+                    staticCtx.drawImage(images.doorInner, p.x, p.y, dw, dh);
+                } else if (o.kind === "finalDoor" && images.doorFinal) {
+                    staticCtx.drawImage(images.doorFinal, p.x, p.y, dw, dh);
+                } else {
+                    // fallback
+                    staticCtx.fillStyle = "#0f172a";
+                    staticCtx.fillRect(p.x, p.y, dw, dh);
+                }
+            }
+        }
+
+        function rebuildStaticLayer() {
+            buildStaticLayer();
+        }
+
+        // ===========================================================================
+        // FX (click ring / bump / object pulse)
+        // ===========================================================================
+        const clickFx = [];
+        const bumpFx = [];
+        const objFx = [];
+
+        function pushClickFx(x, y) { clickFx.push({ x, y, t: 0 }); }
+        function pushBumpFx(x, y) { bumpFx.push({ x, y, t: 0 }); }
+        function pushObjFx(x, y, w, h) { objFx.push({ x, y, w, h, t: 0 }); }
+
+        function drawFx(dt) {
+            // click ring
+            for (let i = clickFx.length - 1; i >= 0; i--) {
+                const fx = clickFx[i];
+                fx.t += dt;
+                const life = 0.35;
+                const k = fx.t / life;
+                if (k >= 1) { clickFx.splice(i, 1); continue; }
+
+                const c = worldToScreen(fx.x, fx.y);
+                const r = (12 + 42 * k) * coverT.scale;
+
+                ctx.save();
+                ctx.globalAlpha = 0.55 * (1 - k);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#0f172a";
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // bump fx
+            for (let i = bumpFx.length - 1; i >= 0; i--) {
+                const fx = bumpFx[i];
+                fx.t += dt;
+                const life = 0.22;
+                const k = fx.t / life;
+                if (k >= 1) { bumpFx.splice(i, 1); continue; }
+
+                const c = worldToScreen(fx.x, fx.y);
+                const r = (18 + 16 * k) * coverT.scale;
+
+                ctx.save();
+                ctx.globalAlpha = 0.35 * (1 - k);
+                ctx.fillStyle = "#ef4444";
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // object pulse
+            for (let i = objFx.length - 1; i >= 0; i--) {
+                const fx = objFx[i];
+                fx.t += dt;
+                const life = 0.45;
+                const k = fx.t / life;
+                if (k >= 1) { objFx.splice(i, 1); continue; }
+
+                const p = worldToScreen(fx.x, fx.y);
+                const w = fx.w * coverT.scale;
+                const h = fx.h * coverT.scale;
+
+                ctx.save();
+                ctx.globalAlpha = 0.22 * (1 - k);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "#f59e0b";
+                ctx.strokeRect(p.x - 6 * k, p.y - 6 * k, w + 12 * k, h + 12 * k);
+                ctx.restore();
+            }
+        }
+
+        // ===========================================================================
+        // Question spot (random)
+        // ===========================================================================
+        function randomizeQuestionObject() {
+            const q = objects.find(o => o.id === "question");
+            if (!q) return;
+
+            const obs = getObstacles(); // walls + closed doors
+
+            for (let i = 0; i < 200; i++) {
+                const x = T + Math.random() * (WORLD_W - 2 * T - q.w);
+                const y = T + Math.random() * (WORLD_H - 2 * T - q.h);
+
+                const box = { x, y, w: q.w, h: q.h };
+
+                if (!obs.some(o => rectsIntersect(box, o))) {
+                    q.x = x;
+                    q.y = y;
+                    return;
+                }
+            }
+
+            // fallback
+            q.x = WORLD_W / 2 - q.w / 2;
+            q.y = WORLD_H / 2 - q.h / 2;
+        }
+
+        // ===========================================================================
+        // Inner door quizzes (static, front-only)
+        // ===========================================================================
+        const INNER_DOOR_QUIZZES = {
+            door1: { title: "Есікті ашу", question: "64 + 64 = ?", options: ["96", "128", "64"], correctIndex: 1 },
+            door2: { title: "Есікті ашу", question: "3 * 5 = ?", options: ["15", "20", "10"], correctIndex: 0 },
+        };
+
+        function openInnerDoorQuiz(doorObj) {
+            const q = INNER_DOOR_QUIZZES[doorObj.id];
+            if (!q) {
+                showModal({ 
+                    title: "Сұрақ жоқ", 
+                    bodyHTML: "<div>Бұл есікке сұрақ бекітілмеген.</div>", 
+                    primaryText: "OK", 
+                    onPrimary: () => closeModal(true) 
+                });
+                return;
+            }
+
+            const root = document.createElement("div");
+            root.className = "grid gap-3 text-left";
+
+            const qt = document.createElement("div");
+            qt.className = "font-medium";
+            qt.textContent = q.question;
+            root.appendChild(qt);
+
+            const wrap = document.createElement("div");
+            wrap.className = "grid gap-2";
+
+            q.options.forEach((opt, idx) => {
+                const b = document.createElement("button");
+                b.type = "button";
+                b.className = "px-3 py-2 rounded-xl border hover:bg-slate-50";
+                b.textContent = opt;
+                b.onclick = () => {
+                    if (idx === q.correctIndex) {
+                        doorObj.open = true;
+                        doorObj.solid = false;
+                        rebuildStaticLayer();
+                        showModal({ title: "Дұрыс!", bodyHTML: "<div>Есік ашылды ✅</div>", primaryText: "OK", onPrimary: () => closeModal(true) });
+                    } else {
+                        showModal({ title: "Қате", bodyHTML: "<div>Тағы байқап көр.</div>", primaryText: "OK", onPrimary: () => closeModal(true) });
+                    }
+                };
+                wrap.appendChild(b);
+            });
+
+            root.appendChild(wrap);
+
+            showModal({ title: q.title, mountNode: root, primaryText: "", manual: false });
+        }
+
+        // ===========================================================================
+        // HTMX question modal (main DB questions)
+        // ===========================================================================
+        function openQuestionModalHTMX() {
+            const qc = document.getElementById("question-container");
+            const cache = document.getElementById("next-question-cache");
+            if (!qc || !cache) return;
+
+            if (cache.innerHTML.trim()) {
+                qc.innerHTML = cache.innerHTML;
+                cache.innerHTML = "";
+                if (window.htmx) htmx.process(qc);
+            } else {
+                htmx.ajax("GET", ER_URL_QUESTION, { target: "#question-container", swap: "innerHTML" });
+            }
+
+            qc.classList.remove("hidden");
+            showModal({ title: "", mountNode: qc, primaryText: "", manual: false });
+        }
+
+        // ===========================================================================
+        // Final door flow
+        // ===========================================================================
+        const state = { finalUnlocked: false };
+
+        function finalDoorLockedModal() {
+            showModal({
+                title: "Есік құлыптаулы!",
+                bodyHTML: "<div>Барлық сұрақтарға жауап бермейінше соңғы есік ашылмайды.</div>",
+                primaryText: "Түсіндім",
+                onPrimary: () => closeModal(true)
+            });
+        }
+
+        function onFinalDoorInteract() {
+            if (!state.finalUnlocked) return finalDoorLockedModal();
+            window.location.href = ER_URL_RESULT;
+        }
+
+        // ===========================================================================
+        // Player (FULL core: facing + stop-on-wall + click feedback)
+        // ===========================================================================
+        const player = {
+            x: 72, y: 140,
+            w: 56, h: 96,
+            speed: 400,
+            targetX: null, targetY: null,
+            facing: 1,  // 1 right, -1 left
+            frame: "stand",
+            anim: 0,
+        };
+
+        function setPlayerSpawn() {
+            player.x = 72; player.y = 140;
+            player.targetX = null; player.targetY = null;
+            player.facing = 1;
+            player.frame = "stand";
+            player.anim = 0;
+        }
+
+        function updatePlayer(dt) {
+            if (player.targetX == null || player.targetY == null) {
+                player.frame = "stand";
+                player.anim = 0;
+                return;
+            }
+
+            const dx = player.targetX - player.x;
+            const dy = player.targetY - player.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < 2) {
+                runPendingActionIfArrived();
+                if (!pendingAction) {
+                    player.targetX = null;
+                    player.targetY = null;
+                    player.frame = "stand";
+                    player.anim = 0;
+                }
+                return;
+            }
+
+            if (Math.abs(dx) > 2) player.facing = dx >= 0 ? 1 : -1;
+
+            const step = Math.min(dist, player.speed * dt);
+            const vx = dx / dist;
+            const vy = dy / dist;
+
+            const obstacles = getObstacles();
+
+            let nx = player.x + vx * step;
+            let ny = player.y + vy * step;
+
+            const moved = tryMove(nx, ny, obstacles, player.w, player.h, player.x, player.y);
+
+            if (moved.blockedX && moved.blockedY) {
+                player.targetX = null;
+                player.targetY = null;
+                pendingAction = null;
+                player.frame = "stand";
+                player.anim = 0;
+                pushBumpFx(player.x + player.w / 2, player.y + player.h / 2);
+                return;
+            }
+
+            player.x = moved.nx;
+            player.y = moved.ny;
+
+            player.anim += dt * 10;
+            player.frame = (Math.floor(player.anim) % 2 === 0) ? "walk1" : "walk2";
+        }
+
+        // ===========================================================================
+        // Pending action (object interactions)
+        // ===========================================================================
+        let pendingAction = null;
+
+        function getInteractionTarget(obj) {
+            const margin = 18;
+            const px = player.x;
+            const py = player.y;
+
+            const candidates = [
+                { tx: obj.x + obj.w / 2 - player.w / 2, ty: obj.y - player.h - margin },
+                { tx: obj.x + obj.w / 2 - player.w / 2, ty: obj.y + obj.h + margin },
+                { tx: obj.x - player.w - margin, ty: obj.y + obj.h / 2 - player.h / 2 },
+                { tx: obj.x + obj.w + margin, ty: obj.y + obj.h / 2 - player.h / 2 },
+            ].map(p => applyBounds(p.tx, p.ty, player.w, player.h));
+
+            let best = candidates[0];
+            let bestD = Infinity;
+            for (const c of candidates) {
+                const d = Math.hypot(c.nx - px, c.ny - py);
+                if (d < bestD) { bestD = d; best = c; }
+            }
+            return { tx: best.nx, ty: best.ny };
+        }
+
+        function runPendingActionIfArrived() {
+            if (!pendingAction) return;
+
+            const d = Math.hypot(player.x - pendingAction.arriveX, player.y - pendingAction.arriveY);
+            if (d > 14) return;
+
+            if (pendingAction.kind === "questionSpot") {
+                pendingAction = null;
+                openQuestionModalHTMX();
+                return;
+            }
+
+            if (pendingAction.kind === "question") {
+                pendingAction = null;
+                openQuestionModalHTMX();
+                return;
+            }
+
+            if (pendingAction.kind === "innerDoor") {
+                const door = objects.find(o => o.id === pendingAction.objectId);
+                pendingAction = null;
+                if (door && !door.open) openInnerDoorQuiz(door);
+                return;
+            }
+
+            if (pendingAction.kind === "finalDoor") {
+                pendingAction = null;
+                onFinalDoorInteract();
+                return;
+            }
+        }
+
+        // ===========================================================================
+        // Input: click-to-move + object click effects
+        // ===========================================================================
+        canvas.addEventListener("pointerdown", (e) => {
+            if (gamePaused) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const sx = e.clientX - rect.left;
+            const sy = e.clientY - rect.top;
+
+            const w = screenToWorld(sx, sy);
+
+            if (w.x < 0 || w.y < 0 || w.x > WORLD_W || w.y > WORLD_H) return;
+
+            const clickPoint = { x: w.x, y: w.y, w: 1, h: 1 };
+
+            // 1) QUESTION object click (object effect OK)
+            // ------------------------------------------------------------
+            const q = objects.find(o => o.id === "question");
+            if (q && rectsIntersect(clickPoint, q)) {
+                pushObjFx(q.x, q.y, q.w, q.h);
+
+                const t = getInteractionTarget(q);
+                player.targetX = t.tx;
+                player.targetY = t.ty;
+
+                pendingAction = {
+                    kind: "question",
+                    objectId: q.id,
+                    arriveX: t.tx,
+                    arriveY: t.ty
+                };
+                return;
+            }
+
+            // 2) INNER DOORS click (object effect OK)
+            // ------------------------------------------------------------
+            for (const o of objects) {
+                if (o.kind !== "innerDoor") continue;
+                if (o.open) continue;
+
+                if (!rectsIntersect(clickPoint, o)) continue;
+
+                pushObjFx(o.x, o.y, o.w, o.h);
+
+                const t = getInteractionTarget(o);
+                player.targetX = t.tx;
+                player.targetY = t.ty;
+
+                pendingAction = {
+                    kind: "innerDoor",
+                    objectId: o.id,
+                    arriveX: t.tx,
+                    arriveY: t.ty
+                };
+                return;
+            }
+
+            // 3) FINAL DOOR click (object effect OK)
+            // ------------------------------------------------------------
+            const fd = objects.find(o => o.id === "final_door");
+            if (fd && rectsIntersect(clickPoint, fd)) {
+                pushObjFx(fd.x, fd.y, fd.w, fd.h);
+
+                const t = getInteractionTarget(fd);
+                player.targetX = t.tx;
+                player.targetY = t.ty;
+
+                pendingAction = {
+                    kind: "finalDoor",
+                    objectId: fd.id,
+                    arriveX: t.tx,
+                    arriveY: t.ty
+                };
+                return;
+            }
+
+            // 4) If click is on an obstacle -> do NOTHING (no effect)
+            // ------------------------------------------------------------
+            const obstacles = getObstacles();
+            if (obstacles.some(o => rectsIntersect(clickPoint, o))) {
+                return;
+            }
+
+            // 5) Free move (walkable floor only) -> click effect OK
+            // ------------------------------------------------------------
+            const tx = w.x - player.w / 2;
+            const ty = w.y - player.h / 2;
+
+            if (!isWalkableTarget(tx, ty, player.w, player.h)) {
+                return;
+            }
+
+            pushClickFx(w.x, w.y);
+            player.targetX = tx;
+            player.targetY = ty;
+            pendingAction = null;
+        });
+
+        // ===========================================================================
+        // Draw: static + question + player + fx
+        // ===========================================================================
+        function drawStatic() {
+            ctx.drawImage(staticCanvas, 0, 0);
+        }
+
+        function drawQuestionObject() {
+            const q = objects.find(o => o.id === "question");
+            if (!q) return;
+
+            const p = worldToScreen(q.x, q.y);
+            const dw = q.w * coverT.scale;
+            const dh = q.h * coverT.scale;
+
+            if (images.questionIcon) {
+                ctx.drawImage(images.questionIcon, p.x, p.y, dw, dh);
+            } else {
+                // fallback
+                ctx.save();
+                ctx.globalAlpha = 0.85;
+                ctx.fillStyle = "#f59e0b";
+                ctx.fillRect(p.x, p.y, dw, dh);
+                ctx.restore();
+            }
+        }
+
+        function drawPlayer() {
+            const img =
+                player.frame === "stand" ? images.playerStand :
+                    player.frame === "walk1" ? images.playerWalk1 :
+                        images.playerWalk2;
+
+            const p = worldToScreen(player.x, player.y);
+            const dw = player.w * coverT.scale;
+            const dh = player.h * coverT.scale;
+
+            ctx.save();
+            if (player.facing === -1) {
+                ctx.translate(p.x + dw / 2, 0);
+                ctx.scale(-1, 1);
+                ctx.translate(-(p.x + dw / 2), 0);
+            }
+
+            if (img) {
+                ctx.drawImage(img, p.x, p.y, dw, dh);
+            } else {
+                // fallback
+                ctx.fillStyle = "#2563eb";
+                ctx.fillRect(p.x, p.y, dw, dh);
+            }
+            ctx.restore();
+        }
+
+        function drawDebug() {
+            if (!DEBUG_WALLS) return;
+            ctx.save();
+            ctx.globalAlpha = 0.25;
+            ctx.fillStyle = "red";
+            for (const w of MAZE_WALLS) {
+                const p = worldToScreen(w.x, w.y);
+                ctx.fillRect(p.x, p.y, w.w * coverT.scale, w.h * coverT.scale);
+            }
+            ctx.restore();
+
+            if (DEBUG_TARGET && player.targetX != null) {
+                const c = worldToScreen(player.targetX + player.w / 2, player.targetY + player.h / 2);
+                ctx.save();
+                ctx.globalAlpha = 0.8;
+                ctx.fillStyle = "#10b981";
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // ===========================================================================
+        // HTMX stage handling: review / finished
+        // ===========================================================================
+        let tClose = null;
+        let tPreload = null;
+
+        function clearTimers() {
+            if (tClose) { clearTimeout(tClose); tClose = null; }
+            if (tPreload) { clearTimeout(tPreload); tPreload = null; }
+        }
+
+        document.addEventListener("htmx:afterSettle", () => {
+            const st = document.getElementById("er-state");
+            if (!st) return;
+
+            const stage = st.dataset.stage || "none";
+            const finished = st.dataset.finished === "1";
+
+            if (stage === "finished" || finished) {
+                state.finalUnlocked = true;
+
+                const fd = objects.find(o => o.id === "final_door");
+                if (fd) { fd.open = true; fd.solid = false; }
+
+                rebuildStaticLayer();
+                clearTimers();
+
+                showModal({
+                    title: "Дайын!",
+                    bodyHTML: "<div>Барлық сұрақтарға жауап берілді. Енді соңғы есіктен шыға аласың.</div>",
+                    primaryText: "OK",
+                    manual: true,
+                    onPrimary: () => closeModal(true),
+                });
+
+                const cache = document.getElementById("next-question-cache");
+                if (cache) cache.innerHTML = "";
+                return;
+            }
+
+            if (stage === "review") {
+                clearTimers();
+                randomizeQuestionObject();
+                tClose = setTimeout(() => closeModal(true), 2000);
+
+                tPreload = setTimeout(() => {
+                    if (window.htmx) htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
+                    randomizeQuestionObject();
+                }, 2050);
+            }
+        });
+
+        // ===========================================================================
+        // Game loop
+        // ===========================================================================
+        const FPS = 30;
+        const FRAME_MS = 1000 / FPS;
+
+        let last = performance.now();
+        let acc = 0;
+
+        function loop(now) {
+            const dt = Math.min(0.05, (now - last) / 1000);
+            last = now;
+            acc += dt * 1000;
+
+            while (acc >= FRAME_MS) {
+                if (!gamePaused) updatePlayer(FRAME_MS / 1000);
+                acc -= FRAME_MS;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawStatic();
+            drawQuestionObject();
+            drawPlayer();
+            drawFx(dt);
+            drawDebug();
+
+            requestAnimationFrame(loop);
+        }
+
+        // ===========================================================================
+        // Start
+        // ===========================================================================
+        async function start() {
+            resize();
+
+            // load images (soft fail)
+            images.bg = await loadImage(ASSETS.bg);
+            images.wallTile = await loadImage(ASSETS.wallTile);
+
+            images.doorInner = await loadImage(ASSETS.objects.innerDoor);
+            images.doorFinal = await loadImage(ASSETS.objects.finalDoor);
+            images.questionIcon = await loadImage(ASSETS.objects.question);
+
+            images.playerStand = await loadImage(ASSETS.player.stand);
+            images.playerWalk1 = await loadImage(ASSETS.player.walk1);
+            images.playerWalk2 = await loadImage(ASSETS.player.walk2);
+
+            setPlayerSpawn();
+            randomizeQuestionObject();
+            rebuildStaticLayer();
+
+            // preload first question
+            if (window.htmx) htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
+
+            requestAnimationFrame(loop);
+        }
+
+        start().catch((err) => {
+            console.error(err);
+            showModal({ title: "Қате", bodyHTML: "<div>Start error. Console-ды қара.</div>", primaryText: "OK", onPrimary: () => closeModal(true) });
+        });
+    })();
+</script>
+{% endblock base %}

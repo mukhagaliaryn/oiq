@@ -1,0 +1,112 @@
+<!-- Көрсеткіштер -->
+<!-- ======================================================================= -->
+<div class="relative">
+    <!-- Прогресс -->
+    <div class="relative">
+        {% if total_questions > 0 %}
+            {% widthratio index total_questions 100 as progress_percent %}
+        {% else %}
+            {% with progress_percent=0 %}{% endwith %}
+        {% endif %}
+        <div
+            id="ui-progress-bar"
+            hx-swap-oob="true"
+            class="h-full bg-primary-600 transition-[width] duration-300"
+            style="--w: {{ progress_percent }}%; width: var(--w);">
+        </div>
+    </div>
+
+    <!-- SFX (OOB) -->
+    <span
+        id="ui-sfx-signal"
+        hx-swap-oob="true"
+        class="hidden"
+        data-kind="{% if answered %}{% if last_answer_correct %}success{% else %}error{% endif %}{% else %}error{% endif %}">
+    </span>
+</div>
+
+<!-- EscapeRoom state (OOB) -->
+<!-- ======================================================================= -->
+<span
+    id="er-state"
+    hx-swap-oob="true"
+    class="hidden"
+    data-stage="review"
+    data-index="{{ index }}"
+    data-total="{{ total_questions }}"
+    data-score="{{ participant.score }}"
+    data-correct="{{ participant.correct_count }}"
+></span>
+
+<div class="grid gap-6">
+    <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
+
+    <div class="space-y-2">
+        {% with variant=question.variant.code|default_if_none:"" %}
+            {% include result_template %}
+        {% endwith %}
+    </div>
+
+    <div class="text-center text-slate-600">
+        Жауап сақталды. Бөлмені ары қарай зертте!
+    </div>
+</div>
+
+<!-- alert(Нәтиже) -->
+<!-- ======================================================================= -->
+<div class="fixed bottom-0 left-0 w-full z-10 transition-all">
+    <div class="
+        flex gap-2 justify-center items-center p-8 animate-[slideUpFade_100ms_ease-out]
+        {% if last_answer_correct is True %}border-emerald-200 bg-emerald-50 text-emerald-600
+        {% elif last_answer_correct is False %}border-red-200 bg-red-50 text-red-600
+        {% else %}border-slate-200 bg-slate-50 text-slate-600{% endif %}
+        "
+    >
+        {% if last_answer_correct is True %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <div class="grid gap-1">
+                <h3 class="text-xl font-bold">Дұрыс жауап!</h3>
+                <div class="flex gap-1 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24" class="text-amber-500">
+                        <path fill-rule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-bold">+{{ score_delta }} балл</span>
+                </div>
+            </div>
+            
+        {% elif last_answer_correct is False %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <h3 class="text-xl font-bold">Қате жауап!</h3>
+        {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clip-rule="evenodd" />
+            </svg>
+            <h3 class="text-xl font-bold">Жауап берілмеді!</h3>
+        {% endif %}
+    </div>
+</div>
+<style>
+    @keyframes slideUpFade {
+        from {
+            transform: translateY(24px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
