@@ -1,0 +1,925 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ participant.nickname }} - {{ game_task.name }}{% endblock %}
+
+{% block base %}
+<div class="min-h-screen flex items-center justify-center">
+    <div id="frame" class="
+      relative w-screen h-screen overflow-hidden
+      md:h-[90vh] md:w-auto md:aspect-[16/9]
+      md:rounded-3xl md:shadow-2xl
+    ">
+        <header id="gameplay-header" class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none">
+            <div class="w-full h-4 rounded-full bg-secondary-200/50 overflow-hidden">
+                <div id="ui-progress-bar" class="h-full bg-primary-600 transition-[width] duration-300"
+                    style="width:0%"></div>
+            </div>
+        </header>
+
+        <canvas id="game" class="block w-full h-full"></canvas>
+    </div>
+</div>
+
+<!-- Modal (escape_room contract) -->
+<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999">
+    <div class="bg-white rounded-2xl p-4 w-[92%] max-w-md">
+        <div id="modalTitle" class="text-2xl font-bold mb-2 text-center"></div>
+        <div id="modalBody" class="text-sm leading-relaxed"></div>
+        <div id="modalFooter" class="mt-4 flex items-center justify-end gap-2">
+            <button id="modalPrimary" class="relative w-full grid cursor-pointer group">
+                <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+                <span id="modalPrimaryText" class="
+          relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium
+          group-hover:bg-primary-500 group-active:translate-y-1.5
+        ">Жарайды</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Anchors (escape_room contract) -->
+<div id="er-anchors" class="hidden">
+    <div id="question-container"></div>
+    <div id="next-question-cache"></div>
+    <span id="er-state" data-stage="none" data-finished="0"></span>
+</div>
+
+<!-- Signals (escape_room contract) -->
+<div id="sounds">
+    <span id="ui-sfx-signal" data-kind="none" class="hidden"></span>
+    <audio id="sfx-success" preload="auto">
+        <source src="{% static 'sounds/success.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-error" preload="auto">
+        <source src="{% static 'sounds/error.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-finish" preload="auto">
+        <source src="{% static 'sounds/finish.mp3' %}" type="audio/mpeg">
+    </audio>
+</div>
+
+<script>
+    (function () {
+        function play(kind) {
+            let el = null;
+            if (kind === "success") el = document.getElementById("sfx-success");
+            if (kind === "error") el = document.getElementById("sfx-error");
+            if (kind === "finish") el = document.getElementById("sfx-finish");
+            if (!el) return;
+            el.currentTime = 0;
+            el.volume = 0.5;
+            el.play().catch(() => { });
+        }
+        document.addEventListener("htmx:afterSwap", () => {
+            const sig = document.getElementById("ui-sfx-signal");
+            if (!sig) return;
+            const kind = sig.dataset.kind;
+            if (kind && kind !== "none") {
+                play(kind);
+                sig.dataset.kind = "none";
+            }
+        });
+    })();
+</script>
+
+<script>
+    (() => {
+        // ===========================================================================
+        // DOM + Canvas
+        // ===========================================================================
+        const frame = document.getElementById("frame");
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        // ===========================================================================
+        // URLs (same everywhere)
+        // ===========================================================================
+        const ER_URL_QUESTION = "{% url 'main:gameplay_question' participant.token %}";
+        const ER_URL_RESULT = "{% url 'main:gameplay_result' participant.token %}";
+
+        // ===========================================================================
+        // Modal (escape_room core)
+        // ===========================================================================
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const modalPrimary = document.getElementById("modalPrimary");
+        const modalPrimaryText = document.getElementById("modalPrimaryText");
+
+        let gamePaused = false;
+        let modalManual = false;
+
+        function showModal({ title = "", bodyHTML = "", primaryText = "", onPrimary = null, mountNode = null, manual = false }) {
+            modalManual = manual;
+
+            modalTitle.textContent = title;
+            modalBody.innerHTML = "";
+
+            if (mountNode) modalBody.appendChild(mountNode);
+            else modalBody.innerHTML = bodyHTML;
+
+            modalPrimary.classList.add("hidden");
+            modalPrimary.onclick = null;
+
+            if (primaryText) {
+                modalPrimaryText.textContent = primaryText;
+                modalPrimary.classList.remove("hidden");
+                if (typeof onPrimary === "function") modalPrimary.onclick = onPrimary;
+            }
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            gamePaused = true;
+        }
+
+        let tClose = null;
+        let tPreload = null;
+
+        function clearModalTimers() {
+            if (tClose) { clearTimeout(tClose); tClose = null; }
+            if (tPreload) { clearTimeout(tPreload); tPreload = null; }
+        }
+
+        function closeModal(force = false) {
+            if (modalManual && !force) return;
+            modalManual = false;
+
+            const anchors = document.getElementById("er-anchors");
+            const qc = document.getElementById("question-container");
+            if (anchors && qc) {
+                qc.classList.add("hidden");
+                anchors.prepend(qc);
+            }
+
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            gamePaused = false;
+        }
+
+        modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+        // ===========================================================================
+        // WORLD + Cover transform + Static Layer (escape_room-style)
+        // ===========================================================================
+        const WORLD_W = 1080;
+        const WORLD_H = 1920;
+
+        // safe walk area (so user doesn't click on header/top margin)
+        const WALL_MIN_X = 40;
+        const WALL_MIN_Y = 140;
+
+        const FPS = 30;
+        const FRAME_MS = 1000 / FPS;
+
+        // ====== Assets paths (YOU will place files) ======
+        const baseSrc = "/static/images/activity/games/smart_explorer";
+
+        const ASSETS = {
+            bg: `${baseSrc}/assets/bg_island.svg`,
+            marker: `${baseSrc}/assets/marker.png`,
+            diamond: `${baseSrc}/assets/diamond.png`,
+            hole: `${baseSrc}/assets/hole.png`,
+            obstacles: {
+                rock1: `${baseSrc}/assets/rock1.png`,
+                rock2: `${baseSrc}/assets/rock2.png`,
+                palm1: `${baseSrc}/assets/palm1.png`,
+                palm2: `${baseSrc}/assets/palm2.png`,
+                crate: `${baseSrc}/assets/crate.png`,
+            },
+            player: {
+                stand: `${baseSrc}/assets/player/player_stand.svg`,
+                walk1: `${baseSrc}/assets/player/player_walk1.svg`,
+                walk2: `${baseSrc}/assets/player/player_walk2.svg`,
+            }
+        };
+
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const im = new Image();
+                im.onload = () => resolve(im);
+                im.onerror = () => reject(new Error("Failed to load: " + src));
+                im.src = src;
+            });
+        }
+
+        // --- Cover transform (world->screen)
+        let coverT = null;
+        function getCoverTransform() {
+            const cw = canvas.clientWidth;
+            const ch = canvas.clientHeight;
+            const scale = Math.max(cw / WORLD_W, ch / WORLD_H);
+            const dw = WORLD_W * scale;
+            const dh = WORLD_H * scale;
+            const dx = (cw - dw) / 2;
+            const dy = (ch - dh) / 2;
+            return { scale, dx, dy };
+        }
+
+        function screenToWorld(screenX, screenY) {
+            if (!coverT) return { x: 0, y: 0 };
+            return {
+                x: (screenX - coverT.dx) / coverT.scale,
+                y: (screenY - coverT.dy) / coverT.scale,
+            };
+        }
+
+        // --- Static layer canvas
+        let staticCanvas = null;
+        let staticCtx = null;
+        let staticReady = false;
+
+        let currentImages = null; // { bg, marker, diamond, hole, obstacles:{}, player:{} }
+
+        // Obstacles definition (solid true for collision)
+        // You can edit positions/sizes freely.
+        const objects = [
+            { id: "rock1", src: ASSETS.obstacles.rock1, x: 180, y: 520, w: 210, h: 180, solid: true },
+            { id: "rock2", src: ASSETS.obstacles.rock2, x: 700, y: 650, w: 220, h: 190, solid: true },
+            { id: "palm1", src: ASSETS.obstacles.palm1, x: 120, y: 980, w: 220, h: 320, solid: true },
+            { id: "palm2", src: ASSETS.obstacles.palm2, x: 780, y: 1040, w: 220, h: 320, solid: true },
+            { id: "crate", src: ASSETS.obstacles.crate, x: 520, y: 1320, w: 220, h: 220, solid: true },
+        ];
+
+        // Ensure default solid flag is false (important)
+        for (const o of objects) {
+            if (o.solid == null) o.solid = false;
+        }
+
+        function buildStaticLayer(images) {
+            coverT = getCoverTransform();
+            staticCanvas = document.createElement("canvas");
+            staticCanvas.width = canvas.clientWidth;
+            staticCanvas.height = canvas.clientHeight;
+            staticCtx = staticCanvas.getContext("2d");
+
+            staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+
+            // background
+            staticCtx.drawImage(images.bg, coverT.dx, coverT.dy, WORLD_W * coverT.scale, WORLD_H * coverT.scale);
+
+            // obstacles
+            for (const o of objects) {
+                const im = images.obstacles[o.id];
+                if (!im) continue;
+                const sx = coverT.dx + o.x * coverT.scale;
+                const sy = coverT.dy + o.y * coverT.scale;
+                staticCtx.drawImage(im, sx, sy, o.w * coverT.scale, o.h * coverT.scale);
+            }
+
+            staticReady = true;
+        }
+
+        // DPR resize (escape_room-style)
+        let dpr = 1;
+        let resizeRAF = null;
+
+        function resize() {
+            const r = frame.getBoundingClientRect();
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+            canvas.width = Math.floor(r.width * dpr);
+            canvas.height = Math.floor(r.height * dpr);
+            canvas.style.width = Math.floor(r.width) + "px";
+            canvas.style.height = Math.floor(r.height) + "px";
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function scheduleResizeRebuild() {
+            if (resizeRAF) cancelAnimationFrame(resizeRAF);
+            resizeRAF = requestAnimationFrame(() => {
+                resize();
+                if (currentImages) buildStaticLayer(currentImages);
+            });
+        }
+        window.addEventListener("resize", scheduleResizeRebuild);
+
+        // ===========================================================================
+        // Geometry helpers
+        // ===========================================================================
+        function clamp(v, a, b) {
+            return Math.max(a, Math.min(b, v));
+        }
+
+        function rectsIntersect(a, b) {
+            return (
+                a.x < b.x + b.w &&
+                a.x + a.w > b.x &&
+                a.y < b.y + b.h &&
+                a.y + a.h > b.y
+            );
+        }
+
+        function applyWalls(nx, ny) {
+            const minX = WALL_MIN_X;
+            const minY = WALL_MIN_Y;
+            const maxX = WORLD_W - player.w;
+            const maxY = WORLD_H - player.h;
+
+            nx = Math.max(minX, Math.min(maxX, nx));
+            ny = Math.max(minY, Math.min(maxY, ny));
+            return { nx, ny };
+        }
+
+        function getObstacles() {
+            const obs = [];
+            for (const o of objects) {
+                if (o.solid !== true) continue;
+                obs.push({ x: o.x, y: o.y, w: o.w, h: o.h });
+            }
+            return obs;
+        }
+
+        // return hit obstacle so detour is stable
+        function tryMove(nx, ny, obstacles) {
+            ({ nx, ny } = applyWalls(nx, ny));
+
+            let blockedX = false;
+            let blockedY = false;
+            let hit = null;
+
+            let test = { x: nx, y: player.y, w: player.w, h: player.h };
+            for (const o of obstacles) {
+                if (rectsIntersect(test, o)) { nx = player.x; blockedX = true; hit = o; break; }
+            }
+
+            test = { x: nx, y: ny, w: player.w, h: player.h };
+            for (const o of obstacles) {
+                if (rectsIntersect(test, o)) { ny = player.y; blockedY = true; hit = hit || o; break; }
+            }
+
+            return { nx, ny, blockedX, blockedY, hit };
+        }
+
+        function computeDetourAroundObstacle(finalX, finalY, hitObstacle, obstacles) {
+            if (!hitObstacle) return null;
+
+            const margin = 26;
+            const cand = [
+                { x: hitObstacle.x - player.w - margin, y: player.y },
+                { x: hitObstacle.x + hitObstacle.w + margin, y: player.y },
+                { x: player.x, y: hitObstacle.y - player.h - margin },
+                { x: player.x, y: hitObstacle.y + hitObstacle.h + margin },
+            ].map(p => {
+                const walled = applyWalls(p.x, p.y);
+                return { x: walled.nx, y: walled.ny };
+            });
+
+            function isInsideAnyObstacle(x, y) {
+                const r = { x, y, w: player.w, h: player.h };
+                for (const o of obstacles) if (rectsIntersect(r, o)) return true;
+                return false;
+            }
+
+            let bestP = null;
+            let bestScore = Infinity;
+
+            for (const p of cand) {
+                if (isInsideAnyObstacle(p.x, p.y)) continue;
+                const score =
+                    Math.hypot(p.x - player.x, p.y - player.y) +
+                    Math.hypot(finalX - p.x, finalY - p.y);
+                if (score < bestScore) { bestScore = score; bestP = p; }
+            }
+            return bestP;
+        }
+
+        // ===========================================================================
+        // Player (sprite movement)
+        // ===========================================================================
+        const player = {
+            x: 820, y: 1640,
+            w: 120, h: 186,
+            targetX: null, targetY: null,
+            speed: 520,
+            facing: "right",
+            anim: 0,
+            frame: "stand",
+            detour: null,
+            detourTries: 0,
+        };
+
+        function setInitialPlayerPos() {
+            player.x = (WORLD_W - player.w) - 40;
+            player.y = (WORLD_H - player.h) - 40;
+            ({ nx: player.x, ny: player.y } = applyWalls(player.x, player.y));
+        }
+
+        // ===========================================================================
+        // Scenario state: Marker + outcomes (diamond/hole)
+        // ===========================================================================
+        const game = {
+            // marker for current question
+            marker: null, // { x,y,w,h, active:true }
+            // outcomes placed after review
+            placed: [],   // { kind:"diamond"|"hole", x,y,w,h, t0 }
+            // finished lock
+            finished: false,
+        };
+
+        // pick random point that is not inside obstacles and not too close to player
+        function spawnMarker() {
+            const obstacles = getObstacles();
+            const tries = 60;
+
+            const mw = 120, mh = 120;
+
+            for (let i = 0; i < tries; i++) {
+                const x = Math.floor(WALL_MIN_X + 40 + Math.random() * (WORLD_W - WALL_MIN_X - mw - 80));
+                const y = Math.floor(WALL_MIN_Y + 60 + Math.random() * (WORLD_H - WALL_MIN_Y - mh - 100));
+
+                const rect = { x, y, w: mw, h: mh };
+
+                // avoid obstacles
+                let bad = false;
+                for (const o of obstacles) {
+                    if (rectsIntersect(rect, o)) { bad = true; break; }
+                }
+                if (bad) continue;
+
+                // avoid very close to player
+                const d = Math.hypot((player.x + player.w / 2) - (x + mw / 2), (player.y + player.h / 2) - (y + mh / 2));
+                if (d < 220) continue;
+
+                game.marker = { x, y, w: mw, h: mh, active: true };
+                return;
+            }
+
+            // fallback center-ish
+            game.marker = { x: 480, y: 900, w: 120, h: 120, active: true };
+        }
+
+        function placeOutcome(kind, markerRect) {
+            game.placed.push({
+                kind,
+                x: markerRect.x + (markerRect.w / 2) - 70,
+                y: markerRect.y + (markerRect.h / 2) - 70,
+                w: 140,
+                h: 140,
+                t: 0
+            });
+        }
+
+        // ===========================================================================
+        // Effects (click + object glow)
+        // ===========================================================================
+        const clickFx = [];
+        const objectFx = [];
+
+        function pushRectFx(rect) {
+            objectFx.push({ x: rect.x, y: rect.y, w: rect.w, h: rect.h, t: 0 });
+        }
+
+        // ===========================================================================
+        // HTMX open question (escape_room core)
+        // ===========================================================================
+        function openQuestionModalHTMX() {
+            const qc = document.getElementById("question-container");
+            const cache = document.getElementById("next-question-cache");
+            if (!qc || !cache) return;
+
+            if (cache.innerHTML.trim()) {
+                qc.innerHTML = cache.innerHTML;
+                cache.innerHTML = "";
+                if (window.htmx) htmx.process(qc);
+            } else {
+                htmx.ajax("GET", ER_URL_QUESTION, { target: "#question-container", swap: "innerHTML" });
+            }
+
+            qc.classList.remove("hidden");
+
+            showModal({
+                title: "",
+                mountNode: qc,
+                primaryText: "",
+                onPrimary: null
+            });
+        }
+
+        function preloadNextQuestion() {
+            if (!window.htmx) return;
+            htmx.ajax("GET", ER_URL_QUESTION, { target: "#next-question-cache", swap: "innerHTML" });
+        }
+
+        // ===========================================================================
+        // Pending action: arrive at marker -> open modal
+        // ===========================================================================
+        let pendingAction = null; // { kind:"marker", tx,ty }
+
+        function runPendingActionIfTargetMatch(tx, ty) {
+            if (!pendingAction) return;
+            if (Math.hypot(pendingAction.tx - tx, pendingAction.ty - ty) > 12) return;
+
+            if (pendingAction.kind === "marker") {
+                // open question when arrived
+                openQuestionModalHTMX();
+                pendingAction = null;
+                return;
+            }
+        }
+
+        // ===========================================================================
+        // Input: click to move; click marker to interact
+        // ===========================================================================
+        canvas.addEventListener("pointerdown", (e) => {
+            if (gamePaused) return;
+            if (game.finished) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const sx = e.clientX - rect.left;
+            const sy = e.clientY - rect.top;
+
+            const w = screenToWorld(sx, sy);
+            if (w.x < WALL_MIN_X || w.y < WALL_MIN_Y) return;
+
+            clickFx.push({ x: w.x, y: w.y, t: 0 });
+
+            // If click is on marker -> go to marker and "press"
+            if (game.marker && game.marker.active) {
+                const clickBox = { x: w.x, y: w.y, w: 1, h: 1 };
+                if (rectsIntersect(clickBox, game.marker)) {
+                    pushRectFx(game.marker);
+
+                    // interaction target near marker (stand under it)
+                    const tx = clamp(game.marker.x + game.marker.w / 2 - player.w / 2, WALL_MIN_X, WORLD_W - player.w);
+                    const ty = clamp(game.marker.y + game.marker.h + 18, WALL_MIN_Y, WORLD_H - player.h);
+
+                    player.targetX = tx;
+                    player.targetY = ty;
+                    pendingAction = { kind: "marker", tx, ty };
+                    return;
+                }
+            }
+
+            // Prevent walking into obstacles by direct click (optional)
+            const obstacles = getObstacles();
+            const clickRect = { x: w.x, y: w.y, w: 1, h: 1 };
+            for (const o of obstacles) {
+                if (rectsIntersect(clickRect, o)) return;
+            }
+
+            // Regular move
+            player.targetX = w.x - player.w / 2;
+            player.targetY = w.y - player.h / 2;
+            ({ nx: player.targetX, ny: player.targetY } = applyWalls(player.targetX, player.targetY));
+        });
+
+        // ===========================================================================
+        // Movement + detour (escape_room core, improved)
+        // ===========================================================================
+        function updatePlayer(dt) {
+            if (player.targetX == null || player.targetY == null) {
+                player.frame = "stand";
+                player.anim = 0;
+                return;
+            }
+
+            const dx = player.targetX - player.x;
+            const dy = player.targetY - player.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < 2) {
+                // Arrive: run pending action only when final target
+                runPendingActionIfTargetMatch(player.targetX, player.targetY);
+
+                // Detour waypoint reached?
+                if (player.detour && Math.hypot(player.x - player.detour.x, player.y - player.detour.y) < 4) {
+                    player.targetX = player.detour.finalX;
+                    player.targetY = player.detour.finalY;
+                    player.detour = null;
+                    return;
+                }
+
+                player.x = player.targetX;
+                player.y = player.targetY;
+                player.targetX = null;
+                player.targetY = null;
+
+                player.frame = "stand";
+                player.anim = 0;
+                player.detourTries = 0;
+                return;
+            }
+
+            // facing FIX (right if dx>0)
+            if (dx > 0) player.facing = "right";
+            else if (dx < 0) player.facing = "left";
+
+            const vx = (dx / dist) * player.speed;
+            const vy = (dy / dist) * player.speed;
+
+            const nx = player.x + vx * dt;
+            const ny = player.y + vy * dt;
+
+            const obstacles = getObstacles();
+            const moved = tryMove(nx, ny, obstacles);
+
+            const prevX = player.x;
+            const prevY = player.y;
+
+            player.x = moved.nx;
+            player.y = moved.ny;
+
+            const wantX = Math.abs(player.targetX - prevX) > 0.5;
+            const wantY = Math.abs(player.targetY - prevY) > 0.5;
+
+            if ((wantX && moved.blockedX) || (wantY && moved.blockedY)) {
+                // create detour waypoint
+                if (!player.detour && player.detourTries < 6) {
+                    const finalX = player.targetX;
+                    const finalY = player.targetY;
+
+                    const det = computeDetourAroundObstacle(finalX, finalY, moved.hit, obstacles);
+                    if (det) {
+                        player.detour = { x: det.x, y: det.y, finalX, finalY };
+                        player.detourTries += 1;
+                        player.targetX = det.x;
+                        player.targetY = det.y;
+                        return;
+                    }
+                }
+
+                // give up
+                player.targetX = null;
+                player.targetY = null;
+                player.detour = null;
+                player.detourTries = 0;
+                player.frame = "stand";
+                player.anim = 0;
+                pendingAction = null;
+                return;
+            }
+
+            // snap end
+            const rdx = player.targetX - player.x;
+            const rdy = player.targetY - player.y;
+            const rdist = Math.hypot(rdx, rdy);
+            const stopDist = Math.max(2, player.speed * dt);
+
+            if (rdist <= stopDist) {
+                runPendingActionIfTargetMatch(player.targetX, player.targetY);
+
+                player.x = player.targetX;
+                player.y = player.targetY;
+                player.targetX = null;
+                player.targetY = null;
+
+                player.frame = "stand";
+                player.anim = 0;
+                player.detourTries = 0;
+                return;
+            }
+
+            // anim
+            player.anim += dt;
+            if (player.anim >= 0.12) {
+                player.anim = 0;
+                player.frame = (player.frame === "walk1") ? "walk2" : "walk1";
+            }
+            if (player.frame !== "walk1" && player.frame !== "walk2") player.frame = "walk1";
+        }
+
+        // ===========================================================================
+        // Render
+        // ===========================================================================
+        function drawSprite(im, x, y, w, h, facing) {
+            if (!im) return;
+            if (facing === "right") {
+                // flip horizontally (like escape_room)
+                ctx.save();
+                ctx.translate(x + w, y);
+                ctx.scale(-1, 1);
+                ctx.drawImage(im, 0, 0, w, h);
+                ctx.restore();
+            } else {
+                ctx.drawImage(im, x, y, w, h);
+            }
+        }
+
+        function render(dt) {
+            // clear correctly in CSS px space (ctx already DPR-transformed)
+            ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+
+            if (staticReady) ctx.drawImage(staticCanvas, 0, 0);
+
+            const t = coverT || getCoverTransform();
+
+            // marker (question indicator)
+            if (game.marker && game.marker.active && currentImages?.marker) {
+                const mx = t.dx + game.marker.x * t.scale;
+                const my = t.dy + game.marker.y * t.scale;
+                const mw = game.marker.w * t.scale;
+                const mh = game.marker.h * t.scale;
+                ctx.drawImage(currentImages.marker, mx, my, mw, mh);
+            }
+
+            // placed outcomes (diamond/hole)
+            for (let i = game.placed.length - 1; i >= 0; i--) {
+                const p = game.placed[i];
+                p.t += dt;
+
+                const px = t.dx + p.x * t.scale;
+                const py = t.dy + p.y * t.scale;
+                const pw = p.w * t.scale;
+                const ph = p.h * t.scale;
+
+                const im = (p.kind === "diamond") ? currentImages.diamond : currentImages.hole;
+                if (im) ctx.drawImage(im, px, py, pw, ph);
+            }
+
+            // player sprite
+            const px = t.dx + player.x * t.scale;
+            const py = t.dy + player.y * t.scale;
+            const pw = player.w * t.scale;
+            const ph = player.h * t.scale;
+
+            const sprite =
+                player.frame === "walk1" ? currentImages.player.walk1 :
+                    player.frame === "walk2" ? currentImages.player.walk2 :
+                        currentImages.player.stand;
+
+            drawSprite(sprite, px, py, pw, ph, player.facing);
+
+            // click fx
+            for (let i = clickFx.length - 1; i >= 0; i--) {
+                const fx = clickFx[i];
+                fx.t += dt;
+                if (fx.t > 0.35) { clickFx.splice(i, 1); continue; }
+
+                const p = { x: t.dx + fx.x * t.scale, y: t.dy + fx.y * t.scale };
+                const r = (18 + fx.t * 140) * t.scale;
+                const a = 1 - fx.t / 0.35;
+
+                ctx.save();
+                ctx.globalAlpha = a;
+                ctx.lineWidth = 3 * t.scale;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // object fx (marker highlight)
+            for (let i = objectFx.length - 1; i >= 0; i--) {
+                const fx = objectFx[i];
+                fx.t += dt;
+                if (fx.t > 0.45) { objectFx.splice(i, 1); continue; }
+
+                const sx = t.dx + fx.x * t.scale;
+                const sy = t.dy + fx.y * t.scale;
+                const sw = fx.w * t.scale;
+                const sh = fx.h * t.scale;
+
+                const pad = (6 + fx.t * 18) * t.scale;
+                const a = 1 - fx.t / 0.45;
+
+                ctx.save();
+                ctx.globalAlpha = a;
+                ctx.lineWidth = 4 * t.scale;
+                ctx.beginPath();
+                ctx.rect(sx - pad, sy - pad, sw + pad * 2, sh + pad * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // ===========================================================================
+        // Loop (FPS limiter)
+        // ===========================================================================
+        let acc = 0;
+        let lastTs = 0;
+
+        function loop(ts) {
+            if (!lastTs) lastTs = ts;
+            const delta = ts - lastTs;
+            lastTs = ts;
+
+            acc += delta;
+            while (acc >= FRAME_MS) {
+                if (!gamePaused) updatePlayer(FRAME_MS / 1000);
+                acc -= FRAME_MS;
+            }
+
+            render(FRAME_MS / 1000);
+            requestAnimationFrame(loop);
+        }
+
+        // ===========================================================================
+        // HTMX: stage handling (scenario-specific)
+        // ===========================================================================
+        document.addEventListener("htmx:afterSettle", () => {
+            const st = document.getElementById("er-state");
+            if (!st) return;
+
+            const stage = st.dataset.stage || "none";
+            const finished = st.dataset.finished === "1";
+
+            // FINISHED
+            if (stage === "finished" || finished) {
+                game.finished = true;
+                clearModalTimers();
+
+                const qc = document.getElementById("question-container");
+                if (qc) qc.classList.add("hidden");
+
+                showModal({
+                    title: "Қазына табылды!",
+                    bodyHTML: `
+          <div class="grid gap-2 text-muted text-center">
+            <span>Барлық сұрақтарға жауап берілді. Нәтижені көре аласың.</span>
+          </div>
+        `,
+                    primaryText: "Нәтиже",
+                    manual: true,
+                    onPrimary: () => { window.location.href = ER_URL_RESULT; }
+                });
+
+                return;
+            }
+
+            // REVIEW => place diamond/hole on current marker, then spawn next marker, preload next question
+            if (stage === "review") {
+                // IMPORTANT: your _review.html must set: data-last-correct="1|0" on #er-state
+                const lastCorrect = (st.dataset.lastCorrect === "1");
+
+                if (game.marker) {
+                    placeOutcome(lastCorrect ? "diamond" : "hole", game.marker);
+                    game.marker.active = false;
+                }
+
+                clearModalTimers();
+
+                // close review modal after a short time
+                tClose = setTimeout(() => {
+                    closeModal(true);
+
+                    // after closing, spawn next marker (if not finished)
+                    if (!game.finished) {
+                        spawnMarker();
+                        // optional: flash FX on marker to hint user
+                        if (game.marker) pushRectFx(game.marker);
+                    }
+                }, 1200);
+
+                // preload next question soon
+                tPreload = setTimeout(() => {
+                    preloadNextQuestion();
+                }, 250);
+
+                return;
+            }
+
+            // QUESTION stage: nothing special here (modal open already)
+        });
+
+        // ===========================================================================
+        // Start
+        // ===========================================================================
+        async function start() {
+            resize();
+
+            // preload assets
+            const bg = await loadImage(ASSETS.bg);
+            const marker = await loadImage(ASSETS.marker);
+            const diamond = await loadImage(ASSETS.diamond);
+            const hole = await loadImage(ASSETS.hole);
+
+            const obstaclesImgs = {};
+            await Promise.all(objects.map(async (o) => {
+                obstaclesImgs[o.id] = await loadImage(o.src);
+            }));
+
+            const playerImgs = {
+                stand: await loadImage(ASSETS.player.stand),
+                walk1: await loadImage(ASSETS.player.walk1),
+                walk2: await loadImage(ASSETS.player.walk2),
+            };
+
+            currentImages = { bg, marker, diamond, hole, obstacles: obstaclesImgs, player: playerImgs };
+
+            buildStaticLayer(currentImages);
+            setInitialPlayerPos();
+
+            // first marker
+            spawnMarker();
+            if (game.marker) pushRectFx(game.marker);
+
+            // preload first question
+            preloadNextQuestion();
+
+            requestAnimationFrame(loop);
+        }
+
+        start().catch((err) => {
+            console.error(err);
+            showModal({
+                title: "Қате",
+                bodyHTML: `<div>Assets load error. Console-ды қараңыз.</div>`,
+                primaryText: "OK",
+                onPrimary: () => closeModal(true)
+            });
+        });
+    })();
+</script>
+{% endblock base %}

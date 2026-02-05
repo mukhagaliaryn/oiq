@@ -1,0 +1,65 @@
+<!-- Көрсеткіштер -->
+<!-- ======================================================================= -->
+<div class="relative">
+    <!-- Прогресс -->
+    <div class="relative">
+        {% if total_questions > 0 %}
+            {% widthratio index total_questions 100 as progress_percent %}
+        {% else %}
+            {% with progress_percent=0 %}{% endwith %}
+        {% endif %}
+        <div 
+            id="ui-progress-bar"
+            hx-swap-oob="true"
+            class="h-full bg-primary-600 transition-[width] duration-300"
+            style="--w: {{ progress_percent }}%; width: var(--w);">
+        </div>
+    </div>
+</div>
+
+<!-- EscapeRoom state (OOB) -->
+<!-- ======================================================================= -->
+<span
+    id="er-state"
+    hx-swap-oob="true"
+    class="hidden"
+    data-stage="question"
+    data-index="{{ index }}"
+    data-total="{{ total_questions }}"
+    data-score="{{ participant.score }}"
+    data-correct="{{ participant.correct_count }}"
+></span>
+
+<div class="grid gap-6">
+    <h4 class="text-lg font-medium">{{ question.body|safe }}</h4>
+
+    <form
+        id="answer-form"
+        method="post"
+        action="{% url 'main:gameplay_answer' participant.token %}"
+        hx-post="{% url 'main:gameplay_answer' participant.token %}"
+        hx-target="#question-container"
+        hx-swap="innerHTML"
+        class="space-y-4"
+    >
+        {% csrf_token %}
+        <div class="space-y-2">
+            {% with variant=question.variant.code|default_if_none:"" %}
+            {% include option_template %}
+            {% endwith %}
+        </div>
+        <button
+            type="submit"
+            class="relative w-full grid cursor-pointer group"
+        >
+            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
+            <span class="
+                relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
+                group-hover:bg-primary-500 group-active:translate-y-1.5
+                "
+            >
+                Жауап беру
+            </span>
+        </button>
+    </form>
+</div>

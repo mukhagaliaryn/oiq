@@ -35,6 +35,7 @@
     data-total="{{ total_questions }}"
     data-score="{{ participant.score }}"
     data-correct="{{ participant.correct_count }}"
+    data-last-correct="{% if last_answer_correct is True %}1{% else %}0{% endif %}"
 ></span>
 
 <div class="grid gap-6">
