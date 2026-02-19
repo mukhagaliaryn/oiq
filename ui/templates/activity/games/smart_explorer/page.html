@@ -5,11 +5,15 @@
 
 {% block base %}
 <div class="min-h-screen flex items-center justify-center">
-    <div id="frame" class="
-      relative w-screen h-screen overflow-hidden
-      md:h-[90vh] md:w-auto md:aspect-[16/9]
-      md:rounded-3xl md:shadow-2xl
-    ">
+    <div 
+        id="frame" 
+        class="
+            relative overflow-hidden
+            h-screen w-auto aspect-9/16
+            md:h-[90vh]
+            md:rounded-3xl md:shadow-2xl
+        "
+    >
         <header id="gameplay-header" class="absolute top-0 left-0 right-0 z-50 px-3 pt-3 pointer-events-none">
             <div class="w-full h-4 rounded-full bg-secondary-200/50 overflow-hidden">
                 <div id="ui-progress-bar" class="h-full bg-primary-600 transition-[width] duration-300"
@@ -22,17 +26,28 @@
 </div>
 
 <!-- Modal (escape_room contract) -->
-<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999">
+<div 
+    id="modal" 
+    class="fixed inset-0 hidden items-center justify-center bg-black/50 z-9999"
+>
     <div class="bg-white rounded-2xl p-4 w-[92%] max-w-md">
         <div id="modalTitle" class="text-2xl font-bold mb-2 text-center"></div>
         <div id="modalBody" class="text-sm leading-relaxed"></div>
         <div id="modalFooter" class="mt-4 flex items-center justify-end gap-2">
-            <button id="modalPrimary" class="relative w-full grid cursor-pointer group">
+            <button 
+                id="modalPrimary" 
+                class="relative w-full grid cursor-pointer group"
+            >
                 <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
-                <span id="modalPrimaryText" class="
-          relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium
-          group-hover:bg-primary-500 group-active:translate-y-1.5
-        ">Жарайды</span>
+                <span 
+                    id="modalPrimaryText" 
+                    class="
+                    relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium
+                    group-hover:bg-primary-500 group-active:translate-y-1.5
+                    "
+                >
+                    Жарайды
+                </span>
             </button>
         </div>
     </div>
@@ -165,10 +180,9 @@
         const WORLD_W = 1080;
         const WORLD_H = 1920;
 
-        // safe walk area (so user doesn't click on header/top margin)
         const WALL_MIN_X = 40;
         const WALL_MIN_Y = 140;
-
+        
         const FPS = 30;
         const FRAME_MS = 1000 / FPS;
 
@@ -177,14 +191,15 @@
 
         const ASSETS = {
             bg: `${baseSrc}/assets/bg_island.svg`,
-            marker: `${baseSrc}/assets/marker.png`,
-            diamond: `${baseSrc}/assets/diamond.png`,
-            hole: `${baseSrc}/assets/hole.png`,
+            marker: `${baseSrc}/assets/marker.svg`,
+            diamond: `${baseSrc}/assets/diamond.svg`,
+            hole: `${baseSrc}/assets/hole.svg`,
             obstacles: {
                 rock1: `${baseSrc}/assets/rock1.png`,
                 rock2: `${baseSrc}/assets/rock2.png`,
                 palm1: `${baseSrc}/assets/palm1.png`,
                 palm2: `${baseSrc}/assets/palm2.png`,
+                palm3: `${baseSrc}/assets/palm3.png`,
                 crate: `${baseSrc}/assets/crate.png`,
             },
             player: {
@@ -229,16 +244,20 @@
         let staticCtx = null;
         let staticReady = false;
 
-        let currentImages = null; // { bg, marker, diamond, hole, obstacles:{}, player:{} }
+        let currentImages = null;
 
-        // Obstacles definition (solid true for collision)
-        // You can edit positions/sizes freely.
         const objects = [
-            { id: "rock1", src: ASSETS.obstacles.rock1, x: 180, y: 520, w: 210, h: 180, solid: true },
-            { id: "rock2", src: ASSETS.obstacles.rock2, x: 700, y: 650, w: 220, h: 190, solid: true },
-            { id: "palm1", src: ASSETS.obstacles.palm1, x: 120, y: 980, w: 220, h: 320, solid: true },
+            { id: "rock1", src: ASSETS.obstacles.rock1, x: 20, y: 20, w: 210, h: 180 },
+            { id: "rock1_1", src: ASSETS.obstacles.rock1, x: 340, y: 80, w: 210, h: 180 },
+            { id: "rock2", src: ASSETS.obstacles.rock2, x: 880, y: 94, w: 220, h: 190 },
+            { id: "palm1", src: ASSETS.obstacles.palm1, x: 200, y: 0, w: 180, h: 252 },
+            { id: "palm1_1", src: ASSETS.obstacles.palm1, x: 200, y: 420, w: 180, h: 252, solid: true },
+            { id: "palm1_2", src: ASSETS.obstacles.palm1, x: 320, y: 420, w: 180, h: 260, solid: true },
+            { id: "palm1_3", src: ASSETS.obstacles.palm1, x: 520, y: 460, w: 180, h: 260, solid: true },
+            { id: "palm1_4", src: ASSETS.obstacles.palm1, x: 0, y: 820, w: 180, h: 260, solid: true },
+            { id: "palm1_5", src: ASSETS.obstacles.palm1, x: 100, y: 980, w: 180, h: 260, solid: true },
             { id: "palm2", src: ASSETS.obstacles.palm2, x: 780, y: 1040, w: 220, h: 320, solid: true },
-            { id: "crate", src: ASSETS.obstacles.crate, x: 520, y: 1320, w: 220, h: 220, solid: true },
+            { id: "crate", src: ASSETS.obstacles.crate, x: 520, y: 1320, w: 120, h: 120, solid: true },
         ];
 
         // Ensure default solid flag is false (important)
@@ -254,8 +273,6 @@
             staticCtx = staticCanvas.getContext("2d");
 
             staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
-
-            // background
             staticCtx.drawImage(images.bg, coverT.dx, coverT.dy, WORLD_W * coverT.scale, WORLD_H * coverT.scale);
 
             // obstacles
@@ -331,7 +348,6 @@
             return obs;
         }
 
-        // return hit obstacle so detour is stable
         function tryMove(nx, ny, obstacles) {
             ({ nx, ny } = applyWalls(nx, ny));
 
@@ -410,15 +426,11 @@
         // Scenario state: Marker + outcomes (diamond/hole)
         // ===========================================================================
         const game = {
-            // marker for current question
-            marker: null, // { x,y,w,h, active:true }
-            // outcomes placed after review
-            placed: [],   // { kind:"diamond"|"hole", x,y,w,h, t0 }
-            // finished lock
+            marker: null,
+            placed: [],
             finished: false,
         };
 
-        // pick random point that is not inside obstacles and not too close to player
         function spawnMarker() {
             const obstacles = getObstacles();
             const tries = 60;
@@ -431,14 +443,12 @@
 
                 const rect = { x, y, w: mw, h: mh };
 
-                // avoid obstacles
                 let bad = false;
                 for (const o of obstacles) {
                     if (rectsIntersect(rect, o)) { bad = true; break; }
                 }
                 if (bad) continue;
 
-                // avoid very close to player
                 const d = Math.hypot((player.x + player.w / 2) - (x + mw / 2), (player.y + player.h / 2) - (y + mh / 2));
                 if (d < 220) continue;
 
@@ -446,7 +456,6 @@
                 return;
             }
 
-            // fallback center-ish
             game.marker = { x: 480, y: 900, w: 120, h: 120, active: true };
         }
 
@@ -580,10 +589,8 @@
             const dist = Math.hypot(dx, dy);
 
             if (dist < 2) {
-                // Arrive: run pending action only when final target
                 runPendingActionIfTargetMatch(player.targetX, player.targetY);
 
-                // Detour waypoint reached?
                 if (player.detour && Math.hypot(player.x - player.detour.x, player.y - player.detour.y) < 4) {
                     player.targetX = player.detour.finalX;
                     player.targetY = player.detour.finalY;
@@ -602,9 +609,8 @@
                 return;
             }
 
-            // facing FIX (right if dx>0)
-            if (dx > 0) player.facing = "right";
-            else if (dx < 0) player.facing = "left";
+            if (dx > 0) player.facing = "left";
+            else if (dx < 0) player.facing = "right";
 
             const vx = (dx / dist) * player.speed;
             const vy = (dy / dist) * player.speed;
@@ -625,7 +631,6 @@
             const wantY = Math.abs(player.targetY - prevY) > 0.5;
 
             if ((wantX && moved.blockedX) || (wantY && moved.blockedY)) {
-                // create detour waypoint
                 if (!player.detour && player.detourTries < 6) {
                     const finalX = player.targetX;
                     const finalY = player.targetY;
@@ -640,7 +645,6 @@
                     }
                 }
 
-                // give up
                 player.targetX = null;
                 player.targetY = null;
                 player.detour = null;
@@ -651,7 +655,6 @@
                 return;
             }
 
-            // snap end
             const rdx = player.targetX - player.x;
             const rdy = player.targetY - player.y;
             const rdist = Math.hypot(rdx, rdy);
@@ -671,7 +674,6 @@
                 return;
             }
 
-            // anim
             player.anim += dt;
             if (player.anim >= 0.12) {
                 player.anim = 0;
@@ -686,7 +688,6 @@
         function drawSprite(im, x, y, w, h, facing) {
             if (!im) return;
             if (facing === "right") {
-                // flip horizontally (like escape_room)
                 ctx.save();
                 ctx.translate(x + w, y);
                 ctx.scale(-1, 1);
@@ -698,14 +699,12 @@
         }
 
         function render(dt) {
-            // clear correctly in CSS px space (ctx already DPR-transformed)
             ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
             if (staticReady) ctx.drawImage(staticCanvas, 0, 0);
 
             const t = coverT || getCoverTransform();
 
-            // marker (question indicator)
             if (game.marker && game.marker.active && currentImages?.marker) {
                 const mx = t.dx + game.marker.x * t.scale;
                 const my = t.dy + game.marker.y * t.scale;
@@ -714,7 +713,6 @@
                 ctx.drawImage(currentImages.marker, mx, my, mw, mh);
             }
 
-            // placed outcomes (diamond/hole)
             for (let i = game.placed.length - 1; i >= 0; i--) {
                 const p = game.placed[i];
                 p.t += dt;
@@ -728,7 +726,6 @@
                 if (im) ctx.drawImage(im, px, py, pw, ph);
             }
 
-            // player sprite
             const px = t.dx + player.x * t.scale;
             const py = t.dy + player.y * t.scale;
             const pw = player.w * t.scale;
@@ -741,7 +738,6 @@
 
             drawSprite(sprite, px, py, pw, ph, player.facing);
 
-            // click fx
             for (let i = clickFx.length - 1; i >= 0; i--) {
                 const fx = clickFx[i];
                 fx.t += dt;
@@ -760,7 +756,6 @@
                 ctx.restore();
             }
 
-            // object fx (marker highlight)
             for (let i = objectFx.length - 1; i >= 0; i--) {
                 const fx = objectFx[i];
                 fx.t += dt;
@@ -824,12 +819,13 @@
                 if (qc) qc.classList.add("hidden");
 
                 showModal({
-                    title: "Қазына табылды!",
+                    title: "Барлық қазыналар табылды!",
                     bodyHTML: `
-          <div class="grid gap-2 text-muted text-center">
-            <span>Барлық сұрақтарға жауап берілді. Нәтижені көре аласың.</span>
-          </div>
-        `,
+                    <div class="grid gap-2 text-muted text-center">
+                        <span>Барлық сұрақтарға жауап берілді. Нәтижені көре аласың.</span>
+                        <img src="/static/images/activity/games/smart_explorer/assets/diamond.png" class="w-16 mx-auto" />
+                    </div>
+                    `,
                     primaryText: "Нәтиже",
                     manual: true,
                     onPrimary: () => { window.location.href = ER_URL_RESULT; }
@@ -838,9 +834,7 @@
                 return;
             }
 
-            // REVIEW => place diamond/hole on current marker, then spawn next marker, preload next question
             if (stage === "review") {
-                // IMPORTANT: your _review.html must set: data-last-correct="1|0" on #er-state
                 const lastCorrect = (st.dataset.lastCorrect === "1");
 
                 if (game.marker) {
@@ -849,28 +843,21 @@
                 }
 
                 clearModalTimers();
-
-                // close review modal after a short time
                 tClose = setTimeout(() => {
                     closeModal(true);
 
-                    // after closing, spawn next marker (if not finished)
                     if (!game.finished) {
                         spawnMarker();
-                        // optional: flash FX on marker to hint user
                         if (game.marker) pushRectFx(game.marker);
                     }
                 }, 1200);
 
-                // preload next question soon
                 tPreload = setTimeout(() => {
                     preloadNextQuestion();
                 }, 250);
 
                 return;
             }
-
-            // QUESTION stage: nothing special here (modal open already)
         });
 
         // ===========================================================================
@@ -879,7 +866,6 @@
         async function start() {
             resize();
 
-            // preload assets
             const bg = await loadImage(ASSETS.bg);
             const marker = await loadImage(ASSETS.marker);
             const diamond = await loadImage(ASSETS.diamond);
@@ -901,13 +887,10 @@
             buildStaticLayer(currentImages);
             setInitialPlayerPos();
 
-            // first marker
             spawnMarker();
             if (game.marker) pushRectFx(game.marker);
 
-            // preload first question
             preloadNextQuestion();
-
             requestAnimationFrame(loop);
         }
 
