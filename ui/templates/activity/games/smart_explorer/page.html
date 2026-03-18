@@ -470,6 +470,59 @@
             });
         }
 
+        function isPlayerRectBlocked(x, y, obstacles) {
+            const r = { x, y, w: player.w, h: player.h };
+            for (const o of obstacles) {
+                if (rectsIntersect(r, o)) return true;
+            }
+            return false;
+        }
+
+        function getMarkerApproachTarget(markerRect, obstacles) {
+            const gap = 18;
+
+            const candidates = [
+                // bottom
+                {
+                    x: markerRect.x + markerRect.w / 2 - player.w / 2,
+                    y: markerRect.y + markerRect.h + gap
+                },
+                // top
+                {
+                    x: markerRect.x + markerRect.w / 2 - player.w / 2,
+                    y: markerRect.y - player.h - gap
+                },
+                // right
+                {
+                    x: markerRect.x + markerRect.w + gap,
+                    y: markerRect.y + markerRect.h / 2 - player.h / 2
+                },
+                // left
+                {
+                    x: markerRect.x - player.w - gap,
+                    y: markerRect.y + markerRect.h / 2 - player.h / 2
+                },
+            ].map(p => {
+                const walled = applyWalls(p.x, p.y);
+                return { x: walled.nx, y: walled.ny };
+            });
+
+            let best = null;
+            let bestScore = Infinity;
+
+            for (const p of candidates) {
+                if (isPlayerRectBlocked(p.x, p.y, obstacles)) continue;
+
+                const score = Math.hypot(player.x - p.x, player.y - p.y);
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = p;
+                }
+            }
+
+            return best;
+        }
+
         // ===========================================================================
         // Effects (click + object glow)
         // ===========================================================================
@@ -550,13 +603,31 @@
                 if (rectsIntersect(clickBox, game.marker)) {
                     pushRectFx(game.marker);
 
-                    // interaction target near marker (stand under it)
-                    const tx = clamp(game.marker.x + game.marker.w / 2 - player.w / 2, WALL_MIN_X, WORLD_W - player.w);
-                    const ty = clamp(game.marker.y + game.marker.h + 18, WALL_MIN_Y, WORLD_H - player.h);
+                    const obstacles = getObstacles();
+                    const target = getMarkerApproachTarget(game.marker, obstacles);
 
-                    player.targetX = tx;
-                    player.targetY = ty;
-                    pendingAction = { kind: "marker", tx, ty };
+                    if (!target) {
+                        // fallback: бұрынғыдай астына апаруға тырысады
+                        const tx = clamp(
+                            game.marker.x + game.marker.w / 2 - player.w / 2,
+                            WALL_MIN_X,
+                            WORLD_W - player.w
+                        );
+                        const ty = clamp(
+                            game.marker.y + game.marker.h + 18,
+                            WALL_MIN_Y,
+                            WORLD_H - player.h
+                        );
+
+                        player.targetX = tx;
+                        player.targetY = ty;
+                        pendingAction = { kind: "marker", tx, ty };
+                        return;
+                    }
+
+                    player.targetX = target.x;
+                    player.targetY = target.y;
+                    pendingAction = { kind: "marker", tx: target.x, ty: target.y };
                     return;
                 }
             }
