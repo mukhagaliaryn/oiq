@@ -1,6 +1,8 @@
 from pathlib import Path
 from decouple import config, Csv
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.templatetags.static import static
 
 
 # Generic configs
@@ -144,3 +146,110 @@ TAILWIND_APP_NAME = 'ui'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+AUTH_USER_MODEL = 'core.User'
+
+
+# Unfold settings
+# ----------------------------------------------------------------------------------------------------------------------
+UNFOLD = {
+    'SITE_TITLE': config('SITE_NAME'),
+    'SITE_HEADER': config('SITE_NAME'),
+    'SITE_SUBHEADER': _('Administration'),
+
+    'LOGIN': {
+        'image': lambda request: static('images/oiq-banner.svg'),
+        'title': _('Dashboard'),
+    },
+
+    'SITE_URL': '/',
+    'SITE_ICON': lambda request: static('images/icon.png'),
+    'SITE_SYMBOL': 'speed',
+    'SITE_FAVICONS': [
+        {
+            'rel': 'icon',
+            'sizes': '32x32',
+            'type': 'image/svg+xml',
+            'href': lambda request: static('images/icon.png'),
+        },
+    ],
+    # 'SHOW_LANGUAGES': True,
+
+    'SITE_DROPDOWN': [
+        {
+            'icon': 'home',
+            'title': _('Dashboard'),
+            'link': config('ADMIN_URL'),
+        },
+        {
+            'icon': 'account_circle',
+            'title': _('Website'),
+            'link': config('WEBSITE_URL'),
+            'attrs': {
+                'target': '_blank',
+            },
+        },
+    ],
+
+    'SIDEBAR': {
+        'show_search': True,
+        'command_search': True,
+        'show_all_applications': True,
+
+        'navigation': [
+            {
+                'items': [
+                    {
+                        'title': _('Dashboard'),
+                        'icon': 'dashboard',
+                        'link': reverse_lazy('admin:index'),
+                        'badge': '3',
+                        'badge_variant': 'info',
+                        'badge_style': 'solid',
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                ],
+            },
+            {
+                'title': _('Account'),
+                'separator': True,
+                'collapsible': True,
+                'items': [
+                    {
+                        'title': _('Roles'),
+                        'icon': 'lock_person',
+                        'link': reverse_lazy('admin:core_role_changelist'),
+                    },
+                    {
+                        'title': _('Users'),
+                        'icon': 'account_circle',
+                        'link': reverse_lazy('admin:core_user_changelist'),
+                    },
+                    {
+                        'title': _('User sessions'),
+                        'icon': 'admin_panel_settings',
+                        'link': reverse_lazy('admin:core_usersession_changelist'),
+                    },
+                    # ...
+                ],
+            },
+        ],
+    },
+
+    'BORDER_RADIUS': '12px',
+    'COLORS': {
+        'primary': {
+            '50': '#eef2ff',
+            '100': '#e0e7ff',
+            '200': '#c7d2fe',
+            '300': '#a5b4fc',
+            '400': '#818cf8',
+            '500': "#6366f1",
+            '600': '#4f46e5',
+            '700': '#4338ca',
+            '800': '#3730a3',
+            '900': '#312e81',
+            '950': '#1e1b4b',
+        },
+    },
+}
