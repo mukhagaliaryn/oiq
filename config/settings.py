@@ -173,16 +173,15 @@ UNFOLD = {
             'href': lambda request: static('images/icon.png'),
         },
     ],
-    # 'SHOW_LANGUAGES': True,
-
+    'SHOW_LANGUAGES': True,
     'SITE_DROPDOWN': [
         {
-            'icon': 'home',
-            'title': _('Dashboard'),
+            'icon': 'dashboard',
+            'title': _('Administration'),
             'link': config('ADMIN_URL'),
         },
         {
-            'icon': 'account_circle',
+            'icon': 'arrow_outward',
             'title': _('Website'),
             'link': config('WEBSITE_URL'),
             'attrs': {
@@ -190,7 +189,6 @@ UNFOLD = {
             },
         },
     ],
-
     'SIDEBAR': {
         'show_search': True,
         'command_search': True,
