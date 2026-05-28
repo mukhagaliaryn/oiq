@@ -1,30 +1,23 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from core.models import TimeStampedModel, BaseModel
 from core.utils.files import user_avatar_upload_path
 
 
-# Role model
-# ----------------------------------------------------------------------------------------------------------------------
-class Role(TimeStampedModel):
-    code = models.SlugField(_('Code'), max_length=64, unique=True)
-    name = models.CharField(_('Name'), max_length=128)
-
-    class Meta:
-        verbose_name = _('Role')
-        verbose_name_plural = _('Roles')
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
-
-
-# User model
+# User models
 # ----------------------------------------------------------------------------------------------------------------------
 # -------------- User --------------
 class User(AbstractUser):
-    middle_name = models.CharField(_('Middle name'), max_length=128, blank=True)
+    class Role(models.TextChoices):
+        ADMIN = 'admin', _('Admin')
+        TEACHER = 'teacher', _('Teacher')
+        LEARNER = 'learner', _('Learner')
+
+    middle_name = models.CharField(_('Middle name'), max_length=128, null=True, blank=True)
+    role = models.CharField(
+        _('Role'), max_length=16, choices=Role.choices,
+        default=Role.LEARNER, help_text=_('Shows the user\'s role in the system.')
+    )
     phone = models.CharField(_('Phone'), max_length=32, blank=True)
     avatar = models.ImageField(_('Avatar'), upload_to=user_avatar_upload_path, blank=True, null=True)
     is_verified = models.BooleanField(_('Is verified'), default=False)
@@ -44,31 +37,6 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return ' '.join(filter(None, [self.first_name, self.middle_name, self.last_name])) or self.username
-
-    @property
-    def role(self):
-        return self.user_role.role if hasattr(self, 'user_role') else None
-
-
-# -------------- UserRole --------------
-class UserRole(BaseModel):
-    user = models.OneToOneField(
-        User, verbose_name=_('User'),
-        on_delete=models.CASCADE, related_name='user_role',
-    )
-    role = models.ForeignKey(
-        Role, verbose_name=_('Role'),
-        on_delete=models.PROTECT, related_name='user_roles',
-    )
-    is_system = models.BooleanField(_('Is system'), default=False)
-
-    class Meta:
-        verbose_name = _('User role')
-        verbose_name_plural = _('User roles')
-        ordering = ('user', 'role')
-
-    def __str__(self):
-        return f'{self.user} — {self.role}'
 
 
 # -------------- UserSession --------------
@@ -104,3 +72,44 @@ class UserSession(models.Model):
 
     def __str__(self):
         return f'{self.user} — {self.device_name or self.device_type}'
+
+
+# Account models
+# ----------------------------------------------------------------------------------------------------------------------
+# -------------- Teacher --------------
+class Teacher(models.Model):
+    class Type(models.TextChoices):
+        REGULAR = 'regular', _('Regular')
+        PARTNER = 'partner', _('Partner')
+
+    user = models.OneToOneField(
+        User, verbose_name=_('User'),
+        on_delete=models.CASCADE, related_name='teacher',
+    )
+    city = models.ForeignKey(
+        'core.City', verbose_name=_('City'),
+        on_delete=models.SET_NULL, related_name='teachers',
+        blank=True, null=True,
+    )
+    school = models.ForeignKey(
+        'core.School', verbose_name=_('School'),
+        on_delete=models.SET_NULL, related_name='teachers',
+        blank=True, null=True,
+    )
+    type = models.CharField(
+        _('Type'), max_length=16,
+        choices=Type.choices, default=Type.REGULAR,
+    )
+    agreement_accepted_at = models.DateTimeField(_('Agreement accepted at'), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _('Teacher')
+        verbose_name_plural = _('Teachers')
+        ordering = ('user',)
+
+    def __str__(self):
+        return str(self.user)
+
+    @property
+    def is_partner(self):
+        return self.type == self.Type.PARTNER

@@ -214,11 +214,6 @@ UNFOLD = {
                 'collapsible': True,
                 'items': [
                     {
-                        'title': _('Roles'),
-                        'icon': 'lock_person',
-                        'link': reverse_lazy('admin:core_role_changelist'),
-                    },
-                    {
                         'title': _('Users'),
                         'icon': 'account_circle',
                         'link': reverse_lazy('admin:core_user_changelist'),

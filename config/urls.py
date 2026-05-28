@@ -13,6 +13,7 @@ urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
 
     # apps...
+    path('', include('apps.main.urls')),
     prefix_default_language=True,
 )
 

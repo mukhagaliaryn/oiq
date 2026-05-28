@@ -5,35 +5,11 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.forms import UserCreationForm, AdminPasswordChangeForm
-from core.models import UserRole, UserSession, User, Role
-
-
-# Role admin
-# ----------------------------------------------------------------------------------------------------------------------
-@admin.register(Role)
-class RoleAdmin(ModelAdmin):
-    list_display = ('name', 'code', 'created_at')
-    search_fields = ('name', 'code')
-    prepopulated_fields = {
-        'code': ('name',),
-    }
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ('name',)
+from core.models import User, UserSession
 
 
 # User admin
 # ----------------------------------------------------------------------------------------------------------------------
-# -------------- UserRoleInline --------------
-class UserRoleInline(TabularInline):
-    model = UserRole
-    extra = 0
-    max_num = 1
-    can_delete = True
-    tab = True
-    fields = ('role', 'is_system', 'is_active', 'created_at')
-    readonly_fields = ('created_at',)
-
-
 # -------------- UserSessionInline --------------
 class UserSessionInline(TabularInline):
     model = UserSession
@@ -50,15 +26,15 @@ class UserSessionInline(TabularInline):
 # -------------- UserAdmin --------------
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
-    list_display = ('avatar_preview', 'display_name', 'username', 'email', 'role_column', 'is_verified', 'is_active', 'last_login')
+    list_display = ('avatar_preview', 'display_name', 'username', 'email', 'role', 'is_verified', 'is_active', 'last_login')
     list_display_links = ('avatar_preview', 'display_name', 'username')
-    list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_verified', 'user_role__role')
+    list_filter = ('role', 'is_active', 'is_staff', 'is_superuser', 'is_verified')
     search_fields = ('username', 'first_name', 'middle_name', 'last_name', 'email', 'phone')
     ordering = ('id',)
     readonly_fields = ('password_change_link', 'last_login', 'date_joined')
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
-    inlines = (UserRoleInline, UserSessionInline)
+    inlines = (UserSessionInline,)
 
     fieldsets = (
         (_('Account'), {
@@ -72,7 +48,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         }),
         (_('Status'), {
             'classes': ('tab',),
-            'fields': ('is_verified', 'is_active',
+            'fields': ('role', 'is_verified', 'is_active',
             ),
         }),
         (_('Permissions'), {
@@ -104,18 +80,6 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             (obj.username[:1] or '?').upper(),
         )
 
-    def role_column(self, obj):
-        role = obj.role
-        if not role:
-            return '-'
-
-        if role.is_system:
-            return format_html(
-                '<span style="font-weight:600;color:#4f46e5;">{}</span>',
-                role.name,
-            )
-        return role.name
-
     def password_change_link(self, obj):
         if not obj or not obj.pk:
             return '-'
@@ -126,19 +90,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         )
 
     avatar_preview.short_description = _('Avatar')
-    role_column.short_description = _('Role')
     password_change_link.short_description = _('Password change')
-
-
-# -------------- UserRoleAdmin --------------
-@admin.register(UserRole)
-class UserRoleAdmin(ModelAdmin):
-    list_display = ('user', 'role', 'is_active', 'created_at')
-    list_filter = ('role', 'is_active')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'user__email', 'role__name', 'role__code')
-    autocomplete_fields = ('user', 'role')
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ('user',)
 
 
 # -------------- UserSessionAdmin --------------
