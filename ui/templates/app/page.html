@@ -5,36 +5,56 @@
 
 
 {% block main_layout %}
-<div class="w-full sm:max-w-sm mx-auto space-y-4 py-16 text-center">
-    <img src="{% static 'images/logo.svg' %}" class="w-36 mx-auto" alt="">
-    <h6 class="text-lg text-muted">Интерактивті, геймификацияланған және визуалды білім беру платформасы</h6>
-    <div class="grid gap-4">
-        <a 
-            href="#" 
-            class="relative grid group"
-        >  
-            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-primary-800 group-active:h-0"></span>
-            <span class="
-                relative w-full px-4 py-2 rounded-xl bg-primary-600 text-white font-medium 
-                group-hover:bg-primary-500 group-active:translate-y-1.5
-                "
-            >
-                Ойынға қосылу
-            </span>
-        </a>
-        <a 
-            href="#" 
-            class="relative grid group"
-        >  
-            <span class="absolute -bottom-1.5 w-full h-full rounded-xl bg-secondary-300 group-active:h-0"></span>
-            <span class="
-                relative w-full px-4 py-2 rounded-xl bg-white border border-border-300 font-medium 
-                group-hover:bg-secondary-50 group-active:translate-y-1.5
-                "
-            >
-                Мен оқытушымын
-            </span>
-        </a>
+<div class="min-h-screen border-b border-default flex justify-center items-center">
+    <div class="relative z-10 max-w-5xl mx-auto flex flex-col items-center md:flex-row gap-8 md:gap-16 py-16 px-4">
+        <div class="flex-1 relative bg-amber-100">
+            <dotlottie-wc
+                src="https://lottie.host/20d6b93a-9d06-4899-9ada-a5e2631838cd/EmnmppKCOJ.lottie"
+                class="w-64 h-64 sm:w-75 md:h-75"
+                autoplay
+                loop
+            ></dotlottie-wc>
+
+            <dotlottie-wc
+                src="https://lottie.host/3cb6b2bb-e65a-462d-9ae5-312ae11dc91d/KW2H4rwzfA.lottie"
+                class="w-60 h-60 sm:w-75 md:h-75 absolute top-[25%] left-[25%] md:left-[35%]"
+                autoplay
+                loop
+            ></dotlottie-wc>
+        </div>
+
+        <div class="w-full md:max-w-lg mx-auto space-y-8 text-center">
+            <h6 class="text-2xl font-black text-body-subtle">Интерактивті, геймификацияланған және визуалды білім беру платформасы</h6>
+            <div class="max-w-sm mx-auto grid gap-4">
+                <a 
+                    href="#" 
+                    class="relative grid group"
+                >  
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="
+                        relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium 
+                        group-hover:bg-brand-medium group-active:translate-y-1.5
+                        "
+                    >
+                        Мен оқушымын
+                    </span>
+                </a>
+                <a 
+                    href="#" 
+                    class="relative grid group"
+                >  
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                    <span class="
+                        relative w-full px-6 py-3 rounded-full bg-neutral-primary border border-default font-medium 
+                        group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                        "
+                    >
+                        Мен мұғаліммін
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock main_layout %}

@@ -27,6 +27,79 @@
   --color-border-300: #d4d4d4;
   --color-destructive: #dc2626;
 
+  /* v2 */
+  --color-body: var(--color-neutral-500);
+  --color-body-subtle: var(--color-neutral-700);
+  --color-heading: var(--color-neutral-950);
+  
+  /* BACKGROUND COLOR VARIABLES */
+  /* used for neutral colors */
+  --color-neutral-primary: var(--color-white);
+  --color-neutral-secondary: var(--color-neutral-50);
+  --color-neutral-tertiary: var(--color-neutral-100);
+  --color-neutral-quaternary: var(--color-neutral-200);
+  --color-neutral-fivetenary: var(--color-neutral-300);
+
+  /* used for brand colors */
+  --color-brand-softer: var(--color-indigo-50);
+  --color-brand-soft: var(--color-indigo-100);
+  --color-brand: var(--color-indigo-600);
+  --color-brand-medium: var(--color-indigo-500);
+  --color-brand-strong: var(--color-indigo-800);
+
+  /* used for status colors */
+  --color-success-soft: var(--color-emerald-50);
+  --color-success: var(--color-emerald-700);
+  --color-success-medium: var(--color-emerald-100);
+  --color-success-strong: var(--color-emerald-800);
+
+  --color-danger-soft: var(--color-rose-50);
+  --color-danger: var(--color-rose-700);
+  --color-danger-medium: var(--color-rose-100);
+  --color-danger-strong: var(--color-rose-800);
+  
+  --color-warning-soft: var(--color-orange-50);
+  --color-warning: var(--color-orange-500);
+  --color-warning-medium: var(--color-orange-100);
+  --color-warning-strong: var(--color-orange-700);
+  
+  --color-dark-soft: var(--color-neutral-800);
+  --color-dark: var(--color-neutral-800);
+  --color-dark-strong: var(--color-neutral-900);
+  
+  --color-disabled: var(--color-neutral-100);
+
+  --color-purple: var(--color-purple-500);
+  --color-sky: var(--color-sky-500);
+  --color-teal: var(--color-teal-600);
+  --color-pink: var(--color-pink-600);
+  --color-cyan: var(--color-cyan-500);
+  --color-fuchsia: var(--color-fuchsia-600);
+  --color-indigo: var(--color-indigo-600);
+  --color-orange: var(--color-orange-400);
+  
+  /* BORDER COLOR VARIABLES */
+  --color-buffer: var(--color-white);
+  --color-buffer-medium: var(--color-white);
+  --color-buffer-strong: var(--color-white);
+  --color-muted: var(--color-neutral-50);
+  --color-light-subtle: var(--color-neutral-100);
+  --color-light: var(--color-neutral-100);
+  --color-light-medium: var(--color-neutral-100);
+  --color-default-subtle: var(--color-neutral-200);
+  --color-default: var(--color-neutral-200);
+  --color-default-medium: var(--color-neutral-200);
+  --color-default-strong: var(--color-neutral-200);
+
+  /* used for status colors */
+  --color-success-subtle: var(--color-emerald-200);
+  --color-danger-subtle: var(--color-rose-200);
+  --color-warning-subtle: var(--color-orange-200);
+  --color-brand-subtle: var(--color-indigo-200);
+  --color-brand-light: var(--color-indigo-600);
+  --color-dark-subtle: var(--color-neutral-800);
+  --color-dark-backdrop: var(--color-neutral-950);
+
   --breakpoint-xs: 480px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
@@ -35,7 +108,7 @@
   --breakpoint-2xl: 1536px;
   --breakpoint-3xl: 1920px;
 
-  --text-normal: 15px;
+  --text-normal: 16px;
   /* 
     h1 - 4xl 
     h2 - 2xl
@@ -45,9 +118,9 @@
     h6 - normal  
   */
 
-  --font-roboto: "Roboto", "sans-serif";
-  --font-inter: "Inter", sans-serif;
-  --font-inter-t: "Inter Tight", sans-serif;
+  --font-roboto: 'Roboto', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-inter: 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-inter-t: 'Inter Tight', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 
