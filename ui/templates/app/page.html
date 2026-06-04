@@ -7,7 +7,7 @@
 {% block main_layout %}
 <div class="min-h-screen border-b border-default flex justify-center items-center">
     <div class="relative z-10 max-w-5xl mx-auto flex flex-col items-center md:flex-row gap-8 md:gap-16 py-16 px-4">
-        <div class="flex-1 relative bg-amber-100">
+        <div class="flex-1 relative">
             <dotlottie-wc
                 src="https://lottie.host/20d6b93a-9d06-4899-9ada-a5e2631838cd/EmnmppKCOJ.lottie"
                 class="w-64 h-64 sm:w-75 md:h-75"
@@ -27,7 +27,7 @@
             <h6 class="text-2xl font-black text-body-subtle">Интерактивті, геймификацияланған және визуалды білім беру платформасы</h6>
             <div class="max-w-sm mx-auto grid gap-4">
                 <a 
-                    href="#" 
+                    href="{% url 'main:register' %}" 
                     class="relative grid group"
                 >  
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
@@ -36,11 +36,11 @@
                         group-hover:bg-brand-medium group-active:translate-y-1.5
                         "
                     >
-                        Мен оқушымын
+                        Қазір бастау
                     </span>
                 </a>
                 <a 
-                    href="#" 
+                    href="{% url 'main:login' %}" 
                     class="relative grid group"
                 >  
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
@@ -49,7 +49,7 @@
                         group-hover:bg-neutral-secondary group-active:translate-y-1.5
                         "
                     >
-                        Мен мұғаліммін
+                        Менде аккаунт бар
                     </span>
                 </a>
             </div>

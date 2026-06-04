@@ -1,17 +1,130 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}{% endblock title %}
 
 {% block base %}
-<div class="">
-    <nav class="fixed z-50 w-full border-b border-default bg-neutral-primary">
+<div class="relative">
+    <nav
+        x-data="{ scrolled: false }"
+        @scroll.window="scrolled = window.scrollY > 10"
+        :class="{
+            'border-b border-default bg-neutral-primary': scrolled
+        }"
+        class="fixed z-50 w-full"
+    >
         <div class="max-w-7xl mx-auto flex items-center justify-between h-16 px-4">
-            <a href="#" class="flex items-center gap-2">
+            <a 
+                href="{% url 'main:main' %}" 
+                class="flex items-center gap-2 active:scale-90"
+            >
                 <img src="{% static 'images/logo.svg' %}" class="w-16 md:w-20" alt="Brand logo">
             </a>
 
-            <!-- ... -->
+            <div class="flex items-center gap-2">
+                <!-- Language selector -->
+                <div
+                    x-data="{
+                        open: false,
+                        hover: false,
+                    }"
+                    @mouseenter="
+                        hover = true;
+                        open = true;
+                    "
+                    @mouseleave="
+                        hover = false;
+                        open = false;
+                    "
+                    @keydown.escape.window="open = false"
+                    class="hidden md:block relative"
+                >
+                    {% get_current_language as CURRENT_LANGUAGE %}
+                    <button
+                        type="button"
+                        @click="
+                            if (!hover) {
+                                open = !open
+                            }
+                        "
+                        class="flex items-center gap-2 rounded-full bg-neutral-primary px-4 py-2 text-body-subtle hover:bg-neutral-secondary focus:outline-none focus:ring-2 focus:ring-brand"
+                    >
+                        <span>
+                            {% if CURRENT_LANGUAGE == 'kk' %}
+                                Қазақ
+                            {% elif CURRENT_LANGUAGE == 'ru' %}
+                                Русский
+                            {% else %}
+                                English
+                            {% endif %}
+                        </span>
+
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chevron-down-icon lucide-chevron-down" 
+                            :class="{ 'rotate-180': open }"
+                            >
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+
+                    <div
+                        x-show="open"
+                        x-transition.origin.top.left
+                        class="absolute left-1/2 -translate-x-1/2 z-50 mt-2 w-52 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+                        style="display:none"
+                    >
+                        {% get_available_languages as LANGUAGES %}
+                        {% for language_code, language_name in LANGUAGES %}
+                            <form action="{% url 'set_language' %}" method="post">
+                                {% csrf_token %}
+                                <input
+                                    type="hidden"
+                                    name="language"
+                                    value="{{ language_code }}"
+                                >
+                                <input
+                                    type="hidden"
+                                    name="next"
+                                    value="{{ request.get_full_path }}"
+                                >
+                                <button
+                                    type="submit" 
+                                    class="flex gap-2 w-full items-center justify-between rounded-xl px-4 py-2.5 text-normal transition duration-150
+                                    {% if CURRENT_LANGUAGE == language_code %}
+                                        bg-brand text-neutral-primary
+                                    {% else %}
+                                        text-body-subtle hover:bg-neutral-secondary
+                                    {% endif %}
+                                ">
+                                    <span class="flex items-center gap-2">
+                                        <span>
+                                            {% if language_code == 'kk' %}
+                                                Қазақ
+                                            {% elif language_code == 'ru' %}
+                                                Русский
+                                            {% else %}
+                                                English
+                                            {% endif %}
+                                        </span>
+                                    </span>
+
+                                    {% if CURRENT_LANGUAGE == language_code %}
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                                            class="lucide lucide-check-icon lucide-check text-neutral-primary"
+                                        >
+                                            <path d="M20 6 9 17l-5-5" />
+                                        </svg>
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -20,5 +133,4 @@
         {% endblock main_layout %}
     </div>
 </div>
-
 {% endblock base %}
