@@ -16,10 +16,7 @@ from core.utils.decorators import anonymous_required
 # -------------- login view --------------
 @anonymous_required
 def login_view(request):
-    form = LoginForm(
-        request=request,
-        data=request.POST or None,
-    )
+    form = LoginForm(request=request, data=request.POST or None)
     if request.method == 'POST' and form.is_valid():
         user = form.get_user()
         login(request, user)
@@ -35,7 +32,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('main:home')
-
 
 
 # register

@@ -1,48 +1,92 @@
 {% extends "layouts/auth_layout.html" %}
-
+{% load static %}
 {% block title %}Кіру{% endblock title %}
+
+
+{% block link %}
+    <a href="{% url 'main:main' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
+        <i data-lucide="chevron-left" class="size-6"></i>
+    </a>
+{% endblock link %}
 
 {% block auth_layout %}
 <div class="w-full">
-    <div class="rounded-2xl border border-default bg-neutral-primary p-6 shadow-sm">
-        <h1 class="text-2xl font-semibold text-heading">Кіру</h1>
-        <p class="mt-2 text-sm text-body">Аккаунтыңызға кіріңіз</p>
+    <div class="bg-neutral-primary space-y-8">
+        <div class="text-center space-y-4">
+            <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-black">Оқушы ретінде тіркелу</h1>
+                <span class="text-body">Жеке оқу кеңістігіңізді бастаңыз</span>
+            </div>
+        </div>
 
-        <form method="post" class="mt-6 space-y-5">
+        <form method="post" class="space-y-4">
             {% csrf_token %}
 
-            <div>
-                <label class="mb-2 block text-sm font-medium text-heading" for="{{ form.username.id_for_label }}">
-                    {{ form.username.label }}
+            <div class="space-y-2">
+                <label for="username" class="block ml-6 font-medium">
+                    Электрондық пошта/пайдаланушы аты
                 </label>
-                {{ form.username }}
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    value="{{ form.username.value|default:'' }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                    placeholder="example@gmail.com"
+                    autocomplete="username"
+                    required
+                >
                 {% for error in form.username.errors %}
-                <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-medium text-heading" for="{{ form.password.id_for_label }}">
-                    {{ form.password.label }}
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="id_password" class="block ml-6 font-medium">
+                    Құпия сөз
                 </label>
-                {{ form.password }}
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password"
+                        id="id_password"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="current-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer"
+                    >
+                        <i x-show="!show" data-lucide="eye" class="size-6"></i>
+                        <i x-show="show" data-lucide="eye-off" class="size-6"></i>
+                    </button>
+                </div>
                 {% for error in form.password.errors %}
-                <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
 
             {% if form.non_field_errors %}
-            <div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-                {{ form.non_field_errors }}
-            </div>
+                <div class="rounded-2xl border border-danger-medium bg-danger-soft p-4 text-danger">
+                    {{ form.non_field_errors }}
+                </div>
             {% endif %}
 
-            <button type="submit" class="w-full rounded-xl bg-brand px-4 py-3 text-sm font-medium text-white">
-                Кіру
+            <button 
+                type="submit"
+                class="relative grid group w-full"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    Кіру
+                </span>
             </button>
         </form>
 
-        <p class="mt-6 text-center text-sm text-body">
+        <p class="text-center text-body">
             Аккаунтыңыз жоқ па?
             <a href="{% url 'main:register' %}" class="font-medium text-brand">Тіркелу</a>
         </p>

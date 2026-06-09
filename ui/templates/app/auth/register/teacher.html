@@ -1,58 +1,270 @@
 {% extends "layouts/auth_layout.html" %}
-
+{% load static %}
 {% block title %}Оқытушы ретінде тіркелу{% endblock title %}
 
 
-{% block auth_layout %}
-<div class="w-full">
-    <div class="rounded-2xl border border-default bg-neutral-primary p-6 shadow-sm">
-        <h1 class="text-2xl font-semibold text-heading">Оқытушы ретінде тіркелу</h1>
-        <p class="mt-2 text-sm text-body">Сыныптар мен ойын тапсырмаларын басқару кеңістігін ашыңыз</p>
+{% block link %}
+    <a href="{% url 'main:register' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
+        <i data-lucide="chevron-left" class="size-6"></i>
+    </a>
+{% endblock link %}
 
-        <form method="post" class="mt-6 space-y-5">
+
+{% block auth_layout %}
+<div
+    class="w-full"
+    x-data="{
+        step: {% if form.first_name.errors or form.last_name.errors or form.email.errors or form.password1.errors or form.password2.errors %}2{% else %}1{% endif %},
+        showPassword: false,
+        showPasswordConfirm: false
+    }"
+>
+    <div class="bg-neutral-primary space-y-8">
+        <div class="text-center space-y-4">
+            <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-black">Оқушы ретінде тіркелу</h1>
+                <span class="text-body">Жеке оқу кеңістігіңізді бастаңыз</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <button
+                type="button"
+                @click="step = 1"
+                class="rounded-full px-6 py-3 font-medium border transition cursor-pointer"
+                :class="step === 1 ? 'bg-brand text-neutral-primary border-brand' : 'border-default text-body'"
+            >
+                Мектеп
+            </button>
+
+            <button
+                type="button"
+                @click="step = 2"
+                class="rounded-full px-6 py-3 font-medium border transition cursor-pointer"
+                :class="step === 2 ? 'bg-brand text-neutral-primary border-brand' : 'border-default text-body'"
+            >
+                Аккаунт
+            </button>
+        </div>
+
+        <form method="post" class="space-y-4">
             {% csrf_token %}
 
-            {% include 'app/auth/register/_register_fields.html' %}
+            <div x-show="step === 1" x-cloak class="space-y-4">
+                <div class="space-y-2">
+                    <label for="id_city" class="block ml-6 font-medium">
+                        Қала
+                    </label>
+                    <select
+                        name="city"
+                        id="id_city"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition text-body focus:ring-2 focus:ring-brand"
+                    >
+                        <option value="">Қаланы таңдаңыз</option>
+                        {% for city in form.city.field.queryset %}
+                            <option value="{{ city.id }}" {% if form.city.value|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
+                                {{ city.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.city.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-medium text-heading" for="{{ form.city.id_for_label }}">
-                    {{ form.city.label }}
-                </label>
-                {{ form.city }}
-                {% for error in form.city.errors %}
-                <p class="mt-1 text-sm text-red-500">{{ error }}</p>
-                {% endfor %}
+                <div class="space-y-2">
+                    <label for="id_school" class="block ml-6 font-medium">
+                        Мектеп
+                    </label>
+                    <select
+                        name="school"
+                        id="id_school"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition text-body focus:ring-2 focus:ring-brand"
+                    >
+                        <option value="">Мектепті таңдаңыз</option>
+                        {% for school in form.school.field.queryset %}
+                            <option value="{{ school.id }}" {% if form.school.value|stringformat:"s" == school.id|stringformat:"s" %}selected{% endif %}>
+                                {{ school.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.school.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-2">
+                    <label class="flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            name="agreement"
+                            id="id_agreement"
+                            class="mt-1 size-5 rounded border-default accent-brand"
+                            {% if form.agreement.value %}checked{% endif %}
+                            required
+                        >
+                        <span class="text-body">
+                            Платформа ережелерімен келісемін.
+                        </span>
+                    </label>
+                    {% for error in form.agreement.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <button
+                    type="button"
+                    @click="step = 2"
+                    class="relative grid group w-full"
+                >
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                        Жалғастыру
+                    </span>
+                </button>
             </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-medium text-heading" for="{{ form.school.id_for_label }}">
-                    {{ form.school.label }}
-                </label>
-                {{ form.school }}
-                {% for error in form.school.errors %}
-                <p class="mt-1 text-sm text-red-500">{{ error }}</p>
-                {% endfor %}
+            <div x-show="step === 2" x-cloak class="space-y-4">
+                <div class="space-y-2">
+                    <label for="email" class="block ml-6 font-medium">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        value="{{ form.email.value|default:'' }}"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        placeholder="example@mail.com"
+                        autocomplete="email"
+                        required
+                    >
+                    {% for error in form.email.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div class="space-y-2">
+                        <label for="first_name" class="block ml-6 font-medium">
+                            Аты
+                        </label>
+                        <input
+                            type="text"
+                            name="first_name"
+                            id="first_name"
+                            value="{{ form.first_name.value|default:'' }}"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                            placeholder="Аты"
+                            autocomplete="given-name"
+                            required
+                        >
+                        {% for error in form.first_name.errors %}
+                            <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="last_name" class="ml-6 block font-medium">
+                            Тегі
+                        </label>
+                        <input
+                            type="text"
+                            name="last_name"
+                            id="last_name"
+                            value="{{ form.last_name.value|default:'' }}"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                            placeholder="Тегі"
+                            autocomplete="family-name"
+                            required
+                        >
+                        {% for error in form.last_name.errors %}
+                            <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="id_password1" class="block ml-6 font-medium">
+                        Құпия сөз
+                    </label>
+                    <div class="relative">
+                        <input
+                            :type="showPassword ? 'text' : 'password'"
+                            name="password1"
+                            id="id_password1"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                            placeholder="Құпия сөз"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            @click="showPassword = !showPassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer"
+                        >
+                            <i x-show="!showPassword" data-lucide="eye" class="size-6"></i>
+                            <i x-show="showPassword" data-lucide="eye-off" class="size-6"></i>
+                        </button>
+                    </div>
+
+                    {% if form.password1.help_text %}
+                        <div class="ml-6 text-body">
+                            {{ form.password1.help_text }}
+                        </div>
+                    {% endif %}
+                    {% for error in form.password1.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="id_password2" class="block ml-6 font-medium">
+                        Құпия сөзді қайталау
+                    </label>
+                    <div class="relative">
+                        <input
+                            :type="showPasswordConfirm ? 'text' : 'password'"
+                            name="password2"
+                            id="id_password2"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                            placeholder="Құпия сөзді қайталау"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            @click="showPasswordConfirm = !showPasswordConfirm"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer"
+                        >
+                            <i x-show="!showPasswordConfirm" data-lucide="eye" class="size-6"></i>
+                            <i x-show="showPasswordConfirm" data-lucide="eye-off" class="size-6"></i>
+                        </button>
+                    </div>
+
+                    {% for error in form.password2.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="rounded-2xl border border-danger-medium bg-danger-soft p-4 text-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="relative grid group w-full"
+                >
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                        Тіркелу
+                    </span>
+                </button>
             </div>
-
-            <label class="flex items-start gap-3 rounded-xl border border-default p-4">
-                {{ form.agreement }}
-                <span class="text-sm text-body">
-                    Платформа ережелерімен келісемін.
-                </span>
-            </label>
-            {% for error in form.agreement.errors %}
-            <p class="mt-1 text-sm text-red-500">{{ error }}</p>
-            {% endfor %}
-
-            <button type="submit" class="w-full rounded-xl bg-brand px-4 py-3 text-sm font-medium text-white">
-                Тіркелу
-            </button>
         </form>
-
-        <p class="mt-6 text-center text-sm text-body">
-            Аккаунтыңыз бар ма?
-            <a href="{% url 'main:login' %}" class="font-medium text-brand">Кіру</a>
-        </p>
     </div>
 </div>
 {% endblock %}

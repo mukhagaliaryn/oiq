@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from core.models import Teacher
+from django.utils.text import slugify
 User = get_user_model()
 
 
@@ -17,22 +18,53 @@ def get_user_redirect_url(user):
     return reverse('main:home')
 
 
+def generate_username(email, user_id=None):
+    username = slugify(email.split('@')[0])
+
+    if not username:
+        username = 'user'
+
+    if not User.objects.filter(username=username).exists():
+        return username
+
+    if user_id:
+        return f'{username}_{user_id}'
+
+    return username
+
+
 def create_learner_user(*, form):
     user = form.save(commit=False)
+
+    user.email = form.cleaned_data['email'].lower()
     user.role = User.Role.LEARNER
     user.is_active = False
-    user.is_staff = False
+
     user.save()
+
+    user.username = generate_username(
+        email=user.email,
+        user_id=user.id,
+    )
+    user.save(update_fields=['username'])
 
     return user
 
 
 def create_teacher_user(*, form, agreement_accepted_at=None):
     user = form.save(commit=False)
+
+    user.email = form.cleaned_data['email'].lower()
     user.role = User.Role.TEACHER
     user.is_active = False
-    user.is_staff = False
+
     user.save()
+
+    user.username = generate_username(
+        email=user.email,
+        user_id=user.id,
+    )
+    user.save(update_fields=['username'])
 
     Teacher.objects.create(
         user=user,

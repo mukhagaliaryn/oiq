@@ -1,28 +1,169 @@
 {% extends "layouts/auth_layout.html" %}
-
+{% load static %}
 {% block title %}Оқушы ретінде тіркелу{% endblock title %}
+
+
+{% block link %}
+    <a href="{% url 'main:register' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
+        <i data-lucide="chevron-left" class="size-6"></i>
+    </a>
+{% endblock link %}
 
 
 {% block auth_layout %}
 <div class="w-full">
-    <div class="rounded-2xl border border-default bg-neutral-primary p-6 shadow-sm">
-        <h1 class="text-2xl font-semibold text-heading">Оқушы ретінде тіркелу</h1>
-        <p class="mt-2 text-sm text-body">Жеке оқу кеңістігіңізді бастаңыз</p>
+    <div class="bg-neutral-primary space-y-8">
+        <div class="text-center space-y-4">
+            <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-black">Оқушы ретінде тіркелу</h1>
+                <span class="text-body">Жеке оқу кеңістігіңізді бастаңыз</span>
+            </div>
+        </div>
 
-        <form method="post" class="mt-6 space-y-5">
+        <form method="post" class="space-y-4">
             {% csrf_token %}
 
-            {% include 'app/auth/register/_register_fields.html' %}
+            <div class="space-y-2">
+                <label for="email" class="block ml-6 font-medium">
+                    Электрондық пошта
+                </label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value="{{ form.email.value|default:'' }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                    placeholder="example@mail.com"
+                    autocomplete="email"
+                    required
+                >
+                {% for error in form.email.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
 
-            <button type="submit" class="w-full rounded-xl bg-brand px-4 py-3 text-sm font-medium text-white">
-                Тіркелу
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="space-y-2">
+                    <label for="first_name" class="block ml-6 font-medium">
+                        Есімі
+                    </label>
+                    <input
+                        type="text"
+                        name="first_name"
+                        id="first_name"
+                        value="{{ form.first_name.value|default:'' }}"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="given-name"
+                        required
+                    >
+                    {% for error in form.first_name.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="last_name" class="ml-6 block font-medium">
+                        Тегі
+                    </label>
+                    <input
+                        type="text"
+                        name="last_name"
+                        id="last_name"
+                        value="{{ form.last_name.value|default:'' }}"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="family-name"
+                        required
+                    >
+                    {% for error in form.last_name.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="password1" class="block ml-6 font-medium">
+                    Құпия сөз
+                </label>
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password1"
+                        id="id_password1"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        placeholder="Құпия сөз"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer"
+                    >
+                        <i x-show="!show" data-lucide="eye" class="size-6"></i>
+                        <i x-show="show" data-lucide="eye-off" class="size-6"></i>
+                    </button>
+                </div>
+
+                {% if form.password1.help_text %}
+                    <div class="ml-6 text-sm text-body">
+                        {{ form.password1.help_text }}
+                    </div>
+                {% endif %}
+                {% for error in form.password1.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="password2" class="block ml-6 font-medium">
+                    Құпия сөзді қайталау
+                </label>
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password2"
+                        id="id_password2"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        placeholder="Құпия сөзді қайталау"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer"
+                    >
+                        <i x-show="!show" data-lucide="eye" class="size-6"></i>
+                        <i x-show="show" data-lucide="eye-off" class="size-6"></i>
+                    </button>
+                </div>
+
+                {% for error in form.password2.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+           
+            <button 
+                type="submit"
+                class="relative grid group w-full"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer
+                    group-hover:bg-brand-medium group-active:translate-y-1.5
+                    "
+                >
+                    Тіркелу
+                </span>
             </button>
         </form>
-
-        <p class="mt-6 text-center text-sm text-body">
-            Аккаунтыңыз бар ма?
-            <a href="{% url 'main:login' %}" class="font-medium text-brand">Кіру</a>
-        </p>
     </div>
 </div>
 {% endblock %}
