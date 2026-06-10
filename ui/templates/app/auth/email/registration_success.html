@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>OIQ платформасына қош келдіңіз!</title>
+</head>
+<body 
+    style="margin:0;padding:0;background:#f8fafc;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;color:#737373;"
+>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:32px 16px;">
+        <tr>
+            <td align="center">
+                <table
+                    width="100%" 
+                    cellpadding="0"
+                    cellspacing="0"
+                    style="max-width:560px;background:#ffffff;border-radius:24px;padding:32px;border:1px solid #e5e7eb;"
+                >
+                    <tr>
+                        <td>
+                            <img
+                                src="https://oiq.kz/static/images/logo.svg"
+                                alt="OIQ"
+                                width="120"
+                                style="display:block;margin:0 auto 24px auto;"
+                            >
+                            <h1 style="margin:0;font-size:28px;font-weight:800;text-align:center;color:#0a0a0a;">
+                                Қош келдіңіз!
+                            </h1>
+
+                            <p style="margin:16px 0 0;line-height:1.6;">
+                                Сәлем, <strong>{{ user.display_name }}</strong>. Сіз OIQ платформасына сәтті тіркелдіңіз.
+                            </p>
+                            <div style="margin-top:24px;padding:20px;border-radius:18px;background:#f8fafc;border:1px solid #e5e7eb;">
+                                <p style="margin:0 0 8px;"><strong>Аккаунт деректері:</strong></p>
+                                <p style="margin:0;"><strong>Аты-жөн:</strong> {{ user.display_name }}</p>
+                                <p style="margin:0;"><strong>Электрондық пошта:</strong> <span style="color:#004ebb;">{{ user.email }}</span></p>
+                                <p style="margin:0;"><strong>Пайдаланушы типі:</strong> {{ user.get_role_display }}</p>
+                            </div>
+
+                            <p style="margin:24px 0 0;line-height:1.6;">
+                                Платформада жеке оқу, ойын тапсырмалары және сыныптық жұмыс мүмкіндіктері қолжетімді.
+                            </p>
+
+                            <p style="margin:32px 0 0;color:#004ebb;">
+                                OIQ командасы
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

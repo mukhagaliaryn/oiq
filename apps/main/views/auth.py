@@ -13,6 +13,7 @@ from apps.main.forms.auth import TeacherRegisterForm
 from apps.main.services.auth import create_learner_user
 from apps.main.services.auth import create_teacher_user
 from apps.main.services.auth import get_user_redirect_url
+from apps.main.services.email import send_registration_success_email
 from apps.main.services.sessions import save_user_session
 from core.models import School
 from core.utils.decorators import anonymous_required
@@ -66,6 +67,8 @@ def learner_register_view(request):
             # Email activation кейін қосамыз.
             user.is_active = True
             user.save(update_fields=['is_active'])
+            send_registration_success_email(user)
+
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             save_user_session(request, user)
             messages.success(request, _('Аккаунт сәтті құрылды.'))
@@ -95,6 +98,7 @@ def teacher_register_view(request):
             # Email activation кейін қосамыз.
             user.is_active = True
             user.save(update_fields=['is_active'])
+            send_registration_success_email(user)
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             save_user_session(request, user)
