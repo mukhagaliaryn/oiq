@@ -144,12 +144,26 @@
                 {% endfor %}
             </div>
 
-            {% if form.non_field_errors %}
-                <div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-           
+            <div class="space-y-2">
+                <label class="flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        name="agreement"
+                        id="id_agreement"
+                        class="mt-1 size-5 rounded border-default accent-brand"
+                        {% if form.agreement.value %}checked{% endif %}
+                        required
+                    >
+                    <span class="text-body">
+                        Платформа ережелерімен келісемін.
+                    </span>
+                </label>
+
+                {% for error in form.agreement.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
             <button 
                 type="submit"
                 class="relative grid group w-full"

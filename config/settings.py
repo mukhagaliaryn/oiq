@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'tailwind',
     'ui',
     'core.apps.CoreConfig',
+
+    # apps...
+    'apps.dashboard.learner.apps.LearnerConfig',
+    'apps.dashboard.teacher.apps.TeacherConfig',
 ]
 
 
@@ -145,6 +149,7 @@ TAILWIND_APP_NAME = 'ui'
 # ----------------------------------------------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'core.utils.backends.EmailOrUsernameBackend'
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -222,6 +227,24 @@ UNFOLD = {
                         'title': _('User sessions'),
                         'icon': 'admin_panel_settings',
                         'link': reverse_lazy('admin:core_usersession_changelist'),
+                    },
+                    # ...
+                ],
+            },
+            {
+                'title': _('Education'),
+                'separator': True,
+                'collapsible': True,
+                'items': [
+                    {
+                        'title': _('Cities'),
+                        'icon': 'apartment',
+                        'link': reverse_lazy('admin:core_city_changelist'),
+                    },
+                    {
+                        'title': _('Schools'),
+                        'icon': 'school',
+                        'link': reverse_lazy('admin:core_school_changelist'),
                     },
                     # ...
                 ],

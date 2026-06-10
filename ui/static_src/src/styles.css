@@ -106,3 +106,19 @@
     @apply outline-none focus:outline-2 focus:outline-brand;
   }
 }
+
+.toast-success {
+  @apply border border-success-medium text-success bg-success-soft;
+}
+
+.toast-error {
+  @apply border border-danger-medium text-danger bg-danger-soft;
+}
+
+.toast-info {
+  @apply border border-amber-500 text-amber-500 bg-amber-50;
+}
+
+.toast-warning {
+  @apply border border-danger-medium text-danger bg-danger-soft;
+}

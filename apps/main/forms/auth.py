@@ -17,10 +17,14 @@ class BaseRegisterForm(UserCreationForm):
     first_name = forms.CharField(label=_('First name'), max_length=100)
     last_name = forms.CharField(label=_('Last name'), max_length=100)
     email = forms.EmailField(label=_('Email'))
+    agreement = forms.BooleanField(
+        label=_('I agree with terms'),
+        required=True,
+    )
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2', 'agreement')
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -39,30 +43,20 @@ class TeacherRegisterForm(BaseRegisterForm):
     city = forms.ModelChoiceField(
         label=_('City'),
         queryset=City.objects.filter(is_active=True).order_by('name'),
-        required=False,
+        required=True,
         empty_label=_('Select city'),
     )
     school = forms.ModelChoiceField(
         label=_('School'),
         queryset=School.objects.none(),
-        required=False,
-        empty_label=_('Select school'),
-    )
-    agreement = forms.BooleanField(
-        label=_('I agree with terms'),
         required=True,
+        empty_label=_('Select school'),
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        city_id = None
-
-        if self.data.get('city'):
-            city_id = self.data.get('city')
-
-        elif self.initial.get('city'):
-            city_id = self.initial.get('city')
+        city_id = self.data.get('city') or self.initial.get('city')
 
         if city_id:
             self.fields['school'].queryset = (

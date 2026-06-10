@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.forms import UserCreationForm, AdminPasswordChangeForm
-from core.models import User, UserSession
+from core.models import User, UserSession, Teacher
 
 
 # User admin
@@ -23,6 +23,13 @@ class UserSessionInline(TabularInline):
         return False
 
 
+# -------------- TeacherInline --------------
+class TeacherInline(TabularInline):
+    model = Teacher
+    extra = 0
+    tab = True
+
+
 # -------------- UserAdmin --------------
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
@@ -34,7 +41,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     readonly_fields = ('password_change_link', 'last_login', 'date_joined')
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
-    inlines = (UserSessionInline,)
+    inlines = (UserSessionInline, TeacherInline)
 
     fieldsets = (
         (_('Account'), {

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Оқытушы панелі{% endblock title %}
+
+{% block base %}
+<div class="min-h-screen bg-neutral-secondary">
+    <header class="border-b border-default bg-neutral-primary">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+            <div>
+                <h1 class="text-2xl font-black">Оқушы панелі</h1>
+                <p class="text-body">Жеке оқу және сыныптық тапсырмалар</p>
+            </div>
+
+            <a href="{% url 'main:logout' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
+                Шығу
+            </a>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-6 py-8">
+        <section class="grid gap-5 md:grid-cols-2">
+            <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+                <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                    <i data-lucide="sparkles" class="size-6"></i>
+                </div>
+                <h2 class="text-xl font-black">Жеке оқу</h2>
+                <p class="mt-2 text-body">Дайын пәндерді өз бетіңізше өтіп, жеке прогресс жинаңыз.</p>
+
+                <a href="#" class="mt-6 inline-flex rounded-full bg-brand px-6 py-3 font-medium text-neutral-primary hover:bg-brand-medium">
+                    Оқуды бастау
+                </a>
+            </div>
+
+            <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+                <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                    <i data-lucide="school" class="size-6"></i>
+                </div>
+                <h2 class="text-xl font-black">Менің сыныптарым</h2>
+                <p class="mt-2 text-body">Оқытушы қосқан сыныптар мен тапсырмалар осында көрінеді.</p>
+
+                <a href="#" class="mt-6 inline-flex rounded-full border border-default px-6 py-3 font-medium text-body hover:text-body-subtle">
+                    Сыныптарды көру
+                </a>
+            </div>
+        </section>
+
+        <section class="mt-8 rounded-3xl border border-default bg-neutral-primary p-6">
+            <h2 class="text-xl font-black">Соңғы белсенділік</h2>
+            <p class="mt-2 text-body">Әзірге белсенділік жоқ. Оқуды бастағаннан кейін нәтиже осында шығады.</p>
+        </section>
+    </main>
+</div>
+{% endblock %}

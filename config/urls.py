@@ -14,6 +14,9 @@ urlpatterns += i18n_patterns(
 
     # apps...
     path('', include('apps.main.urls')),
+    path('learner/', include('apps.dashboard.learner.urls')),
+    path('teacher/', include('apps.dashboard.teacher.urls')),
+
     prefix_default_language=True,
 )
 

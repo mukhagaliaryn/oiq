@@ -5,19 +5,21 @@ from django.utils.text import slugify
 User = get_user_model()
 
 
+# -------------- get_user_redirect_url --------------
 def get_user_redirect_url(user):
     if user.is_superuser or user.role == User.Role.ADMIN:
         return reverse('admin:index')
 
     if user.role == User.Role.TEACHER:
-        return reverse('dashboard_teacher:index')
+        return reverse('teacher:dashboard')
 
     if user.role == User.Role.LEARNER:
-        return reverse('dashboard_learner:index')
+        return reverse('learner:dashboard')
 
     return reverse('main:home')
 
 
+# -------------- generate_username --------------
 def generate_username(email, user_id=None):
     username = slugify(email.split('@')[0])
 
@@ -33,6 +35,7 @@ def generate_username(email, user_id=None):
     return username
 
 
+# -------------- create_learner_user --------------
 def create_learner_user(*, form):
     user = form.save(commit=False)
 
@@ -51,6 +54,7 @@ def create_learner_user(*, form):
     return user
 
 
+# -------------- create_teacher_user --------------
 def create_teacher_user(*, form, agreement_accepted_at=None):
     user = form.save(commit=False)
 
@@ -76,6 +80,7 @@ def create_teacher_user(*, form, agreement_accepted_at=None):
     return user
 
 
+# -------------- activate_user --------------
 def activate_user(user):
     user.is_active = True
     user.save(update_fields=['is_active'])
