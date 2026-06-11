@@ -32,3 +32,17 @@ class School(BaseModel):
 
     def __str__(self):
         return f'{self.name} — {self.city}'
+
+
+# -------------- Grade --------------
+class Grade(BaseModel):
+    title = models.CharField(_('Title'), max_length=64, unique=True)
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Grade')
+        verbose_name_plural = _('Grades')
+        ordering = ('order', 'title')
+
+    def __str__(self):
+        return self.title
