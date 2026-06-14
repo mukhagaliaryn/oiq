@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 00:55+0500\n"
+"POT-Creation-Date: 2026-06-15 02:36+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/main/forms/auth.py:12
+#: apps/main/forms/auth.py:12 ui/templates/app/auth/login/page.html:27
 msgid "Email or username"
 msgstr "Эл. почта или имя пользователя"
 
-#: apps/main/forms/auth.py:13
+#: apps/main/forms/auth.py:13 ui/templates/app/auth/login/page.html:46
+#: ui/templates/app/auth/register/learner.html:86
+#: ui/templates/app/auth/register/learner.html:94
+#: ui/templates/app/auth/register/teacher.html:284
+#: ui/templates/app/auth/register/teacher.html:292
 msgid "Password"
 msgstr "Пароль"
 
-#: apps/main/forms/auth.py:17
+#: apps/main/forms/auth.py:17 ui/templates/app/auth/register/learner.html:49
+#: ui/templates/app/auth/register/teacher.html:243
+#: ui/templates/app/auth/register/teacher.html:252
 msgid "First name"
 msgstr "Имя"
 
-#: apps/main/forms/auth.py:18
+#: apps/main/forms/auth.py:18 ui/templates/app/auth/register/learner.html:67
+#: ui/templates/app/auth/register/teacher.html:263
+#: ui/templates/app/auth/register/teacher.html:272
 msgid "Last name"
 msgstr "Фамилия"
 
-#: apps/main/forms/auth.py:19
+#: apps/main/forms/auth.py:19 ui/templates/app/auth/register/learner.html:29
+#: ui/templates/app/auth/register/teacher.html:222
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -47,6 +56,7 @@ msgstr "Пользователь с таким email уже существует
 
 #: apps/main/forms/auth.py:44 core/models/account.py:90
 #: core/models/education.py:11 core/models/education.py:22
+#: ui/templates/app/auth/register/teacher.html:156
 msgid "City"
 msgstr "Город"
 
@@ -55,7 +65,7 @@ msgid "Select city"
 msgstr "Выберите город"
 
 #: apps/main/forms/auth.py:50 core/models/account.py:95
-#: core/models/education.py:28
+#: core/models/education.py:28 ui/templates/app/auth/register/teacher.html:181
 msgid "School"
 msgstr "Школа"
 
@@ -63,20 +73,25 @@ msgstr "Школа"
 msgid "Select school"
 msgstr "Выберите школу"
 
+#: apps/main/services/email.py:8
+#: ui/templates/app/auth/email/registration_success.html:7
+msgid "Welcome to the OIQ platform!"
+msgstr "Добро пожаловать на платформу OIQ!"
+
 #: apps/main/views/auth.py:31
-msgid "Сіз аккаунтыңызға сәтті кірдіңіз."
-msgstr "Вы успешно вошли в аккаунт."
+msgid "You have successfully signed in."
+msgstr "Вы успешно вошли в систему."
 
 #: apps/main/views/auth.py:46
-msgid "Сіз жүйеден шықтыңыз."
-msgstr "Вы вышли из системы."
+msgid "You have been signed out."
+msgstr "Вы успешно вышли из системы."
 
 #: apps/main/views/auth.py:74
-msgid "Аккаунт сәтті құрылды."
-msgstr "Аккаунт успешно создан."
+msgid "Your account has been created successfully."
+msgstr "Ваш аккаунт успешно создан."
 
 #: apps/main/views/auth.py:105
-msgid "Мұғалім аккаунты сәтті құрылды."
+msgid "Teacher account has been created successfully."
 msgstr "Аккаунт учителя успешно создан."
 
 #: config/settings.py:118
@@ -193,19 +208,19 @@ msgstr "Ссылка на предмет"
 msgid "Chapter link"
 msgstr "Ссылка на главу"
 
-#: core/admin/content.py:172
+#: core/admin/content.py:163
 msgid "Question content"
 msgstr "Содержание вопроса"
 
-#: core/admin/content.py:175
+#: core/admin/content.py:166
 msgid "Question settings"
 msgstr "Настройки вопроса"
 
-#: core/admin/content.py:186 core/models/content.py:118
+#: core/admin/content.py:177 core/models/content.py:118
 msgid "Text"
 msgstr "Текст"
 
-#: core/admin/content.py:187
+#: core/admin/content.py:178
 msgid "Question link"
 msgstr "Ссылка на вопрос"
 
@@ -214,10 +229,11 @@ msgid "Admin"
 msgstr "Администратор"
 
 #: core/models/account.py:13 core/models/account.py:106
+#: ui/templates/app/auth/register/page.html:24
 msgid "Teacher"
 msgstr "Учитель"
 
-#: core/models/account.py:14
+#: core/models/account.py:14 ui/templates/app/auth/register/page.html:17
 msgid "Learner"
 msgstr "Ученик"
 
@@ -451,3 +467,273 @@ msgstr "Варианты ответов"
 #: core/models/content.py:154
 msgid "#{} option"
 msgstr "Вариант №{}"
+
+#: core/views.py:24
+msgid "File not found."
+msgstr "Файл не найден."
+
+#: core/views.py:27
+msgid "File size must not exceed 5MB."
+msgstr "Размер файла не должен превышать 5MB."
+
+#: core/views.py:32
+msgid "Please upload a valid image file."
+msgstr "Загрузите корректный файл изображения."
+
+#: ui/templates/app/auth/email/registration_success.html:30
+#: ui/templates/app/auth/email/registration_success.txt:10
+#: ui/templates/app/page.html:4
+msgid "Welcome!"
+msgstr "Добро пожаловать!"
+
+#: ui/templates/app/auth/email/registration_success.html:34
+#, python-format
+msgid ""
+"Hello, <strong>%(user.display_name)s</strong>. You have successfully "
+"registered on the OIQ platform."
+msgstr ""
+"Здравствуйте, <strong>%(user.display_name)s</strong>. Вы успешно "
+"зарегистрировались на платформе OIQ."
+
+#: ui/templates/app/auth/email/registration_success.html:37
+#: ui/templates/app/auth/email/registration_success.txt:5
+msgid "Account details:"
+msgstr "Данные аккаунта:"
+
+#: ui/templates/app/auth/email/registration_success.html:38
+#: ui/templates/app/auth/email/registration_success.txt:6
+msgid "Full name:"
+msgstr "ФИО:"
+
+#: ui/templates/app/auth/email/registration_success.html:39
+#: ui/templates/app/auth/email/registration_success.txt:7
+msgid "Email:"
+msgstr "Электронная почта:"
+
+#: ui/templates/app/auth/email/registration_success.html:40
+#: ui/templates/app/auth/email/registration_success.txt:8
+msgid "User type:"
+msgstr "Тип пользователя:"
+
+#: ui/templates/app/auth/email/registration_success.html:44
+msgid ""
+"Personal learning, game-based tasks and classroom activities are available "
+"on the platform."
+msgstr ""
+"На платформе доступны индивидуальное обучение, игровые задания и работа в "
+"классе."
+
+#: ui/templates/app/auth/email/registration_success.html:48
+#: ui/templates/app/auth/email/registration_success.txt:11
+msgid "OIQ team"
+msgstr "Команда OIQ"
+
+#: ui/templates/app/auth/email/registration_success.txt:1
+#, python-format
+msgid "Hello, %(user.display_name)s!"
+msgstr "Здравствуйте, %(user.display_name)s!"
+
+#: ui/templates/app/auth/email/registration_success.txt:3
+msgid "You have successfully registered on the OIQ platform."
+msgstr "Вы успешно зарегистрировались на платформе OIQ."
+
+#: ui/templates/app/auth/login/page.html:3
+#: ui/templates/app/auth/login/page.html:18
+#: ui/templates/app/auth/login/page.html:77
+msgid "Sign in"
+msgstr "Войти"
+
+#: ui/templates/app/auth/login/page.html:83
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+#: ui/templates/app/auth/login/page.html:84
+#: ui/templates/app/auth/register/learner.html:177
+#: ui/templates/app/auth/register/teacher.html:372
+#: ui/templates/app/page.html:39
+msgid "Sign up"
+msgstr "Регистрация"
+
+#: ui/templates/app/auth/register/learner.html:3
+#: ui/templates/app/auth/register/learner.html:19
+msgid "Sign up as a learner"
+msgstr "Регистрация как ученик"
+
+#: ui/templates/app/auth/register/learner.html:20
+#: ui/templates/app/auth/register/teacher.html:126
+msgid "Start your personal learning space"
+msgstr "Начните своё личное учебное пространство"
+
+#: ui/templates/app/auth/register/learner.html:120
+#: ui/templates/app/auth/register/learner.html:128
+#: ui/templates/app/auth/register/teacher.html:318
+#: ui/templates/app/auth/register/teacher.html:326
+msgid "Confirm password"
+msgstr "Повторите пароль"
+
+#: ui/templates/app/auth/register/learner.html:158
+#: ui/templates/app/auth/register/teacher.html:358
+msgid "I agree with the platform's terms of use."
+msgstr "Согласен с правилами платформы."
+
+#: ui/templates/app/auth/register/page.html:4
+msgid "Registration type"
+msgstr "Тип регистрации"
+
+#: ui/templates/app/auth/register/page.html:9
+msgid "Who are you?"
+msgstr "Кто вы?"
+
+#: ui/templates/app/auth/register/page.html:10
+msgid "Use the platform as a learner or a teacher"
+msgstr "Используйте платформу как ученик или учитель"
+
+#: ui/templates/app/auth/register/page.html:18
+msgid "Study ready-made subjects on your own and track your progress."
+msgstr ""
+"Изучайте готовые предметы самостоятельно и следите за своим прогрессом."
+
+#: ui/templates/app/auth/register/page.html:25
+msgid "Create classes and organize game-based tasks for learners."
+msgstr "Создавайте классы и организуйте игровые задания для учеников."
+
+#: ui/templates/app/auth/register/teacher.html:3
+#: ui/templates/app/auth/register/teacher.html:125
+msgid "Sign up as a teacher"
+msgstr "Регистрация как учитель"
+
+#: ui/templates/app/auth/register/teacher.html:166
+msgid "Select a city"
+msgstr "Выберите город"
+
+#: ui/templates/app/auth/register/teacher.html:192
+msgid "Select a school"
+msgstr "Выберите школу"
+
+#: ui/templates/app/auth/register/teacher.html:213
+msgid "Continue"
+msgstr "Продолжить"
+
+#: ui/templates/app/dashboard/learner/page.html:4
+#: ui/templates/app/dashboard/learner/page.html:11
+msgid "Learner dashboard"
+msgstr "Панель ученика"
+
+#: ui/templates/app/dashboard/learner/page.html:12
+msgid "Personal learning and classroom tasks"
+msgstr "Индивидуальное обучение и задания класса"
+
+#: ui/templates/app/dashboard/learner/page.html:16
+#: ui/templates/app/dashboard/teacher/page.html:16
+msgid "Sign out"
+msgstr "Выйти"
+
+#: ui/templates/app/dashboard/learner/page.html:27
+msgid "Personal learning"
+msgstr "Индивидуальное обучение"
+
+#: ui/templates/app/dashboard/learner/page.html:28
+msgid "Study ready-made subjects on your own and build your progress."
+msgstr "Проходите готовые предметы самостоятельно и накапливайте прогресс."
+
+#: ui/templates/app/dashboard/learner/page.html:31
+msgid "Start learning"
+msgstr "Начать обучение"
+
+#: ui/templates/app/dashboard/learner/page.html:39
+msgid "My classes"
+msgstr "Мои классы"
+
+#: ui/templates/app/dashboard/learner/page.html:40
+msgid "Classes and tasks added by your teacher will appear here."
+msgstr "Здесь появятся классы и задания, добавленные вашим учителем."
+
+#: ui/templates/app/dashboard/learner/page.html:43
+msgid "View classes"
+msgstr "Просмотреть классы"
+
+#: ui/templates/app/dashboard/learner/page.html:49
+msgid "Recent activity"
+msgstr "Последняя активность"
+
+#: ui/templates/app/dashboard/learner/page.html:50
+msgid "No activity yet. Results will appear here once you start learning."
+msgstr "Пока нет активности. Результаты появятся здесь после начала обучения."
+
+#: ui/templates/app/dashboard/teacher/page.html:4
+#: ui/templates/app/dashboard/teacher/page.html:11
+msgid "Teacher dashboard"
+msgstr "Панель учителя"
+
+#: ui/templates/app/dashboard/teacher/page.html:12
+msgid "Manage classes, games and learners"
+msgstr "Управление классами, играми и учениками"
+
+#: ui/templates/app/dashboard/teacher/page.html:27
+msgid "Classes"
+msgstr "Классы"
+
+#: ui/templates/app/dashboard/teacher/page.html:28
+msgid "Add learners to classes and track the learning process."
+msgstr "Добавляйте учеников в классы и следите за процессом обучения."
+
+#: ui/templates/app/dashboard/teacher/page.html:35
+msgid "Game tasks"
+msgstr "Игровые задания"
+
+#: ui/templates/app/dashboard/teacher/page.html:36
+msgid "Create interactive tasks in a Kahoot-like style."
+msgstr "Создавайте интерактивные задания в стиле Kahoot."
+
+#: ui/templates/app/dashboard/teacher/page.html:43
+msgid "Results"
+msgstr "Результаты"
+
+#: ui/templates/app/dashboard/teacher/page.html:44
+msgid "View learners' progress and task results."
+msgstr "Просматривайте прогресс учеников и результаты заданий."
+
+#: ui/templates/app/dashboard/teacher/page.html:51
+msgid "Quick actions"
+msgstr "Быстрые действия"
+
+#: ui/templates/app/dashboard/teacher/page.html:52
+msgid "Key actions to get started"
+msgstr "Основные действия для начала работы"
+
+#: ui/templates/app/dashboard/teacher/page.html:58
+msgid "Create a new class"
+msgstr "Создать новый класс"
+
+#: ui/templates/app/dashboard/teacher/page.html:59
+msgid "Open a class to bring learners together."
+msgstr "Откройте класс, чтобы объединить учеников."
+
+#: ui/templates/app/dashboard/teacher/page.html:63
+msgid "Create a game"
+msgstr "Создать игру"
+
+#: ui/templates/app/dashboard/teacher/page.html:64
+msgid "Build a game from questions and tasks."
+msgstr "Создавайте игру из вопросов и заданий."
+
+#: ui/templates/app/page.html:27
+msgid "An interactive, gamified and visual education platform"
+msgstr ""
+"Интерактивная, геймифицированная и наглядная образовательная платформа"
+
+#: ui/templates/app/page.html:52
+msgid "I already have an account"
+msgstr "У меня уже есть аккаунт"
+
+#~ msgid "Сіз аккаунтыңызға сәтті кірдіңіз."
+#~ msgstr "Вы успешно вошли в аккаунт."
+
+#~ msgid "Сіз жүйеден шықтыңыз."
+#~ msgstr "Вы вышли из системы."
+
+#~ msgid "Аккаунт сәтті құрылды."
+#~ msgstr "Аккаунт успешно создан."
+
+#~ msgid "Мұғалім аккаунты сәтті құрылды."
+#~ msgstr "Аккаунт учителя успешно создан."

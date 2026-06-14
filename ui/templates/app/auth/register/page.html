@@ -1,27 +1,28 @@
 {% extends "layouts/auth_layout.html" %}
+{% load i18n %}
 
-{% block title %}Тіркелу түрі{% endblock title %}
+{% block title %}{% translate "Registration type" %}{% endblock title %}
 
 {% block auth_layout %}
 <div class="w-full space-y-8">
     <div class="space-y-2 text-center">
-        <h1 class="text-2xl font-black">Сіз кім боласыз?</h1>
-        <span class="text-body">Платформаны оқушы немесе мұғалім ретінде қолдану</span>
+        <h1 class="text-2xl font-black">{% translate "Who are you?" %}</h1>
+        <span class="text-body">{% translate "Use the platform as a learner or a teacher" %}</span>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
         <a href="{% url 'main:learner-register' %}"
             class="rounded-2xl text-center border border-default bg-neutral-primary p-4 transition-all hover:border-brand active:scale-95">
             <div class="text-4xl">🎓</div>
-            <h2 class="mt-5 text-xl font-bold">Оқушы</h2>
-            <p class="mt-2 text-normal text-body">Дайын пәндерді өз бетінше оқу, прогресс жинау.</p>
+            <h2 class="mt-5 text-xl font-bold">{% translate "Learner" %}</h2>
+            <p class="mt-2 text-normal text-body">{% translate "Study ready-made subjects on your own and track your progress." %}</p>
         </a>
 
         <a href="{% url 'main:teacher-register' %}"
             class="rounded-2xl text-center border border-default bg-neutral-primary p-4 transition-all hover:border-brand active:scale-95">
             <div class="text-4xl">👨‍🏫</div>
-            <h2 class="mt-5 text-xl font-bold">Мұғалім</h2>
-            <p class="mt-2 text-normal text-body">Сыныптар құру, оқушыларға ойын тапсырмаларын ұйымдастыру.</p>
+            <h2 class="mt-5 text-xl font-bold">{% translate "Teacher" %}</h2>
+            <p class="mt-2 text-normal text-body">{% translate "Create classes and organize game-based tasks for learners." %}</p>
         </a>
     </div>
 </div>

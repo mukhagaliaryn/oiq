@@ -180,9 +180,10 @@ class QuestionAdmin(LinkedAdminMixin, BaseModelAdmin):
     class Media:
         css = {
             'all': (
-                'oiq-question-preview/ui.css',
+                'js/oiq-question-preview/ui.css',
             )
         }
         js = (
-            'oiq-question-preview/oiq-question-preview.bundle.js',
+            'js/oiq-question-preview/oiq-question-preview.bundle.js',
+            'js/admin/question-format-variant.js',
         )

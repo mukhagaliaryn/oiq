@@ -1,11 +1,11 @@
-Сәлем, {{ user.display_name }}!
+{% load i18n %}{% blocktranslate %}Hello, {{ user.display_name }}!{% endblocktranslate %}
 
-Сіз OIQ платформасына сәтті тіркелдіңіз.
+{% translate "You have successfully registered on the OIQ platform." %}
 
-Аккаунт:
-Аты-жөні: {{ user.display_name }}
-Электронды пошта: {{ user.email }}
-Пайдаланушы типі: {{ user.get_role_display }}
+{% translate "Account details:" %}
+{% translate "Full name:" %} {{ user.display_name }}
+{% translate "Email:" %} {{ user.email }}
+{% translate "User type:" %} {{ user.get_role_display }}
 
-Қош келдіңіз!
-OIQ командасы
+{% translate "Welcome!" %}
+{% translate "OIQ team" %}

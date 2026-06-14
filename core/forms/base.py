@@ -6,11 +6,11 @@ class RichTextTextarea(forms.Textarea):
     class Media:
         css = {
             'all': (
-                'oiq-ckeditor/ui.css',
+                'js/oiq-ckeditor/ui.css',
             )
         }
         js = (
-            'oiq-ckeditor/oiq-ckeditor.bundle.js',
+            'js/oiq-ckeditor/oiq-ckeditor.bundle.js',
         )
 
     def __init__(self, attrs=None, height=None, width=None):

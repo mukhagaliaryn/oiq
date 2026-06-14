@@ -28,7 +28,7 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             save_user_session(request, user)
-            messages.success(request, _('Сіз аккаунтыңызға сәтті кірдіңіз.'))
+            messages.success(request, _('You have successfully signed in.'))
             return redirect(get_user_redirect_url(user))
 
         for error in form.non_field_errors():
@@ -43,7 +43,7 @@ def login_view(request):
 # -------------- logout view --------------
 def logout_view(request):
     logout(request)
-    messages.success(request, _('Сіз жүйеден шықтыңыз.'))
+    messages.success(request, _('You have been signed out.'))
     return redirect('main:login')
 
 
@@ -71,7 +71,7 @@ def learner_register_view(request):
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             save_user_session(request, user)
-            messages.success(request, _('Аккаунт сәтті құрылды.'))
+            messages.success(request, _('Your account has been created successfully.'))
             return redirect(f'{get_user_redirect_url(user)}?clear_register=1')
 
         for error in form.non_field_errors():
@@ -102,7 +102,7 @@ def teacher_register_view(request):
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             save_user_session(request, user)
-            messages.success(request, _('Мұғалім аккаунты сәтті құрылды.'))
+            messages.success(request, _('Teacher account has been created successfully.'))
             return redirect(f'{get_user_redirect_url(user)}?clear_register=1')
 
         for error in form.non_field_errors():

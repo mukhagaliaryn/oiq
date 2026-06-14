@@ -1,8 +1,10 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!doctype html>
-<html lang="kk">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>OIQ платформасына қош келдіңіз!</title>
+    <title>{% translate "Welcome to the OIQ platform!" %}</title>
 </head>
 <body 
     style="margin:0;padding:0;background:#f8fafc;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;color:#737373;"
@@ -25,25 +27,25 @@
                                 style="display:block;margin:0 auto 24px auto;"
                             >
                             <h1 style="margin:0;font-size:28px;font-weight:800;text-align:center;color:#0a0a0a;">
-                                Қош келдіңіз!
+                                {% translate "Welcome!" %}
                             </h1>
 
                             <p style="margin:16px 0 0;line-height:1.6;">
-                                Сәлем, <strong>{{ user.display_name }}</strong>. Сіз OIQ платформасына сәтті тіркелдіңіз.
+                                {% blocktranslate %}Hello, <strong>{{ user.display_name }}</strong>. You have successfully registered on the OIQ platform.{% endblocktranslate %}
                             </p>
                             <div style="margin-top:24px;padding:20px;border-radius:18px;background:#f8fafc;border:1px solid #e5e7eb;">
-                                <p style="margin:0 0 8px;"><strong>Аккаунт деректері:</strong></p>
-                                <p style="margin:0;"><strong>Аты-жөн:</strong> {{ user.display_name }}</p>
-                                <p style="margin:0;"><strong>Электрондық пошта:</strong> <span style="color:#004ebb;">{{ user.email }}</span></p>
-                                <p style="margin:0;"><strong>Пайдаланушы типі:</strong> {{ user.get_role_display }}</p>
+                                <p style="margin:0 0 8px;"><strong>{% translate "Account details:" %}</strong></p>
+                                <p style="margin:0;"><strong>{% translate "Full name:" %}</strong> {{ user.display_name }}</p>
+                                <p style="margin:0;"><strong>{% translate "Email:" %}</strong> <span style="color:#004ebb;">{{ user.email }}</span></p>
+                                <p style="margin:0;"><strong>{% translate "User type:" %}</strong> {{ user.get_role_display }}</p>
                             </div>
 
                             <p style="margin:24px 0 0;line-height:1.6;">
-                                Платформада жеке оқу, ойын тапсырмалары және сыныптық жұмыс мүмкіндіктері қолжетімді.
+                                {% translate "Personal learning, game-based tasks and classroom activities are available on the platform." %}
                             </p>
 
                             <p style="margin:32px 0 0;color:#004ebb;">
-                                OIQ командасы
+                                {% translate "OIQ team" %}
                             </p>
                         </td>
                     </tr>

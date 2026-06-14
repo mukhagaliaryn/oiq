@@ -1,6 +1,6 @@
 {% extends "layouts/auth_layout.html" %}
-{% load static %}
-{% block title %}Оқушы ретінде тіркелу{% endblock title %}
+{% load i18n static %}
+{% block title %}{% translate "Sign up as a learner" %}{% endblock title %}
 
 
 {% block link %}
@@ -16,8 +16,8 @@
         <div class="text-center space-y-4">
             <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
             <div class="space-y-2">
-                <h1 class="text-2xl font-black">Оқушы ретінде тіркелу</h1>
-                <span class="text-body">Жеке оқу кеңістігіңізді бастаңыз</span>
+                <h1 class="text-2xl font-black">{% translate "Sign up as a learner" %}</h1>
+                <span class="text-body">{% translate "Start your personal learning space" %}</span>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
 
             <div class="space-y-2">
                 <label for="email" class="block ml-6 font-medium">
-                    Электрондық пошта
+                    {% translate "Email" %}
                 </label>
                 <input
                     type="email"
@@ -46,7 +46,7 @@
             <div class="grid gap-4 md:grid-cols-2">
                 <div class="space-y-2">
                     <label for="first_name" class="block ml-6 font-medium">
-                        Есімі
+                        {% translate "First name" %}
                     </label>
                     <input
                         type="text"
@@ -64,7 +64,7 @@
 
                 <div class="space-y-2">
                     <label for="last_name" class="ml-6 block font-medium">
-                        Тегі
+                        {% translate "Last name" %}
                     </label>
                     <input
                         type="text"
@@ -83,7 +83,7 @@
 
             <div x-data="{ show: false }" class="space-y-2">
                 <label for="password1" class="block ml-6 font-medium">
-                    Құпия сөз
+                    {% translate "Password" %}
                 </label>
                 <div class="relative">
                     <input
@@ -91,7 +91,7 @@
                         name="password1"
                         id="id_password1"
                         class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
-                        placeholder="Құпия сөз"
+                        placeholder="{% translate 'Password' %}"
                         autocomplete="new-password"
                         required
                     >
@@ -117,7 +117,7 @@
 
             <div x-data="{ show: false }" class="space-y-2">
                 <label for="password2" class="block ml-6 font-medium">
-                    Құпия сөзді қайталау
+                    {% translate "Confirm password" %}
                 </label>
                 <div class="relative">
                     <input
@@ -125,7 +125,7 @@
                         name="password2"
                         id="id_password2"
                         class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
-                        placeholder="Құпия сөзді қайталау"
+                        placeholder="{% translate 'Confirm password' %}"
                         autocomplete="new-password"
                         required
                     >
@@ -155,7 +155,7 @@
                         required
                     >
                     <span class="text-body">
-                        Платформа ережелерімен келісемін.
+                        {% translate "I agree with the platform's terms of use." %}
                     </span>
                 </label>
 
@@ -174,7 +174,7 @@
                     group-hover:bg-brand-medium group-active:translate-y-1.5
                     "
                 >
-                    Тіркелу
+                    {% translate "Sign up" %}
                 </span>
             </button>
         </form>

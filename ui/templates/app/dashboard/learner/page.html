@@ -1,18 +1,19 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Оқытушы панелі{% endblock title %}
+{% block title %}{% translate "Learner dashboard" %}{% endblock title %}
 
 {% block base %}
 <div class="min-h-screen bg-neutral-secondary">
     <header class="border-b border-default bg-neutral-primary">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
             <div>
-                <h1 class="text-2xl font-black">Оқушы панелі</h1>
-                <p class="text-body">Жеке оқу және сыныптық тапсырмалар</p>
+                <h1 class="text-2xl font-black">{% translate "Learner dashboard" %}</h1>
+                <p class="text-body">{% translate "Personal learning and classroom tasks" %}</p>
             </div>
 
             <a href="{% url 'main:logout' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
-                Шығу
+                {% translate "Sign out" %}
             </a>
         </div>
     </header>
@@ -23,11 +24,11 @@
                 <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
                     <i data-lucide="sparkles" class="size-6"></i>
                 </div>
-                <h2 class="text-xl font-black">Жеке оқу</h2>
-                <p class="mt-2 text-body">Дайын пәндерді өз бетіңізше өтіп, жеке прогресс жинаңыз.</p>
+                <h2 class="text-xl font-black">{% translate "Personal learning" %}</h2>
+                <p class="mt-2 text-body">{% translate "Study ready-made subjects on your own and build your progress." %}</p>
 
                 <a href="#" class="mt-6 inline-flex rounded-full bg-brand px-6 py-3 font-medium text-neutral-primary hover:bg-brand-medium">
-                    Оқуды бастау
+                    {% translate "Start learning" %}
                 </a>
             </div>
 
@@ -35,18 +36,18 @@
                 <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
                     <i data-lucide="school" class="size-6"></i>
                 </div>
-                <h2 class="text-xl font-black">Менің сыныптарым</h2>
-                <p class="mt-2 text-body">Оқытушы қосқан сыныптар мен тапсырмалар осында көрінеді.</p>
+                <h2 class="text-xl font-black">{% translate "My classes" %}</h2>
+                <p class="mt-2 text-body">{% translate "Classes and tasks added by your teacher will appear here." %}</p>
 
                 <a href="#" class="mt-6 inline-flex rounded-full border border-default px-6 py-3 font-medium text-body hover:text-body-subtle">
-                    Сыныптарды көру
+                    {% translate "View classes" %}
                 </a>
             </div>
         </section>
 
         <section class="mt-8 rounded-3xl border border-default bg-neutral-primary p-6">
-            <h2 class="text-xl font-black">Соңғы белсенділік</h2>
-            <p class="mt-2 text-body">Әзірге белсенділік жоқ. Оқуды бастағаннан кейін нәтиже осында шығады.</p>
+            <h2 class="text-xl font-black">{% translate "Recent activity" %}</h2>
+            <p class="mt-2 text-body">{% translate "No activity yet. Results will appear here once you start learning." %}</p>
         </section>
     </main>
 </div>

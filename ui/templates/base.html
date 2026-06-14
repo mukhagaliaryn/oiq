@@ -1,6 +1,7 @@
-{% load static tailwind_tags %}
+{% load i18n static tailwind_tags %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="kk" data-theme="light">
+<html lang="{{ LANGUAGE_CODE }}" data-theme="light">
 <head>
     <title>{% block title %}{% endblock %} | OIQ</title>
     <meta charset="UTF-8">

@@ -33,7 +33,7 @@ function ckeditorSvgRaw() {
 export default defineConfig({
     plugins: [ckeditorSvgRaw()],
     build: {
-        outDir: "../static/oiq-ckeditor",
+        outDir: "../static/js/oiq-ckeditor",
         emptyOutDir: false,
         lib: {
             entry: path.resolve(__dirname, "./src/js/oiq-ckeditor.js"),
