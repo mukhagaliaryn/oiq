@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import TabularInline, ModelAdmin
-from unfold.contrib.forms.widgets import WysiwygWidget
 from core.admin import BaseModelAdmin
 from core.admin.base import LinkedAdminMixin
 from core.forms.content import QuestionAdminForm
@@ -34,11 +33,6 @@ class SubjectAdmin(BaseModelAdmin):
     ordering = ('order',)
     inlines = (ChapterInline,)
     filter_horizontal = ('grades',)
-    formfield_overrides = {
-        models.TextField: {
-            'widget': WysiwygWidget,
-        },
-    }
 
     fieldsets = (
         (None, {'fields': ('name', 'description', 'cover', 'grades', 'order')}),
@@ -67,11 +61,7 @@ class ChapterAdmin(LinkedAdminMixin, BaseModelAdmin):
     search_fields = ('title', 'subject__name', 'grade__title')
     list_filter = ('subject', 'grade',)
     readonly_fields = ('admin_link',)
-    formfield_overrides = {
-        models.TextField: {
-            'widget': WysiwygWidget,
-        },
-    }
+
     inlines = (TopicInline,)
 
     fieldsets = (
@@ -91,11 +81,6 @@ class QuestionInline(LinkedAdminMixin, TabularInline):
     fields = ('text', 'format', 'detail_link')
     readonly_fields = ('detail_link',)
     extra = 0
-    formfield_overrides = {
-        models.TextField: {
-            'widget': WysiwygWidget,
-        },
-    }
 
     def detail_link(self, obj):
         return self.admin_link(obj, label=_('Detail link'))
@@ -109,11 +94,6 @@ class TopicAdmin(LinkedAdminMixin, BaseModelAdmin):
     list_display = ('title', 'chapter', 'updated_at', 'is_active')
     search_fields = ('title', 'subject__name', 'chapter__title')
     readonly_fields = ('admin_link',)
-    formfield_overrides = {
-        models.TextField: {
-            'widget': WysiwygWidget,
-        },
-    }
     inlines = (QuestionInline, )
 
     fieldsets = (

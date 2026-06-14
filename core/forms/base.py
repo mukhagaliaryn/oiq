@@ -3,6 +3,11 @@ from django import forms
 
 class RichTextTextarea(forms.Textarea):
     class Media:
+        css = {
+            'all': (
+                'oiq-ckeditor/ui.css',
+            )
+        }
         js = (
             'oiq-ckeditor/oiq-ckeditor.bundle.js',
         )
