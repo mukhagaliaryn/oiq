@@ -258,7 +258,28 @@ UNFOLD = {
                         'icon': 'school',
                         'link': reverse_lazy('admin:core_school_changelist'),
                     },
+                    {
+                        'title': _('Grades'),
+                        'icon': 'cast_for_education',
+                        'link': reverse_lazy('admin:core_grade_changelist'),
+                    },
+                    {
+                        'title': _('Subjects'),
+                        'icon': 'book_2',
+                        'link': reverse_lazy('admin:core_subject_changelist'),
+                    },
+                    {
+                        'title': _('Question formats'),
+                        'icon': 'quiz',
+                        'link': reverse_lazy('admin:core_questionformat_changelist'),
+                    },
+                    {
+                        'title': _('Questions'),
+                        'icon': 'live_help',
+                        'link': reverse_lazy('admin:core_question_changelist'),
+                    },
                     # ...
+
                 ],
             },
         ],

@@ -7,6 +7,7 @@
     "build": "npm run build:clean && npm run build:tailwind",
     "build:clean": "rimraf ../static/css/dist",
     "build:tailwind": "cross-env NODE_ENV=production postcss ./src/styles.css -o ../static/css/dist/styles.css --minify",
+    "build:ckeditor": "vite build --config vite.ckeditor.config.js",
     "dev": "cross-env NODE_ENV=development postcss ./src/styles.css -o ../static/css/dist/styles.css --watch"
   },
   "keywords": [],
@@ -14,13 +15,18 @@
   "license": "MIT",
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
-
     "cross-env": "^10.1.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "postcss-nested": "^7.0.2",
     "postcss-simple-vars": "^7.0.1",
     "rimraf": "^6.0.1",
-    "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.16",
+    "vite": "^8.0.16"
+  },
+  "dependencies": {
+    "@isaul32/ckeditor5-math": "^43.2.0",
+    "ckeditor5": "^43.2.0",
+    "katex": "^0.17.0"
   }
 }

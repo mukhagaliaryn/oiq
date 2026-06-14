@@ -1,38 +1,49 @@
 from django.contrib import admin
-from unfold.admin import ModelAdmin, TabularInline
-from core.models import School, City
-from django.utils.translation import gettext_lazy as _
+from unfold.admin import TabularInline
+from core.admin.base import BaseModelAdmin
+from core.models import School, City, Grade
 
 
-# City
+# City admin
 # ----------------------------------------------------------------------------------------------------------------------
+# -------------- SchoolTabularInline --------------
 class SchoolTabularInline(TabularInline):
     model = School
     extra = 0
+    tab = True
 
 
+# -------------- CityAdmin --------------
 @admin.register(City)
-class CityAdmin(ModelAdmin):
+class CityAdmin(BaseModelAdmin):
     list_display = ('name', 'created_at', 'updated_at', 'is_active')
     search_fields = ('name',)
     fieldsets = (
         (None, {'fields': ('name',)}),
-        (_('General information'), {'fields': ('is_active', 'created_at', 'updated_at')}),
     )
-    readonly_fields = ('created_at', 'updated_at')
     inlines = (SchoolTabularInline,)
 
 
-# School
+# School admin
 # ----------------------------------------------------------------------------------------------------------------------
+# -------------- School admin --------------
 @admin.register(School)
-class SchoolAdmin(ModelAdmin):
+class SchoolAdmin(BaseModelAdmin):
     list_display = ('name', 'city')
     search_fields = ('name', 'city')
     list_filter = ('city',)
 
     fieldsets = (
-        (None, {'fields': ('city', 'name')}),
-        (_('General information'), {'fields': ('is_active', 'created_at', 'updated_at')}),
+        (None, {'fields': ('name', 'city')}),
     )
-    readonly_fields = ('created_at', 'updated_at')
+
+
+# -------------- Grade admin --------------
+@admin.register(Grade)
+class GradeAdmin(BaseModelAdmin):
+    list_display = ('name', 'code', 'order', )
+    search_fields = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'code', 'order')}),
+    )

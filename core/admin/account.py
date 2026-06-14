@@ -16,8 +16,24 @@ class UserSessionInline(TabularInline):
     extra = 0
     can_delete = False
     tab = True
-    fields = ('device_type', 'device_name', 'browser', 'os', 'ip_address', 'last_activity_at')
-    readonly_fields = ('device_type', 'device_name', 'browser', 'os', 'ip_address', 'user_agent', 'session_key', 'last_activity_at')
+    fields = (
+        'device_type',
+        'device_name',
+        'browser',
+        'os',
+        'ip_address',
+        'last_activity_at'
+    )
+    readonly_fields = (
+        'device_type',
+        'device_name',
+        'browser',
+        'os',
+        'ip_address',
+        'user_agent',
+        'session_key',
+        'last_activity_at'
+    )
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -33,7 +49,16 @@ class TeacherInline(TabularInline):
 # -------------- UserAdmin --------------
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ModelAdmin):
-    list_display = ('avatar_preview', 'display_name', 'username', 'email', 'role', 'is_verified', 'is_active', 'last_login')
+    list_display = (
+        'avatar_preview',
+        'display_name',
+        'username',
+        'email',
+        'role',
+        'is_verified',
+        'is_active',
+        'last_login'
+    )
     list_display_links = ('avatar_preview', 'display_name', 'username')
     list_filter = ('role', 'is_active', 'is_staff', 'is_superuser', 'is_verified')
     search_fields = ('username', 'first_name', 'middle_name', 'last_name', 'email', 'phone')
@@ -60,7 +85,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         }),
         (_('Permissions'), {
             'classes': ('tab',),
-            'fields': ('is_staff', 'is_superuser'),
+            'fields': ('is_staff', 'is_superuser', 'user_permissions'),
         }),
         (_('Important dates'), {
             'classes': ('tab',),
@@ -83,7 +108,19 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             )
 
         return format_html(
-            '<div style="width:40px;height:40px;border-radius:9999px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-weight:700;color:#6b7280;">{}</div>',
+            """
+                <div style="
+                    width:40px;
+                    height:40px;
+                    border-radius:9999px;
+                    background:#e5e7eb;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-weight:700;
+                    color:#6b7280;"
+                >{}</div>
+            """,
             (obj.username[:1] or '?').upper(),
         )
 
@@ -103,10 +140,38 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
 # -------------- UserSessionAdmin --------------
 @admin.register(UserSession)
 class UserSessionAdmin(ModelAdmin):
-    list_display = ('user', 'device_type', 'device_name', 'browser', 'os', 'ip_address', 'last_activity_at')
+    list_display = (
+        'user',
+        'device_type',
+        'device_name',
+        'browser',
+        'os',
+        'ip_address',
+        'last_activity_at'
+    )
     list_filter = ('device_type', 'browser', 'os')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'user__email', 'device_name', 'browser', 'os', 'ip_address', 'user_agent')
-    readonly_fields = ('user', 'session_key', 'device_type', 'device_name', 'browser', 'os', 'ip_address', 'user_agent', 'last_activity_at')
+    search_fields = (
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'device_name',
+        'browser',
+        'os',
+        'ip_address',
+        'user_agent'
+    )
+    readonly_fields = (
+        'user',
+        'session_key',
+        'device_type',
+        'device_name',
+        'browser',
+        'os',
+        'ip_address',
+        'user_agent',
+        'last_activity_at'
+    )
     ordering = ('-last_activity_at',)
 
     def has_add_permission(self, request):

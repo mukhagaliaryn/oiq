@@ -36,13 +36,14 @@ class School(BaseModel):
 
 # -------------- Grade --------------
 class Grade(BaseModel):
-    title = models.CharField(_('Title'), max_length=64, unique=True)
+    name = models.CharField(_('Name'), max_length=64)
+    code = models.SlugField(_('Code'), max_length=64)
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
 
     class Meta:
         verbose_name = _('Grade')
         verbose_name_plural = _('Grades')
-        ordering = ('order', 'title')
+        ordering = ('order', 'name')
 
     def __str__(self):
-        return self.title
+        return self.name

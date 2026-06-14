@@ -31,6 +31,10 @@ class Chapter(BaseModel):
         Subject, on_delete=models.CASCADE,
         related_name='chapters', verbose_name=_('Subject')
     )
+    grade = models.ForeignKey(
+        'core.Grade', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='chapters', verbose_name=_('Grade')
+    )
     title = models.CharField(_('Title'), max_length=255)
     description = models.TextField(_('Description'), blank=True)
     order = models.PositiveSmallIntegerField(_('Order'), default=0)
@@ -81,8 +85,8 @@ class QuestionFormat(models.Model):
         return self.name
 
 
-# -------------- QuestionVariant --------------
-class QuestionVariant(models.Model):
+# -------------- FormatVariant --------------
+class FormatVariant(models.Model):
     format = models.ForeignKey(
         QuestionFormat, on_delete=models.CASCADE,
         related_name='variants', verbose_name=_('Format')
@@ -117,7 +121,7 @@ class Question(BaseModel):
         related_name='questions', verbose_name=_('Format')
     )
     variant = models.ForeignKey(
-        QuestionVariant, on_delete=models.PROTECT, null=True, blank=True,
+        FormatVariant, on_delete=models.PROTECT, null=True, blank=True,
         related_name='questions', verbose_name=_('Variant')
     )
     level = models.CharField(_('Level'), choices=Level.choices, max_length=16, default=Level.EASY)
