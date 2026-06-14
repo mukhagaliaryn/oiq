@@ -1,0 +1,453 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-15 00:55+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/main/forms/auth.py:12
+msgid "Email or username"
+msgstr "Эл. почта или имя пользователя"
+
+#: apps/main/forms/auth.py:13
+msgid "Password"
+msgstr "Пароль"
+
+#: apps/main/forms/auth.py:17
+msgid "First name"
+msgstr "Имя"
+
+#: apps/main/forms/auth.py:18
+msgid "Last name"
+msgstr "Фамилия"
+
+#: apps/main/forms/auth.py:19
+msgid "Email"
+msgstr "Электронная почта"
+
+#: apps/main/forms/auth.py:21
+msgid "I agree with terms"
+msgstr "Я согласен с условиями"
+
+#: apps/main/forms/auth.py:33
+msgid "User with this email already exists."
+msgstr "Пользователь с таким email уже существует."
+
+#: apps/main/forms/auth.py:44 core/models/account.py:90
+#: core/models/education.py:11 core/models/education.py:22
+msgid "City"
+msgstr "Город"
+
+#: apps/main/forms/auth.py:47
+msgid "Select city"
+msgstr "Выберите город"
+
+#: apps/main/forms/auth.py:50 core/models/account.py:95
+#: core/models/education.py:28
+msgid "School"
+msgstr "Школа"
+
+#: apps/main/forms/auth.py:53
+msgid "Select school"
+msgstr "Выберите школу"
+
+#: apps/main/views/auth.py:31
+msgid "Сіз аккаунтыңызға сәтті кірдіңіз."
+msgstr "Вы успешно вошли в аккаунт."
+
+#: apps/main/views/auth.py:46
+msgid "Сіз жүйеден шықтыңыз."
+msgstr "Вы вышли из системы."
+
+#: apps/main/views/auth.py:74
+msgid "Аккаунт сәтті құрылды."
+msgstr "Аккаунт успешно создан."
+
+#: apps/main/views/auth.py:105
+msgid "Мұғалім аккаунты сәтті құрылды."
+msgstr "Аккаунт учителя успешно создан."
+
+#: config/settings.py:118
+msgid "Kazakh"
+msgstr "Казахский"
+
+#: config/settings.py:119
+msgid "Russian"
+msgstr "Русский"
+
+#: config/settings.py:120
+msgid "English"
+msgstr "Английский"
+
+#: config/settings.py:175 config/settings.py:197
+msgid "Administration"
+msgstr "Администрирование"
+
+#: config/settings.py:179 config/settings.py:218
+msgid "Dashboard"
+msgstr "Панель управления"
+
+#: config/settings.py:202
+msgid "Website"
+msgstr "Сайт"
+
+#: config/settings.py:229 core/admin/account.py:72
+msgid "Account"
+msgstr "Аккаунт"
+
+#: config/settings.py:234 core/models/account.py:27
+msgid "Users"
+msgstr "Пользователи"
+
+#: config/settings.py:239 core/models/account.py:70
+msgid "User sessions"
+msgstr "Сессии пользователей"
+
+#: config/settings.py:247
+msgid "Education"
+msgstr "Образование"
+
+#: config/settings.py:252 core/models/education.py:12
+msgid "Cities"
+msgstr "Города"
+
+#: config/settings.py:257 core/models/education.py:29
+msgid "Schools"
+msgstr "Школы"
+
+#: config/settings.py:262 core/models/content.py:13
+#: core/models/education.py:45
+msgid "Grades"
+msgstr "Классы"
+
+#: config/settings.py:267 core/models/content.py:24
+msgid "Subjects"
+msgstr "Предметы"
+
+#: config/settings.py:272 core/models/content.py:81
+msgid "Question formats"
+msgstr "Форматы вопросов"
+
+#: config/settings.py:277 core/models/content.py:132
+msgid "Questions"
+msgstr "Вопросы"
+
+#: core/admin/account.py:76
+msgid "Personal information"
+msgstr "Личные данные"
+
+#: core/admin/account.py:81
+msgid "Status"
+msgstr "Статус"
+
+#: core/admin/account.py:86
+msgid "Permissions"
+msgstr "Права доступа"
+
+#: core/admin/account.py:90
+msgid "Important dates"
+msgstr "Важные даты"
+
+#: core/admin/account.py:97
+msgid "Create user"
+msgstr "Создать пользователя"
+
+#: core/admin/account.py:133
+msgid "Password change link"
+msgstr "Ссылка для смены пароля"
+
+#: core/admin/account.py:136 core/models/account.py:22
+msgid "Avatar"
+msgstr "Аватар"
+
+#: core/admin/account.py:137
+msgid "Password change"
+msgstr "Смена пароля"
+
+#: core/admin/base.py:13 core/admin/base.py:41
+msgid "General information"
+msgstr "Общая информация"
+
+#: core/admin/content.py:26 core/admin/content.py:28 core/admin/content.py:59
+#: core/admin/content.py:61 core/admin/content.py:99 core/admin/content.py:101
+msgid "Detail link"
+msgstr "Подробная ссылка"
+
+#: core/admin/content.py:85
+msgid "Subject link"
+msgstr "Ссылка на предмет"
+
+#: core/admin/content.py:124
+msgid "Chapter link"
+msgstr "Ссылка на главу"
+
+#: core/admin/content.py:172
+msgid "Question content"
+msgstr "Содержание вопроса"
+
+#: core/admin/content.py:175
+msgid "Question settings"
+msgstr "Настройки вопроса"
+
+#: core/admin/content.py:186 core/models/content.py:118
+msgid "Text"
+msgstr "Текст"
+
+#: core/admin/content.py:187
+msgid "Question link"
+msgstr "Ссылка на вопрос"
+
+#: core/models/account.py:12
+msgid "Admin"
+msgstr "Администратор"
+
+#: core/models/account.py:13 core/models/account.py:106
+msgid "Teacher"
+msgstr "Учитель"
+
+#: core/models/account.py:14
+msgid "Learner"
+msgstr "Ученик"
+
+#: core/models/account.py:16
+msgid "Middle name"
+msgstr "Отчество"
+
+#: core/models/account.py:18
+msgid "Role"
+msgstr "Роль"
+
+#: core/models/account.py:19
+msgid "Shows the user's role in the system."
+msgstr "Показывает роль пользователя в системе."
+
+#: core/models/account.py:21
+msgid "Phone"
+msgstr "Телефон"
+
+#: core/models/account.py:23
+msgid "Is verified"
+msgstr "Подтверждён"
+
+#: core/models/account.py:26 core/models/account.py:51
+#: core/models/account.py:86
+msgid "User"
+msgstr "Пользователь"
+
+#: core/models/account.py:45
+msgid "Desktop"
+msgstr "Компьютер"
+
+#: core/models/account.py:46
+msgid "Mobile"
+msgstr "Мобильный"
+
+#: core/models/account.py:47
+msgid "Tablet"
+msgstr "Планшет"
+
+#: core/models/account.py:48
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: core/models/account.py:54
+msgid "Session key"
+msgstr "Ключ сессии"
+
+#: core/models/account.py:57
+msgid "Device type"
+msgstr "Тип устройства"
+
+#: core/models/account.py:60
+msgid "Device name"
+msgstr "Название устройства"
+
+#: core/models/account.py:61
+msgid "Browser"
+msgstr "Браузер"
+
+#: core/models/account.py:62
+msgid "Operating system"
+msgstr "Операционная система"
+
+#: core/models/account.py:64
+msgid "IP address"
+msgstr "IP-адрес"
+
+#: core/models/account.py:65
+msgid "User agent"
+msgstr "User agent"
+
+#: core/models/account.py:66
+msgid "Last activity at"
+msgstr "Дата последней активности"
+
+#: core/models/account.py:69
+msgid "User session"
+msgstr "Сессия пользователя"
+
+#: core/models/account.py:82
+msgid "Regular"
+msgstr "Обычный"
+
+#: core/models/account.py:83
+msgid "Partner"
+msgstr "Партнёр"
+
+#: core/models/account.py:100
+msgid "Type"
+msgstr "Тип"
+
+#: core/models/account.py:103
+msgid "Agreement accepted at"
+msgstr "Дата принятия соглашения"
+
+#: core/models/account.py:107
+msgid "Teachers"
+msgstr "Учителя"
+
+#: core/models/base.py:6
+msgid "Created at"
+msgstr "Дата создания"
+
+#: core/models/base.py:7
+msgid "Updated at"
+msgstr "Дата обновления"
+
+#: core/models/base.py:15
+msgid "Is active"
+msgstr "Активен"
+
+#: core/models/content.py:10 core/models/content.py:75
+#: core/models/content.py:94 core/models/education.py:8
+#: core/models/education.py:25 core/models/education.py:39
+msgid "Name"
+msgstr "Название"
+
+#: core/models/content.py:11
+msgid "Cover"
+msgstr "Обложка"
+
+#: core/models/content.py:16 core/models/content.py:39
+#: core/models/content.py:58
+msgid "Description"
+msgstr "Описание"
+
+#: core/models/content.py:17 core/models/content.py:40
+#: core/models/content.py:59 core/models/content.py:77
+#: core/models/content.py:96 core/models/education.py:41
+msgid "Order"
+msgstr "Порядок"
+
+#: core/models/content.py:23 core/models/content.py:32
+msgid "Subject"
+msgstr "Предмет"
+
+#: core/models/content.py:36 core/models/education.py:44
+msgid "Grade"
+msgstr "Класс"
+
+#: core/models/content.py:38 core/models/content.py:53
+msgid "Title"
+msgstr "Заголовок"
+
+#: core/models/content.py:43 core/models/content.py:56
+msgid "Chapter"
+msgstr "Глава"
+
+#: core/models/content.py:44
+msgid "Chapters"
+msgstr "Главы"
+
+#: core/models/content.py:62 core/models/content.py:116
+msgid "Topic"
+msgstr "Тема"
+
+#: core/models/content.py:63
+msgid "Topics"
+msgstr "Темы"
+
+#: core/models/content.py:76 core/models/content.py:95
+#: core/models/education.py:40
+msgid "Code"
+msgstr "Код"
+
+#: core/models/content.py:80
+msgid "Question format"
+msgstr "Формат вопроса"
+
+#: core/models/content.py:92 core/models/content.py:121
+msgid "Format"
+msgstr "Формат"
+
+#: core/models/content.py:99
+msgid "Question variant"
+msgstr "Вариант вопроса"
+
+#: core/models/content.py:100
+msgid "Question variants"
+msgstr "Варианты вопроса"
+
+#: core/models/content.py:110
+msgid "Easy"
+msgstr "Лёгкий"
+
+#: core/models/content.py:111
+msgid "Medium"
+msgstr "Средний"
+
+#: core/models/content.py:112
+msgid "Hard"
+msgstr "Сложный"
+
+#: core/models/content.py:125
+msgid "Variant"
+msgstr "Вариант"
+
+#: core/models/content.py:127
+msgid "Level"
+msgstr "Уровень"
+
+#: core/models/content.py:128
+msgid "Time limit (sec)"
+msgstr "Лимит времени (сек)"
+
+#: core/models/content.py:131 core/models/content.py:144
+msgid "Question"
+msgstr "Вопрос"
+
+#: core/models/content.py:135
+msgid "#{} question"
+msgstr "Вопрос №{}"
+
+#: core/models/content.py:146
+msgid "Answer"
+msgstr "Ответ"
+
+#: core/models/content.py:147
+msgid "Is correct"
+msgstr "Правильный ответ"
+
+#: core/models/content.py:150
+msgid "Option"
+msgstr "Вариант ответа"
+
+#: core/models/content.py:151
+msgid "Options"
+msgstr "Варианты ответов"
+
+#: core/models/content.py:154
+msgid "#{} option"
+msgstr "Вариант №{}"

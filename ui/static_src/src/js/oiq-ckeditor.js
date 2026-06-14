@@ -1,3 +1,8 @@
+import katex from "katex";
+import "katex/dist/katex.min.css";
+
+window.katex = katex;
+
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
 
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
@@ -22,15 +27,23 @@ import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload";
 import ImageToolbar from "@ckeditor/ckeditor5-image/src/imagetoolbar";
 import ImageCaption from "@ckeditor/ckeditor5-image/src/imagecaption";
 import ImageStyle from "@ckeditor/ckeditor5-image/src/imagestyle";
+import ImageResize from "@ckeditor/ckeditor5-image/src/imageresize";
 
-import Base64UploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter";
+import SimpleUploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter";
 
 import Math from "@isaul32/ckeditor5-math/src/math";
 import AutoformatMath from "@isaul32/ckeditor5-math/src/autoformatmath";
 import Autoformat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
 
 import "ckeditor5/ckeditor5.css";
-import "katex/dist/katex.min.css";
+
+function getCookie(name) {
+    const match = document.cookie.match(
+        new RegExp("(^|;\\s*)" + name + "=([^;]*)")
+    );
+
+    return match ? decodeURIComponent(match[2]) : null;
+}
 
 window.OIQEditor = {
     create(element) {
@@ -54,7 +67,8 @@ window.OIQEditor = {
                 ImageToolbar,
                 ImageCaption,
                 ImageStyle,
-                Base64UploadAdapter,
+                ImageResize,
+                SimpleUploadAdapter,
                 Math,
                 Autoformat,
                 AutoformatMath,
@@ -81,6 +95,25 @@ window.OIQEditor = {
                 "imageUpload",
                 "math",
             ],
+            image: {
+                toolbar: [
+                    "imageStyle:inline",
+                    "imageStyle:wrapText",
+                    "imageStyle:breakText",
+                    "|",
+                    "resizeImage",
+                    "|",
+                    "imageTextAlternative",
+                    "toggleImageCaption",
+                ],
+                resizeUnit: "px",
+            },
+            simpleUpload: {
+                uploadUrl: element.dataset.oiqEditorUploadUrl,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+            },
             math: {
                 engine: "katex",
                 outputType: "span",
@@ -91,20 +124,58 @@ window.OIQEditor = {
                     throwOnError: false,
                 },
             }
+        }).then(function (editor) {
+            if (element.dataset.oiqEditorHeight) {
+                editor.editing.view.change(function (writer) {
+                    writer.setStyle(
+                        "min-height",
+                        element.dataset.oiqEditorHeight,
+                        editor.editing.view.document.getRoot()
+                    );
+                });
+            }
+
+            if (element.dataset.oiqEditorWidth) {
+                editor.ui.view.element.style.width = element.dataset.oiqEditorWidth;
+                editor.ui.view.element.style.maxWidth = "100%";
+            }
+
+            return editor;
         });
     },
 };
 
+function initEditor(element) {
+    if (element.dataset.ckeditorInitialized === "true") {
+        return;
+    }
+
+    element.dataset.ckeditorInitialized = "true";
+
+    window.OIQEditor.create(element).catch(function (error) {
+        console.error(error);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-oiq-editor]").forEach(function (element) {
-        if (element.dataset.ckeditorInitialized === "true") {
+        // Django admin-нің "empty-form" қалыбы — жасырын үлгі, жаңа inline
+        // жол қосылғанда осыдан клондалады, сондықтан мұнда CKEditor
+        // инициализацияламаймыз (formset:added оқиғасында жасалады).
+        if (element.closest(".empty-form")) {
             return;
         }
 
-        element.dataset.ckeditorInitialized = "true";
-
-        window.OIQEditor.create(element).catch(function (error) {
-            console.error(error);
-        });
+        initEditor(element);
     });
+});
+
+document.addEventListener("formset:added", function (event) {
+    const row = event.target;
+
+    if (!(row instanceof Element)) {
+        return;
+    }
+
+    row.querySelectorAll("[data-oiq-editor]").forEach(initEditor);
 });

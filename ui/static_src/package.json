@@ -8,6 +8,7 @@
     "build:clean": "rimraf ../static/css/dist",
     "build:tailwind": "cross-env NODE_ENV=production postcss ./src/styles.css -o ../static/css/dist/styles.css --minify",
     "build:ckeditor": "vite build --config vite.ckeditor.config.js",
+    "build:preview": "vite build --config vite.preview.config.js",
     "dev": "cross-env NODE_ENV=development postcss ./src/styles.css -o ../static/css/dist/styles.css --watch"
   },
   "keywords": [],

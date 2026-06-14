@@ -13,3 +13,9 @@ def user_avatar_upload_path(instance, filename):
         f'{datetime.now().strftime("%Y/%m")}/'
         f'{filename}'
     )
+
+
+def ckeditor_image_upload_path(filename, file_hash):
+    extension = Path(filename).suffix
+
+    return f'core/ckeditor/{file_hash}{extension}'

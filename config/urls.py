@@ -10,6 +10,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
+    path('admin/ckeditor/', include('core.urls')),
     path('admin/', admin.site.urls),
 
     # apps...
