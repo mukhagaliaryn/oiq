@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from core.models import City, School, Teacher
+from core.models import City, School, Subject, Teacher
 
 User = get_user_model()
 
@@ -36,10 +36,16 @@ class TeacherEditForm(forms.ModelForm):
         required=True,
         empty_label=_('Select school'),
     )
+    subject = forms.ModelChoiceField(
+        label=_('Subject'),
+        queryset=Subject.objects.filter(is_active=True).order_by('order'),
+        required=True,
+        empty_label=_('Select subject'),
+    )
 
     class Meta:
         model = Teacher
-        fields = ('city', 'school')
+        fields = ('city', 'school', 'subject')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

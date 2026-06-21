@@ -1,0 +1,49 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n %}
+
+{% block title %}{{ subject.name }}{% endblock title %}
+
+{% block css %}
+    {{ chapter_form.media.css }}
+{% endblock css %}
+
+{% block teacher_header %}
+    <h1 class="text-xl font-black">{{ subject.name }}</h1>
+    <p class="text-body">{% translate "Manage chapters and topics for your subject" %}</p>
+{% endblock teacher_header %}
+
+{% block teacher_layout %}
+{% if subject.description %}
+    <div class="mb-6 rounded-3xl border border-default bg-neutral-primary p-6 text-body">
+        {{ subject.description|safe }}
+    </div>
+{% endif %}
+
+{% if grades %}
+    <div class="mb-6 flex gap-2 overflow-x-auto border-b border-default">
+        {% for grade in grades %}
+            <a
+                href="?grade={{ grade.code }}"
+                class="shrink-0 whitespace-nowrap border-b-2 px-4 py-3 font-medium transition
+                {% if grade.id == selected_grade.id %}
+                    border-brand text-brand
+                {% else %}
+                    border-transparent text-body hover:text-body-subtle
+                {% endif %}"
+            >
+                {{ grade.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    {% include "app/dashboard/teacher/subject/_chapters_section.html" %}
+{% else %}
+    <div class="rounded-3xl border border-dashed border-default p-8 text-center text-body-subtle">
+        {% translate "No grades are assigned to this subject yet. Ask an administrator to configure them." %}
+    </div>
+{% endif %}
+{% endblock teacher_layout %}
+
+{% block js %}
+    {{ chapter_form.media.js }}
+{% endblock js %}

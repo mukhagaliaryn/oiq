@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 19:38+0500\n"
+"POT-Creation-Date: 2026-06-22 00:52+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgstr "Аватар"
 
 #: apps/dashboard/teacher/forms/account.py:28 apps/main/forms/auth.py:44
 #: core/models/account.py:90 core/models/education.py:11
-#: core/models/education.py:22 ui/templates/app/auth/register/teacher.html:156
+#: core/models/education.py:22 ui/templates/app/auth/register/teacher.html:165
 #: ui/templates/app/dashboard/teacher/account/edit.html:155
 #: ui/templates/app/dashboard/teacher/account/profile.html:64
 msgid "City"
@@ -37,7 +37,7 @@ msgstr "Выберите город"
 
 #: apps/dashboard/teacher/forms/account.py:34 apps/main/forms/auth.py:50
 #: core/models/account.py:95 core/models/education.py:28
-#: ui/templates/app/auth/register/teacher.html:181
+#: ui/templates/app/auth/register/teacher.html:190
 #: ui/templates/app/dashboard/teacher/account/edit.html:176
 #: ui/templates/app/dashboard/teacher/account/profile.html:68
 msgid "School"
@@ -48,14 +48,37 @@ msgstr "Школа"
 msgid "Select school"
 msgstr "Выберите школу"
 
-#: apps/dashboard/teacher/forms/account.py:59
+#: apps/dashboard/teacher/forms/account.py:40 apps/main/forms/auth.py:56
+#: core/models/account.py:100 core/models/content.py:23
+#: core/models/content.py:32 ui/templates/app/auth/register/teacher.html:218
+#: ui/templates/app/dashboard/teacher/account/edit.html:196
+#: ui/templates/app/dashboard/teacher/account/profile.html:72
+msgid "Subject"
+msgstr "Предмет"
+
+#: apps/dashboard/teacher/forms/account.py:43 apps/main/forms/auth.py:59
+#: ui/templates/app/dashboard/teacher/account/edit.html:203
+#, fuzzy
+#| msgid "Select city"
+msgid "Select subject"
+msgstr "Выберите город"
+
+#: apps/dashboard/teacher/forms/account.py:65
 #: ui/templates/app/dashboard/teacher/account/security.html:151
 msgid "Confirm with your password"
 msgstr "Подтвердите паролем"
 
-#: apps/dashboard/teacher/forms/account.py:71
+#: apps/dashboard/teacher/forms/account.py:77
 msgid "Incorrect password."
 msgstr "Неверный пароль."
+
+#: apps/dashboard/teacher/forms/subject.py:29
+msgid "General (all grades)"
+msgstr "Общий (все классы)"
+
+#: apps/dashboard/teacher/forms/subject.py:63
+msgid "A topic with this title already exists in this chapter."
+msgstr "Тема с таким названием уже существует в этом разделе."
 
 #: apps/dashboard/teacher/views/account.py:34
 msgid "Avatar removed."
@@ -80,27 +103,27 @@ msgstr "Эл. почта или имя пользователя"
 #: apps/main/forms/auth.py:13 ui/templates/app/auth/login/page.html:46
 #: ui/templates/app/auth/register/learner.html:86
 #: ui/templates/app/auth/register/learner.html:94
-#: ui/templates/app/auth/register/teacher.html:284
-#: ui/templates/app/auth/register/teacher.html:292
+#: ui/templates/app/auth/register/teacher.html:318
+#: ui/templates/app/auth/register/teacher.html:326
 msgid "Password"
 msgstr "Пароль"
 
 #: apps/main/forms/auth.py:17 ui/templates/app/auth/register/learner.html:49
-#: ui/templates/app/auth/register/teacher.html:243
-#: ui/templates/app/auth/register/teacher.html:252
+#: ui/templates/app/auth/register/teacher.html:277
+#: ui/templates/app/auth/register/teacher.html:286
 #: ui/templates/app/dashboard/teacher/account/edit.html:70
 msgid "First name"
 msgstr "Имя"
 
 #: apps/main/forms/auth.py:18 ui/templates/app/auth/register/learner.html:67
-#: ui/templates/app/auth/register/teacher.html:263
-#: ui/templates/app/auth/register/teacher.html:272
+#: ui/templates/app/auth/register/teacher.html:297
+#: ui/templates/app/auth/register/teacher.html:306
 #: ui/templates/app/dashboard/teacher/account/edit.html:85
 msgid "Last name"
 msgstr "Фамилия"
 
 #: apps/main/forms/auth.py:19 ui/templates/app/auth/register/learner.html:29
-#: ui/templates/app/auth/register/teacher.html:222
+#: ui/templates/app/auth/register/teacher.html:256
 #: ui/templates/app/dashboard/teacher/account/profile.html:56
 msgid "Email"
 msgstr "Электронная почта"
@@ -265,7 +288,7 @@ msgstr "Ссылка на вопрос"
 msgid "Admin"
 msgstr "Администратор"
 
-#: core/models/account.py:13 core/models/account.py:106
+#: core/models/account.py:13 core/models/account.py:111
 #: ui/templates/app/auth/register/page.html:24
 #: ui/templates/app/dashboard/teacher/account/profile.html:37
 msgid "Teacher"
@@ -364,15 +387,15 @@ msgstr "Обычный"
 msgid "Partner"
 msgstr "Партнёр"
 
-#: core/models/account.py:100
+#: core/models/account.py:105
 msgid "Type"
 msgstr "Тип"
 
-#: core/models/account.py:103
+#: core/models/account.py:108
 msgid "Agreement accepted at"
 msgstr "Дата принятия соглашения"
 
-#: core/models/account.py:107
+#: core/models/account.py:112
 msgid "Teachers"
 msgstr "Учителя"
 
@@ -400,24 +423,34 @@ msgstr "Обложка"
 
 #: core/models/content.py:16 core/models/content.py:39
 #: core/models/content.py:58
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:74
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:48
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:62
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:39
 msgid "Description"
 msgstr "Описание"
 
 #: core/models/content.py:17 core/models/content.py:40
 #: core/models/content.py:59 core/models/content.py:77
 #: core/models/content.py:96 core/models/education.py:41
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:79
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:53
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:67
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:44
 msgid "Order"
 msgstr "Порядок"
 
-#: core/models/content.py:23 core/models/content.py:32
-msgid "Subject"
-msgstr "Предмет"
-
 #: core/models/content.py:36 core/models/education.py:44
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:68
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:42
 msgid "Grade"
 msgstr "Класс"
 
 #: core/models/content.py:38 core/models/content.py:53
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:60
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:34
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:54
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:31
 msgid "Title"
 msgstr "Заголовок"
 
@@ -591,7 +624,7 @@ msgstr "Нет аккаунта?"
 
 #: ui/templates/app/auth/login/page.html:84
 #: ui/templates/app/auth/register/learner.html:177
-#: ui/templates/app/auth/register/teacher.html:372
+#: ui/templates/app/auth/register/teacher.html:406
 #: ui/templates/app/page.html:39
 msgid "Sign up"
 msgstr "Регистрация"
@@ -602,19 +635,19 @@ msgid "Sign up as a learner"
 msgstr "Регистрация как ученик"
 
 #: ui/templates/app/auth/register/learner.html:20
-#: ui/templates/app/auth/register/teacher.html:126
+#: ui/templates/app/auth/register/teacher.html:135
 msgid "Start your personal learning space"
 msgstr "Начните своё личное учебное пространство"
 
 #: ui/templates/app/auth/register/learner.html:120
 #: ui/templates/app/auth/register/learner.html:128
-#: ui/templates/app/auth/register/teacher.html:318
-#: ui/templates/app/auth/register/teacher.html:326
+#: ui/templates/app/auth/register/teacher.html:352
+#: ui/templates/app/auth/register/teacher.html:360
 msgid "Confirm password"
 msgstr "Повторите пароль"
 
 #: ui/templates/app/auth/register/learner.html:158
-#: ui/templates/app/auth/register/teacher.html:358
+#: ui/templates/app/auth/register/teacher.html:392
 msgid "I agree with the platform's terms of use."
 msgstr "Согласен с правилами платформы."
 
@@ -640,19 +673,25 @@ msgid "Create classes and organize game-based tasks for learners."
 msgstr "Создавайте классы и организуйте игровые задания для учеников."
 
 #: ui/templates/app/auth/register/teacher.html:3
-#: ui/templates/app/auth/register/teacher.html:125
+#: ui/templates/app/auth/register/teacher.html:134
 msgid "Sign up as a teacher"
 msgstr "Регистрация как учитель"
 
-#: ui/templates/app/auth/register/teacher.html:166
+#: ui/templates/app/auth/register/teacher.html:175
 msgid "Select a city"
 msgstr "Выберите город"
 
-#: ui/templates/app/auth/register/teacher.html:192
+#: ui/templates/app/auth/register/teacher.html:201
 msgid "Select a school"
 msgstr "Выберите школу"
 
-#: ui/templates/app/auth/register/teacher.html:213
+#: ui/templates/app/auth/register/teacher.html:228
+#, fuzzy
+#| msgid "Select a city"
+msgid "Select a subject"
+msgstr "Выберите город"
+
+#: ui/templates/app/auth/register/teacher.html:247
 msgid "Continue"
 msgstr "Продолжить"
 
@@ -666,7 +705,7 @@ msgid "Personal learning and classroom tasks"
 msgstr "Индивидуальное обучение и задания класса"
 
 #: ui/templates/app/dashboard/learner/page.html:16
-#: ui/templates/layouts/teacher_layout.html:137
+#: ui/templates/layouts/teacher_layout.html:153
 msgid "Sign out"
 msgstr "Выйти"
 
@@ -702,26 +741,34 @@ msgstr "Последняя активность"
 msgid "No activity yet. Results will appear here once you start learning."
 msgstr "Пока нет активности. Результаты появятся здесь после начала обучения."
 
-#: ui/templates/app/dashboard/teacher/account/_tabs.html:13
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:14
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:48
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:101
 #: ui/templates/app/dashboard/teacher/account/profile.html:7
-#: ui/templates/layouts/teacher_layout.html:126
+#: ui/templates/layouts/teacher_layout.html:142
 msgid "Profile"
 msgstr "Профиль"
 
-#: ui/templates/app/dashboard/teacher/account/_tabs.html:26
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:17
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:60
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:114
 #: ui/templates/app/dashboard/teacher/account/edit.html:4
 #: ui/templates/app/dashboard/teacher/account/edit.html:7
 #: ui/templates/app/dashboard/teacher/account/profile.html:49
 msgid "Edit profile"
 msgstr "Редактировать профиль"
 
-#: ui/templates/app/dashboard/teacher/account/_tabs.html:39
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:20
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:72
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:127
 #: ui/templates/app/dashboard/teacher/account/settings.html:4
 #: ui/templates/app/dashboard/teacher/account/settings.html:7
 msgid "Settings"
 msgstr "Настройки"
 
-#: ui/templates/app/dashboard/teacher/account/_tabs.html:52
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:23
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:84
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:140
 #: ui/templates/app/dashboard/teacher/account/security.html:4
 #: ui/templates/app/dashboard/teacher/account/security.html:7
 msgid "Security"
@@ -743,7 +790,7 @@ msgstr "Удалить"
 msgid "JPG or PNG, up to 5MB."
 msgstr "JPG или PNG, до 5 МБ."
 
-#: ui/templates/app/dashboard/teacher/account/edit.html:198
+#: ui/templates/app/dashboard/teacher/account/edit.html:218
 msgid "Save changes"
 msgstr "Сохранить изменения"
 
@@ -812,6 +859,8 @@ msgstr ""
 "не восстановит аккаунт."
 
 #: ui/templates/app/dashboard/teacher/account/security.html:172
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:85
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:73
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -824,6 +873,7 @@ msgid "Manage your interface preferences"
 msgstr "Управляйте настройками интерфейса"
 
 #: ui/templates/app/dashboard/teacher/account/settings.html:15
+#: ui/templates/app/dashboard/teacher/account/settings.html:23
 msgid "Language"
 msgstr "Язык"
 
@@ -836,7 +886,7 @@ msgid "Teacher dashboard"
 msgstr "Панель учителя"
 
 #: ui/templates/app/dashboard/teacher/page.html:14
-#: ui/templates/layouts/teacher_layout.html:55
+#: ui/templates/layouts/teacher_layout.html:70
 msgid "Classes"
 msgstr "Классы"
 
@@ -845,7 +895,7 @@ msgid "Add learners to classes and track the learning process."
 msgstr "Добавляйте учеников в классы и следите за процессом обучения."
 
 #: ui/templates/app/dashboard/teacher/page.html:22
-#: ui/templates/layouts/teacher_layout.html:63
+#: ui/templates/layouts/teacher_layout.html:78
 msgid "Game tasks"
 msgstr "Игровые задания"
 
@@ -854,7 +904,7 @@ msgid "Create interactive tasks in a Kahoot-like style."
 msgstr "Создавайте интерактивные задания в стиле Kahoot."
 
 #: ui/templates/app/dashboard/teacher/page.html:30
-#: ui/templates/layouts/teacher_layout.html:71
+#: ui/templates/layouts/teacher_layout.html:86
 msgid "Results"
 msgstr "Результаты"
 
@@ -886,6 +936,57 @@ msgstr "Создать игру"
 msgid "Build a game from questions and tasks."
 msgstr "Создавайте игру из вопросов и заданий."
 
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:17
+msgid "General"
+msgstr "Общий"
+
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:30
+msgid "Delete this chapter together with its topics?"
+msgstr ""
+
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:88
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:76
+msgid "Save"
+msgstr "Сохранить"
+
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:7
+msgid "No chapters yet for this grade."
+msgstr "Для этого класса пока нет разделов."
+
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:18
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:58
+msgid "Add chapter"
+msgstr "Добавить раздел"
+
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:25
+msgid "Delete this topic?"
+msgstr ""
+
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:38
+msgid "No description yet."
+msgstr "Описания пока нет."
+
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:6
+msgid "No topics yet."
+msgstr "Тем пока нет."
+
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:16
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:49
+msgid "Add topic"
+msgstr "Добавить тему"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:12
+msgid "Manage chapters and topics for your subject"
+msgstr "Управляйте разделами и темами своего предмета"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:42
+msgid ""
+"No grades are assigned to this subject yet. Ask an administrator to "
+"configure them."
+msgstr ""
+"Этому предмету пока не назначены классы. Попросите администратора настроить "
+"их."
+
 #: ui/templates/app/page.html:27
 msgid "An interactive, gamified and visual education platform"
 msgstr ""
@@ -899,12 +1000,12 @@ msgstr "У меня уже есть аккаунт"
 msgid "Teaching"
 msgstr "Преподавание"
 
-#: ui/templates/layouts/teacher_layout.html:57
-#: ui/templates/layouts/teacher_layout.html:65
-#: ui/templates/layouts/teacher_layout.html:73
+#: ui/templates/layouts/teacher_layout.html:72
+#: ui/templates/layouts/teacher_layout.html:80
+#: ui/templates/layouts/teacher_layout.html:88
 msgid "Soon"
 msgstr "Скоро"
 
-#: ui/templates/layouts/teacher_layout.html:130
+#: ui/templates/layouts/teacher_layout.html:146
 msgid "Account settings"
 msgstr "Настройки аккаунта"

@@ -96,6 +96,11 @@ class Teacher(models.Model):
         on_delete=models.SET_NULL, related_name='teachers',
         blank=True, null=True,
     )
+    subject = models.ForeignKey(
+        'core.Subject', verbose_name=_('Subject'),
+        on_delete=models.SET_NULL, related_name='teachers',
+        blank=True, null=True,
+    )
     type = models.CharField(
         _('Type'), max_length=16,
         choices=Type.choices, default=Type.REGULAR,

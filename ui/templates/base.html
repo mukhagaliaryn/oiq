@@ -103,6 +103,23 @@
 
     <script>
         lucide.createIcons();
+
+        document.body.addEventListener('htmx:configRequest', function (event) {
+            const match = document.cookie.match(/(^|;\s*)csrftoken=([^;]*)/);
+            event.detail.headers['X-CSRFToken'] = match ? decodeURIComponent(match[2]) : null;
+
+            event.detail.elt.querySelectorAll('[data-oiq-editor]').forEach(function (el) {
+                if (el.oiqEditorInstance && el.name) {
+                    el.oiqEditorInstance.updateSourceElement();
+                    event.detail.parameters[el.name] = el.value;
+                }
+            });
+        });
+
+        document.body.addEventListener('htmx:afterSwap', function (event) {
+            lucide.createIcons();
+            event.target.dispatchEvent(new Event('formset:added', { bubbles: true }));
+        });
     </script>
 </body>
 </html>

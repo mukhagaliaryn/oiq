@@ -49,6 +49,21 @@
                 {% translate "Teaching" %}
             </p>
 
+            {% if request.user.teacher.is_partner and request.user.teacher.subject %}
+                <a
+                    href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
+                    class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
+                    {% if request.resolver_match.url_name == 'subject-detail' %}
+                        bg-brand-soft text-brand
+                    {% else %}
+                        text-body hover:bg-neutral-secondary
+                    {% endif %}"
+                >
+                    <i data-lucide="book-open" class="size-5"></i>
+                    {{ request.user.teacher.subject.name }}
+                </a>
+            {% endif %}
+
             <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
                 <span class="flex items-center gap-3">
                     <i data-lucide="users" class="size-5"></i>

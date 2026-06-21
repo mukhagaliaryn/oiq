@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from core.models import City, School
+from core.models import City, School, Subject
 
 User = get_user_model()
 
@@ -51,6 +51,12 @@ class TeacherRegisterForm(BaseRegisterForm):
         queryset=School.objects.none(),
         required=True,
         empty_label=_('Select school'),
+    )
+    subject = forms.ModelChoiceField(
+        label=_('Subject'),
+        queryset=Subject.objects.filter(is_active=True).order_by('order'),
+        required=True,
+        empty_label=_('Select subject'),
     )
 
     def __init__(self, *args, **kwargs):

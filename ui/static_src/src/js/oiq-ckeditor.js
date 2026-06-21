@@ -152,7 +152,22 @@ function initEditor(element) {
 
     element.dataset.ckeditorInitialized = "true";
 
-    window.OIQEditor.create(element).catch(function (error) {
+    window.OIQEditor.create(element).then(function (editor) {
+        // CKEditor 5 буфер ретінде өзінің ішкі деректер моделін қолданады,
+        // бастапқы <textarea>-ні әр басу сайын жаңартпайды — сондықтан форма
+        // submit болардан бұрын мазмұнды қолмен синхрондау керек (htmx
+        // сұраулары үшін base.html-дегі htmx:configRequest те осыны жасайды).
+        element.oiqEditorInstance = editor;
+
+        const form = element.closest("form");
+        if (form) {
+            form.addEventListener("submit", function () {
+                editor.updateSourceElement();
+            });
+        }
+
+        return editor;
+    }).catch(function (error) {
         console.error(error);
     });
 }

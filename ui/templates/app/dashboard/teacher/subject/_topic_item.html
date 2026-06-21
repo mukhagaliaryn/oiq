@@ -1,0 +1,81 @@
+{% load i18n %}
+<div
+    id="topic-item-{{ topic.id }}"
+    x-data="{
+        open: {% if topic.id == editing_topic_id %}true{% else %}false{% endif %},
+        editing: {% if topic.id == editing_topic_id %}true{% else %}false{% endif %}
+    }"
+    class="rounded-2xl border border-default"
+>
+    <div class="flex items-center justify-between gap-2 px-4 py-3">
+        <button type="button" @click="open = !open" class="flex flex-1 items-center gap-2 text-left font-medium">
+            <i data-lucide="chevron-right" class="size-4 shrink-0 transition" :class="{ 'rotate-90': open }"></i>
+            {{ topic.title }}
+        </button>
+
+        <div class="flex items-center gap-1">
+            <button type="button" @click="editing = true; open = true" class="rounded-lg p-1.5 hover:bg-neutral-secondary">
+                <i data-lucide="pencil" class="size-4"></i>
+            </button>
+            <button
+                type="button"
+                hx-delete="{% url 'teacher:topic-delete' topic.pk %}"
+                hx-target="#topics-section-{{ topic.chapter_id }}"
+                hx-swap="outerHTML"
+                hx-confirm="{% translate 'Delete this topic?' %}"
+                class="rounded-lg p-1.5 text-danger hover:bg-danger-soft"
+            >
+                <i data-lucide="trash-2" class="size-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <div x-show="open" x-cloak class="border-t border-default px-4 py-4">
+        <div x-show="!editing">
+            {% if topic.description %}
+                <div class="text-body">{{ topic.description|safe }}</div>
+            {% else %}
+                <p class="text-body-subtle">{% translate "No description yet." %}</p>
+            {% endif %}
+        </div>
+
+        <form
+            id="topic-edit-form-{{ topic.id }}"
+            x-show="editing"
+            x-cloak
+            hx-post="{% url 'teacher:topic-update' topic.pk %}"
+            hx-target="#topics-section-{{ topic.chapter_id }}"
+            hx-swap="outerHTML"
+            class="space-y-4"
+        >
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label for="{{ topic.edit_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
+                {{ topic.edit_form.title }}
+                {% for error in topic.edit_form.title.errors %}
+                    <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="space-y-2">
+                <label for="{{ topic.edit_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
+                {{ topic.edit_form.description }}
+            </div>
+
+            <div class="space-y-2">
+                <label for="{{ topic.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
+                {{ topic.edit_form.order }}
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button" @click="editing = false" class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
+                    {% translate "Cancel" %}
+                </button>
+                <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
+                    {% translate "Save" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

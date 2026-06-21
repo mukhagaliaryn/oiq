@@ -1,0 +1,93 @@
+{% load i18n %}
+<div
+    id="chapter-item-{{ chapter.id }}"
+    x-data="{
+        open: {% if chapter.id == editing_chapter_id %}true{% else %}false{% endif %},
+        editing: {% if chapter.id == editing_chapter_id %}true{% else %}false{% endif %}
+    }"
+    class="rounded-3xl border border-default bg-neutral-primary"
+>
+    <div class="flex items-center justify-between gap-2 px-5 py-4">
+        <button type="button" @click="open = !open" class="flex flex-1 items-center gap-3 text-left">
+            <i data-lucide="chevron-right" class="size-5 shrink-0 transition" :class="{ 'rotate-90': open }"></i>
+            <span class="font-bold">{{ chapter.title }}</span>
+            {% if chapter.grade %}
+                <span class="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand">{{ chapter.grade.name }}</span>
+            {% else %}
+                <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs font-medium text-body-subtle">{% translate "General" %}</span>
+            {% endif %}
+        </button>
+
+        <div class="flex items-center gap-1">
+            <button type="button" @click="editing = true; open = true" class="rounded-lg p-1.5 hover:bg-neutral-secondary">
+                <i data-lucide="pencil" class="size-4"></i>
+            </button>
+            <button
+                type="button"
+                hx-delete="{% url 'teacher:chapter-delete' chapter.pk %}?grade={{ selected_grade.code }}"
+                hx-target="#chapters-section"
+                hx-swap="outerHTML"
+                hx-confirm="{% translate 'Delete this chapter together with its topics?' %}"
+                class="rounded-lg p-1.5 text-danger hover:bg-danger-soft"
+            >
+                <i data-lucide="trash-2" class="size-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <div x-show="open" x-cloak class="space-y-5 border-t border-default px-5 py-5">
+        <div x-show="!editing" class="space-y-5">
+            {% if chapter.description %}
+                <div class="text-body">{{ chapter.description|safe }}</div>
+            {% endif %}
+
+            {% include "app/dashboard/teacher/subject/_topics_section.html" with chapter=chapter topics=chapter.topics.all topic_create_form=chapter.topic_create_form %}
+        </div>
+
+        <form
+            id="chapter-edit-form-{{ chapter.id }}"
+            x-show="editing"
+            x-cloak
+            hx-post="{% url 'teacher:chapter-update' chapter.pk %}?grade={{ selected_grade.code }}"
+            hx-target="#chapters-section"
+            hx-swap="outerHTML"
+            class="space-y-4"
+        >
+            {% csrf_token %}
+
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="space-y-2">
+                    <label for="{{ chapter.edit_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
+                    {{ chapter.edit_form.title }}
+                    {% for error in chapter.edit_form.title.errors %}
+                        <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ chapter.edit_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
+                    {{ chapter.edit_form.grade }}
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label for="{{ chapter.edit_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
+                {{ chapter.edit_form.description }}
+            </div>
+
+            <div class="space-y-2">
+                <label for="{{ chapter.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
+                {{ chapter.edit_form.order }}
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button" @click="editing = false" class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
+                    {% translate "Cancel" %}
+                </button>
+                <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
+                    {% translate "Save" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

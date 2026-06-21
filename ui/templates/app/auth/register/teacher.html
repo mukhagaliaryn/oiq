@@ -21,6 +21,7 @@
             formData: {
                 city: '',
                 school: '',
+                subject: '',
                 first_name: '',
                 last_name: '',
                 email: '',
@@ -39,6 +40,7 @@
 
                 this.formData.city = String(this.formData.city || '')
                 this.formData.school = String(this.formData.school || '')
+                this.formData.subject = String(this.formData.subject || '')
 
                 if (this.formData.city) {
                     const savedSchool = this.formData.school
@@ -60,6 +62,7 @@
             saveForm() {
                 this.formData.city = String(this.formData.city || '')
                 this.formData.school = String(this.formData.school || '')
+                this.formData.subject = String(this.formData.subject || '')
 
                 localStorage.setItem(
                     'teacherRegisterForm',
@@ -99,6 +102,7 @@
             nextStep() {
                 const city = document.getElementById('id_city')
                 const school = document.getElementById('id_school')
+                const subject = document.getElementById('id_subject')
 
                 if (!city.checkValidity()) {
                     city.reportValidity()
@@ -107,6 +111,11 @@
 
                 if (!school.checkValidity()) {
                     school.reportValidity()
+                    return
+                }
+
+                if (!subject.checkValidity()) {
+                    subject.reportValidity()
                     return
                 }
 
@@ -199,6 +208,31 @@
                             </template>
                         </select>
                         {% for error in form.school.errors %}
+                            <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="space-y-2">
+                        <label for="id_subject" class="block ml-6 font-medium">
+                            {% translate "Subject" %}
+                        </label>
+                        <select
+                            name="subject"
+                            id="id_subject"
+                            x-model="formData.subject"
+                            @change="formData.subject = String($event.target.value); saveForm()"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
+                            required
+                        >
+                            <option value="">{% translate "Select a subject" %}</option>
+                            {% for subject in form.subject.field.queryset %}
+                                <option value="{{ subject.id }}" {% if form.subject.value|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ subject.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% for error in form.subject.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}
                     </div>
