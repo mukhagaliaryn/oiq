@@ -1,73 +1,58 @@
-{% extends "base.html" %}
+{% extends "layouts/teacher_layout.html" %}
 {% load i18n %}
 
 {% block title %}{% translate "Teacher dashboard" %}{% endblock title %}
 
-{% block base %}
-<div class="min-h-screen bg-neutral-secondary">
-    <header class="border-b border-default bg-neutral-primary">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            <div>
-                <h1 class="text-2xl font-black">{% translate "Teacher dashboard" %}</h1>
-                <p class="text-body">{% translate "Manage classes, games and learners" %}</p>
-            </div>
 
-            <a href="{% url 'main:logout' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
-                {% translate "Sign out" %}
-            </a>
+
+{% block teacher_layout %}
+<section class="grid gap-5 md:grid-cols-3">
+    <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+            <i data-lucide="users" class="size-6"></i>
         </div>
-    </header>
+        <h2 class="font-bold">{% translate "Classes" %}</h2>
+        <p class="mt-2 text-body">{% translate "Add learners to classes and track the learning process." %}</p>
+    </div>
 
-    <main class="mx-auto max-w-7xl px-6 py-8">
-        <section class="grid gap-5 md:grid-cols-3">
-            <div class="rounded-3xl border border-default bg-neutral-primary p-6">
-                <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
-                    <i data-lucide="users" class="size-6"></i>
-                </div>
-                <h2 class="font-bold">{% translate "Classes" %}</h2>
-                <p class="mt-2 text-body">{% translate "Add learners to classes and track the learning process." %}</p>
-            </div>
+    <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+            <i data-lucide="gamepad-2" class="size-6"></i>
+        </div>
+        <h2 class="font-bold">{% translate "Game tasks" %}</h2>
+        <p class="mt-2 text-body">{% translate "Create interactive tasks in a Kahoot-like style." %}</p>
+    </div>
 
-            <div class="rounded-3xl border border-default bg-neutral-primary p-6">
-                <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
-                    <i data-lucide="gamepad-2" class="size-6"></i>
-                </div>
-                <h2 class="font-bold">{% translate "Game tasks" %}</h2>
-                <p class="mt-2 text-body">{% translate "Create interactive tasks in a Kahoot-like style." %}</p>
-            </div>
+    <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+            <i data-lucide="bar-chart-3" class="size-6"></i>
+        </div>
+        <h2 class="font-bold">{% translate "Results" %}</h2>
+        <p class="mt-2 text-body">{% translate "View learners' progress and task results." %}</p>
+    </div>
+</section>
 
-            <div class="rounded-3xl border border-default bg-neutral-primary p-6">
-                <div class="mb-4 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
-                    <i data-lucide="bar-chart-3" class="size-6"></i>
-                </div>
-                <h2 class="font-bold">{% translate "Results" %}</h2>
-                <p class="mt-2 text-body">{% translate "View learners' progress and task results." %}</p>
-            </div>
-        </section>
+<section class="mt-8 rounded-3xl border border-default bg-neutral-primary p-6">
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-black">{% translate "Quick actions" %}</h2>
+            <p class="text-body">{% translate "Key actions to get started" %}</p>
+        </div>
+    </div>
 
-        <section class="mt-8 rounded-3xl border border-default bg-neutral-primary p-6">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-xl font-black">{% translate "Quick actions" %}</h2>
-                    <p class="text-body">{% translate "Key actions to get started" %}</p>
-                </div>
-            </div>
+    <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <a href="#" class="rounded-2xl border border-default p-5 hover:border-brand">
+            <h3 class="font-bold">{% translate "Create a new class" %}</h3>
+            <p class="mt-1 text-body">{% translate "Open a class to bring learners together." %}</p>
+        </a>
 
-            <div class="mt-6 grid gap-4 md:grid-cols-2">
-                <a href="#" class="rounded-2xl border border-default p-5 hover:border-brand">
-                    <h3 class="font-bold">{% translate "Create a new class" %}</h3>
-                    <p class="mt-1 text-body">{% translate "Open a class to bring learners together." %}</p>
-                </a>
-
-                <a href="#" class="rounded-2xl border border-default p-5 hover:border-brand">
-                    <h3 class="font-bold">{% translate "Create a game" %}</h3>
-                    <p class="mt-1 text-body">{% translate "Build a game from questions and tasks." %}</p>
-                </a>
-            </div>
-        </section>
-    </main>
-</div>
-{% endblock %}
+        <a href="#" class="rounded-2xl border border-default p-5 hover:border-brand">
+            <h3 class="font-bold">{% translate "Create a game" %}</h3>
+            <p class="mt-1 text-body">{% translate "Build a game from questions and tasks." %}</p>
+        </a>
+    </div>
+</section>
+{% endblock teacher_layout %}
 
 
 {% block js %}

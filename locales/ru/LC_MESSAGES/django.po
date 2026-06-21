@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 02:36+0500\n"
+"POT-Creation-Date: 2026-06-21 19:38+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,62 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/dashboard/teacher/forms/account.py:11 core/admin/account.py:136
+#: core/models/account.py:22
+msgid "Avatar"
+msgstr "Аватар"
+
+#: apps/dashboard/teacher/forms/account.py:28 apps/main/forms/auth.py:44
+#: core/models/account.py:90 core/models/education.py:11
+#: core/models/education.py:22 ui/templates/app/auth/register/teacher.html:156
+#: ui/templates/app/dashboard/teacher/account/edit.html:155
+#: ui/templates/app/dashboard/teacher/account/profile.html:64
+msgid "City"
+msgstr "Город"
+
+#: apps/dashboard/teacher/forms/account.py:31 apps/main/forms/auth.py:47
+#: ui/templates/app/dashboard/teacher/account/edit.html:163
+msgid "Select city"
+msgstr "Выберите город"
+
+#: apps/dashboard/teacher/forms/account.py:34 apps/main/forms/auth.py:50
+#: core/models/account.py:95 core/models/education.py:28
+#: ui/templates/app/auth/register/teacher.html:181
+#: ui/templates/app/dashboard/teacher/account/edit.html:176
+#: ui/templates/app/dashboard/teacher/account/profile.html:68
+msgid "School"
+msgstr "Школа"
+
+#: apps/dashboard/teacher/forms/account.py:37 apps/main/forms/auth.py:53
+#: ui/templates/app/dashboard/teacher/account/edit.html:184
+msgid "Select school"
+msgstr "Выберите школу"
+
+#: apps/dashboard/teacher/forms/account.py:59
+#: ui/templates/app/dashboard/teacher/account/security.html:151
+msgid "Confirm with your password"
+msgstr "Подтвердите паролем"
+
+#: apps/dashboard/teacher/forms/account.py:71
+msgid "Incorrect password."
+msgstr "Неверный пароль."
+
+#: apps/dashboard/teacher/views/account.py:34
+msgid "Avatar removed."
+msgstr "Аватар удалён."
+
+#: apps/dashboard/teacher/views/account.py:45
+msgid "Profile has been updated."
+msgstr "Профиль обновлён."
+
+#: apps/dashboard/teacher/views/account.py:76
+msgid "Password has been changed."
+msgstr "Пароль изменён."
+
+#: apps/dashboard/teacher/views/account.py:87
+msgid "Your account has been deactivated."
+msgstr "Ваш аккаунт деактивирован."
 
 #: apps/main/forms/auth.py:12 ui/templates/app/auth/login/page.html:27
 msgid "Email or username"
@@ -32,17 +88,20 @@ msgstr "Пароль"
 #: apps/main/forms/auth.py:17 ui/templates/app/auth/register/learner.html:49
 #: ui/templates/app/auth/register/teacher.html:243
 #: ui/templates/app/auth/register/teacher.html:252
+#: ui/templates/app/dashboard/teacher/account/edit.html:70
 msgid "First name"
 msgstr "Имя"
 
 #: apps/main/forms/auth.py:18 ui/templates/app/auth/register/learner.html:67
 #: ui/templates/app/auth/register/teacher.html:263
 #: ui/templates/app/auth/register/teacher.html:272
+#: ui/templates/app/dashboard/teacher/account/edit.html:85
 msgid "Last name"
 msgstr "Фамилия"
 
 #: apps/main/forms/auth.py:19 ui/templates/app/auth/register/learner.html:29
 #: ui/templates/app/auth/register/teacher.html:222
+#: ui/templates/app/dashboard/teacher/account/profile.html:56
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -53,25 +112,6 @@ msgstr "Я согласен с условиями"
 #: apps/main/forms/auth.py:33
 msgid "User with this email already exists."
 msgstr "Пользователь с таким email уже существует."
-
-#: apps/main/forms/auth.py:44 core/models/account.py:90
-#: core/models/education.py:11 core/models/education.py:22
-#: ui/templates/app/auth/register/teacher.html:156
-msgid "City"
-msgstr "Город"
-
-#: apps/main/forms/auth.py:47
-msgid "Select city"
-msgstr "Выберите город"
-
-#: apps/main/forms/auth.py:50 core/models/account.py:95
-#: core/models/education.py:28 ui/templates/app/auth/register/teacher.html:181
-msgid "School"
-msgstr "Школа"
-
-#: apps/main/forms/auth.py:53
-msgid "Select school"
-msgstr "Выберите школу"
 
 #: apps/main/services/email.py:8
 #: ui/templates/app/auth/email/registration_success.html:7
@@ -111,6 +151,7 @@ msgid "Administration"
 msgstr "Администрирование"
 
 #: config/settings.py:179 config/settings.py:218
+#: ui/templates/layouts/teacher_layout.html:45
 msgid "Dashboard"
 msgstr "Панель управления"
 
@@ -183,10 +224,6 @@ msgstr "Создать пользователя"
 msgid "Password change link"
 msgstr "Ссылка для смены пароля"
 
-#: core/admin/account.py:136 core/models/account.py:22
-msgid "Avatar"
-msgstr "Аватар"
-
 #: core/admin/account.py:137
 msgid "Password change"
 msgstr "Смена пароля"
@@ -230,6 +267,7 @@ msgstr "Администратор"
 
 #: core/models/account.py:13 core/models/account.py:106
 #: ui/templates/app/auth/register/page.html:24
+#: ui/templates/app/dashboard/teacher/account/profile.html:37
 msgid "Teacher"
 msgstr "Учитель"
 
@@ -238,6 +276,7 @@ msgid "Learner"
 msgstr "Ученик"
 
 #: core/models/account.py:16
+#: ui/templates/app/dashboard/teacher/account/edit.html:102
 msgid "Middle name"
 msgstr "Отчество"
 
@@ -250,6 +289,8 @@ msgid "Shows the user's role in the system."
 msgstr "Показывает роль пользователя в системе."
 
 #: core/models/account.py:21
+#: ui/templates/app/dashboard/teacher/account/edit.html:116
+#: ui/templates/app/dashboard/teacher/account/profile.html:60
 msgid "Phone"
 msgstr "Телефон"
 
@@ -319,6 +360,7 @@ msgid "Regular"
 msgstr "Обычный"
 
 #: core/models/account.py:83
+#: ui/templates/app/dashboard/teacher/account/profile.html:41
 msgid "Partner"
 msgstr "Партнёр"
 
@@ -624,7 +666,7 @@ msgid "Personal learning and classroom tasks"
 msgstr "Индивидуальное обучение и задания класса"
 
 #: ui/templates/app/dashboard/learner/page.html:16
-#: ui/templates/app/dashboard/teacher/page.html:16
+#: ui/templates/layouts/teacher_layout.html:137
 msgid "Sign out"
 msgstr "Выйти"
 
@@ -660,60 +702,187 @@ msgstr "Последняя активность"
 msgid "No activity yet. Results will appear here once you start learning."
 msgstr "Пока нет активности. Результаты появятся здесь после начала обучения."
 
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:13
+#: ui/templates/app/dashboard/teacher/account/profile.html:7
+#: ui/templates/layouts/teacher_layout.html:126
+msgid "Profile"
+msgstr "Профиль"
+
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:26
+#: ui/templates/app/dashboard/teacher/account/edit.html:4
+#: ui/templates/app/dashboard/teacher/account/edit.html:7
+#: ui/templates/app/dashboard/teacher/account/profile.html:49
+msgid "Edit profile"
+msgstr "Редактировать профиль"
+
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:39
+#: ui/templates/app/dashboard/teacher/account/settings.html:4
+#: ui/templates/app/dashboard/teacher/account/settings.html:7
+msgid "Settings"
+msgstr "Настройки"
+
+#: ui/templates/app/dashboard/teacher/account/_tabs.html:52
+#: ui/templates/app/dashboard/teacher/account/security.html:4
+#: ui/templates/app/dashboard/teacher/account/security.html:7
+msgid "Security"
+msgstr "Безопасность"
+
+#: ui/templates/app/dashboard/teacher/account/edit.html:8
+msgid "Update your personal information"
+msgstr "Обновите личные данные"
+
+#: ui/templates/app/dashboard/teacher/account/edit.html:47
+msgid "Change photo"
+msgstr "Изменить фото"
+
+#: ui/templates/app/dashboard/teacher/account/edit.html:55
+msgid "Remove"
+msgstr "Удалить"
+
+#: ui/templates/app/dashboard/teacher/account/edit.html:59
+msgid "JPG or PNG, up to 5MB."
+msgstr "JPG или PNG, до 5 МБ."
+
+#: ui/templates/app/dashboard/teacher/account/edit.html:198
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+#: ui/templates/app/dashboard/teacher/account/profile.html:8
+msgid "Public information about the teacher"
+msgstr "Общедоступная информация об учителе"
+
+#: ui/templates/app/dashboard/teacher/account/profile.html:17
+msgid "Back to dashboard"
+msgstr "Вернуться к панели"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:8
+msgid "Manage your password and account access"
+msgstr "Управляйте паролем и доступом к аккаунту"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:15
+msgid "Change password"
+msgstr "Изменить пароль"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:16
+msgid "Use a strong password that you don't use elsewhere."
+msgstr "Используйте надёжный пароль, который вы не используете больше нигде."
+
+#: ui/templates/app/dashboard/teacher/account/security.html:24
+msgid "Current password"
+msgstr "Текущий пароль"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:51
+msgid "New password"
+msgstr "Новый пароль"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:81
+msgid "Confirm new password"
+msgstr "Повторите новый пароль"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:113
+msgid "Update password"
+msgstr "Обновить пароль"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:120
+msgid "Danger zone"
+msgstr "Опасная зона"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:121
+msgid ""
+"Deactivating your account will sign you out and block access until support "
+"restores it."
+msgstr ""
+"Деактивация аккаунта выйдет из системы и заблокирует доступ, пока поддержка "
+"не восстановит его."
+
+#: ui/templates/app/dashboard/teacher/account/security.html:129
+msgid "Deactivate account"
+msgstr "Деактивировать аккаунт"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:140
+msgid "Deactivate your account?"
+msgstr "Деактивировать аккаунт?"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:142
+msgid ""
+"You will be signed out immediately and won't be able to log back in until "
+"support reactivates your account."
+msgstr ""
+"Вы будете немедленно выведены из системы и не сможете войти, пока поддержка "
+"не восстановит аккаунт."
+
+#: ui/templates/app/dashboard/teacher/account/security.html:172
+msgid "Cancel"
+msgstr "Отмена"
+
+#: ui/templates/app/dashboard/teacher/account/security.html:178
+msgid "Yes, deactivate"
+msgstr "Да, деактивировать"
+
+#: ui/templates/app/dashboard/teacher/account/settings.html:8
+msgid "Manage your interface preferences"
+msgstr "Управляйте настройками интерфейса"
+
+#: ui/templates/app/dashboard/teacher/account/settings.html:15
+msgid "Language"
+msgstr "Язык"
+
+#: ui/templates/app/dashboard/teacher/account/settings.html:16
+msgid "Choose the interface language."
+msgstr "Выберите язык интерфейса."
+
 #: ui/templates/app/dashboard/teacher/page.html:4
-#: ui/templates/app/dashboard/teacher/page.html:11
 msgid "Teacher dashboard"
 msgstr "Панель учителя"
 
-#: ui/templates/app/dashboard/teacher/page.html:12
-msgid "Manage classes, games and learners"
-msgstr "Управление классами, играми и учениками"
-
-#: ui/templates/app/dashboard/teacher/page.html:27
+#: ui/templates/app/dashboard/teacher/page.html:14
+#: ui/templates/layouts/teacher_layout.html:55
 msgid "Classes"
 msgstr "Классы"
 
-#: ui/templates/app/dashboard/teacher/page.html:28
+#: ui/templates/app/dashboard/teacher/page.html:15
 msgid "Add learners to classes and track the learning process."
 msgstr "Добавляйте учеников в классы и следите за процессом обучения."
 
-#: ui/templates/app/dashboard/teacher/page.html:35
+#: ui/templates/app/dashboard/teacher/page.html:22
+#: ui/templates/layouts/teacher_layout.html:63
 msgid "Game tasks"
 msgstr "Игровые задания"
 
-#: ui/templates/app/dashboard/teacher/page.html:36
+#: ui/templates/app/dashboard/teacher/page.html:23
 msgid "Create interactive tasks in a Kahoot-like style."
 msgstr "Создавайте интерактивные задания в стиле Kahoot."
 
-#: ui/templates/app/dashboard/teacher/page.html:43
+#: ui/templates/app/dashboard/teacher/page.html:30
+#: ui/templates/layouts/teacher_layout.html:71
 msgid "Results"
 msgstr "Результаты"
 
-#: ui/templates/app/dashboard/teacher/page.html:44
+#: ui/templates/app/dashboard/teacher/page.html:31
 msgid "View learners' progress and task results."
 msgstr "Просматривайте прогресс учеников и результаты заданий."
 
-#: ui/templates/app/dashboard/teacher/page.html:51
+#: ui/templates/app/dashboard/teacher/page.html:38
 msgid "Quick actions"
 msgstr "Быстрые действия"
 
-#: ui/templates/app/dashboard/teacher/page.html:52
+#: ui/templates/app/dashboard/teacher/page.html:39
 msgid "Key actions to get started"
 msgstr "Основные действия для начала работы"
 
-#: ui/templates/app/dashboard/teacher/page.html:58
+#: ui/templates/app/dashboard/teacher/page.html:45
 msgid "Create a new class"
 msgstr "Создать новый класс"
 
-#: ui/templates/app/dashboard/teacher/page.html:59
+#: ui/templates/app/dashboard/teacher/page.html:46
 msgid "Open a class to bring learners together."
 msgstr "Откройте класс, чтобы объединить учеников."
 
-#: ui/templates/app/dashboard/teacher/page.html:63
+#: ui/templates/app/dashboard/teacher/page.html:50
 msgid "Create a game"
 msgstr "Создать игру"
 
-#: ui/templates/app/dashboard/teacher/page.html:64
+#: ui/templates/app/dashboard/teacher/page.html:51
 msgid "Build a game from questions and tasks."
 msgstr "Создавайте игру из вопросов и заданий."
 
@@ -726,14 +895,16 @@ msgstr ""
 msgid "I already have an account"
 msgstr "У меня уже есть аккаунт"
 
-#~ msgid "Сіз аккаунтыңызға сәтті кірдіңіз."
-#~ msgstr "Вы успешно вошли в аккаунт."
+#: ui/templates/layouts/teacher_layout.html:49
+msgid "Teaching"
+msgstr "Преподавание"
 
-#~ msgid "Сіз жүйеден шықтыңыз."
-#~ msgstr "Вы вышли из системы."
+#: ui/templates/layouts/teacher_layout.html:57
+#: ui/templates/layouts/teacher_layout.html:65
+#: ui/templates/layouts/teacher_layout.html:73
+msgid "Soon"
+msgstr "Скоро"
 
-#~ msgid "Аккаунт сәтті құрылды."
-#~ msgstr "Аккаунт успешно создан."
-
-#~ msgid "Мұғалім аккаунты сәтті құрылды."
-#~ msgstr "Аккаунт учителя успешно создан."
+#: ui/templates/layouts/teacher_layout.html:130
+msgid "Account settings"
+msgstr "Настройки аккаунта"

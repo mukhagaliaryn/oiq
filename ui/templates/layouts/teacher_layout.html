@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+
+{% block base %}
+<div x-data="{ sidebarOpen: false }" class="flex min-h-screen bg-neutral-secondary">
+    <!-- Sidebar backdrop (mobile) -->
+    <div
+        x-show="sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="fixed inset-0 z-40 bg-dark-backdrop/50 lg:hidden"
+        style="display:none"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-default bg-neutral-primary transition-transform duration-300 lg:translate-x-0"
+    >
+        <div class="flex items-center justify-between px-6 py-5">
+            <a href="{% url 'teacher:dashboard' %}" class="flex items-center gap-2 active:scale-90">
+                <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
+            </a>
+            <button
+                type="button"
+                @click="sidebarOpen = false"
+                class="rounded-xl p-2 hover:bg-neutral-secondary lg:hidden"
+            >
+                <i data-lucide="x" class="size-5"></i>
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-2">
+            <a
+                href="{% url 'teacher:dashboard' %}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
+                {% if request.resolver_match.url_name == 'dashboard' %}
+                    bg-brand-soft text-brand
+                {% else %}
+                    text-body hover:bg-neutral-secondary
+                {% endif %}"
+            >
+                <i data-lucide="layout-dashboard" class="size-5"></i>
+                {% translate "Dashboard" %}
+            </a>
+
+            <p class="px-4 pt-6 pb-2 text-xs font-medium uppercase tracking-wide text-body-subtle">
+                {% translate "Teaching" %}
+            </p>
+
+            <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
+                <span class="flex items-center gap-3">
+                    <i data-lucide="users" class="size-5"></i>
+                    {% translate "Classes" %}
+                </span>
+                <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
+            </span>
+
+            <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
+                <span class="flex items-center gap-3">
+                    <i data-lucide="gamepad-2" class="size-5"></i>
+                    {% translate "Game tasks" %}
+                </span>
+                <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
+            </span>
+
+            <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
+                <span class="flex items-center gap-3">
+                    <i data-lucide="bar-chart-3" class="size-5"></i>
+                    {% translate "Results" %}
+                </span>
+                <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
+            </span>
+        </nav>
+    </aside>
+
+    <!-- Main column -->
+    <div class="flex min-h-screen flex-1 flex-col lg:ml-72">
+        <header class="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-default bg-neutral-primary px-6 py-4">
+            <div class="flex items-center gap-3">
+                <button
+                    type="button"
+                    @click="sidebarOpen = true"
+                    class="rounded-xl p-2 hover:bg-neutral-secondary lg:hidden"
+                >
+                    <i data-lucide="menu" class="size-6"></i>
+                </button>
+
+                <div>
+                    {% block teacher_header %}{% endblock teacher_header %}
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <div
+                    x-data="{ open: false }"
+                    @keydown.escape.window="open = false"
+                    class="relative"
+                >
+                    <button
+                        type="button"
+                        @click="open = !open"
+                        class="flex items-center gap-2 rounded-full border border-default px-2 py-1.5 hover:bg-neutral-secondary"
+                    >
+                        {% if request.user.avatar %}
+                            <img src="{{ request.user.avatar.url }}" class="size-8 rounded-full object-cover" alt="{{ request.user.display_name }}">
+                        {% else %}
+                            <span class="flex size-8 items-center justify-center rounded-full bg-brand-soft font-bold text-brand">
+                                {{ request.user.display_name|first|upper }}
+                            </span>
+                        {% endif %}
+                        <span class="hidden font-medium md:inline">{{ request.user.display_name }}</span>
+                        <i data-lucide="chevron-down" class="size-4" :class="{ 'rotate-180': open }"></i>
+                    </button>
+
+                    <div
+                        id="account-menu"
+                        x-show="open"
+                        @click.away="open = false"
+                        x-transition.origin.top.right
+                        class="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+                        style="display:none"
+                    >
+                        <a href="{% url 'teacher:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                            <i data-lucide="user" class="size-4"></i>
+                            {% translate "Profile" %}
+                        </a>
+                        <a href="{% url 'teacher:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                            <i data-lucide="settings" class="size-4"></i>
+                            {% translate "Account settings" %}
+                        </a>
+
+                        <div class="my-2 border-t border-default"></div>
+
+                        <a href="{% url 'main:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
+                            <i data-lucide="log-out" class="size-4"></i>
+                            {% translate "Sign out" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 px-6 py-8">
+            <div class="mx-auto max-w-7xl">
+                {% block teacher_layout %}{% endblock teacher_layout %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock base %}

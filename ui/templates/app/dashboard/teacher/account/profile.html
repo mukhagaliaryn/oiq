@@ -1,0 +1,73 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n %}
+
+{% block title %}{{ profile_user.display_name }}{% endblock title %}
+
+{% block teacher_header %}
+    <h1 class="text-xl font-black">{% translate "Profile" %}</h1>
+    <p class="text-body">{% translate "Public information about the teacher" %}</p>
+{% endblock teacher_header %}
+
+{% block teacher_layout %}
+{% if is_own_profile %}
+    {% include "app/dashboard/teacher/account/_tabs.html" %}
+{% else %}
+    <a href="{% url 'teacher:dashboard' %}" class="mb-6 inline-flex items-center gap-2 text-body hover:text-body-subtle">
+        <i data-lucide="chevron-left" class="size-4"></i>
+        {% translate "Back to dashboard" %}
+    </a>
+{% endif %}
+
+<div class="rounded-3xl border border-default bg-neutral-primary p-6">
+    <div class="flex flex-wrap items-center gap-5">
+        {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" class="size-20 rounded-full object-cover" alt="{{ profile_user.display_name }}">
+        {% else %}
+            <span class="flex size-20 items-center justify-center rounded-full bg-brand-soft text-2xl font-bold text-brand">
+                {{ profile_user.display_name|first|upper }}
+            </span>
+        {% endif %}
+
+        <div>
+            <h1 class="text-2xl font-black">{{ profile_user.display_name }}</h1>
+            <p class="text-body">@{{ profile_user.username }}</p>
+
+            <div class="mt-2 flex flex-wrap gap-2">
+                <span class="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand">
+                    {% translate "Teacher" %}
+                </span>
+                {% if profile_user.teacher.is_partner %}
+                    <span class="rounded-full bg-warning-soft px-3 py-1 text-xs font-medium text-warning">
+                        {% translate "Partner" %}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if is_own_profile %}
+            <a href="{% url 'teacher:account-edit' %}" class="ml-auto rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
+                {% translate "Edit profile" %}
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="mt-8 grid gap-5 border-t border-default pt-6 md:grid-cols-2">
+        <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "Email" %}</p>
+            <p class="mt-1 font-medium">{{ profile_user.email|default:"—" }}</p>
+        </div>
+        <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "Phone" %}</p>
+            <p class="mt-1 font-medium">{{ profile_user.phone|default:"—" }}</p>
+        </div>
+        <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "City" %}</p>
+            <p class="mt-1 font-medium">{{ profile_user.teacher.city|default:"—" }}</p>
+        </div>
+        <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "School" %}</p>
+            <p class="mt-1 font-medium">{{ profile_user.teacher.school|default:"—" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock teacher_layout %}

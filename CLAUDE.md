@@ -134,3 +134,25 @@ SVG-ні DOMParser арқылы парстайды, сондықтан Vite-ті
 `USE_I18N = True`, `LANGUAGES = (kk, ru, en)`, `LOCALE_PATHS = [BASE_DIR / 'locales']`,
 `django-modeltranslation` орнатылған — модель өрістерінің аудармаларын қажет болса
 `translation.py` файлдары арқылы тіркеу керек (`modeltranslation.translator.register`).
+
+Жаңа `{% translate '...' %}` / `gettext_lazy('...')` жолдарын `locales/kk/LC_MESSAGES/django.po` және
+`locales/ru/LC_MESSAGES/django.po` файлдарына қосу үшін:
+
+```bash
+python manage.py makemessages -l kk -l ru --no-obsolete --ignore=env/* --ignore=ui/static_src/*
+```
+
+`--ignore` флагтары міндетті: олар болмаса `makemessages` `env/` (виртуалды орта, Django/Click т.б.
+пакеттер) мен `ui/static_src/` (node_modules) ішін де сканерлеп, `.po`-ға мыңдаған бөгде жол қосып
+кетеді.
+
+`.po` файлдарды қолмен өзгерткеннен/толтырғаннан кейін (қазақ/орыс аудармасын жазу):
+
+```bash
+python manage.py compilemessages -l kk -l ru
+```
+
+**Ескерту:** `makemessages` жаңа жолды бұрынғы ұқсас аудармаға автоматты түрде сәйкестендіріп
+(`#, fuzzy` деп белгілеп) қоя береді — бұл көбіне **қате** аударма болады. Әр `makemessages`-тен
+кейін `.po` файлдағы `#, fuzzy` пен бос `msgstr ""` жолдарды тауып, дұрыс аудармамен ауыстырып,
+`fuzzy` белгісін алып тастаңыз — әйтпесе `compilemessages` қате аудармамен компиляция жасап кетеді.
