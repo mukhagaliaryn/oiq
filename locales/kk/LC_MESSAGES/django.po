@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-22 00:52+0500\n"
+"POT-Creation-Date: 2026-06-22 19:16+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -206,8 +206,7 @@ msgstr "Қалалар"
 msgid "Schools"
 msgstr "Мектептер"
 
-#: config/settings.py:262 core/models/content.py:13
-#: core/models/education.py:45
+#: config/settings.py:262 core/models/content.py:13 core/models/education.py:45
 msgid "Grades"
 msgstr "Сыныптар"
 
@@ -220,6 +219,8 @@ msgid "Question formats"
 msgstr "Сұрақ форматтары"
 
 #: config/settings.py:277 core/models/content.py:132
+#: ui/templates/app/dashboard/teacher/subject/detail.html:57
+#: ui/templates/app/dashboard/teacher/subject/detail.html:70
 msgid "Questions"
 msgstr "Сұрақтар"
 
@@ -423,34 +424,34 @@ msgstr "Мұқаба"
 
 #: core/models/content.py:16 core/models/content.py:39
 #: core/models/content.py:58
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:74
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:48
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:62
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:39
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:78
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:58
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:78
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:48
 msgid "Description"
 msgstr "Сипаттама"
 
 #: core/models/content.py:17 core/models/content.py:40
 #: core/models/content.py:59 core/models/content.py:77
 #: core/models/content.py:96 core/models/education.py:41
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:79
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:53
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:67
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:44
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:83
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:63
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:83
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:53
 msgid "Order"
 msgstr "Реті"
 
 #: core/models/content.py:36 core/models/education.py:44
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:68
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:42
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:72
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:52
 msgid "Grade"
 msgstr "Сынып"
 
 #: core/models/content.py:38 core/models/content.py:53
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:60
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:34
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:54
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:31
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:64
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:44
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:70
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:40
 msgid "Title"
 msgstr "Атауы"
 
@@ -567,8 +568,8 @@ msgid ""
 "Hello, <strong>%(user.display_name)s</strong>. You have successfully "
 "registered on the OIQ platform."
 msgstr ""
-"Сәлеметсіз бе, <strong>%(user.display_name)s</strong>. Сіз OIQ платформасына"
-" сәтті тіркелдіңіз."
+"Сәлеметсіз бе, <strong>%(user.display_name)s</strong>. Сіз OIQ платформасына "
+"сәтті тіркелдіңіз."
 
 #: ui/templates/app/auth/email/registration_success.html:37
 #: ui/templates/app/auth/email/registration_success.txt:5
@@ -685,10 +686,8 @@ msgid "Select a school"
 msgstr "Мектепті таңдаңыз"
 
 #: ui/templates/app/auth/register/teacher.html:228
-#, fuzzy
-#| msgid "Select a city"
 msgid "Select a subject"
-msgstr "Қаланы таңдаңыз"
+msgstr "Пәнді таңдаңыз"
 
 #: ui/templates/app/auth/register/teacher.html:247
 msgid "Continue"
@@ -858,8 +857,9 @@ msgstr ""
 "келтірмейінше қайта кіре алмайсыз."
 
 #: ui/templates/app/dashboard/teacher/account/security.html:172
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:85
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:73
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:89
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:89
+#: ui/templates/base.html:133
 msgid "Cancel"
 msgstr "Бас тарту"
 
@@ -939,38 +939,47 @@ msgstr "Сұрақтар мен тапсырмалардан ойын құрас
 msgid "General"
 msgstr "Жалпы"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:30
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:34
 msgid "Delete this chapter together with its topics?"
-msgstr ""
+msgstr "Бұл бөлімді оның тақырыптарымен бірге жоюды қалайсыз ба?"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:88
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:76
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:92
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:92
 msgid "Save"
 msgstr "Сақтау"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:7
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:15
 msgid "No chapters yet for this grade."
 msgstr "Бұл сынып бойынша әзірге бөлім жоқ."
 
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:18
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:58
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:27
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:68
 msgid "Add chapter"
 msgstr "Бөлім қосу"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:25
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:28
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:25
+msgid "Close"
+msgstr "Жабу"
+
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:22
 msgid "Delete this topic?"
-msgstr ""
+msgstr "Бұл тақырыпты жоюды қалайсыз ба?"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:38
-msgid "No description yet."
-msgstr "Әзірге сипаттама жоқ."
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:39
+msgid "questions"
+msgstr "сұрақ"
 
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:6
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:53
+msgid "No questions added yet."
+msgstr "Әзірге сұрақ қосылмаған."
+
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:13
 msgid "No topics yet."
 msgstr "Әзірге тақырып жоқ."
 
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:16
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:49
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:24
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:58
 msgid "Add topic"
 msgstr "Тақырып қосу"
 
@@ -978,12 +987,27 @@ msgstr "Тақырып қосу"
 msgid "Manage chapters and topics for your subject"
 msgstr "Пәніңіздің бөлімдері мен тақырыптарын басқарыңыз"
 
-#: ui/templates/app/dashboard/teacher/subject/detail.html:42
+#: ui/templates/app/dashboard/teacher/subject/detail.html:36
+msgid "chapters"
+msgstr "бөлім"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:40
+msgid "topics"
+msgstr "тақырып"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:44
+msgid "grades"
+msgstr "сынып"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:74
+msgid "Add question"
+msgstr "Сұрақ қосу"
+
+#: ui/templates/app/dashboard/teacher/subject/detail.html:100
 msgid ""
 "No grades are assigned to this subject yet. Ask an administrator to "
 "configure them."
-msgstr ""
-"Бұл пәнге әзірге сыныптар тағайындалмаған. Әкімшіден баптауды сұраңыз."
+msgstr "Бұл пәнге әзірге сыныптар тағайындалмаған. Әкімшіден баптауды сұраңыз."
 
 #: ui/templates/app/page.html:27
 msgid "An interactive, gamified and visual education platform"
@@ -992,6 +1016,10 @@ msgstr "Интерактивті, геймификацияланған және 
 #: ui/templates/app/page.html:52
 msgid "I already have an account"
 msgstr "Менде аккаунт бар"
+
+#: ui/templates/base.html:140
+msgid "Delete"
+msgstr "Жою"
 
 #: ui/templates/layouts/teacher_layout.html:49
 msgid "Teaching"

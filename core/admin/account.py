@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import ModelAdmin, TabularInline, StackedInline
 from unfold.forms import UserCreationForm, AdminPasswordChangeForm
 from core.models import User, UserSession, Teacher
 
@@ -40,7 +40,7 @@ class UserSessionInline(TabularInline):
 
 
 # -------------- TeacherInline --------------
-class TeacherInline(TabularInline):
+class TeacherInline(StackedInline):
     model = Teacher
     extra = 0
     tab = True
@@ -85,7 +85,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         }),
         (_('Permissions'), {
             'classes': ('tab',),
-            'fields': ('is_staff', 'is_superuser', 'user_permissions'),
+            'fields': ('is_staff', 'is_superuser'),
         }),
         (_('Important dates'), {
             'classes': ('tab',),

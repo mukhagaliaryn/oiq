@@ -17,7 +17,7 @@ from core.utils.text import question_text_preview
 class ChapterInline(LinkedAdminMixin, TabularInline):
     model = Chapter
     extra = 0
-    fields = ('title', 'grade', 'order', 'detail_link')
+    fields = ('order', 'title', 'grade', 'detail_link')
     ordering = ('order',)
     tab = True
     readonly_fields = ('detail_link',)
@@ -51,7 +51,7 @@ class SubjectAdmin(BaseModelAdmin):
 # -------------- TopicInline --------------
 class TopicInline(LinkedAdminMixin, TabularInline):
     model = Topic
-    fields = ('title', 'order', 'detail_link')
+    fields = ('order', 'title', 'detail_link')
     extra = 0
     readonly_fields = ('detail_link',)
 

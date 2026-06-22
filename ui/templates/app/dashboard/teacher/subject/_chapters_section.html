@@ -1,5 +1,13 @@
 {% load i18n %}
-<div id="chapters-section" class="space-y-4">
+<div
+    id="chapters-section"
+    x-data="{
+        openChapterId: {% if editing_chapter_id %}{{ editing_chapter_id }}{% else %}null{% endif %},
+        editingChapterId: {% if editing_chapter_id %}{{ editing_chapter_id }}{% else %}null{% endif %},
+        addOpen: {% if show_chapter_form %}true{% else %}false{% endif %}
+    }"
+    class="space-y-4"
+>
     {% for chapter in chapters %}
         {% include "app/dashboard/teacher/subject/_chapter_item.html" with chapter=chapter %}
     {% empty %}
@@ -8,19 +16,21 @@
         </div>
     {% endfor %}
 
-    <div x-data="{ open: {% if show_chapter_form %}true{% else %}false{% endif %} }">
+    <div>
         <button
             type="button"
-            @click="open = !open"
+            @click="addOpen = !addOpen"
             class="flex items-center gap-2 rounded-2xl border border-dashed border-default px-5 py-3 font-medium text-body hover:border-brand hover:text-brand"
         >
-            <i data-lucide="plus" class="size-5"></i>
-            {% translate "Add chapter" %}
+            <i x-show="!addOpen" data-lucide="plus" class="size-5"></i>
+            <i x-show="addOpen" data-lucide="x" class="size-5"></i>
+            <span x-show="!addOpen">{% translate "Add chapter" %}</span>
+            <span x-show="addOpen">{% translate "Close" %}</span>
         </button>
 
         <form
             id="chapter-create-form"
-            x-show="open"
+            x-show="addOpen"
             x-cloak
             hx-post="{% url 'teacher:chapter-create' subject.pk %}?grade={{ selected_grade.code }}"
             hx-target="#chapters-section"

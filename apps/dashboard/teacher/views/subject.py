@@ -1,8 +1,8 @@
-from django.db.models import Prefetch, Q
+from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404, render
 
 from apps.dashboard.teacher.forms.subject import ChapterForm, TopicForm
-from core.models import Chapter, Subject, Topic
+from core.models import Chapter, Question, Subject, Topic
 from core.utils.decorators import partner_teacher_required
 
 
@@ -35,6 +35,17 @@ def _selected_grade(request, subject):
     return grades.filter(code=request.GET.get('grade')).first() or grades.first()
 
 
+def _attach_topic_stats(topic):
+    questions = topic.questions.filter(is_active=True)
+    counts_by_level = dict(questions.values_list('level').annotate(count=Count('id')))
+
+    topic.level_breakdown = [
+        (label, counts_by_level.get(value, 0)) for value, label in Question.Level.choices
+    ]
+    topic.questions_count = sum(counts_by_level.values())
+    topic.formats = list(questions.values_list('format__name', flat=True).distinct())
+
+
 def _chapters_section_context(request, subject, selected_grade, editing_chapter_id=None, chapter_edit_form=None):
     chapters = list(
         subject.chapters
@@ -56,6 +67,7 @@ def _chapters_section_context(request, subject, selected_grade, editing_chapter_
 
         for topic in chapter.topics.all():
             topic.edit_form = TopicForm(instance=topic, chapter=chapter, prefix=f'topic-{topic.pk}')
+            _attach_topic_stats(topic)
 
     return {
         'subject': subject,
@@ -74,6 +86,7 @@ def _topics_section_context(chapter, editing_topic_id=None, topic_edit_form=None
             topic.edit_form = topic_edit_form
         else:
             topic.edit_form = TopicForm(instance=topic, chapter=chapter, prefix=f'topic-{topic.pk}')
+        _attach_topic_stats(topic)
 
     return {
         'chapter': chapter,
@@ -91,9 +104,13 @@ def subject_detail_view(request, pk):
     subject = _owned_subject(request, pk)
     grades = subject.grades.filter(is_active=True).order_by('order')
     selected_grade = _selected_grade(request, subject)
+    chapters_qs = subject.chapters.filter(is_active=True)
 
     context = _chapters_section_context(request, subject, selected_grade)
     context['grades'] = grades
+    context['chapters_count'] = chapters_qs.count()
+    context['topics_count'] = Topic.objects.filter(chapter__in=chapters_qs, is_active=True).count()
+    context['grades_count'] = grades.count()
 
     return render(request, 'app/dashboard/teacher/subject/detail.html', context)
 

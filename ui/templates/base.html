@@ -50,7 +50,7 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="opacity-100 translate-y-0"
                     x-transition:leave-end="opacity-0 translate-y-4"
-                    class="rounded-2xl border bg-neutral-primary p-4 shadow-md"
+                    class="rounded-2xl border border-default bg-neutral-secondary p-4"
                     :class="{
                         'toast-success': message.tag.includes('success'),
                         'toast-error': message.tag.includes('error'),
@@ -81,7 +81,7 @@
                         <button
                             type="button"
                             @click="message.show = false"
-                            class="hover:opacity-50 cursor-pointer"
+                            class="hover:opacity-50 cursor-pointer text-body"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
@@ -95,6 +95,54 @@
         </div>
     {% endif %}
 
+    <div
+        x-data="{
+            open: false,
+            message: '',
+            issueRequest: null
+        }"
+        x-init="
+            document.body.addEventListener('htmx:confirm', (event) => {
+                if (!event.detail.elt.hasAttribute('hx-confirm')) return;
+                event.preventDefault();
+                message = event.detail.question;
+                issueRequest = event.detail.issueRequest;
+                open = true;
+            });
+        "
+        x-show="open"
+        x-cloak
+        x-transition.opacity
+        class="fixed inset-0 z-60 flex items-center justify-center bg-dark-backdrop/50 p-4"
+        style="display:none"
+    >
+        <div @click.away="open = false" class="w-full max-w-md rounded-3xl bg-neutral-primary p-6">
+            <div class="flex items-center gap-3">
+                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-danger-soft text-danger">
+                    <i data-lucide="trash-2" class="size-5"></i>
+                </span>
+                <p class="font-bold" x-text="message"></p>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-2">
+                <button
+                    type="button"
+                    @click="open = false"
+                    class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary"
+                >
+                    {% translate "Cancel" %}
+                </button>
+                <button
+                    type="button"
+                    @click="open = false; issueRequest(true)"
+                    class="rounded-full bg-danger px-5 py-2.5 font-medium text-neutral-primary hover:bg-danger-strong"
+                >
+                    {% translate "Delete" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
     <main>
         {% block base %}{% endblock base %}
     </main>
@@ -103,6 +151,10 @@
 
     <script>
         lucide.createIcons();
+
+        // Alpine (x-show/:class) manages "style"/"class" itself; htmx's attribute
+        // settling would otherwise overwrite those right after a swap and undo it.
+        htmx.config.attributesToSettle = [];
 
         document.body.addEventListener('htmx:configRequest', function (event) {
             const match = document.cookie.match(/(^|;\s*)csrftoken=([^;]*)/);

@@ -108,17 +108,17 @@
 }
 
 .toast-success {
-  @apply border border-success-medium text-success bg-success-soft;
+  @apply border text-success;
 }
 
 .toast-error {
-  @apply border border-danger-medium text-danger bg-danger-soft;
+  @apply border text-danger;
 }
 
 .toast-info {
-  @apply border border-amber-500 text-amber-500 bg-amber-50;
+  @apply border text-amber-500;
 }
 
 .toast-warning {
-  @apply border border-danger-medium text-danger bg-danger-soft;
+  @apply border text-warning;
 }

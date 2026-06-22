@@ -1,24 +1,33 @@
 {% load i18n %}
-<div id="topics-section-{{ chapter.id }}" class="space-y-2 pl-4">
+<div
+    id="topics-section-{{ chapter.id }}"
+    x-data="{
+        editingTopicId: {% if editing_topic_id %}{{ editing_topic_id }}{% else %}null{% endif %},
+        addOpen: {% if show_topic_form %}true{% else %}false{% endif %}
+    }"
+    class="space-y-2 pl-4"
+>
     {% for topic in topics %}
         {% include "app/dashboard/teacher/subject/_topic_item.html" with topic=topic %}
     {% empty %}
         <p class="text-body-subtle">{% translate "No topics yet." %}</p>
     {% endfor %}
 
-    <div x-data="{ open: {% if show_topic_form %}true{% else %}false{% endif %} }">
+    <div>
         <button
             type="button"
-            @click="open = !open"
+            @click="addOpen = !addOpen"
             class="flex items-center gap-2 rounded-2xl border border-dashed border-default px-4 py-2.5 font-medium text-body hover:border-brand hover:text-brand"
         >
-            <i data-lucide="plus" class="size-4"></i>
-            {% translate "Add topic" %}
+            <i x-show="!addOpen" data-lucide="plus" class="size-4"></i>
+            <i x-show="addOpen" data-lucide="x" class="size-4"></i>
+            <span x-show="!addOpen">{% translate "Add topic" %}</span>
+            <span x-show="addOpen">{% translate "Close" %}</span>
         </button>
 
         <form
             id="topic-create-form-{{ chapter.id }}"
-            x-show="open"
+            x-show="addOpen"
             x-cloak
             hx-post="{% url 'teacher:topic-create' chapter.pk %}"
             hx-target="#topics-section-{{ chapter.id }}"
