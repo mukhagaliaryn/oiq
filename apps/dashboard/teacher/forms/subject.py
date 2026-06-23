@@ -54,7 +54,7 @@ class TopicForm(forms.ModelForm):
 
     def clean_title(self):
         title = self.cleaned_data['title']
-        qs = Topic.objects.filter(chapter=self.chapter, title=title)
+        qs = Topic.objects.filter(chapter=self.chapter, title=title, is_active=True)
 
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)

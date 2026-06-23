@@ -62,7 +62,13 @@ class Topic(BaseModel):
         verbose_name = _('Topic')
         verbose_name_plural = _('Topics')
         ordering = ('order', )
-        unique_together = ('chapter', 'title')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['chapter', 'title'],
+                condition=models.Q(is_active=True),
+                name='unique_active_topic_title_per_chapter',
+            )
+        ]
 
     def __str__(self):
         return self.title

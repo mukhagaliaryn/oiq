@@ -51,7 +51,7 @@ class SubjectAdmin(BaseModelAdmin):
 # -------------- TopicInline --------------
 class TopicInline(LinkedAdminMixin, TabularInline):
     model = Topic
-    fields = ('order', 'title', 'detail_link')
+    fields = ('order', 'title', 'is_active', 'detail_link')
     extra = 0
     readonly_fields = ('detail_link',)
 
