@@ -1,0 +1,18 @@
+{% load i18n %}
+<div class="flex items-start gap-3 rounded-2xl border border-default p-4" data-option-row>
+    {{ option_form.id }}
+    <div class="flex-1 space-y-2">
+        {{ option_form.answer }}
+        {% for error in option_form.answer.errors %}
+            <span class="block text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <label class="flex items-center gap-2 pt-3 font-medium whitespace-nowrap">
+        {{ option_form.is_correct }}
+        {% translate "Correct" %}
+    </label>
+    <button type="button" data-remove-option class="rounded-lg p-2 pt-3 text-danger hover:bg-danger-soft">
+        <i data-lucide="trash-2" class="size-4"></i>
+    </button>
+    <span class="hidden">{{ option_form.DELETE }}</span>
+</div>

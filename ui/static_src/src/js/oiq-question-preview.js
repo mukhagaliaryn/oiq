@@ -22,6 +22,18 @@ function renderMathTex(element) {
     }
 }
 
+function renderMathInside(root) {
+    root.querySelectorAll(".math-tex").forEach(renderMathTex);
+}
+
+window.OIQRenderMath = renderMathInside;
+
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".math-tex").forEach(renderMathTex);
+    renderMathInside(document);
+});
+
+// htmx swap-тан кейін келген жаңа контентте (мыс. chapter/topic/question
+// мәтінінде) де формулалар рендерленуі үшін.
+document.body.addEventListener("htmx:afterSwap", function (event) {
+    renderMathInside(event.target);
 });

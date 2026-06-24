@@ -1,0 +1,90 @@
+{% with current_value=field.value|default:'' %}
+<div
+    {% if not field.field.disabled %}
+    x-data="{
+        open: false,
+        value: '{{ current_value|escapejs }}',
+        options: [
+            {% for value, label in field.field.choices %}
+                { value: '{{ value|default_if_none:''|escapejs }}', label: '{{ label|escapejs }}' }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        get label() {
+            const found = this.options.find((option) => String(option.value) === String(this.value));
+            return found ? found.label : '';
+        },
+    }"
+    @keydown.escape.window="open = false"
+    {% endif %}
+    class="relative"
+>
+    <button
+        type="button"
+        {% if field.field.disabled %}
+        disabled
+        class="flex w-full items-center justify-between gap-2 rounded-full border border-default bg-neutral-tertiary px-6 py-3 text-left text-body-subtle"
+        {% else %}
+        @click="open = !open"
+        class="flex w-full items-center justify-between gap-2 rounded-full border border-default bg-neutral-primary px-6 py-3 text-left outline-none transition focus:ring-2 focus:ring-brand"
+        {% endif %}
+    >
+        {% if field.field.disabled %}
+            <span class="truncate">
+                {% for value, label in field.field.choices %}
+                    {% if value|stringformat:"s" == current_value|stringformat:"s" %}{{ label }}{% endif %}
+                {% endfor %}
+            </span>
+        {% else %}
+            <span class="truncate" x-text="label"></span>
+        {% endif %}
+        {% if not field.field.disabled %}
+            <i data-lucide="chevron-down" class="size-4 shrink-0 text-body-subtle transition" :class="{ 'rotate-180': open }"></i>
+        {% endif %}
+    </button>
+
+    {% if not field.field.disabled %}
+        <div
+            x-show="open"
+            x-cloak
+            @click.away="open = false"
+            x-transition.origin.top
+            class="absolute left-0 right-0 z-20 mt-2 max-h-64 overflow-y-auto rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+        >
+            <template x-for="option in options" :key="option.value">
+                <button
+                    type="button"
+                    @click="
+                        value = option.value;
+                        $refs['{{ field.html_name }}'].value = option.value;
+                        $refs['{{ field.html_name }}'].dispatchEvent(new Event('change', { bubbles: true }));
+                        open = false;
+                    "
+                    class="block w-full rounded-lg px-4 py-2.5 text-left text-normal transition hover:bg-neutral-secondary"
+                    :class="{ 'bg-brand-soft text-brand': String(value) === String(option.value) }"
+                    x-text="option.label"
+                ></button>
+            </template>
+        </div>
+    {% endif %}
+
+    <select
+        {% if not field.field.disabled %}x-ref="{{ field.html_name }}"{% endif %}
+        name="{{ field.html_name }}"
+        id="{{ field.id_for_label }}"
+        class="hidden"
+        {% if field.field.disabled %}disabled{% endif %}
+        {% if hx_get %}
+            hx-get="{{ hx_get }}"
+            hx-trigger="change"
+            hx-target="{{ hx_target|default:'this' }}"
+            hx-swap="{{ hx_swap|default:'outerHTML' }}"
+            {% if hx_push_url %}hx-push-url="true"{% endif %}
+            {% if hx_include %}hx-include="{{ hx_include }}"{% endif %}
+        {% endif %}
+    >
+        {% for value, label in field.field.choices %}
+            <option value="{{ value }}" {% if value|stringformat:"s" == current_value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endwith %}

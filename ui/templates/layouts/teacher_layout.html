@@ -18,25 +18,25 @@
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-default bg-neutral-primary transition-transform duration-300 lg:translate-x-0"
     >
-        <div class="flex items-center justify-between px-6 py-5">
+        <div class="flex items-center justify-between h-16 px-4 border-b border-default">
             <a href="{% url 'teacher:dashboard' %}" class="flex items-center gap-2 active:scale-90">
                 <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
             </a>
             <button
                 type="button"
                 @click="sidebarOpen = false"
-                class="rounded-xl p-2 hover:bg-neutral-secondary lg:hidden"
+                class="rounded-xl p-2 cursor-pointer hover:bg-neutral-secondary lg:hidden"
             >
                 <i data-lucide="x" class="size-5"></i>
             </button>
         </div>
 
-        <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-2">
+        <nav class="flex-1 space-y-1 overflow-y-auto p-2">
             <a
                 href="{% url 'teacher:dashboard' %}"
                 class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
                 {% if request.resolver_match.url_name == 'dashboard' %}
-                    bg-brand-soft text-brand
+                    bg-brand text-neutral-primary
                 {% else %}
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
@@ -45,26 +45,29 @@
                 {% translate "Dashboard" %}
             </a>
 
-            <p class="px-4 pt-6 pb-2 text-xs font-medium uppercase tracking-wide text-body-subtle">
-                {% translate "Teaching" %}
-            </p>
+            <div class="">
+                <p class="px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-wide text-body-subtle">
+                    {% translate "Subjects" %}
+                </p>
 
-            {% if request.user.teacher.is_partner and request.user.teacher.subject %}
-                <a
-                    href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
-                    class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
-                    {% if request.resolver_match.url_name == 'subject-detail' %}
-                        bg-brand-soft text-brand
-                    {% else %}
-                        text-body hover:bg-neutral-secondary
-                    {% endif %}"
-                >
-                    <i data-lucide="book-open" class="size-5"></i>
-                    {{ request.user.teacher.subject.name }}
-                </a>
-            {% endif %}
+                {% if request.user.teacher.is_partner and request.user.teacher.subject %}
+                    <a
+                        href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
+                        class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
+                        {% if request.resolver_match.url_name == 'subject-detail' %}
+                            bg-brand text-neutral-primary
+                        {% else %}
+                            text-body hover:bg-neutral-secondary
+                        {% endif %}"
+                    >
+                        <i data-lucide="book-open" class="size-5"></i>
+                        {{ request.user.teacher.subject.name }}
+                    </a>
+                {% endif %}
+            </div>
 
-            <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
+
+            <!-- <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
                 <span class="flex items-center gap-3">
                     <i data-lucide="users" class="size-5"></i>
                     {% translate "Classes" %}
@@ -86,23 +89,23 @@
                     {% translate "Results" %}
                 </span>
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
-            </span>
+            </span> -->
         </nav>
     </aside>
 
     <!-- Main column -->
     <div class="flex min-h-screen flex-1 flex-col lg:ml-72">
-        <header class="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-default bg-neutral-primary px-6 py-4">
+        <header class="sticky top-0 z-30 flex items-center justify-between h-16 gap-4 border-b border-default bg-neutral-primary px-4">
             <div class="flex items-center gap-3">
                 <button
                     type="button"
                     @click="sidebarOpen = true"
-                    class="rounded-xl p-2 hover:bg-neutral-secondary lg:hidden"
+                    class="rounded-xl p-2 cursor-pointer hover:bg-neutral-secondary lg:hidden"
                 >
                     <i data-lucide="menu" class="size-6"></i>
                 </button>
 
-                <div>
+                <div class="hidden md:block">
                     {% block teacher_header %}{% endblock teacher_header %}
                 </div>
             </div>
@@ -134,7 +137,7 @@
                         x-show="open"
                         @click.away="open = false"
                         x-transition.origin.top.right
-                        class="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+                        class="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
                         style="display:none"
                     >
                         <a href="{% url 'teacher:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">

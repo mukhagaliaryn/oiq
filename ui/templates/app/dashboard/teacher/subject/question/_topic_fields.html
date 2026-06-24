@@ -1,0 +1,14 @@
+{% load i18n %}
+<div id="topic-fields" class="contents">
+    <div class="space-y-2">
+        <label class="block ml-6 font-medium">{% translate "Chapter" %}</label>
+        {% include "components/select.html" with field=chapter_field hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" hx_include="[name='grade']" %}
+    </div>
+    <div class="space-y-2">
+        <label class="block ml-6 font-medium">{% translate "Topic" %}</label>
+        {% include "components/select.html" with field=topic_field %}
+        {% for error in topic_field.errors %}
+            <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+</div>

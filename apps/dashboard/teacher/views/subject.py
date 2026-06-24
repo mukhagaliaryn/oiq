@@ -2,16 +2,9 @@ from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404, render
 
 from apps.dashboard.teacher.forms.subject import ChapterForm, TopicForm
-from core.models import Chapter, Question, Subject, Topic
+from apps.dashboard.teacher.views.common import owned_subject
+from core.models import Chapter, Question, Topic
 from core.utils.decorators import partner_teacher_required
-
-
-def _owned_subject(request, pk):
-    teacher = request.user.teacher
-    return get_object_or_404(
-        Subject.objects.filter(pk=teacher.subject_id, is_active=True),
-        pk=pk,
-    )
 
 
 def _owned_chapter(request, pk):
@@ -101,7 +94,7 @@ def _topics_section_context(chapter, editing_topic_id=None, topic_edit_form=None
 # -------------- subject detail --------------
 @partner_teacher_required
 def subject_detail_view(request, pk):
-    subject = _owned_subject(request, pk)
+    subject = owned_subject(request, pk)
     grades = subject.grades.filter(is_active=True).order_by('order')
     selected_grade = _selected_grade(request, subject)
     chapters_qs = subject.chapters.filter(is_active=True)
@@ -120,7 +113,7 @@ def subject_detail_view(request, pk):
 # -------------- chapter create --------------
 @partner_teacher_required
 def chapter_create_view(request, pk):
-    subject = _owned_subject(request, pk)
+    subject = owned_subject(request, pk)
     selected_grade = _selected_grade(request, subject)
     form = ChapterForm(request.POST, subject=subject, prefix='chapter-create')
 

@@ -17,7 +17,7 @@ from core.utils.text import question_text_preview
 class ChapterInline(LinkedAdminMixin, TabularInline):
     model = Chapter
     extra = 0
-    fields = ('order', 'title', 'grade', 'detail_link')
+    fields = ('order', 'title', 'grade', 'is_active', 'detail_link')
     ordering = ('order',)
     tab = True
     readonly_fields = ('detail_link',)
@@ -152,7 +152,7 @@ class OptionInline(TabularInline):
 # -------------- QuestionAdmin --------------
 @admin.register(Question)
 class QuestionAdmin(LinkedAdminMixin, BaseModelAdmin):
-    list_display = ('text_preview', 'topic', 'format', 'variant', 'level', 'time_limit', 'updated_at', 'is_active')
+    list_display = ('text_preview', 'topic', 'author', 'format', 'variant', 'level', 'time_limit', 'updated_at', 'is_active')
     search_fields = ('text', 'topic__name', 'format__name', 'variant__name')
     list_filter = ('topic', 'format', 'variant', 'level')
     form = QuestionAdminForm
@@ -164,7 +164,7 @@ class QuestionAdmin(LinkedAdminMixin, BaseModelAdmin):
             'fields': ('text', 'topic', 'admin_link')
         }),
         (_('Question settings'), {
-            'fields': ('format', 'variant', 'level', 'time_limit')
+            'fields': ('format', 'variant', 'level', 'time_limit', 'author')
         }),
     )
 

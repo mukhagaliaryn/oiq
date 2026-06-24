@@ -1,6 +1,11 @@
 from django import forms
 from django.urls import reverse_lazy
 
+INPUT_CLASS = (
+    'w-full rounded-full border border-default bg-neutral-primary px-6 py-3 '
+    'outline-none transition focus:ring-2 focus:ring-brand'
+)
+
 
 class RichTextTextarea(forms.Textarea):
     class Media:

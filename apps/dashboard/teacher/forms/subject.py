@@ -1,12 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from core.forms.base import RichTextTextarea
+from core.forms.base import INPUT_CLASS, RichTextTextarea
 from core.models import Chapter, Topic
-
-INPUT_CLASS = (
-    'w-full rounded-full border border-default bg-neutral-primary px-6 py-3 '
-    'outline-none transition focus:ring-2 focus:ring-brand'
-)
 
 
 class ChapterForm(forms.ModelForm):

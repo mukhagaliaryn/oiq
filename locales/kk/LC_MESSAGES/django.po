@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-22 19:16+0500\n"
+"POT-Creation-Date: 2026-06-24 11:25+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,10 +58,8 @@ msgstr "Пән"
 
 #: apps/dashboard/teacher/forms/account.py:43 apps/main/forms/auth.py:59
 #: ui/templates/app/dashboard/teacher/account/edit.html:203
-#, fuzzy
-#| msgid "Select city"
 msgid "Select subject"
-msgstr "Қаланы таңдаңыз"
+msgstr "Пәнді таңдаңыз"
 
 #: apps/dashboard/teacher/forms/account.py:65
 #: ui/templates/app/dashboard/teacher/account/security.html:151
@@ -72,11 +70,49 @@ msgstr "Құпия сөзіңізбен растаңыз"
 msgid "Incorrect password."
 msgstr "Құпия сөз қате."
 
-#: apps/dashboard/teacher/forms/subject.py:29
+#: apps/dashboard/teacher/forms/question.py:15
+msgid "All grades"
+msgstr "Барлық сыныптар"
+
+#: apps/dashboard/teacher/forms/question.py:16
+msgid "All chapters"
+msgstr "Барлық бөлімдер"
+
+#: apps/dashboard/teacher/forms/question.py:17
+msgid "All topics"
+msgstr "Барлық тақырыптар"
+
+#: apps/dashboard/teacher/forms/question.py:18
+msgid "All formats"
+msgstr "Барлық форматтар"
+
+#: apps/dashboard/teacher/forms/question.py:19
+msgid "All variants"
+msgstr "Барлық нұсқалар"
+
+#: apps/dashboard/teacher/forms/question.py:20
+msgid "Search"
+msgstr "Іздеу"
+
+#: apps/dashboard/teacher/forms/question.py:52
+msgid "Select grade"
+msgstr "Сыныпты таңдаңыз"
+
+#: apps/dashboard/teacher/forms/question.py:53
+#: apps/dashboard/teacher/views/question.py:210
+msgid "Select chapter"
+msgstr "Бөлімді таңдаңыз"
+
+#: apps/dashboard/teacher/forms/question.py:96
+#: apps/dashboard/teacher/views/question.py:183
+msgid "No variant"
+msgstr "Нұсқасы жоқ"
+
+#: apps/dashboard/teacher/forms/subject.py:24
 msgid "General (all grades)"
 msgstr "Жалпы (барлық сыныптар)"
 
-#: apps/dashboard/teacher/forms/subject.py:63
+#: apps/dashboard/teacher/forms/subject.py:58
 msgid "A topic with this title already exists in this chapter."
 msgstr "Бұл бөлімде осы атаумен тақырып бар."
 
@@ -95,6 +131,15 @@ msgstr "Құпия сөз өзгертілді."
 #: apps/dashboard/teacher/views/account.py:87
 msgid "Your account has been deactivated."
 msgstr "Аккаунтыңыз өшірілді."
+
+#: apps/dashboard/teacher/views/question.py:73
+msgid "Add at least two options and mark one of them as correct."
+msgstr ""
+"Кемінде екі жауап нұсқасын қосып, олардың біреуін дұрыс деп белгілеңіз."
+
+#: apps/dashboard/teacher/views/question.py:211
+msgid "Select topic"
+msgstr "Тақырыпты таңдаңыз"
 
 #: apps/main/forms/auth.py:12 ui/templates/app/auth/login/page.html:27
 msgid "Email or username"
@@ -214,13 +259,15 @@ msgstr "Сыныптар"
 msgid "Subjects"
 msgstr "Пәндер"
 
-#: config/settings.py:272 core/models/content.py:81
+#: config/settings.py:272 core/models/content.py:87
 msgid "Question formats"
 msgstr "Сұрақ форматтары"
 
-#: config/settings.py:277 core/models/content.py:132
+#: config/settings.py:277 core/models/content.py:142
 #: ui/templates/app/dashboard/teacher/subject/detail.html:57
 #: ui/templates/app/dashboard/teacher/subject/detail.html:70
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:4
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:11
 msgid "Questions"
 msgstr "Сұрақтар"
 
@@ -277,7 +324,7 @@ msgstr "Сұрақ мазмұны"
 msgid "Question settings"
 msgstr "Сұрақ баптаулары"
 
-#: core/admin/content.py:177 core/models/content.py:118
+#: core/admin/content.py:177 core/models/content.py:128
 msgid "Text"
 msgstr "Мәтін"
 
@@ -412,8 +459,8 @@ msgstr "Жаңартылған уақыты"
 msgid "Is active"
 msgstr "Белсенді"
 
-#: core/models/content.py:10 core/models/content.py:75
-#: core/models/content.py:94 core/models/education.py:8
+#: core/models/content.py:10 core/models/content.py:81
+#: core/models/content.py:100 core/models/education.py:8
 #: core/models/education.py:25 core/models/education.py:39
 msgid "Name"
 msgstr "Атауы"
@@ -432,8 +479,8 @@ msgid "Description"
 msgstr "Сипаттама"
 
 #: core/models/content.py:17 core/models/content.py:40
-#: core/models/content.py:59 core/models/content.py:77
-#: core/models/content.py:96 core/models/education.py:41
+#: core/models/content.py:59 core/models/content.py:83
+#: core/models/content.py:102 core/models/education.py:41
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:83
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:63
 #: ui/templates/app/dashboard/teacher/subject/_topic_item.html:83
@@ -444,6 +491,7 @@ msgstr "Реті"
 #: core/models/content.py:36 core/models/education.py:44
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:72
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:52
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:52
 msgid "Grade"
 msgstr "Сынып"
 
@@ -456,6 +504,7 @@ msgid "Title"
 msgstr "Атауы"
 
 #: core/models/content.py:43 core/models/content.py:56
+#: ui/templates/app/dashboard/teacher/subject/question/_topic_fields.html:4
 msgid "Chapter"
 msgstr "Тарау"
 
@@ -463,7 +512,8 @@ msgstr "Тарау"
 msgid "Chapters"
 msgstr "Тараулар"
 
-#: core/models/content.py:62 core/models/content.py:116
+#: core/models/content.py:62 core/models/content.py:122
+#: ui/templates/app/dashboard/teacher/subject/question/_topic_fields.html:8
 msgid "Topic"
 msgstr "Тақырып"
 
@@ -471,76 +521,85 @@ msgstr "Тақырып"
 msgid "Topics"
 msgstr "Тақырыптар"
 
-#: core/models/content.py:76 core/models/content.py:95
+#: core/models/content.py:82 core/models/content.py:101
 #: core/models/education.py:40
 msgid "Code"
 msgstr "Код"
 
-#: core/models/content.py:80
+#: core/models/content.py:86
 msgid "Question format"
 msgstr "Сұрақ форматы"
 
-#: core/models/content.py:92 core/models/content.py:121
+#: core/models/content.py:98 core/models/content.py:131
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:69
 msgid "Format"
 msgstr "Формат"
 
-#: core/models/content.py:99
+#: core/models/content.py:105
 msgid "Question variant"
 msgstr "Сұрақ нұсқасы"
 
-#: core/models/content.py:100
+#: core/models/content.py:106
 msgid "Question variants"
 msgstr "Сұрақ нұсқалары"
 
-#: core/models/content.py:110
+#: core/models/content.py:116
 msgid "Easy"
 msgstr "Жеңіл"
 
-#: core/models/content.py:111
+#: core/models/content.py:117
 msgid "Medium"
 msgstr "Орташа"
 
-#: core/models/content.py:112
+#: core/models/content.py:118
 msgid "Hard"
 msgstr "Қиын"
 
-#: core/models/content.py:125
+#: core/models/content.py:126
+msgid "Author"
+msgstr "Авторы"
+
+#: core/models/content.py:135
+#: ui/templates/app/dashboard/teacher/subject/question/_variant_field.html:3
 msgid "Variant"
 msgstr "Нұсқа"
 
-#: core/models/content.py:127
+#: core/models/content.py:137
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:76
 msgid "Level"
 msgstr "Деңгей"
 
-#: core/models/content.py:128
+#: core/models/content.py:138
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:81
 msgid "Time limit (sec)"
 msgstr "Уақыт шегі (сек)"
 
-#: core/models/content.py:131 core/models/content.py:144
+#: core/models/content.py:141 core/models/content.py:154
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:35
 msgid "Question"
 msgstr "Сұрақ"
 
-#: core/models/content.py:135
+#: core/models/content.py:145
 msgid "#{} question"
 msgstr "№{} сұрақ"
 
-#: core/models/content.py:146
+#: core/models/content.py:156
 msgid "Answer"
 msgstr "Жауап"
 
-#: core/models/content.py:147
+#: core/models/content.py:157
 msgid "Is correct"
 msgstr "Дұрыс жауап"
 
-#: core/models/content.py:150
+#: core/models/content.py:160
 msgid "Option"
 msgstr "Жауап нұсқасы"
 
-#: core/models/content.py:151
+#: core/models/content.py:161
 msgid "Options"
 msgstr "Жауап нұсқалары"
 
-#: core/models/content.py:154
+#: core/models/content.py:164
 msgid "#{} option"
 msgstr "№{} нұсқа"
 
@@ -859,6 +918,7 @@ msgstr ""
 #: ui/templates/app/dashboard/teacher/account/security.html:172
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:89
 #: ui/templates/app/dashboard/teacher/subject/_topic_item.html:89
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:118
 #: ui/templates/base.html:133
 msgid "Cancel"
 msgstr "Бас тарту"
@@ -945,6 +1005,7 @@ msgstr "Бұл бөлімді оның тақырыптарымен бірге �
 
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:92
 #: ui/templates/app/dashboard/teacher/subject/_topic_item.html:92
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:121
 msgid "Save"
 msgstr "Сақтау"
 
@@ -1000,6 +1061,9 @@ msgid "grades"
 msgstr "сынып"
 
 #: ui/templates/app/dashboard/teacher/subject/detail.html:74
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:26
 msgid "Add question"
 msgstr "Сұрақ қосу"
 
@@ -1008,6 +1072,51 @@ msgid ""
 "No grades are assigned to this subject yet. Ask an administrator to "
 "configure them."
 msgstr "Бұл пәнге әзірге сыныптар тағайындалмаған. Әкімшіден баптауды сұраңыз."
+
+#: ui/templates/app/dashboard/teacher/subject/question/_option_row.html:12
+msgid "Correct"
+msgstr "Дұрыс"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:22
+msgid "Search by question text"
+msgstr "Сұрақ мәтіні бойынша іздеу"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:59
+msgid "Delete this question?"
+msgstr "Бұл сұрақты жоюды қалайсыз ба?"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:79
+msgid "Previous"
+msgstr "Алдыңғы"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:90
+msgid "Next"
+msgstr "Келесі"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:96
+msgid "No questions found."
+msgstr "Сұрақтар табылмады."
+
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
+msgid "Edit question"
+msgstr "Сұрақты өзгерту"
+
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:41
+msgid "Preview"
+msgstr "Көрсетілім"
+
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:60
+msgid "Question text"
+msgstr "Сұрақ мәтіні"
+
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:89
+msgid "Answer options"
+msgstr "Жауап нұсқалары"
+
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:96
+msgid "Add option"
+msgstr "Жауап нұсқасын қосу"
 
 #: ui/templates/app/page.html:27
 msgid "An interactive, gamified and visual education platform"

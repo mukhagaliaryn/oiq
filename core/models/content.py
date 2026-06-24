@@ -121,6 +121,10 @@ class Question(BaseModel):
         Topic, on_delete=models.CASCADE,
         related_name='questions', verbose_name=_('Topic')
     )
+    author = models.ForeignKey(
+        'core.Teacher', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='questions', verbose_name=_('Author')
+    )
     text = models.TextField(_('Text'))
     format = models.ForeignKey(
         QuestionFormat, on_delete=models.PROTECT,
