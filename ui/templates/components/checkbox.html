@@ -1,0 +1,20 @@
+{% with current_value=field.value|default:False %}
+<label
+    for="{{ field.id_for_label }}"
+    class="{{ wrapper_class|default:'flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft' }}"
+>
+    <span class="relative mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border border-default transition has-[:checked]:border-brand has-[:checked]:bg-brand">
+        <input
+            type="checkbox"
+            name="{{ field.html_name }}"
+            id="{{ field.id_for_label }}"
+            {% if current_value %}checked{% endif %}
+            class="peer absolute inset-0 size-full cursor-pointer opacity-0"
+            {% if field.field.disabled %}disabled{% endif %}
+            {% if field.field.required %}required{% endif %}
+        >
+        <i data-lucide="check" class="size-3.5 text-neutral-primary opacity-0 transition peer-checked:opacity-100"></i>
+    </span>
+    <span class="text-body">{{ label }}</span>
+</label>
+{% endwith %}

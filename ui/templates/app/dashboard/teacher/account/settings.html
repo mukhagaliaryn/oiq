@@ -15,31 +15,12 @@
     <h2 class="text-xl font-black">{% translate "Language" %}</h2>
     <p class="mt-1 text-body">{% translate "Choose the interface language." %}</p>
 
-    {% get_current_language as CURRENT_LANGUAGE %}
-    <form action="{% url 'set_language' %}" method="post" class="mt-6 max-w-xs">
+    <form action="{% url 'set_language' %}" method="post" class="mt-6 max-w-xs" onchange="this.submit()">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
 
         <label for="id_language" class="sr-only">{% translate "Language" %}</label>
-        <select
-            name="language"
-            id="id_language"
-            onchange="this.form.submit()"
-            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-        >
-            {% get_available_languages as LANGUAGES %}
-            {% for language_code, language_name in LANGUAGES %}
-                <option value="{{ language_code }}" {% if CURRENT_LANGUAGE == language_code %}selected{% endif %}>
-                    {% if language_code == 'kk' %}
-                        Қазақ
-                    {% elif language_code == 'ru' %}
-                        Русский
-                    {% else %}
-                        English
-                    {% endif %}
-                </option>
-            {% endfor %}
-        </select>
+        {% include "components/select.html" with field=form.language %}
     </form>
 </div>
 {% endblock teacher_layout %}

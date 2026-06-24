@@ -68,11 +68,15 @@
     {% endif %}
 
     <select
-        {% if not field.field.disabled %}x-ref="{{ field.html_name }}"{% endif %}
+        {% if not field.field.disabled %}
+            x-ref="{{ field.html_name }}"
+            @change="value = $event.target.value"
+        {% endif %}
         name="{{ field.html_name }}"
         id="{{ field.id_for_label }}"
         class="hidden"
         {% if field.field.disabled %}disabled{% endif %}
+        {% if field.field.required %}required{% endif %}
         {% if hx_get %}
             hx-get="{{ hx_get }}"
             hx-trigger="change"

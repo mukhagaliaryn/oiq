@@ -128,45 +128,11 @@
             </div>
         </div>
 
-        <div
-            x-data="{
-                schools: [],
-                async loadSchoolsByCity(cityId) {
-                    const response = await fetch(`{% url 'main:schools-by-city' %}?city=${cityId}`)
-                    const data = await response.json()
-                    this.schools = data.schools.map((school) => ({ id: String(school.id), name: school.name }))
-                },
-                async onCityChange(event) {
-                    const cityId = event.target.value
-                    this.schools = []
-                    if (cityId) await this.loadSchoolsByCity(cityId)
-                }
-            }"
-            x-init="
-                {% if teacher_form.city.value %}
-                    loadSchoolsByCity('{{ teacher_form.city.value }}').then(() => {
-                        setTimeout(() => { if ($refs.school) $refs.school.value = '{{ teacher_form.school.value|default:"" }}' }, 50)
-                    })
-                {% endif %}
-            "
-            class="grid gap-4 md:grid-cols-2"
-        >
+        {% url 'core:school-field' as school_field_url %}
+        <div class="grid gap-4 md:grid-cols-2">
             <div class="space-y-2">
                 <label for="id_city" class="block ml-6 font-medium">{% translate "City" %}</label>
-                <select
-                    name="city"
-                    id="id_city"
-                    @change="onCityChange"
-                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                    required
-                >
-                    <option value="">{% translate "Select city" %}</option>
-                    {% for city in teacher_form.city.field.queryset %}
-                        <option value="{{ city.id }}" {% if teacher_form.city.value|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
-                            {{ city.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                {% include "components/select.html" with field=teacher_form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
                 {% for error in teacher_form.city.errors %}
                     <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                 {% endfor %}
@@ -174,18 +140,7 @@
 
             <div class="space-y-2">
                 <label for="id_school" class="block ml-6 font-medium">{% translate "School" %}</label>
-                <select
-                    name="school"
-                    id="id_school"
-                    x-ref="school"
-                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                    required
-                >
-                    <option value="">{% translate "Select school" %}</option>
-                    <template x-for="school in schools" :key="school.id">
-                        <option :value="school.id" x-text="school.name"></option>
-                    </template>
-                </select>
+                {% include "components/_school_field.html" with field=teacher_form.school %}
                 {% for error in teacher_form.school.errors %}
                     <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                 {% endfor %}
@@ -194,19 +149,7 @@
 
         <div class="space-y-2">
             <label for="id_subject" class="block ml-6 font-medium">{% translate "Subject" %}</label>
-            <select
-                name="subject"
-                id="id_subject"
-                class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                required
-            >
-                <option value="">{% translate "Select subject" %}</option>
-                {% for subject in teacher_form.subject.field.queryset %}
-                    <option value="{{ subject.id }}" {% if teacher_form.subject.value|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
-                        {{ subject.name }}
-                    </option>
-                {% endfor %}
-            </select>
+            {% include "components/select.html" with field=teacher_form.subject %}
             {% for error in teacher_form.subject.errors %}
                 <span class="block mt-1 text-normal text-danger">{{ error }}</span>
             {% endfor %}

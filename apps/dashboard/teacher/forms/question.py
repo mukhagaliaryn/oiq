@@ -124,9 +124,6 @@ class OptionForm(forms.ModelForm):
         fields = ('answer', 'is_correct')
         widgets = {
             'answer': RichTextTextarea(height='100px'),
-            'is_correct': forms.CheckboxInput(attrs={
-                'class': 'size-5 rounded border-default accent-brand focus:ring-2 focus:ring-brand',
-            }),
         }
 
 

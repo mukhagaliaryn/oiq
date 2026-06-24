@@ -11,5 +11,4 @@ urlpatterns= [
     path('register/', auth.register_select_view, name='register'),
     path('register/learner/', auth.learner_register_view, name='learner-register'),
     path('register/teacher/', auth.teacher_register_view, name='teacher-register'),
-    path('api/schools/', auth.schools_by_city_view, name='schools-by-city'),
 ]

@@ -11,12 +11,11 @@
 
 
 {% block auth_layout %}
+    {% url 'core:school-field' as school_field_url %}
     <div
-        class="w-full"
+        class="w-full max-w-md mx-0"
         x-data="{
             step: Number(localStorage.getItem('teacherRegisterStep')) || {% if form.first_name.errors or form.last_name.errors or form.email.errors or form.password1.errors or form.password2.errors or form.agreement.errors %}2{% else %}1{% endif %},
-            schools: [],
-            selectedSchool: '{{ form.school.value|default:'' }}',
 
             formData: {
                 city: '',
@@ -27,6 +26,10 @@
                 email: '',
                 agreement: false,
             },
+
+            cityError: false,
+            schoolError: false,
+            subjectError: false,
 
             init() {
                 const savedForm = localStorage.getItem('teacherRegisterForm')
@@ -42,21 +45,30 @@
                 this.formData.school = String(this.formData.school || '')
                 this.formData.subject = String(this.formData.subject || '')
 
-                if (this.formData.city) {
-                    const savedSchool = this.formData.school
+                this.$nextTick(() => {
+                    this.setFieldValue(document.getElementById('id_city'), this.formData.city)
+                    this.setFieldValue(document.getElementById('id_subject'), this.formData.subject)
 
-                    this.loadSchoolsByCity(this.formData.city).then(() => {
-                        this.formData.school = savedSchool
+                    if (this.formData.city) {
+                        htmx.ajax('GET', `{{ school_field_url }}?city=${this.formData.city}&school=${this.formData.school}`, {
+                            target: '#school-field',
+                            swap: 'outerHTML',
+                        })
+                    }
 
-                        setTimeout(() => {
-                            if (this.$refs.school) {
-                                this.$refs.school.value = savedSchool
-                            }
-                        }, 50)
-                    })
-                }
+                    const agreementInput = document.getElementById('id_agreement')
+                    if (agreementInput) agreementInput.checked = !!this.formData.agreement
+                })
 
                 this.saveForm()
+            },
+
+            setFieldValue(el, value) {
+                if (!el) return
+                el.value = value
+
+                const data = Alpine.$data(el)
+                if (data) data.value = value
             },
 
             saveForm() {
@@ -75,49 +87,19 @@
                 localStorage.setItem('teacherRegisterStep', value)
             },
 
-            async loadSchools(event) {
-                const cityId = String(event.target.value || '')
-
-                this.formData.city = cityId
+            onCityChange(event) {
+                this.formData.city = String(event.target.value || '')
                 this.formData.school = ''
-                this.schools = []
-
+                this.cityError = false
                 this.saveForm()
-
-                if (!cityId) return
-
-                await this.loadSchoolsByCity(cityId)
-            },
-
-            async loadSchoolsByCity(cityId) {
-                const response = await fetch(`{% url 'main:schools-by-city' %}?city=${cityId}`)
-                const data = await response.json()
-
-                this.schools = data.schools.map((school) => ({
-                    id: String(school.id),
-                    name: school.name
-                }))
             },
 
             nextStep() {
-                const city = document.getElementById('id_city')
-                const school = document.getElementById('id_school')
-                const subject = document.getElementById('id_subject')
+                this.cityError = !this.formData.city
+                this.schoolError = !this.formData.school
+                this.subjectError = !this.formData.subject
 
-                if (!city.checkValidity()) {
-                    city.reportValidity()
-                    return
-                }
-
-                if (!school.checkValidity()) {
-                    school.reportValidity()
-                    return
-                }
-
-                if (!subject.checkValidity()) {
-                    subject.reportValidity()
-                    return
-                }
+                if (this.cityError || this.schoolError || this.subjectError) return
 
                 this.saveForm()
                 this.setStep(2)
@@ -132,7 +114,7 @@
                 <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
                 <div class="space-y-2">
                     <h1 class="text-2xl font-black">{% translate "Sign up as a teacher" %}</h1>
-                    <span class="text-body">{% translate "Start your personal learning space" %}</span>
+                    <span class="text-body">{% translate "Start a new educational space" %}</span>
                 </div>
             </div>
 
@@ -164,21 +146,10 @@
                         <label for="id_city" class="block ml-6 font-medium">
                             {% translate "City" %}
                         </label>
-                        <select
-                            name="city"
-                            id="id_city"
-                            x-model="formData.city"
-                            @change="loadSchools"
-                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                            required
-                        >
-                            <option value="">{% translate "Select a city" %}</option>
-                            {% for city in form.city.field.queryset %}
-                                <option value="{{ city.id }}" {% if form.city.value|stringformat:"s" == city.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ city.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <div @change="onCityChange($event)">
+                            {% include "components/select.html" with field=form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
+                        </div>
+                        <span x-show="cityError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.city.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}
@@ -189,24 +160,10 @@
                         <label for="id_school" class="block ml-6 font-medium">
                             {% translate "School" %}
                         </label>
-                        <select
-                            name="school"
-                            id="id_school"
-                            x-ref="school"
-                            x-model="formData.school"
-                            @change="formData.school = String($event.target.value); saveForm()"
-                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                            required
-                        >
-                            <option value="">{% translate "Select a school" %}</option>
-
-                            <template x-for="school in schools" :key="school.id">
-                                <option
-                                    :value="school.id"
-                                    x-text="school.name"
-                                ></option>
-                            </template>
-                        </select>
+                        <div @change="formData.school = String($event.target.value || ''); schoolError = false; saveForm()">
+                            {% include "components/_school_field.html" with field=form.school %}
+                        </div>
+                        <span x-show="schoolError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.school.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}
@@ -217,21 +174,10 @@
                         <label for="id_subject" class="block ml-6 font-medium">
                             {% translate "Subject" %}
                         </label>
-                        <select
-                            name="subject"
-                            id="id_subject"
-                            x-model="formData.subject"
-                            @change="formData.subject = String($event.target.value); saveForm()"
-                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
-                            required
-                        >
-                            <option value="">{% translate "Select a subject" %}</option>
-                            {% for subject in form.subject.field.queryset %}
-                                <option value="{{ subject.id }}" {% if form.subject.value|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ subject.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <div @change="formData.subject = String($event.target.value || ''); subjectError = false; saveForm()">
+                            {% include "components/select.html" with field=form.subject %}
+                        </div>
+                        <span x-show="subjectError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.subject.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}
@@ -330,7 +276,7 @@
                             <button
                                 type="button"
                                 @click="showPassword = !showPassword"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                                class="absolute right-1.5 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
                             >
                                 <i x-show="!showPassword" data-lucide="eye" class="size-6"></i>
                                 <i x-show="showPassword" data-lucide="eye-off" class="size-6"></i>
@@ -364,7 +310,7 @@
                             <button
                                 type="button"
                                 @click="showPasswordConfirm = !showPasswordConfirm"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                                class="absolute right-1.5 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
                             >
                                 <i x-show="!showPasswordConfirm" data-lucide="eye" class="size-6"></i>
                                 <i x-show="showPasswordConfirm" data-lucide="eye-off" class="size-6"></i>
@@ -377,21 +323,10 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                name="agreement"
-                                id="id_agreement"
-                                x-model="formData.agreement"
-                                @change="saveForm"
-                                class="mt-1 size-5 rounded border-default accent-brand focus:ring-2 focus:ring-brand"
-                                {% if form.agreement.value %}checked{% endif %}
-                                required
-                            >
-                            <span class="text-body">
-                                {% translate "I agree with the platform's terms of use." %}
-                            </span>
-                        </label>
+                        {% translate "I agree with the platform's terms of use." as agreement_label %}
+                        <div @change="formData.agreement = $event.target.checked; saveForm()">
+                            {% include "components/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
+                        </div>
                         {% for error in form.agreement.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}

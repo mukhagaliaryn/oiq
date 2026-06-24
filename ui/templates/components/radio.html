@@ -1,0 +1,19 @@
+<label
+    for="{{ id }}"
+    class="{{ wrapper_class|default:'flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft' }}"
+>
+    <span class="relative flex size-5 shrink-0 items-center justify-center rounded-full border border-default transition has-[:checked]:border-brand">
+        <input
+            type="radio"
+            name="{{ name }}"
+            value="{{ value }}"
+            id="{{ id }}"
+            {% if checked %}checked{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if required %}required{% endif %}
+            class="peer absolute inset-0 size-full cursor-pointer opacity-0"
+        >
+        <span class="size-2.5 rounded-full bg-brand opacity-0 transition peer-checked:opacity-100"></span>
+    </span>
+    <span class="text-body">{{ label }}</span>
+</label>

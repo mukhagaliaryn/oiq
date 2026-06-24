@@ -1,13 +1,22 @@
+from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from apps.dashboard.teacher.forms.account import AccountDeleteForm, TeacherEditForm, UserEditForm
 from core.utils.decorators import teacher_required
 
 User = get_user_model()
+
+LANGUAGE_NATIVE_NAMES = {
+    'kk': 'Қазақ',
+    'ru': 'Русский',
+    'en': 'English',
+}
 
 
 # -------------- profile view --------------
@@ -55,7 +64,13 @@ def account_edit_view(request):
 # -------------- account settings view --------------
 @teacher_required
 def account_settings_view(request):
-    return render(request, 'app/dashboard/teacher/account/settings.html')
+    class _SettingsForm(forms.Form):
+        language = forms.ChoiceField(
+            choices=[(code, LANGUAGE_NATIVE_NAMES.get(code, name)) for code, name in settings.LANGUAGES],
+        )
+
+    form = _SettingsForm(initial={'language': get_language()})
+    return render(request, 'app/dashboard/teacher/account/settings.html', {'form': form})
 
 
 # -------------- account security view --------------

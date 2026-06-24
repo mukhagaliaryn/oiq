@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import logout
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -15,7 +14,6 @@ from apps.main.services.auth import create_teacher_user
 from apps.main.services.auth import get_user_redirect_url
 from apps.main.services.email import send_registration_success_email
 from apps.main.services.sessions import save_user_session
-from core.models import School
 from core.utils.decorators import anonymous_required
 
 
@@ -112,16 +110,3 @@ def teacher_register_view(request):
         'form': form,
     }
     return render(request, 'app/auth/register/teacher.html', context)
-
-
-# schools_by_city_view
-def schools_by_city_view(request):
-    city_id = request.GET.get('city')
-
-    schools = (
-        School.objects
-        .filter(city_id=city_id, is_active=True)
-        .order_by('name')
-        .values('id', 'name')
-    )
-    return JsonResponse({'schools': list(schools)})
