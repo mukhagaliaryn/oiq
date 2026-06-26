@@ -147,12 +147,14 @@
             </div>
         </div>
 
-        <div class="space-y-2">
-            <label for="id_subject" class="block ml-6 font-medium">{% translate "Subject" %}</label>
-            {% include "components/select.html" with field=teacher_form.subject %}
-            {% for error in teacher_form.subject.errors %}
-                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
-            {% endfor %}
+        <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-2">
+                <label for="id_subject" class="block ml-6 font-medium">{% translate "Subject" %}</label>
+                {% include "components/select.html" with field=teacher_form.subject %}
+                {% for error in teacher_form.subject.errors %}
+                    <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
         </div>
 
         <button type="submit" class="relative grid group w-full md:w-auto">

@@ -45,26 +45,28 @@
                 {% translate "Dashboard" %}
             </a>
 
-            <div class="">
-                <p class="px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-wide text-body-subtle">
-                    {% translate "Subjects" %}
-                </p>
+            {% if request.user.teacher.is_partner and request.user.teacher.subject %}
+                <div class="">
+                    <p class="px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-wide text-body-subtle">
+                        {% translate "Subjects" %}
+                    </p>
 
-                {% if request.user.teacher.is_partner and request.user.teacher.subject %}
-                    <a
-                        href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
-                        class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
-                        {% if request.resolver_match.url_name == 'subject-detail' %}
-                            bg-brand text-neutral-primary
-                        {% else %}
-                            text-body hover:bg-neutral-secondary
-                        {% endif %}"
-                    >
-                        <i data-lucide="book-open" class="size-5"></i>
-                        {{ request.user.teacher.subject.name }}
-                    </a>
-                {% endif %}
-            </div>
+                    
+                        <a
+                            href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
+                            class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
+                            {% if request.resolver_match.url_name == 'subject-detail' %}
+                                bg-brand text-neutral-primary
+                            {% else %}
+                                text-body hover:bg-neutral-secondary
+                            {% endif %}"
+                        >
+                            <i data-lucide="book-open" class="size-5"></i>
+                            {{ request.user.teacher.subject.name }}
+                        </a>
+                </div>
+            {% endif %}
+
 
 
             <!-- <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
@@ -104,10 +106,9 @@
                 >
                     <i data-lucide="menu" class="size-6"></i>
                 </button>
-
-                <div class="hidden md:block">
-                    {% block teacher_header %}{% endblock teacher_header %}
-                </div>
+                <a href="{% url 'teacher:dashboard' %}" class="flex lg:hidden active:scale-90">
+                    <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
+                </a>
             </div>
 
             <div class="flex items-center gap-2">
@@ -128,7 +129,7 @@
                                 {{ request.user.display_name|first|upper }}
                             </span>
                         {% endif %}
-                        <span class="hidden font-medium md:inline">{{ request.user.display_name }}</span>
+                        <div class="hidden font-medium md:inline">{{ request.user.display_name }}</div>
                         <i data-lucide="chevron-down" class="size-4" :class="{ 'rotate-180': open }"></i>
                     </button>
 

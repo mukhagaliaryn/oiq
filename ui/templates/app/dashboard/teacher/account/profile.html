@@ -3,10 +3,6 @@
 
 {% block title %}{{ profile_user.display_name }}{% endblock title %}
 
-{% block teacher_header %}
-    <h1 class="text-xl font-black">{% translate "Profile" %}</h1>
-    <p class="text-body">{% translate "Public information about the teacher" %}</p>
-{% endblock teacher_header %}
 
 {% block teacher_layout %}
 {% if is_own_profile %}
@@ -21,9 +17,9 @@
 <div class="rounded-3xl border border-default bg-neutral-primary p-6">
     <div class="flex flex-wrap items-center gap-5">
         {% if profile_user.avatar %}
-            <img src="{{ profile_user.avatar.url }}" class="size-20 rounded-full object-cover" alt="{{ profile_user.display_name }}">
+            <img src="{{ profile_user.avatar.url }}" class="size-24 rounded-full object-cover" alt="{{ profile_user.display_name }}">
         {% else %}
-            <span class="flex size-20 items-center justify-center rounded-full bg-brand-soft text-2xl font-bold text-brand">
+            <span class="flex size-24 items-center justify-center rounded-full bg-brand-soft text-4xl font-bold text-brand">
                 {{ profile_user.display_name|first|upper }}
             </span>
         {% endif %}
@@ -45,8 +41,18 @@
         </div>
 
         {% if is_own_profile %}
-            <a href="{% url 'teacher:account-edit' %}" class="ml-auto rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
-                {% translate "Edit profile" %}
+            <a 
+                href="{% url 'teacher:account-edit' %}" 
+                class="relative grid group ml-auto"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 rounded-full bg-neutral-primary border border-default font-medium 
+                    group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                    "
+                >
+                    {% translate "Edit profile" %}
+                </span>
             </a>
         {% endif %}
     </div>
