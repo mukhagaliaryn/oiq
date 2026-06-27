@@ -39,8 +39,8 @@
         >
             {% csrf_token %}
 
-            <div class="flex items-start gap-3">
-                <div class="w-28 shrink-0 space-y-2">
+            <div class="grid md:flex items-start gap-3">
+                <div class="w-full md:w-28 shrink-0 space-y-2">
                     <label for="{{ chapter_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
                     {{ chapter_form.order }}
                 </div>
@@ -51,25 +51,25 @@
                         <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                     {% endfor %}
                 </div>
-                <div class="w-64 shrink-0 space-y-2">
+                <div class="w-full md:w-64 shrink-0 space-y-2">
                     <label for="{{ chapter_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
                     {{ chapter_form.grade }}
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 max-w-sm mx-auto md:max-w-full md:mx-0">
                 <label for="{{ chapter_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
                 {{ chapter_form.description }}
             </div>
 
-            <div class="flex gap-2">
-                <button type="button" @click="addOpen = false" class="relative grid group w-full sm:w-auto">
+            <div class="grid md:flex gap-3">
+                <button type="button" @click="addOpen = false" class="relative grid group w-full md:w-auto">
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
                     <span class="relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium group-hover:bg-neutral-secondary group-active:translate-y-1.5">
                         {% translate "Cancel" %}
                     </span>
                 </button>
-                <button type="submit" class="relative grid group w-full sm:w-auto">
+                <button type="submit" class="relative grid group w-full md:w-auto">
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
                     <span class="relative w-full px-8 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-brand text-neutral-primary font-medium group-hover:bg-brand-medium group-active:translate-y-1.5">
                         {% translate "Add chapter" %}

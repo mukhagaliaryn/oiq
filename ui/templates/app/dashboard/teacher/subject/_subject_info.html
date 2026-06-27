@@ -1,22 +1,25 @@
 {% load i18n %}
-<div id="subject-info" class="mb-6 flex flex-col gap-6 rounded-3xl border border-default bg-neutral-primary p-6 md:flex-row md:items-start md:justify-between">
+<div 
+    id="subject-info" 
+    class="mb-6 flex flex-col gap-6 rounded-3xl border border-default bg-neutral-primary p-6 md:flex-row md:items-start md:justify-between"
+>
     <div class="grid sm:flex flex-1 gap-5">
         {% if subject.cover %}
-            <img src="{{ subject.cover.url }}" alt="{{ subject.name }}" class="size-48 mx-auto md:mx-0 md:size-24 shrink-0 rounded-2xl object-cover">
+            <img src="{{ subject.cover.url }}" alt="{{ subject.name }}" class="size-48 mx-auto sm:mx-0 sm:size-24 shrink-0 rounded-2xl object-cover">
         {% else %}
-            <div class="size-48 mx-auto md:mx-0 md:size-24 flex shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand">
-                <i class="ph ph-book-open size-24 lg:size-8"></i>
+            <div class="size-48 mx-auto sm:mx-0 sm:size-24 flex shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                <i class="ph ph-book-open size-24 sm:size-8"></i>
             </div>
         {% endif %}
 
         <div class="space-y-2">
-            <h2 class="text-2xl font-black">{{ subject.name }}</h2>
+            <h2 class="text-2xl font-black text-center sm:text-left">{{ subject.name }}</h2>
 
             {% if subject.description %}
-                <div class="text-body">{{ subject.description|safe }}</div>
+                <div class="text-body text-center sm:text-left">{{ subject.description|safe }}</div>
             {% endif %}
 
-            <div class="flex flex-wrap gap-4 text-normal text-body-subtle">
+            <div class="flex justify-center sm:justify-start flex-wrap gap-4 text-normal text-body-subtle">
                 <span class="flex items-center gap-1.5">
                     <i class="ph ph-stack size-5"></i>
                     {{ chapters_count }} {% translate "chapters" %}

@@ -12,10 +12,10 @@
         >
             <i class="ph ph-caret-right size-4 shrink-0 transition" :class="{ 'rotate-90': open }"></i>
             <i class="ph ph-article size-5 shrink-0 text-body-subtle"></i>
-            <span class="font-semibold">
+            <div class="font-semibold line-clamp-2">
                 <span class="text-body-subtle">{{ chapter.order }}.{{ topic.order }}-{% translate "topic" %}:</span>
                 {{ topic.title }}
-            </span>
+            </div>
         </button>
 
         <div class="flex items-center gap-1">
@@ -90,8 +90,8 @@
     >
         {% csrf_token %}
 
-        <div class="flex items-start gap-3">
-            <div class="w-28 shrink-0 space-y-2">
+        <div class="grid md:flex items-start gap-3">
+            <div class="w-full md:w-28 shrink-0 space-y-2">
                 <label for="{{ topic.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
                 {{ topic.edit_form.order }}
             </div>
@@ -104,12 +104,12 @@
             </div>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-2 max-w-xs mx-auto md:max-w-full md:mx-0">
             <label for="{{ topic.edit_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
             {{ topic.edit_form.description }}
         </div>
 
-        <div class="flex gap-2">
+        <div class="grid md:flex gap-3">
             <button 
                 type="button" 
                 @click="editingTopicId = null"

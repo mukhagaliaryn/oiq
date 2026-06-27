@@ -9,8 +9,10 @@
 
 
 {% block teacher_layout %}
-<div x-data="{ editOpen: false }" @subject-updated.window="editOpen = false">
-
+<div 
+    x-data="{ editOpen: false }" 
+    @subject-updated.window="editOpen = false"
+>
     {% include "app/dashboard/teacher/subject/_subject_info.html" %}
 
     {% if grades %}
@@ -76,7 +78,6 @@
             </div>
         </div>
     </div>
-
 </div>
 {% endblock teacher_layout %}
 

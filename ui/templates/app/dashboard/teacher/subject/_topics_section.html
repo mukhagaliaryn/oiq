@@ -36,8 +36,8 @@
         >
             {% csrf_token %}
 
-            <div class="flex items-start gap-3">
-                <div class="w-28 shrink-0 space-y-2">
+            <div class="grid md:flex items-start gap-3">
+                <div class="w-full md:w-28 shrink-0 space-y-2">
                     <label for="{{ topic_create_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
                     {{ topic_create_form.order }}
                 </div>
@@ -50,12 +50,12 @@
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 max-w-xs mx-auto md:max-w-full md:mx-0">
                 <label for="{{ topic_create_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
                 {{ topic_create_form.description }}
             </div>
 
-            <div class="flex gap-2">
+            <div class="grid md:flex gap-3">
                 <button type="button" @click="addOpen = false" class="relative grid group w-full sm:w-auto">
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
                     <span class="relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium group-hover:bg-neutral-secondary group-active:translate-y-1.5">

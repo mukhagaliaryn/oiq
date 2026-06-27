@@ -11,10 +11,10 @@
         >
             <i class="ph ph-caret-right size-4 shrink-0 transition" :class="{ 'rotate-90': openChapterId === {{ chapter.id }} }"></i>
             <i class="ph ph-bookmark-simple size-5 shrink-0"></i>
-            <span class="font-bold text-body-subtle">
+            <div class="font-bold text-body-subtle line-clamp-1">
                 <span class="">{{ chapter.order }}-{% translate "chapter" %}:</span>
                 {{ chapter.title }}
-            </span>
+            </div>
             {% if not chapter.grade %}
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs font-medium text-body-subtle">{% translate "General" %}</span>
             {% endif %}
@@ -61,8 +61,8 @@
         >
             {% csrf_token %}
 
-            <div class="flex items-start gap-3">
-                <div class="w-28 shrink-0 space-y-2">
+            <div class="grid md:flex items-start gap-3">
+                <div class="w-full md:w-28 shrink-0 space-y-2">
                     <label for="{{ chapter.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
                     {{ chapter.edit_form.order }}
                 </div>
@@ -73,18 +73,18 @@
                         <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                     {% endfor %}
                 </div>
-                <div class="w-64 shrink-0 space-y-2">
+                <div class="w-full md:w-64 shrink-0 space-y-2">
                     <label for="{{ chapter.edit_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
                     {{ chapter.edit_form.grade }}
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 max-w-sm mx-auto md:max-w-full md:mx-0">
                 <label for="{{ chapter.edit_form.description.id_for_label }}" class="block ml-6 font-medium">{% translate "Description" %}</label>
                 {{ chapter.edit_form.description }}
             </div>
 
-            <div class="flex gap-2">
+            <div class="grid md:flex gap-3">
                 <button 
                     type="button" 
                     @click="editingChapterId = null"
