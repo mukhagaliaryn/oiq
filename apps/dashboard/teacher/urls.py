@@ -14,6 +14,8 @@ urlpatterns = [
     path('account/security/', account.account_security_view, name='account-security'),
 
     path('subject/<int:pk>/', subject.subject_detail_view, name='subject-detail'),
+    path('subject/<int:pk>/update/', subject.subject_update_view, name='subject-update'),
+    path('subject/<int:pk>/remove-cover/', subject.subject_remove_cover_view, name='subject-remove-cover'),
     path('subject/<int:pk>/chapters/create/', subject.chapter_create_view, name='chapter-create'),
     path('chapters/<int:pk>/update/', subject.chapter_update_view, name='chapter-update'),
     path('chapters/<int:pk>/delete/', subject.chapter_delete_view, name='chapter-delete'),

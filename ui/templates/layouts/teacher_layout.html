@@ -27,7 +27,7 @@
                 @click="sidebarOpen = false"
                 class="rounded-xl p-2 cursor-pointer hover:bg-neutral-secondary lg:hidden"
             >
-                <i data-lucide="x" class="size-5"></i>
+                <i class="ph ph-x size-5"></i>
             </button>
         </div>
 
@@ -41,7 +41,7 @@
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
             >
-                <i data-lucide="layout-dashboard" class="size-5"></i>
+                <i class="{% if request.resolver_match.url_name == 'dashboard' %}ph-fill{% else %}ph{% endif %} ph-squares-four size-5"></i>
                 {% translate "Dashboard" %}
             </a>
 
@@ -61,7 +61,7 @@
                                 text-body hover:bg-neutral-secondary
                             {% endif %}"
                         >
-                            <i data-lucide="book-open" class="size-5"></i>
+                            <i class="{% if request.resolver_match.url_name == 'subject-detail' %}ph-fill{% else %}ph{% endif %} ph-book-open size-5"></i>
                             {{ request.user.teacher.subject.name }}
                         </a>
                 </div>
@@ -71,7 +71,7 @@
 
             <!-- <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
                 <span class="flex items-center gap-3">
-                    <i data-lucide="users" class="size-5"></i>
+                    <i class="ph ph-users size-5"></i>
                     {% translate "Classes" %}
                 </span>
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
@@ -79,7 +79,7 @@
 
             <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
                 <span class="flex items-center gap-3">
-                    <i data-lucide="gamepad-2" class="size-5"></i>
+                    <i class="ph ph-game-controller size-5"></i>
                     {% translate "Game tasks" %}
                 </span>
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
@@ -87,7 +87,7 @@
 
             <span class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 font-medium text-body opacity-50 cursor-not-allowed">
                 <span class="flex items-center gap-3">
-                    <i data-lucide="bar-chart-3" class="size-5"></i>
+                    <i class="ph ph-chart-bar size-5"></i>
                     {% translate "Results" %}
                 </span>
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs text-body-subtle">{% translate "Soon" %}</span>
@@ -104,7 +104,7 @@
                     @click="sidebarOpen = true"
                     class="rounded-xl p-2 cursor-pointer hover:bg-neutral-secondary lg:hidden"
                 >
-                    <i data-lucide="menu" class="size-6"></i>
+                    <i class="ph ph-list size-5"></i>
                 </button>
                 <a href="{% url 'teacher:dashboard' %}" class="flex lg:hidden active:scale-90">
                     <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
@@ -120,7 +120,7 @@
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex items-center gap-2 rounded-full border border-default px-2 py-1.5 hover:bg-neutral-secondary"
+                        class="flex items-center gap-2 rounded-full border border-default px-2 py-1.5 cursor-pointer hover:bg-neutral-secondary"
                     >
                         {% if request.user.avatar %}
                             <img src="{{ request.user.avatar.url }}" class="size-8 rounded-full object-cover" alt="{{ request.user.display_name }}">
@@ -130,7 +130,7 @@
                             </span>
                         {% endif %}
                         <div class="hidden font-medium md:inline">{{ request.user.display_name }}</div>
-                        <i data-lucide="chevron-down" class="size-4" :class="{ 'rotate-180': open }"></i>
+                        <i class="ph ph-caret-down size-4" :class="{ 'rotate-180': open }"></i>
                     </button>
 
                     <div
@@ -142,18 +142,18 @@
                         style="display:none"
                     >
                         <a href="{% url 'teacher:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
-                            <i data-lucide="user" class="size-4"></i>
+                            <i class="ph ph-user size-5"></i>
                             {% translate "Profile" %}
                         </a>
                         <a href="{% url 'teacher:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
-                            <i data-lucide="settings" class="size-4"></i>
+                            <i class="ph ph-gear size-5"></i>
                             {% translate "Account settings" %}
                         </a>
 
                         <div class="my-2 border-t border-default"></div>
 
                         <a href="{% url 'main:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
-                            <i data-lucide="log-out" class="size-4"></i>
+                            <i class="ph ph-sign-out size-5"></i>
                             {% translate "Sign out" %}
                         </a>
                     </div>
@@ -161,7 +161,7 @@
             </div>
         </header>
 
-        <main class="flex-1 px-6 py-8">
+        <main class="flex-1 px-4 py-4 md:px-6 md:py-8">
             <div class="mx-auto max-w-7xl">
                 {% block teacher_layout %}{% endblock teacher_layout %}
             </div>

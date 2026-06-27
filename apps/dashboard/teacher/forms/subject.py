@@ -1,7 +1,23 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from core.forms.base import INPUT_CLASS, RichTextTextarea
-from core.models import Chapter, Topic
+from core.models import Chapter, Topic, Subject
+
+
+class SubjectForm(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = ('name', 'description', 'cover')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': INPUT_CLASS}),
+            'description': RichTextTextarea(height='200px'),
+            'cover': forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/*',
+                'x-ref': 'coverInput',
+                '@change': 'onChange($event)',
+            }),
+        }
 
 
 class ChapterForm(forms.ModelForm):

@@ -1,7 +1,18 @@
+from django.contrib import messages
 from django.db.models import Count, Prefetch, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 
-from apps.dashboard.teacher.forms.subject import ChapterForm, TopicForm
+
+def _render_with_toast(request, template, context, msg):
+    messages.success(request, msg)
+    html = render_to_string(template, context, request=request)
+    toast = render_to_string('components/_messages.html', {}, request=request)
+    return HttpResponse(html + f'<div hx-swap-oob="beforeend:body">{toast}</div>', content_type='text/html; charset=utf-8')
+
+from apps.dashboard.teacher.forms.subject import ChapterForm, SubjectForm, TopicForm
 from apps.dashboard.teacher.views.common import owned_subject
 from core.models import Chapter, Question, Topic
 from core.utils.decorators import partner_teacher_required
@@ -91,6 +102,64 @@ def _topics_section_context(chapter, editing_topic_id=None, topic_edit_form=None
 
 # Subject
 # ----------------------------------------------------------------------------------------------------------------------
+# -------------- subject edit form (HTMX) --------------
+@partner_teacher_required
+def subject_update_view(request, pk):
+    subject = owned_subject(request, pk)
+
+    if request.method == 'POST':
+        form = SubjectForm(request.POST, request.FILES, instance=subject)
+        if form.is_valid():
+            subject = form.save()
+            messages.success(request, _('Subject updated successfully.'))
+            chapters_qs = subject.chapters.filter(is_active=True)
+            context = {
+                'subject': subject,
+                'chapters_count': chapters_qs.count(),
+                'topics_count': Topic.objects.filter(chapter__in=chapters_qs, is_active=True).count(),
+                'grades_count': subject.grades.filter(is_active=True).count(),
+            }
+            info_html = render_to_string(
+                'app/dashboard/teacher/subject/_subject_info.html', context, request=request
+            )
+            toast_html = render_to_string('components/_messages.html', {}, request=request)
+            body = info_html + f'<div hx-swap-oob="beforeend:body">{toast_html}</div>'
+            response = HttpResponse(body, content_type='text/html; charset=utf-8')
+            response['HX-Retarget'] = '#subject-info'
+            response['HX-Reswap'] = 'outerHTML'
+            response['HX-Trigger'] = 'subject-updated'
+            return response
+    else:
+        form = SubjectForm(instance=subject)
+
+    return render(request, 'app/dashboard/teacher/subject/_subject_edit_form.html', {
+        'subject': subject,
+        'form': form,
+    })
+
+
+# -------------- subject remove cover (HTMX) --------------
+@partner_teacher_required
+def subject_remove_cover_view(request, pk):
+    subject = owned_subject(request, pk)
+    if subject.cover:
+        subject.cover.delete(save=False)
+        subject.save(update_fields=['cover'])
+
+    chapters_qs = subject.chapters.filter(is_active=True)
+    context = {
+        'subject': subject,
+        'chapters_count': chapters_qs.count(),
+        'topics_count': Topic.objects.filter(chapter__in=chapters_qs, is_active=True).count(),
+        'grades_count': subject.grades.filter(is_active=True).count(),
+    }
+    response = render(request, 'app/dashboard/teacher/subject/_subject_info.html', context)
+    response['HX-Retarget'] = '#subject-info'
+    response['HX-Reswap'] = 'outerHTML'
+    response['HX-Trigger'] = 'subject-updated'
+    return response
+
+
 # -------------- subject detail --------------
 @partner_teacher_required
 def subject_detail_view(request, pk):
@@ -119,9 +188,10 @@ def chapter_create_view(request, pk):
 
     if form.is_valid():
         form.save()
-        return render(
+        return _render_with_toast(
             request, 'app/dashboard/teacher/subject/_chapters_section.html',
             _chapters_section_context(request, subject, selected_grade),
+            _('Chapter created successfully.'),
         )
 
     context = _chapters_section_context(request, subject, selected_grade)
@@ -140,9 +210,10 @@ def chapter_update_view(request, pk):
 
     if form.is_valid():
         form.save()
-        return render(
+        return _render_with_toast(
             request, 'app/dashboard/teacher/subject/_chapters_section.html',
             _chapters_section_context(request, subject, selected_grade),
+            _('Chapter updated successfully.'),
         )
 
     context = _chapters_section_context(
@@ -162,9 +233,10 @@ def chapter_delete_view(request, pk):
     chapter.is_active = False
     chapter.save(update_fields=['is_active'])
 
-    return render(
+    return _render_with_toast(
         request, 'app/dashboard/teacher/subject/_chapters_section.html',
         _chapters_section_context(request, subject, selected_grade),
+        _('Chapter deleted.'),
     )
 
 
@@ -178,9 +250,10 @@ def topic_create_view(request, pk):
 
     if form.is_valid():
         form.save()
-        return render(
+        return _render_with_toast(
             request, 'app/dashboard/teacher/subject/_topics_section.html',
             _topics_section_context(chapter),
+            _('Topic created successfully.'),
         )
 
     context = _topics_section_context(chapter)
@@ -198,9 +271,10 @@ def topic_update_view(request, pk):
 
     if form.is_valid():
         form.save()
-        return render(
+        return _render_with_toast(
             request, 'app/dashboard/teacher/subject/_topics_section.html',
             _topics_section_context(chapter),
+            _('Topic updated successfully.'),
         )
 
     context = _topics_section_context(chapter, editing_topic_id=topic.pk, topic_edit_form=form)
@@ -216,7 +290,8 @@ def topic_delete_view(request, pk):
     topic.is_active = False
     topic.save(update_fields=['is_active'])
 
-    return render(
+    return _render_with_toast(
         request, 'app/dashboard/teacher/subject/_topics_section.html',
         _topics_section_context(chapter),
+        _('Topic deleted.'),
     )

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 19:23+0500\n"
+"POT-Creation-Date: 2026-06-27 12:34+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,45 +24,43 @@ msgstr "Аватар"
 
 #: apps/dashboard/teacher/forms/account.py:28 apps/main/forms/auth.py:44
 #: core/models/account.py:90 core/models/education.py:11
-#: core/models/education.py:22 ui/templates/app/auth/register/teacher.html:165
-#: ui/templates/app/dashboard/teacher/account/edit.html:155
-#: ui/templates/app/dashboard/teacher/account/profile.html:64
+#: core/models/education.py:22 ui/templates/app/auth/register/teacher.html:147
+#: ui/templates/app/dashboard/teacher/account/edit.html:130
+#: ui/templates/app/dashboard/teacher/account/profile.html:70
 msgid "City"
 msgstr "Қала"
 
 #: apps/dashboard/teacher/forms/account.py:31 apps/main/forms/auth.py:47
-#: ui/templates/app/dashboard/teacher/account/edit.html:163
 msgid "Select city"
 msgstr "Қаланы таңдаңыз"
 
 #: apps/dashboard/teacher/forms/account.py:34 apps/main/forms/auth.py:50
 #: core/models/account.py:95 core/models/education.py:28
-#: ui/templates/app/auth/register/teacher.html:190
-#: ui/templates/app/dashboard/teacher/account/edit.html:176
-#: ui/templates/app/dashboard/teacher/account/profile.html:68
+#: ui/templates/app/auth/register/teacher.html:161
+#: ui/templates/app/dashboard/teacher/account/edit.html:138
+#: ui/templates/app/dashboard/teacher/account/profile.html:74
 msgid "School"
 msgstr "Мектеп"
 
 #: apps/dashboard/teacher/forms/account.py:37 apps/main/forms/auth.py:53
-#: ui/templates/app/dashboard/teacher/account/edit.html:184
+#: core/views.py:66
 msgid "Select school"
 msgstr "Мектепті таңдаңыз"
 
 #: apps/dashboard/teacher/forms/account.py:40 apps/main/forms/auth.py:56
 #: core/models/account.py:100 core/models/content.py:23
-#: core/models/content.py:32 ui/templates/app/auth/register/teacher.html:218
-#: ui/templates/app/dashboard/teacher/account/edit.html:196
-#: ui/templates/app/dashboard/teacher/account/profile.html:72
+#: core/models/content.py:32 ui/templates/app/auth/register/teacher.html:175
+#: ui/templates/app/dashboard/teacher/account/edit.html:147
+#: ui/templates/app/dashboard/teacher/account/profile.html:78
 msgid "Subject"
 msgstr "Пән"
 
 #: apps/dashboard/teacher/forms/account.py:43 apps/main/forms/auth.py:59
-#: ui/templates/app/dashboard/teacher/account/edit.html:203
 msgid "Select subject"
 msgstr "Пәнді таңдаңыз"
 
 #: apps/dashboard/teacher/forms/account.py:65
-#: ui/templates/app/dashboard/teacher/account/security.html:151
+#: ui/templates/app/dashboard/teacher/account/security.html:150
 msgid "Confirm with your password"
 msgstr "Құпия сөзіңізбен растаңыз"
 
@@ -108,27 +106,27 @@ msgstr "Бөлімді таңдаңыз"
 msgid "No variant"
 msgstr "Нұсқасы жоқ"
 
-#: apps/dashboard/teacher/forms/subject.py:24
+#: apps/dashboard/teacher/forms/subject.py:40
 msgid "General (all grades)"
 msgstr "Жалпы (барлық сыныптар)"
 
-#: apps/dashboard/teacher/forms/subject.py:58
+#: apps/dashboard/teacher/forms/subject.py:74
 msgid "A topic with this title already exists in this chapter."
 msgstr "Бұл бөлімде осы атаумен тақырып бар."
 
-#: apps/dashboard/teacher/views/account.py:34
+#: apps/dashboard/teacher/views/account.py:43
 msgid "Avatar removed."
 msgstr "Аватар өшірілді."
 
-#: apps/dashboard/teacher/views/account.py:45
+#: apps/dashboard/teacher/views/account.py:54
 msgid "Profile has been updated."
 msgstr "Профиль жаңартылды."
 
-#: apps/dashboard/teacher/views/account.py:76
+#: apps/dashboard/teacher/views/account.py:91
 msgid "Password has been changed."
 msgstr "Құпия сөз өзгертілді."
 
-#: apps/dashboard/teacher/views/account.py:87
+#: apps/dashboard/teacher/views/account.py:102
 msgid "Your account has been deactivated."
 msgstr "Аккаунтыңыз өшірілді."
 
@@ -141,6 +139,34 @@ msgstr ""
 msgid "Select topic"
 msgstr "Тақырыпты таңдаңыз"
 
+#: apps/dashboard/teacher/views/subject.py:114
+msgid "Subject updated successfully."
+msgstr "Пән сәтті жаңартылды."
+
+#: apps/dashboard/teacher/views/subject.py:194
+msgid "Chapter created successfully."
+msgstr "Бөлім сәтті қосылды."
+
+#: apps/dashboard/teacher/views/subject.py:216
+msgid "Chapter updated successfully."
+msgstr "Бөлім сәтті жаңартылды."
+
+#: apps/dashboard/teacher/views/subject.py:239
+msgid "Chapter deleted."
+msgstr "Бөлім жойылды."
+
+#: apps/dashboard/teacher/views/subject.py:256
+msgid "Topic created successfully."
+msgstr "Тақырып сәтті қосылды."
+
+#: apps/dashboard/teacher/views/subject.py:277
+msgid "Topic updated successfully."
+msgstr "Тақырып сәтті жаңартылды."
+
+#: apps/dashboard/teacher/views/subject.py:296
+msgid "Topic deleted."
+msgstr "Тақырып жойылды."
+
 #: apps/main/forms/auth.py:12 ui/templates/app/auth/login/page.html:27
 msgid "Email or username"
 msgstr "Эл. пошта немесе пайдаланушы аты"
@@ -148,28 +174,28 @@ msgstr "Эл. пошта немесе пайдаланушы аты"
 #: apps/main/forms/auth.py:13 ui/templates/app/auth/login/page.html:46
 #: ui/templates/app/auth/register/learner.html:86
 #: ui/templates/app/auth/register/learner.html:94
-#: ui/templates/app/auth/register/teacher.html:318
-#: ui/templates/app/auth/register/teacher.html:326
+#: ui/templates/app/auth/register/teacher.html:264
+#: ui/templates/app/auth/register/teacher.html:272
 msgid "Password"
 msgstr "Құпия сөз"
 
 #: apps/main/forms/auth.py:17 ui/templates/app/auth/register/learner.html:49
-#: ui/templates/app/auth/register/teacher.html:277
-#: ui/templates/app/auth/register/teacher.html:286
-#: ui/templates/app/dashboard/teacher/account/edit.html:70
+#: ui/templates/app/auth/register/teacher.html:223
+#: ui/templates/app/auth/register/teacher.html:232
+#: ui/templates/app/dashboard/teacher/account/edit.html:66
 msgid "First name"
 msgstr "Есімі"
 
 #: apps/main/forms/auth.py:18 ui/templates/app/auth/register/learner.html:67
-#: ui/templates/app/auth/register/teacher.html:297
-#: ui/templates/app/auth/register/teacher.html:306
-#: ui/templates/app/dashboard/teacher/account/edit.html:85
+#: ui/templates/app/auth/register/teacher.html:243
+#: ui/templates/app/auth/register/teacher.html:252
+#: ui/templates/app/dashboard/teacher/account/edit.html:81
 msgid "Last name"
 msgstr "Тегі"
 
 #: apps/main/forms/auth.py:19 ui/templates/app/auth/register/learner.html:29
-#: ui/templates/app/auth/register/teacher.html:256
-#: ui/templates/app/dashboard/teacher/account/profile.html:56
+#: ui/templates/app/auth/register/teacher.html:202
+#: ui/templates/app/dashboard/teacher/account/profile.html:62
 msgid "Email"
 msgstr "Электронды пошта"
 
@@ -186,19 +212,19 @@ msgstr "Бұл email-мен пайдаланушы тіркелген."
 msgid "Welcome to the OIQ platform!"
 msgstr "OIQ платформасына қош келдіңіз!"
 
-#: apps/main/views/auth.py:31
+#: apps/main/views/auth.py:29
 msgid "You have successfully signed in."
 msgstr "Сіз жүйеге сәтті кірдіңіз."
 
-#: apps/main/views/auth.py:46
+#: apps/main/views/auth.py:44
 msgid "You have been signed out."
 msgstr "Сіз жүйеден сәтті шықтыңыз."
 
-#: apps/main/views/auth.py:74
+#: apps/main/views/auth.py:72
 msgid "Your account has been created successfully."
 msgstr "Аккаунтыңыз сәтті құрылды."
 
-#: apps/main/views/auth.py:105
+#: apps/main/views/auth.py:103
 msgid "Teacher account has been created successfully."
 msgstr "Мұғалім аккаунты сәтті құрылды."
 
@@ -256,7 +282,7 @@ msgid "Grades"
 msgstr "Сыныптар"
 
 #: config/settings.py:267 core/models/content.py:24
-#: ui/templates/layouts/teacher_layout.html:50
+#: ui/templates/layouts/teacher_layout.html:51
 msgid "Subjects"
 msgstr "Пәндер"
 
@@ -265,8 +291,8 @@ msgid "Question formats"
 msgstr "Сұрақ форматтары"
 
 #: config/settings.py:277 core/models/content.py:142
-#: ui/templates/app/dashboard/teacher/subject/detail.html:57
-#: ui/templates/app/dashboard/teacher/subject/detail.html:70
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:46
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:60
 #: ui/templates/app/dashboard/teacher/subject/question/list.html:4
 #: ui/templates/app/dashboard/teacher/subject/question/list.html:11
 msgid "Questions"
@@ -339,7 +365,7 @@ msgstr "Әкімші"
 
 #: core/models/account.py:13 core/models/account.py:111
 #: ui/templates/app/auth/register/page.html:24
-#: ui/templates/app/dashboard/teacher/account/profile.html:37
+#: ui/templates/app/dashboard/teacher/account/profile.html:33
 msgid "Teacher"
 msgstr "Мұғалім"
 
@@ -348,7 +374,7 @@ msgid "Learner"
 msgstr "Оқушы"
 
 #: core/models/account.py:16
-#: ui/templates/app/dashboard/teacher/account/edit.html:102
+#: ui/templates/app/dashboard/teacher/account/edit.html:98
 msgid "Middle name"
 msgstr "Әкесінің аты"
 
@@ -361,8 +387,8 @@ msgid "Shows the user's role in the system."
 msgstr "Пайдаланушының жүйедегі рөлін көрсетеді."
 
 #: core/models/account.py:21
-#: ui/templates/app/dashboard/teacher/account/edit.html:116
-#: ui/templates/app/dashboard/teacher/account/profile.html:60
+#: ui/templates/app/dashboard/teacher/account/edit.html:112
+#: ui/templates/app/dashboard/teacher/account/profile.html:66
 msgid "Phone"
 msgstr "Телефон"
 
@@ -432,7 +458,7 @@ msgid "Regular"
 msgstr "Қалыпты"
 
 #: core/models/account.py:83
-#: ui/templates/app/dashboard/teacher/account/profile.html:41
+#: ui/templates/app/dashboard/teacher/account/profile.html:37
 msgid "Partner"
 msgstr "Серіктес"
 
@@ -463,44 +489,47 @@ msgstr "Белсенді"
 #: core/models/content.py:10 core/models/content.py:81
 #: core/models/content.py:100 core/models/education.py:8
 #: core/models/education.py:25 core/models/education.py:39
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:12
 msgid "Name"
 msgstr "Атауы"
 
 #: core/models/content.py:11
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:29
 msgid "Cover"
 msgstr "Мұқаба"
 
 #: core/models/content.py:16 core/models/content.py:39
 #: core/models/content.py:58
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:78
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:58
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:78
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:48
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:83
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:61
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:68
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:102
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:54
 msgid "Description"
 msgstr "Сипаттама"
 
 #: core/models/content.py:17 core/models/content.py:40
 #: core/models/content.py:59 core/models/content.py:83
 #: core/models/content.py:102 core/models/education.py:41
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:83
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:63
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:83
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:53
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:66
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:44
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:89
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:41
 msgid "Order"
 msgstr "Реті"
 
 #: core/models/content.py:36 core/models/education.py:44
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:72
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:52
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:77
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:55
 #: ui/templates/app/dashboard/teacher/subject/question/form.html:52
 msgid "Grade"
 msgstr "Сынып"
 
 #: core/models/content.py:38 core/models/content.py:53
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:64
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:44
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:70
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:40
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:70
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:48
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:93
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:45
 msgid "Title"
 msgstr "Атауы"
 
@@ -604,15 +633,15 @@ msgstr "Жауап нұсқалары"
 msgid "#{} option"
 msgstr "№{} нұсқа"
 
-#: core/views.py:24
+#: core/views.py:26
 msgid "File not found."
 msgstr "Файл табылмады."
 
-#: core/views.py:27
+#: core/views.py:29
 msgid "File size must not exceed 5MB."
 msgstr "Файл өлшемі 5MB-дан аспауы керек."
 
-#: core/views.py:32
+#: core/views.py:34
 msgid "Please upload a valid image file."
 msgstr "Жарамды сурет файлын жүктеңіз."
 
@@ -684,8 +713,8 @@ msgid "Don't have an account?"
 msgstr "Аккаунтыңыз жоқ па?"
 
 #: ui/templates/app/auth/login/page.html:84
-#: ui/templates/app/auth/register/learner.html:177
-#: ui/templates/app/auth/register/teacher.html:406
+#: ui/templates/app/auth/register/learner.html:166
+#: ui/templates/app/auth/register/teacher.html:341
 #: ui/templates/app/page.html:39
 msgid "Sign up"
 msgstr "Тіркелу"
@@ -701,13 +730,13 @@ msgstr "Жеке оқу кеңістігіңізді бастаңыз"
 
 #: ui/templates/app/auth/register/learner.html:120
 #: ui/templates/app/auth/register/learner.html:128
-#: ui/templates/app/auth/register/teacher.html:352
-#: ui/templates/app/auth/register/teacher.html:360
+#: ui/templates/app/auth/register/teacher.html:298
+#: ui/templates/app/auth/register/teacher.html:306
 msgid "Confirm password"
 msgstr "Құпия сөзді қайталау"
 
-#: ui/templates/app/auth/register/learner.html:158
-#: ui/templates/app/auth/register/teacher.html:392
+#: ui/templates/app/auth/register/learner.html:148
+#: ui/templates/app/auth/register/teacher.html:326
 msgid "I agree with the platform's terms of use."
 msgstr "Платформа ережелерімен келісемін."
 
@@ -732,27 +761,21 @@ msgid "Create classes and organize game-based tasks for learners."
 msgstr "Сыныптар құру, оқушыларға ойын тапсырмаларын ұйымдастыру."
 
 #: ui/templates/app/auth/register/teacher.html:3
-#: ui/templates/app/auth/register/teacher.html:134
+#: ui/templates/app/auth/register/teacher.html:116
 msgid "Sign up as a teacher"
 msgstr "Мұғалім ретінде тіркелу"
 
-#: ui/templates/app/auth/register/teacher.html:135
+#: ui/templates/app/auth/register/teacher.html:117
 msgid "Start a new educational space"
 msgstr "Жаңа білім беру кеңістігін бастаңыз"
 
-#: ui/templates/app/auth/register/teacher.html:175
-msgid "Select a city"
-msgstr "Қаланы таңдаңыз"
+#: ui/templates/app/auth/register/teacher.html:152
+#: ui/templates/app/auth/register/teacher.html:166
+#: ui/templates/app/auth/register/teacher.html:180
+msgid "This field is required."
+msgstr ""
 
-#: ui/templates/app/auth/register/teacher.html:201
-msgid "Select a school"
-msgstr "Мектепті таңдаңыз"
-
-#: ui/templates/app/auth/register/teacher.html:228
-msgid "Select a subject"
-msgstr "Пәнді таңдаңыз"
-
-#: ui/templates/app/auth/register/teacher.html:247
+#: ui/templates/app/auth/register/teacher.html:193
 msgid "Continue"
 msgstr "Жалғастыру"
 
@@ -766,7 +789,7 @@ msgid "Personal learning and classroom tasks"
 msgstr "Жеке оқу және сыныптық тапсырмалар"
 
 #: ui/templates/app/dashboard/learner/page.html:16
-#: ui/templates/layouts/teacher_layout.html:156
+#: ui/templates/layouts/teacher_layout.html:157
 msgid "Sign out"
 msgstr "Шығу"
 
@@ -805,8 +828,7 @@ msgstr "Әзірге белсенділік жоқ. Оқуды бастаған�
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:14
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:48
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:101
-#: ui/templates/app/dashboard/teacher/account/profile.html:7
-#: ui/templates/layouts/teacher_layout.html:145
+#: ui/templates/layouts/teacher_layout.html:146
 msgid "Profile"
 msgstr "Профиль"
 
@@ -814,8 +836,7 @@ msgstr "Профиль"
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:60
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:114
 #: ui/templates/app/dashboard/teacher/account/edit.html:4
-#: ui/templates/app/dashboard/teacher/account/edit.html:7
-#: ui/templates/app/dashboard/teacher/account/profile.html:49
+#: ui/templates/app/dashboard/teacher/account/profile.html:54
 msgid "Edit profile"
 msgstr "Профильді өңдеу"
 
@@ -823,7 +844,6 @@ msgstr "Профильді өңдеу"
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:72
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:127
 #: ui/templates/app/dashboard/teacher/account/settings.html:4
-#: ui/templates/app/dashboard/teacher/account/settings.html:7
 msgid "Settings"
 msgstr "Баптаулар"
 
@@ -831,71 +851,56 @@ msgstr "Баптаулар"
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:84
 #: ui/templates/app/dashboard/teacher/account/_tabs.html:140
 #: ui/templates/app/dashboard/teacher/account/security.html:4
-#: ui/templates/app/dashboard/teacher/account/security.html:7
 msgid "Security"
 msgstr "Қауіпсіздік"
 
-#: ui/templates/app/dashboard/teacher/account/edit.html:8
-msgid "Update your personal information"
-msgstr "Жеке мәліметтерді жаңартыңыз"
-
-#: ui/templates/app/dashboard/teacher/account/edit.html:47
+#: ui/templates/app/dashboard/teacher/account/edit.html:43
 msgid "Change photo"
 msgstr "Суретті өзгерту"
 
 #: ui/templates/app/dashboard/teacher/account/edit.html:55
-msgid "Remove"
-msgstr "Өшіру"
-
-#: ui/templates/app/dashboard/teacher/account/edit.html:59
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:58
 msgid "JPG or PNG, up to 5MB."
 msgstr "JPG немесе PNG, 5MB-қа дейін."
 
-#: ui/templates/app/dashboard/teacher/account/edit.html:218
+#: ui/templates/app/dashboard/teacher/account/edit.html:157
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:87
 msgid "Save changes"
 msgstr "Өзгерістерді сақтау"
 
-#: ui/templates/app/dashboard/teacher/account/profile.html:8
-msgid "Public information about the teacher"
-msgstr "Мұғалім туралы жалпыға қолжетімді ақпарат"
-
-#: ui/templates/app/dashboard/teacher/account/profile.html:17
+#: ui/templates/app/dashboard/teacher/account/profile.html:13
 msgid "Back to dashboard"
 msgstr "Басқару тақтасына оралу"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:8
-msgid "Manage your password and account access"
-msgstr "Құпия сөз бен аккаунтқа қол жеткізуді басқарыңыз"
-
-#: ui/templates/app/dashboard/teacher/account/security.html:15
+#: ui/templates/app/dashboard/teacher/account/security.html:11
 msgid "Change password"
 msgstr "Құпия сөзді өзгерту"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:16
+#: ui/templates/app/dashboard/teacher/account/security.html:12
 msgid "Use a strong password that you don't use elsewhere."
 msgstr "Басқа жерде қолданбаған күрделі құпия сөз қойыңыз."
 
-#: ui/templates/app/dashboard/teacher/account/security.html:24
+#: ui/templates/app/dashboard/teacher/account/security.html:20
 msgid "Current password"
 msgstr "Қазіргі құпия сөз"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:51
+#: ui/templates/app/dashboard/teacher/account/security.html:47
 msgid "New password"
 msgstr "Жаңа құпия сөз"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:81
+#: ui/templates/app/dashboard/teacher/account/security.html:77
 msgid "Confirm new password"
 msgstr "Жаңа құпия сөзді қайталау"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:113
+#: ui/templates/app/dashboard/teacher/account/security.html:109
 msgid "Update password"
 msgstr "Құпия сөзді жаңарту"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:120
+#: ui/templates/app/dashboard/teacher/account/security.html:116
 msgid "Danger zone"
 msgstr "Қауіпті аймақ"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:121
+#: ui/templates/app/dashboard/teacher/account/security.html:117
 msgid ""
 "Deactivating your account will sign you out and block access until support "
 "restores it."
@@ -903,15 +908,15 @@ msgstr ""
 "Аккаунтты өшіру сізді жүйеден шығарады және қолдау қызметі қалпына "
 "келтірмейінше кіру мүмкін болмайды."
 
-#: ui/templates/app/dashboard/teacher/account/security.html:129
+#: ui/templates/app/dashboard/teacher/account/security.html:127
 msgid "Deactivate account"
 msgstr "Аккаунтты өшіру"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:140
+#: ui/templates/app/dashboard/teacher/account/security.html:139
 msgid "Deactivate your account?"
 msgstr "Аккаунтыңызды өшіресіз бе?"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:142
+#: ui/templates/app/dashboard/teacher/account/security.html:141
 msgid ""
 "You will be signed out immediately and won't be able to log back in until "
 "support reactivates your account."
@@ -919,28 +924,25 @@ msgstr ""
 "Сіз бірден жүйеден шығарыласыз және қолдау қызметі аккаунтты қалпына "
 "келтірмейінше қайта кіре алмайсыз."
 
-#: ui/templates/app/dashboard/teacher/account/security.html:172
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:89
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:89
+#: ui/templates/app/dashboard/teacher/account/security.html:171
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:99
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:81
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:118
 #: ui/templates/app/dashboard/teacher/subject/question/form.html:118
-#: ui/templates/base.html:133
+#: ui/templates/components/_confirm_modal.html:37
 msgid "Cancel"
 msgstr "Бас тарту"
 
-#: ui/templates/app/dashboard/teacher/account/security.html:178
+#: ui/templates/app/dashboard/teacher/account/security.html:177
 msgid "Yes, deactivate"
 msgstr "Иә, өшіру"
 
-#: ui/templates/app/dashboard/teacher/account/settings.html:8
-msgid "Manage your interface preferences"
-msgstr "Интерфейс баптауларын басқарыңыз"
-
-#: ui/templates/app/dashboard/teacher/account/settings.html:15
-#: ui/templates/app/dashboard/teacher/account/settings.html:23
+#: ui/templates/app/dashboard/teacher/account/settings.html:11
+#: ui/templates/app/dashboard/teacher/account/settings.html:18
 msgid "Language"
 msgstr "Тіл"
 
-#: ui/templates/app/dashboard/teacher/account/settings.html:16
+#: ui/templates/app/dashboard/teacher/account/settings.html:12
 msgid "Choose the interface language."
 msgstr "Интерфейс тілін таңдаңыз."
 
@@ -949,7 +951,7 @@ msgid "Teacher dashboard"
 msgstr "Мұғалім панелі"
 
 #: ui/templates/app/dashboard/teacher/page.html:14
-#: ui/templates/layouts/teacher_layout.html:73
+#: ui/templates/layouts/teacher_layout.html:75
 msgid "Classes"
 msgstr "Сыныптар"
 
@@ -958,7 +960,7 @@ msgid "Add learners to classes and track the learning process."
 msgstr "Оқушыларды сыныптарға қосып, оқу процесін бақылаңыз."
 
 #: ui/templates/app/dashboard/teacher/page.html:22
-#: ui/templates/layouts/teacher_layout.html:81
+#: ui/templates/layouts/teacher_layout.html:83
 msgid "Game tasks"
 msgstr "Ойын тапсырмалары"
 
@@ -967,7 +969,7 @@ msgid "Create interactive tasks in a Kahoot-like style."
 msgstr "Kahoot стилінде интерактивті тапсырмалар құрастырыңыз."
 
 #: ui/templates/app/dashboard/teacher/page.html:30
-#: ui/templates/layouts/teacher_layout.html:89
+#: ui/templates/layouts/teacher_layout.html:91
 msgid "Results"
 msgstr "Нәтижелер"
 
@@ -999,16 +1001,20 @@ msgstr "Ойын жасау"
 msgid "Build a game from questions and tasks."
 msgstr "Сұрақтар мен тапсырмалардан ойын құрастыру."
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:17
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:15
+msgid "chapter"
+msgstr "бөлім"
+
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:19
 msgid "General"
 msgstr "Жалпы"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:34
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:36
 msgid "Delete this chapter together with its topics?"
 msgstr "Бұл бөлімді оның тақырыптарымен бірге жоюды қалайсыз ба?"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:92
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:92
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:109
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:128
 #: ui/templates/app/dashboard/teacher/subject/question/form.html:121
 msgid "Save"
 msgstr "Сақтау"
@@ -1018,7 +1024,7 @@ msgid "No chapters yet for this grade."
 msgstr "Бұл сынып бойынша әзірге бөлім жоқ."
 
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:27
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:68
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:66
 msgid "Add chapter"
 msgstr "Бөлім қосу"
 
@@ -1027,15 +1033,47 @@ msgstr "Бөлім қосу"
 msgid "Close"
 msgstr "Жабу"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:22
+#: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:44
+msgid "Change cover"
+msgstr "Мұқабаны өзгерту"
+
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:22
+msgid "chapters"
+msgstr "бөлім"
+
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:26
+msgid "topics"
+msgstr "тақырып"
+
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:30
+msgid "grades"
+msgstr "сынып"
+
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:64
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:26
+msgid "Add question"
+msgstr "Сұрақ қосу"
+
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:84
+#: ui/templates/app/dashboard/teacher/subject/detail.html:60
+msgid "Edit subject"
+msgstr "Пәнді өзгерту"
+
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:16
+msgid "topic"
+msgstr "тақырып"
+
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:34
 msgid "Delete this topic?"
 msgstr "Бұл тақырыпты жоюды қалайсыз ба?"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:39
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:56
 msgid "questions"
 msgstr "сұрақ"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:53
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:70
 msgid "No questions added yet."
 msgstr "Әзірге сұрақ қосылмаған."
 
@@ -1044,40 +1082,17 @@ msgid "No topics yet."
 msgstr "Әзірге тақырып жоқ."
 
 #: ui/templates/app/dashboard/teacher/subject/_topics_section.html:24
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:58
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:59
 msgid "Add topic"
 msgstr "Тақырып қосу"
 
-#: ui/templates/app/dashboard/teacher/subject/detail.html:12
-msgid "Manage chapters and topics for your subject"
-msgstr "Пәніңіздің бөлімдері мен тақырыптарын басқарыңыз"
-
 #: ui/templates/app/dashboard/teacher/subject/detail.html:36
-msgid "chapters"
-msgstr "бөлім"
-
-#: ui/templates/app/dashboard/teacher/subject/detail.html:40
-msgid "topics"
-msgstr "тақырып"
-
-#: ui/templates/app/dashboard/teacher/subject/detail.html:44
-msgid "grades"
-msgstr "сынып"
-
-#: ui/templates/app/dashboard/teacher/subject/detail.html:74
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
-#: ui/templates/app/dashboard/teacher/subject/question/list.html:26
-msgid "Add question"
-msgstr "Сұрақ қосу"
-
-#: ui/templates/app/dashboard/teacher/subject/detail.html:100
 msgid ""
 "No grades are assigned to this subject yet. Ask an administrator to "
 "configure them."
 msgstr "Бұл пәнге әзірге сыныптар тағайындалмаған. Әкімшіден баптауды сұраңыз."
 
-#: ui/templates/app/dashboard/teacher/subject/question/_option_row.html:12
+#: ui/templates/app/dashboard/teacher/subject/question/_option_row.html:11
 msgid "Correct"
 msgstr "Дұрыс"
 
@@ -1130,16 +1145,16 @@ msgstr "Интерактивті, геймификацияланған және 
 msgid "I already have an account"
 msgstr "Менде аккаунт бар"
 
-#: ui/templates/base.html:140
+#: ui/templates/components/_confirm_modal.html:44
 msgid "Delete"
 msgstr "Жою"
 
-#: ui/templates/layouts/teacher_layout.html:75
-#: ui/templates/layouts/teacher_layout.html:83
-#: ui/templates/layouts/teacher_layout.html:91
+#: ui/templates/layouts/teacher_layout.html:77
+#: ui/templates/layouts/teacher_layout.html:85
+#: ui/templates/layouts/teacher_layout.html:93
 msgid "Soon"
 msgstr "Жақында"
 
-#: ui/templates/layouts/teacher_layout.html:149
+#: ui/templates/layouts/teacher_layout.html:150
 msgid "Account settings"
 msgstr "Аккаунт баптаулары"

@@ -5,10 +5,10 @@
         editingTopicId: {% if editing_topic_id %}{{ editing_topic_id }}{% else %}null{% endif %},
         addOpen: {% if show_topic_form %}true{% else %}false{% endif %}
     }"
-    class="space-y-2 pl-4"
+    class="space-y-2"
 >
     {% for topic in topics %}
-        {% include "app/dashboard/teacher/subject/_topic_item.html" with topic=topic %}
+        {% include "app/dashboard/teacher/subject/_topic_item.html" with topic=topic chapter=chapter %}
     {% empty %}
         <p class="text-body-subtle">{% translate "No topics yet." %}</p>
     {% endfor %}
@@ -19,8 +19,8 @@
             @click="addOpen = !addOpen"
             class="flex items-center gap-2 rounded-2xl border border-dashed border-default px-4 py-2.5 font-medium text-body hover:border-brand hover:text-brand"
         >
-            <i x-show="!addOpen" data-lucide="plus" class="size-4"></i>
-            <i x-show="addOpen" data-lucide="x" class="size-4"></i>
+            <i x-show="!addOpen" class="ph ph-plus size-4"></i>
+            <i x-show="addOpen" class="ph ph-x size-4"></i>
             <span x-show="!addOpen">{% translate "Add topic" %}</span>
             <span x-show="addOpen">{% translate "Close" %}</span>
         </button>
@@ -36,12 +36,18 @@
         >
             {% csrf_token %}
 
-            <div class="space-y-2">
-                <label for="{{ topic_create_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
-                {{ topic_create_form.title }}
-                {% for error in topic_create_form.title.errors %}
-                    <span class="block mt-1 text-normal text-danger">{{ error }}</span>
-                {% endfor %}
+            <div class="flex items-start gap-3">
+                <div class="w-28 shrink-0 space-y-2">
+                    <label for="{{ topic_create_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
+                    {{ topic_create_form.order }}
+                </div>
+                <div class="flex-1 min-w-0 space-y-2">
+                    <label for="{{ topic_create_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
+                    {{ topic_create_form.title }}
+                    {% for error in topic_create_form.title.errors %}
+                        <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="space-y-2">
@@ -49,14 +55,20 @@
                 {{ topic_create_form.description }}
             </div>
 
-            <div class="space-y-2">
-                <label for="{{ topic_create_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
-                {{ topic_create_form.order }}
+            <div class="flex gap-2">
+                <button type="button" @click="addOpen = false" class="relative grid group w-full sm:w-auto">
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                    <span class="relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium group-hover:bg-neutral-secondary group-active:translate-y-1.5">
+                        {% translate "Cancel" %}
+                    </span>
+                </button>
+                <button type="submit" class="relative grid group w-full sm:w-auto">
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="relative w-full px-8 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-brand text-neutral-primary font-medium group-hover:bg-brand-medium group-active:translate-y-1.5">
+                        {% translate "Add topic" %}
+                    </span>
+                </button>
             </div>
-
-            <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
-                {% translate "Add topic" %}
-            </button>
         </form>
     </div>
 </div>

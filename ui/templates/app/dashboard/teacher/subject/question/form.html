@@ -46,8 +46,8 @@
         {{ formset.management_form }}
 
         <div x-show="tab === 'question'" class="space-y-6">
-            <div class="space-y-5 rounded-3xl border border-default bg-neutral-primary p-6">
-                <div class="grid gap-4 md:grid-cols-3">
+            <div class="space-y-5 rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
+                <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                     <div class="space-y-2">
                         <label class="block ml-6 font-medium">{% translate "Grade" %}</label>
                         {% include "components/select.html" with field=form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-            <div x-show="selectedFormatCode === 'test'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-6">
+            <div x-show="selectedFormatCode === 'test'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-black">{% translate "Answer options" %}</h2>
                     <button
@@ -92,7 +92,7 @@
                         id="add-option-button"
                         class="flex items-center gap-2 rounded-full border border-default px-4 py-2 font-medium hover:bg-neutral-secondary"
                     >
-                        <i data-lucide="plus" class="size-4"></i>
+                        <i class="ph ph-plus size-4"></i>
                         {% translate "Add option" %}
                     </button>
                 </div>
@@ -109,7 +109,7 @@
             </div>
         </div>
 
-        <div x-show="tab === 'preview'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <div x-show="tab === 'preview'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
             <div id="question-preview-content" class="text-body"></div>
         </div>
 

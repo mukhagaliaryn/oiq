@@ -5,7 +5,7 @@
 
 {% block link %}
     <a href="{% url 'main:register' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
-        <i data-lucide="chevron-left" class="size-6"></i>
+        <i class="ph ph-caret-left size-6"></i>
     </a>
 {% endblock link %}
 
@@ -276,10 +276,10 @@
                             <button
                                 type="button"
                                 @click="showPassword = !showPassword"
-                                class="absolute right-1.5 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                                class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
                             >
-                                <i x-show="!showPassword" data-lucide="eye" class="size-6"></i>
-                                <i x-show="showPassword" data-lucide="eye-off" class="size-6"></i>
+                                <i x-show="!showPassword" class="ph ph-eye size-6"></i>
+                                <i x-show="showPassword" class="ph ph-eye-slash size-6"></i>
                             </button>
                         </div>
 
@@ -310,10 +310,10 @@
                             <button
                                 type="button"
                                 @click="showPasswordConfirm = !showPasswordConfirm"
-                                class="absolute right-1.5 top-1/2 -translate-y-1/2 text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                                class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
                             >
-                                <i x-show="!showPasswordConfirm" data-lucide="eye" class="size-6"></i>
-                                <i x-show="showPasswordConfirm" data-lucide="eye-off" class="size-6"></i>
+                                <i x-show="!showPasswordConfirm" class="ph ph-eye size-6"></i>
+                                <i x-show="showPasswordConfirm" class="ph ph-eye-slash size-6"></i>
                             </button>
                         </div>
 

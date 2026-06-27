@@ -107,6 +107,39 @@
   }
 }
 
+/* Phosphor icon sizes — map Tailwind size-* to font-size */
+.ph.size-3, .ph-fill.size-3   { font-size: 0.75rem; }
+.ph.size-4, .ph-fill.size-4   { font-size: 1rem; }
+.ph.size-5, .ph-fill.size-5   { font-size: 1.25rem; }
+.ph.size-6, .ph-fill.size-6   { font-size: 1.5rem; }
+.ph.size-8, .ph-fill.size-8   { font-size: 2rem; }
+.ph.size-24, .ph-fill.size-24 { font-size: 6rem; }
+
+@media (min-width: 640px) {
+  .ph.sm\:size-3, .ph-fill.sm\:size-3   { font-size: 0.75rem; }
+  .ph.sm\:size-4, .ph-fill.sm\:size-4   { font-size: 1rem; }
+  .ph.sm\:size-5, .ph-fill.sm\:size-5   { font-size: 1.25rem; }
+  .ph.sm\:size-6, .ph-fill.sm\:size-6   { font-size: 1.5rem; }
+  .ph.sm\:size-8, .ph-fill.sm\:size-8   { font-size: 2rem; }
+  .ph.sm\:size-24, .ph-fill.sm\:size-24 { font-size: 6rem; }
+}
+@media (min-width: 768px) {
+  .ph.md\:size-3, .ph-fill.md\:size-3   { font-size: 0.75rem; }
+  .ph.md\:size-4, .ph-fill.md\:size-4   { font-size: 1rem; }
+  .ph.md\:size-5, .ph-fill.md\:size-5   { font-size: 1.25rem; }
+  .ph.md\:size-6, .ph-fill.md\:size-6   { font-size: 1.5rem; }
+  .ph.md\:size-8, .ph-fill.md\:size-8   { font-size: 2rem; }
+  .ph.md\:size-24, .ph-fill.md\:size-24 { font-size: 6rem; }
+}
+@media (min-width: 1024px) {
+  .ph.lg\:size-3, .ph-fill.lg\:size-3   { font-size: 0.75rem; }
+  .ph.lg\:size-4, .ph-fill.lg\:size-4   { font-size: 1rem; }
+  .ph.lg\:size-5, .ph-fill.lg\:size-5   { font-size: 1.25rem; }
+  .ph.lg\:size-6, .ph-fill.lg\:size-6   { font-size: 1.5rem; }
+  .ph.lg\:size-8, .ph-fill.lg\:size-8   { font-size: 2rem; }
+  .ph.lg\:size-24, .ph-fill.lg\:size-24 { font-size: 6rem; }
+}
+
 .toast-success {
   @apply border text-success;
 }

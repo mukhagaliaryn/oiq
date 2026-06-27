@@ -9,7 +9,7 @@
     {% include "app/dashboard/teacher/account/_tabs.html" %}
 {% else %}
     <a href="{% url 'teacher:dashboard' %}" class="mb-6 inline-flex items-center gap-2 text-body hover:text-body-subtle">
-        <i data-lucide="chevron-left" class="size-4"></i>
+        <i class="ph ph-caret-left size-4"></i>
         {% translate "Back to dashboard" %}
     </a>
 {% endif %}
@@ -29,11 +29,11 @@
             <p class="text-body">@{{ profile_user.username }}</p>
 
             <div class="mt-2 flex flex-wrap gap-2">
-                <span class="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand">
+                <span class="rounded-full bg-success-soft px-3 py-1 font-medium text-success">
                     {% translate "Teacher" %}
                 </span>
                 {% if profile_user.teacher.is_partner %}
-                    <span class="rounded-full bg-warning-soft px-3 py-1 text-xs font-medium text-warning">
+                    <span class="rounded-full bg-warning-soft px-3 py-1 font-medium text-warning">
                         {% translate "Partner" %}
                     </span>
                 {% endif %}
@@ -43,11 +43,11 @@
         {% if is_own_profile %}
             <a 
                 href="{% url 'teacher:account-edit' %}" 
-                class="relative grid group ml-auto"
+                class="relative grid group w-full sm:w-auto sm:ml-auto"
             >  
                 <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
                 <span class="
-                    relative w-full px-6 py-3 rounded-full bg-neutral-primary border border-default font-medium 
+                    relative w-full px-6 py-3 flex justify-center rounded-full bg-neutral-primary border border-default font-medium 
                     group-hover:bg-neutral-secondary group-active:translate-y-1.5
                     "
                 >

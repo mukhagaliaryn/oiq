@@ -1,18 +1,36 @@
 {% load i18n %}
 <div
     id="topic-item-{{ topic.id }}"
+    x-data="{ open: {% if editing_topic_id == topic.id %}true{% else %}false{% endif %} }"
     class="rounded-2xl border border-default"
 >
     <div class="flex items-center justify-between gap-2 px-4 py-3">
-        <span class="flex-1 font-medium">{{ topic.title }}</span>
+        <button
+            type="button"
+            @click="open = !open; if (!open) editingTopicId = null"
+            class="flex flex-1 items-center gap-2 min-w-0 text-left"
+        >
+            <i class="ph ph-caret-right size-4 shrink-0 transition" :class="{ 'rotate-90': open }"></i>
+            <i class="ph ph-article size-5 shrink-0 text-body-subtle"></i>
+            <span class="font-semibold">
+                <span class="text-body-subtle">{{ chapter.order }}.{{ topic.order }}-{% translate "topic" %}:</span>
+                {{ topic.title }}
+            </span>
+        </button>
 
         <div class="flex items-center gap-1">
+            <a
+                href="{% url 'teacher:question-list' chapter.subject_id %}?{% if chapter.grade_id %}grade={{ chapter.grade_id }}&{% endif %}chapter={{ chapter.id }}&topic={{ topic.id }}"
+                class="flex justify-center items-center rounded-2xl p-2 hover:bg-neutral-secondary"
+            >
+                <i class="ph ph-eye size-5"></i>
+            </a>
             <button
                 type="button"
-                @click="editingTopicId = (editingTopicId === {{ topic.id }} ? null : {{ topic.id }})"
-                class="rounded-lg p-1.5 hover:bg-neutral-secondary"
+                @click="open = true; editingTopicId = (editingTopicId === {{ topic.id }} ? null : {{ topic.id }})"
+                class="flex justify-center items-center rounded-2xl p-2 hover:bg-neutral-secondary"
             >
-                <i data-lucide="pencil" class="size-4"></i>
+                <i class="ph ph-pencil size-5"></i>
             </button>
             <button
                 type="button"
@@ -20,22 +38,27 @@
                 hx-target="#topics-section-{{ topic.chapter_id }}"
                 hx-swap="outerHTML"
                 hx-confirm="{% translate 'Delete this topic?' %}"
-                class="rounded-lg p-1.5 text-danger hover:bg-danger-soft"
+                class="flex justify-center items-center rounded-2xl p-2 text-danger hover:bg-danger-soft"
             >
-                <i data-lucide="trash-2" class="size-4"></i>
+                <i class="ph ph-trash size-5"></i>
             </button>
         </div>
     </div>
 
-    <div x-show="editingTopicId !== {{ topic.id }}" class="border-t border-default px-4 py-4">
+    <div
+        x-show="open && editingTopicId !== {{ topic.id }}"
+        x-cloak
+        class="border-t border-default px-4 py-4"
+        style="display:none"
+    >
         {% if topic.description %}
-            <div class="text-body">{{ topic.description|safe }}</div>
+            <div class="text-body mb-3">{{ topic.description|safe }}</div>
         {% endif %}
 
-        <div class="{% if topic.description %}mt-3 {% endif %}rounded-xl bg-neutral-secondary p-4">
+        <div class="rounded-xl bg-neutral-secondary p-4">
             <div class="flex flex-wrap items-center gap-4 text-normal text-body-subtle">
                 <span class="flex items-center gap-1.5 font-medium text-body">
-                    <i data-lucide="help-circle" class="size-4"></i>
+                    <i class="ph ph-question size-4"></i>
                     {{ topic.questions_count }} {% translate "questions" %}
                 </span>
                 {% for label, count in topic.level_breakdown %}
@@ -57,21 +80,28 @@
 
     <form
         id="topic-edit-form-{{ topic.id }}"
-        x-show="editingTopicId === {{ topic.id }}"
+        x-show="open && editingTopicId === {{ topic.id }}"
         x-cloak
         hx-post="{% url 'teacher:topic-update' topic.pk %}"
         hx-target="#topics-section-{{ topic.chapter_id }}"
         hx-swap="outerHTML"
         class="space-y-4 border-t border-default px-4 py-4"
+        style="display:none"
     >
         {% csrf_token %}
 
-        <div class="space-y-2">
-            <label for="{{ topic.edit_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
-            {{ topic.edit_form.title }}
-            {% for error in topic.edit_form.title.errors %}
-                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
-            {% endfor %}
+        <div class="flex items-start gap-3">
+            <div class="w-28 shrink-0 space-y-2">
+                <label for="{{ topic.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
+                {{ topic.edit_form.order }}
+            </div>
+            <div class="flex-1 min-w-0 space-y-2">
+                <label for="{{ topic.edit_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
+                {{ topic.edit_form.title }}
+                {% for error in topic.edit_form.title.errors %}
+                    <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="space-y-2">
@@ -79,17 +109,30 @@
             {{ topic.edit_form.description }}
         </div>
 
-        <div class="space-y-2">
-            <label for="{{ topic.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
-            {{ topic.edit_form.order }}
-        </div>
-
         <div class="flex gap-2">
-            <button type="button" @click="editingTopicId = null" class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
-                {% translate "Cancel" %}
+            <button 
+                type="button" 
+                @click="editingTopicId = null"
+                class="relative grid group w-full sm:w-auto"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium 
+                    group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                    "
+                >
+                    {% translate "Cancel" %}
+                </span>
             </button>
-            <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
-                {% translate "Save" %}
+
+            <button 
+                type="submit"
+                class="relative grid group w-full md:w-auto"
+            >
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    {% translate "Save" %}
+                </span>
             </button>
         </div>
     </form>

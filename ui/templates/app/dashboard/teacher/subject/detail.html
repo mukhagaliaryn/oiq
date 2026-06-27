@@ -7,99 +7,77 @@
     {{ chapter_form.media.css }}
 {% endblock css %}
 
-{% block teacher_header %}
-    <h1 class="text-xl font-black">{{ subject.name }}</h1>
-    <p class="text-body">{% translate "Manage chapters and topics for your subject" %}</p>
-{% endblock teacher_header %}
 
 {% block teacher_layout %}
-<div class="mb-6 flex flex-col gap-6 rounded-3xl border border-default bg-neutral-primary p-6 md:flex-row md:items-start md:justify-between">
-    <div class="flex flex-1 gap-5">
-        {% if subject.cover %}
-            <img src="{{ subject.cover.url }}" alt="{{ subject.name }}" class="size-20 shrink-0 rounded-2xl object-cover">
-        {% else %}
-            <div class="flex size-20 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand">
-                <i data-lucide="book-open" class="size-8"></i>
-            </div>
-        {% endif %}
+<div x-data="{ editOpen: false }" @subject-updated.window="editOpen = false">
 
-        <div class="space-y-3">
-            <h2 class="text-lg font-black">{{ subject.name }}</h2>
+    {% include "app/dashboard/teacher/subject/_subject_info.html" %}
 
-            {% if subject.description %}
-                <div class="text-body">{{ subject.description|safe }}</div>
-            {% endif %}
-
-            <div class="flex flex-wrap gap-4 text-normal text-body-subtle">
-                <span class="flex items-center gap-1.5">
-                    <i data-lucide="layers" class="size-4"></i>
-                    {{ chapters_count }} {% translate "chapters" %}
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <i data-lucide="file-text" class="size-4"></i>
-                    {{ topics_count }} {% translate "topics" %}
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <i data-lucide="graduation-cap" class="size-4"></i>
-                    {{ grades_count }} {% translate "grades" %}
-                </span>
-            </div>
+    {% if grades %}
+        <div class="mb-6 flex gap-2 overflow-x-auto border-b border-default">
+            {% for grade in grades %}
+                <a
+                    href="?grade={{ grade.code }}"
+                    class="shrink-0 whitespace-nowrap border-b-2 px-4 py-3 font-medium transition
+                    {% if grade.id == selected_grade.id %}
+                        border-brand text-brand
+                    {% else %}
+                        border-transparent text-body hover:text-body-subtle
+                    {% endif %}"
+                >
+                    {{ grade.name }}
+                </a>
+            {% endfor %}
         </div>
-    </div>
 
-    <div x-data="{ open: false }" @keydown.escape.window="open = false" class="relative shrink-0">
-        <button
-            type="button"
-            @click="open = !open"
-            class="flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium"
-        >
-            <i data-lucide="help-circle" class="size-4"></i>
-            {% translate "Questions" %}
-            <i data-lucide="chevron-down" class="size-4 transition" :class="{ 'rotate-180': open }"></i>
-        </button>
+        {% include "app/dashboard/teacher/subject/_chapters_section.html" %}
+    {% else %}
+        <div class="rounded-3xl border border-dashed border-default p-8 text-center text-body-subtle">
+            {% translate "No grades are assigned to this subject yet. Ask an administrator to configure them." %}
+        </div>
+    {% endif %}
 
+    <!-- Subject edit modal -->
+    <div
+        x-show="editOpen"
+        x-cloak
+        x-transition.opacity
+        @keydown.escape.window="editOpen = false"
+        class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-dark-backdrop/50 p-4 pt-16"
+        style="display:none"
+    >
         <div
-            x-show="open"
-            @click.away="open = false"
-            x-transition.origin.top.right
-            x-cloak
-            class="absolute right-0 z-10 mt-2 w-52 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+            @click.away="editOpen = false"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="w-full max-w-2xl overflow-hidden rounded-3xl border border-default bg-neutral-primary shadow-2xl"
         >
-            <a href="{% url 'teacher:question-list' subject.pk %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
-                <i data-lucide="list" class="size-4"></i>
-                {% translate "Questions" %}
-            </a>
-            <a href="{% url 'teacher:question-create' subject.pk %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
-                <i data-lucide="plus" class="size-4"></i>
-                {% translate "Add question" %}
-            </a>
+            <div class="flex items-center justify-between border-b border-default px-6 py-4">
+                <h2 class="text-lg font-bold">{% translate "Edit subject" %}</h2>
+                <button
+                    type="button"
+                    @click="editOpen = false"
+                    class="rounded-xl p-2 text-body hover:bg-neutral-secondary"
+                >
+                    <i class="ph ph-x size-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <div id="subject-edit-form">
+                    <div class="flex items-center justify-center py-10 text-body-subtle">
+                        <i class="ph ph-spinner size-6 animate-spin"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
-
-{% if grades %}
-    <div class="mb-6 flex gap-2 overflow-x-auto border-b border-default">
-        {% for grade in grades %}
-            <a
-                href="?grade={{ grade.code }}"
-                class="shrink-0 whitespace-nowrap border-b-2 px-4 py-3 font-medium transition
-                {% if grade.id == selected_grade.id %}
-                    border-brand text-brand
-                {% else %}
-                    border-transparent text-body hover:text-body-subtle
-                {% endif %}"
-            >
-                {{ grade.name }}
-            </a>
-        {% endfor %}
-    </div>
-
-    {% include "app/dashboard/teacher/subject/_chapters_section.html" %}
-{% else %}
-    <div class="rounded-3xl border border-dashed border-default p-8 text-center text-body-subtle">
-        {% translate "No grades are assigned to this subject yet. Ask an administrator to configure them." %}
-    </div>
-{% endif %}
 {% endblock teacher_layout %}
 
 {% block js %}

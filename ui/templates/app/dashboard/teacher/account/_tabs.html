@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="mb-6" x-data="{ open: false }">
+<div class="mb-4 md:mb-6" x-data="{ open: false }">
     <!-- Mobile/tablet: dropdown -->
     <div class="relative lg:hidden">
         <button
@@ -10,20 +10,20 @@
         >
             <span class="flex items-center gap-2">
                 {% if request.resolver_match.url_name == 'profile' %}
-                    <i data-lucide="user" class="size-4"></i>
+                    <i class="ph-fill ph-user size-4"></i>
                     {% translate "Profile" %}
                 {% elif request.resolver_match.url_name == 'account-edit' %}
-                    <i data-lucide="pencil" class="size-4"></i>
+                    <i class="ph-fill ph-pencil size-4"></i>
                     {% translate "Edit profile" %}
                 {% elif request.resolver_match.url_name == 'account-settings' %}
-                    <i data-lucide="settings" class="size-4"></i>
+                    <i class="ph-fill ph-gear size-4"></i>
                     {% translate "Settings" %}
                 {% elif request.resolver_match.url_name == 'account-security' %}
-                    <i data-lucide="shield" class="size-4"></i>
+                    <i class="ph-fill ph-shield size-4"></i>
                     {% translate "Security" %}
                 {% endif %}
             </span>
-            <i data-lucide="chevron-down" class="size-4 shrink-0" :class="{ 'rotate-180': open }"></i>
+            <i class="ph ph-caret-down size-4 shrink-0" :class="{ 'rotate-180': open }"></i>
         </button>
 
         <div
@@ -44,7 +44,7 @@
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
             >
-                <i data-lucide="user" class="size-4"></i>
+                <i class="{% if request.resolver_match.url_name == 'profile' %}ph-fill{% else %}ph{% endif %} ph-user size-4"></i>
                 {% translate "Profile" %}
             </a>
             <a
@@ -56,7 +56,7 @@
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
             >
-                <i data-lucide="pencil" class="size-4"></i>
+                <i class="{% if request.resolver_match.url_name == 'account-edit' %}ph-fill{% else %}ph{% endif %} ph-pencil size-4"></i>
                 {% translate "Edit profile" %}
             </a>
             <a
@@ -68,7 +68,7 @@
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
             >
-                <i data-lucide="settings" class="size-4"></i>
+                <i class="{% if request.resolver_match.url_name == 'account-settings' %}ph-fill{% else %}ph{% endif %} ph-gear size-4"></i>
                 {% translate "Settings" %}
             </a>
             <a
@@ -80,7 +80,7 @@
                     text-body hover:bg-neutral-secondary
                 {% endif %}"
             >
-                <i data-lucide="shield" class="size-4"></i>
+                <i class="{% if request.resolver_match.url_name == 'account-security' %}ph-fill{% else %}ph{% endif %} ph-shield size-4"></i>
                 {% translate "Security" %}
             </a>
         </div>
@@ -97,7 +97,7 @@
                 border-transparent text-body hover:text-body-subtle
             {% endif %}"
         >
-            <i data-lucide="user" class="size-4"></i>
+            <i class="{% if request.resolver_match.url_name == 'profile' %}ph-fill{% else %}ph{% endif %} ph-user size-5"></i>
             {% translate "Profile" %}
         </a>
 
@@ -110,7 +110,7 @@
                 border-transparent text-body hover:text-body-subtle
             {% endif %}"
         >
-            <i data-lucide="pencil" class="size-4"></i>
+            <i class="{% if request.resolver_match.url_name == 'account-edit' %}ph-fill{% else %}ph{% endif %} ph-pencil size-5"></i>
             {% translate "Edit profile" %}
         </a>
 
@@ -123,7 +123,7 @@
                 border-transparent text-body hover:text-body-subtle
             {% endif %}"
         >
-            <i data-lucide="settings" class="size-4"></i>
+            <i class="{% if request.resolver_match.url_name == 'account-settings' %}ph-fill{% else %}ph{% endif %} ph-gear size-5"></i>
             {% translate "Settings" %}
         </a>
 
@@ -136,7 +136,7 @@
                 border-transparent text-body hover:text-body-subtle
             {% endif %}"
         >
-            <i data-lucide="shield" class="size-4"></i>
+            <i class="{% if request.resolver_match.url_name == 'account-security' %}ph-fill{% else %}ph{% endif %} ph-shield size-5"></i>
             {% translate "Security" %}
         </a>
     </div>

@@ -15,7 +15,7 @@
             setTimeout(() => message.show = false, 4000 + index * 300)
         })
     "
-    class="fixed top-6 right-6 z-50 flex w-full max-w-sm flex-col gap-2"
+    class="fixed top-0 md:top-6 right-0 md:right-6 z-50 flex w-full md:max-w-sm p-2 md:p-0 flex-col gap-2"
 >
     <template x-for="(message, index) in messages" :key="index">
         <div

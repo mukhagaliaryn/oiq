@@ -1,0 +1,90 @@
+{% load i18n %}
+<form
+    hx-post="{% url 'teacher:subject-update' subject.pk %}"
+    hx-target="#subject-edit-form"
+    hx-swap="innerHTML"
+    hx-encoding="multipart/form-data"
+    class="space-y-5"
+>
+    {% csrf_token %}
+
+    <div class="space-y-2">
+        <label for="{{ form.name.id_for_label }}" class="block ml-4 font-medium">{% translate "Name" %}</label>
+        {{ form.name }}
+        {% for error in form.name.errors %}
+            <span class="block mt-1 ml-6 text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div
+        x-data="{
+            preview: {% if subject.cover %}'{{ subject.cover.url }}'{% else %}null{% endif %},
+            onChange(e) {
+                const f = e.target.files[0];
+                if (f) this.preview = URL.createObjectURL(f);
+            }
+        }"
+        class="space-y-3"
+    >
+        <span class="block ml-4 font-medium">{% translate "Cover" %}</span>
+        <div class="flex items-center gap-4">
+            <div class="size-24 shrink-0 overflow-hidden rounded-2xl">
+                <img x-show="preview" :src="preview" class="size-24 object-cover" alt="{{ subject.name }}">
+                <div x-show="!preview" class="flex size-24 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                    <i class="ph ph-image size-6"></i>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button
+                        type="button"
+                        @click="$refs.coverInput.click()"
+                        class="rounded-full border border-default px-4 py-2 text-normal font-medium hover:bg-neutral-secondary"
+                    >
+                        {% translate "Change cover" %}
+                    </button>
+                    {% if subject.cover %}
+                        <button
+                            type="button"
+                            hx-post="{% url 'teacher:subject-remove-cover' subject.pk %}"
+                            hx-target="#subject-edit-form"
+                            hx-swap="innerHTML"
+                            class="rounded-full p-3 text-normal font-medium cursor-pointer text-danger hover:bg-danger-soft"
+                        >
+                            <i class="ph ph-trash size-4"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-body">{% translate "JPG or PNG, up to 5MB." %}</p>
+            </div>
+        </div>
+        {{ form.cover }}
+        {% for error in form.cover.errors %}
+            <span class="block ml-6 text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="space-y-2">
+        <label for="{{ form.description.id_for_label }}" class="block ml-4 font-medium">{% translate "Description" %}</label>
+        {{ form.description }}
+        {% for error in form.description.errors %}
+            <span class="block mt-1 ml-6 text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="flex justify-end gap-2 pt-2 border-t border-default">
+        <button
+            type="button"
+            @click="editOpen = false"
+            class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary"
+        >
+            {% translate "Cancel" %}
+        </button>
+        <button
+            type="submit"
+            class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium"
+        >
+            {% translate "Save changes" %}
+        </button>
+    </div>
+</form>

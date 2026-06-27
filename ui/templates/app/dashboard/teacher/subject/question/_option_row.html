@@ -1,16 +1,18 @@
 {% load i18n %}
-<div class="flex items-start gap-3 rounded-2xl border border-default p-4" data-option-row>
+<div class="space-y-3 rounded-2xl border border-default p-4" data-option-row>
     {{ option_form.id }}
-    <div class="flex-1 space-y-2">
+    <div class="space-y-2">
         {{ option_form.answer }}
         {% for error in option_form.answer.errors %}
             <span class="block text-normal text-danger">{{ error }}</span>
         {% endfor %}
     </div>
-    {% translate "Correct" as correct_label %}
-    {% include "components/checkbox.html" with field=option_form.is_correct label=correct_label wrapper_class="flex items-center gap-2 pt-3 font-medium whitespace-nowrap cursor-pointer" %}
-    <button type="button" data-remove-option class="rounded-lg p-2 pt-3 text-danger hover:bg-danger-soft">
-        <i data-lucide="trash-2" class="size-4"></i>
-    </button>
+    <div class="flex items-center justify-between gap-3">
+        {% translate "Correct" as correct_label %}
+        {% include "components/checkbox.html" with field=option_form.is_correct label=correct_label wrapper_class="flex items-center gap-2 font-medium cursor-pointer" %}
+        <button type="button" data-remove-option class="rounded-lg p-2 text-danger hover:bg-danger-soft">
+            <i class="ph ph-trash size-4"></i>
+        </button>
+    </div>
     <span class="hidden">{{ option_form.DELETE }}</span>
 </div>

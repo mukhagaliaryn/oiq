@@ -3,17 +3,19 @@
     id="chapter-item-{{ chapter.id }}"
     class="rounded-3xl border border-default bg-neutral-primary"
 >
-    <div class="flex items-center justify-between gap-2 px-5 py-4">
+    <div class="flex items-center justify-between gap-2 px-4 py-3 sm:px-5 sm:py-4">
         <button
             type="button"
             @click="openChapterId = (openChapterId === {{ chapter.id }} ? null : {{ chapter.id }}); editingChapterId = null"
             class="flex flex-1 items-center gap-3 text-left"
         >
-            <i data-lucide="chevron-right" class="size-5 shrink-0 transition" :class="{ 'rotate-90': openChapterId === {{ chapter.id }} }"></i>
-            <span class="font-bold">{{ chapter.title }}</span>
-            {% if chapter.grade %}
-                <span class="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand">{{ chapter.grade.name }}</span>
-            {% else %}
+            <i class="ph ph-caret-right size-4 shrink-0 transition" :class="{ 'rotate-90': openChapterId === {{ chapter.id }} }"></i>
+            <i class="ph ph-bookmark-simple size-5 shrink-0"></i>
+            <span class="font-bold text-body-subtle">
+                <span class="">{{ chapter.order }}-{% translate "chapter" %}:</span>
+                {{ chapter.title }}
+            </span>
+            {% if not chapter.grade %}
                 <span class="rounded-full bg-neutral-tertiary px-2 py-0.5 text-xs font-medium text-body-subtle">{% translate "General" %}</span>
             {% endif %}
         </button>
@@ -22,9 +24,9 @@
             <button
                 type="button"
                 @click="openChapterId = {{ chapter.id }}; editingChapterId = {{ chapter.id }}"
-                class="rounded-lg p-1.5 hover:bg-neutral-secondary"
+                class="flex justify-center items-center rounded-2xl p-2 cursor-pointer hover:bg-neutral-tertiary"
             >
-                <i data-lucide="pencil" class="size-4"></i>
+                <i class="ph ph-pencil size-5"></i>
             </button>
             <button
                 type="button"
@@ -32,9 +34,9 @@
                 hx-target="#chapters-section"
                 hx-swap="outerHTML"
                 hx-confirm="{% translate 'Delete this chapter together with its topics?' %}"
-                class="rounded-lg p-1.5 text-danger hover:bg-danger-soft"
+                class="flex justify-center items-center rounded-2xl p-2 cursor-pointer text-danger hover:bg-danger-soft"
             >
-                <i data-lucide="trash-2" class="size-4"></i>
+                <i class="ph ph-trash size-5"></i>
             </button>
         </div>
     </div>
@@ -59,16 +61,19 @@
         >
             {% csrf_token %}
 
-            <div class="grid gap-4 md:grid-cols-2">
-                <div class="space-y-2">
+            <div class="flex items-start gap-3">
+                <div class="w-28 shrink-0 space-y-2">
+                    <label for="{{ chapter.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
+                    {{ chapter.edit_form.order }}
+                </div>
+                <div class="flex-1 min-w-0 space-y-2">
                     <label for="{{ chapter.edit_form.title.id_for_label }}" class="block ml-6 font-medium">{% translate "Title" %}</label>
                     {{ chapter.edit_form.title }}
                     {% for error in chapter.edit_form.title.errors %}
                         <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                     {% endfor %}
                 </div>
-
-                <div class="space-y-2">
+                <div class="w-64 shrink-0 space-y-2">
                     <label for="{{ chapter.edit_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
                     {{ chapter.edit_form.grade }}
                 </div>
@@ -79,17 +84,30 @@
                 {{ chapter.edit_form.description }}
             </div>
 
-            <div class="space-y-2">
-                <label for="{{ chapter.edit_form.order.id_for_label }}" class="block ml-6 font-medium">{% translate "Order" %}</label>
-                {{ chapter.edit_form.order }}
-            </div>
-
             <div class="flex gap-2">
-                <button type="button" @click="editingChapterId = null" class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
-                    {% translate "Cancel" %}
+                <button 
+                    type="button" 
+                    @click="editingChapterId = null"
+                    class="relative grid group w-full sm:w-auto"
+                >  
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                    <span class="
+                        relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium 
+                        group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                        "
+                    >
+                        {% translate "Cancel" %}
+                    </span>
                 </button>
-                <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
-                    {% translate "Save" %}
+
+                <button 
+                    type="submit"
+                    class="relative grid group w-full md:w-auto"
+                >
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                        {% translate "Save" %}
+                    </span>
                 </button>
             </div>
         </form>
