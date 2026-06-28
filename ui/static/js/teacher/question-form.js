@@ -27,8 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (row) {
             row.dispatchEvent(new CustomEvent("formset:added", { bubbles: true }));
         }
-
-        lucide.createIcons();
     });
 
     container.addEventListener("click", function (event) {
@@ -73,12 +71,10 @@ function updateQuestionPreview() {
 
             return (
                 '<li class="flex items-start gap-3 rounded-2xl border p-4 ' +
-                (isCorrect ? "border-success bg-success-soft" : "border-default") +
-                '"><i data-lucide="' +
-                (isCorrect ? "check-circle-2" : "circle") +
-                '" class="mt-0.5 size-5 shrink-0 ' +
-                (isCorrect ? "text-success" : "text-body-subtle") +
-                '"></i><div>' +
+                (isCorrect ? "border-success-medium bg-success-soft" : "border-default") +
+                '"><i class="' +
+                (isCorrect ? "ph-fill ph-check-circle text-success" : "ph ph-circle text-body-subtle") +
+                ' mt-0.5 size-6 shrink-0"></i><div>' +
                 answerHtml +
                 "</div></li>"
             );
@@ -96,6 +92,4 @@ function updateQuestionPreview() {
     if (window.OIQRenderMath) {
         window.OIQRenderMath(panel);
     }
-
-    lucide.createIcons();
 }

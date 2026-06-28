@@ -2,13 +2,8 @@ from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
-
 from core.forms.base import INPUT_CLASS, RichTextTextarea
 from core.models import Chapter, FormatVariant, Grade, Option, Question, QuestionFormat, Topic
-
-
-def _topic_label(topic):
-    return f'{topic.chapter.title} — {topic.title}'
 
 
 class QuestionFilterForm(forms.Form):
@@ -39,7 +34,6 @@ class QuestionFilterForm(forms.Form):
         elif grade_id:
             topics = topics.filter(Q(chapter__grade_id=grade_id) | Q(chapter__grade__isnull=True))
         self.fields['topic'].queryset = topics.order_by('chapter__order', 'order')
-        self.fields['topic'].label_from_instance = _topic_label
 
         self.fields['format'].queryset = QuestionFormat.objects.order_by('order')
         self.fields['variant'].queryset = (
@@ -83,7 +77,6 @@ class QuestionForm(forms.ModelForm):
         elif grade_id:
             topics = topics.filter(Q(chapter__grade_id=grade_id) | Q(chapter__grade__isnull=True))
         self.fields['topic'].queryset = topics.order_by('chapter__order', 'order')
-        self.fields['topic'].label_from_instance = _topic_label
 
         self.fields['format'].queryset = QuestionFormat.objects.order_by('order')
         self.fields['format'].empty_label = None
@@ -129,5 +122,5 @@ class OptionForm(forms.ModelForm):
 
 OptionFormSet = inlineformset_factory(
     Question, Option, form=OptionForm,
-    extra=1, can_delete=True, validate_min=False,
+    extra=0, can_delete=True, validate_min=False,
 )

@@ -7,20 +7,25 @@
                 <div class="space-y-3">
                     {% for question in page_obj %}
                         <div class="flex items-center justify-between gap-3 rounded-2xl border border-default bg-neutral-primary p-3 sm:gap-4 sm:p-4">
-                            <a href="{% url 'teacher:question-update' question.pk %}" class="min-w-0 flex-1 space-y-1.5">
-                                <div class="flex flex-wrap items-center gap-2 text-xs">
-                                    <span class="rounded-full bg-brand-soft px-2.5 py-1 font-medium text-brand">{{ question.format.name }}</span>
+                            <a href="{% url 'teacher:question-update' question.pk %}" class="min-w-0 flex-1 space-y-2">
+                                <div class="flex flex-wrap items-center gap-1 text-xs">
+                                    <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.format.name }}</span>
                                     {% if question.variant %}
                                         <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.variant.name }}</span>
                                     {% endif %}
                                     <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.get_level_display }}</span>
-                                    <span class="text-body-subtle">{{ question.topic.chapter.title }} — {{ question.topic.title }}</span>
                                 </div>
-                                <div class="truncate text-normal">{{ question.text_preview|safe }}</div>
+                                <div class="grid gap-1">
+                                    <div class="truncate font-semibold">#{{ question.id }}. {{ question.text_preview|safe }}</div>
+                                    <span class="block text-body-subtle text-xs">{{ question.topic.title }}</span>
+                                </div>
                             </a>
 
-                            <div class="flex shrink-0 items-center gap-1">
-                                <a href="{% url 'teacher:question-update' question.pk %}" class="rounded-lg p-2 hover:bg-neutral-secondary">
+                            <div class="flex shrink-0 items-center">
+                                <a 
+                                    href="{% url 'teacher:question-update' question.pk %}"
+                                    class="flex justify-center items-center rounded-2xl p-3 cursor-pointer hover:bg-neutral-tertiary"
+                                >
                                     <i class="ph ph-pencil size-4"></i>
                                 </a>
                                 <button
@@ -29,7 +34,7 @@
                                     hx-target="#questions-panel"
                                     hx-swap="outerHTML"
                                     hx-confirm="{% translate 'Delete this question?' %}"
-                                    class="rounded-lg p-2 text-danger hover:bg-danger-soft"
+                                    class="flex justify-center items-center rounded-2xl cursor-pointer p-3 text-danger hover:bg-danger-soft"
                                 >
                                     <i class="ph ph-trash size-4"></i>
                                 </button>

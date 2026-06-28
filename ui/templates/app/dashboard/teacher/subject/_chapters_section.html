@@ -53,7 +53,7 @@
                 </div>
                 <div class="w-full md:w-64 shrink-0 space-y-2">
                     <label for="{{ chapter_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
-                    {{ chapter_form.grade }}
+                    {% include "components/select.html" with field=chapter_form.grade %}
                 </div>
             </div>
 

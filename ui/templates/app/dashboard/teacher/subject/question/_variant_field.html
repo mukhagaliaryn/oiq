@@ -1,5 +1,9 @@
 {% load i18n %}
-<div class="space-y-2" id="variant-field">
+<div
+    id="variant-field"
+    class="space-y-2"
+    x-init="$dispatch('variant-init', { code: '{{ initial_variant_code|default:''|escapejs }}' })"
+>
     <label class="block ml-6 font-medium">{% translate "Variant" %}</label>
     {% include "components/select.html" with field=field %}
 </div>

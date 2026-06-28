@@ -26,7 +26,7 @@ class ChapterForm(forms.ModelForm):
         fields = ('title', 'grade', 'description', 'order')
         widgets = {
             'title': forms.TextInput(attrs={'class': INPUT_CLASS}),
-            'grade': forms.Select(attrs={'class': INPUT_CLASS}),
+            'grade': forms.Select(),
             'description': RichTextTextarea(height='160px'),
             'order': forms.NumberInput(attrs={'class': INPUT_CLASS}),
         }

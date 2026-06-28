@@ -90,7 +90,7 @@ class ChapterAdmin(LinkedAdminMixin, BaseModelAdmin):
 # -------------- QuestionInline --------------
 class QuestionInline(LinkedAdminMixin, TabularInline):
     model = Question
-    fields = ('text', 'format', 'detail_link')
+    fields = ('text', 'format', 'variant', 'author', 'detail_link')
     readonly_fields = ('detail_link',)
     extra = 0
     form = QuestionAdminForm

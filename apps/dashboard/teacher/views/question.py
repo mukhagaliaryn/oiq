@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from apps.dashboard.teacher.forms.question import OptionFormSet, QuestionFilterForm, QuestionForm, _topic_label
+from apps.dashboard.teacher.forms.question import OptionFormSet, QuestionFilterForm, QuestionForm
 from apps.dashboard.teacher.views.common import owned_subject
 from core.models import Chapter, FormatVariant, Question, QuestionFormat, Topic
 from core.utils.decorators import partner_teacher_required
@@ -77,7 +77,14 @@ def _validate_test_options(form, formset):
 
 def _question_form_context(request, subject, form, formset, tab='question'):
     format_codes = {str(f.id): f.code for f in QuestionFormat.objects.order_by('order')}
+    variant_codes = {str(v.id): v.code for v in FormatVariant.objects.all()}
+
     selected_format = form.instance.format if form.instance.pk else form.initial.get('format')
+    selected_variant = form.instance.variant if form.instance.pk else form.initial.get('variant')
+    if not selected_variant and selected_format:
+        format_pk = getattr(selected_format, 'pk', None)
+        if format_pk:
+            selected_variant = FormatVariant.objects.filter(format_id=format_pk).order_by('order').first()
 
     return {
         'subject': subject,
@@ -86,7 +93,9 @@ def _question_form_context(request, subject, form, formset, tab='question'):
         'media': form.media + formset.media,
         'tab': tab,
         'format_codes_json': json.dumps(format_codes),
+        'variant_codes_json': json.dumps(variant_codes),
         'initial_format_code': selected_format.code if selected_format else '',
+        'initial_variant_code': selected_variant.code if selected_variant else '',
         'variants_url': reverse('teacher:question-variant-field'),
         'topic_fields_url': reverse('teacher:question-topic-fields'),
     }
@@ -122,7 +131,12 @@ def question_create_view(request, pk):
             formset.save()
             return redirect('teacher:question-list', subject.pk)
     else:
-        initial = {'format': QuestionFormat.objects.order_by('order').first()}
+        first_format = QuestionFormat.objects.order_by('order').first()
+        first_variant = (
+            FormatVariant.objects.filter(format=first_format).order_by('order').first()
+            if first_format else None
+        )
+        initial = {'format': first_format, 'variant': first_variant}
         topic_id = request.GET.get('topic')
         if topic_id:
             initial['topic'] = topic_id
@@ -177,14 +191,24 @@ def question_delete_view(request, pk):
 # -------------- variant field (HTMX) --------------
 @partner_teacher_required
 def question_variant_field_view(request):
+    format_id = request.GET.get('format')
+    variants = (
+        FormatVariant.objects.filter(format_id=format_id).order_by('order')
+        if format_id else FormatVariant.objects.none()
+    )
+    first_variant = variants.first()
+
     class _VariantForm(forms.Form):
         variant = forms.ModelChoiceField(
-            queryset=FormatVariant.objects.filter(format_id=request.GET.get('format')).order_by('order'),
+            queryset=variants,
             required=False, empty_label=_('No variant'),
         )
 
-    field = _VariantForm()['variant']
-    return render(request, 'app/dashboard/teacher/subject/question/_variant_field.html', {'field': field})
+    field = _VariantForm(initial={'variant': first_variant})['variant']
+    return render(request, 'app/dashboard/teacher/subject/question/_variant_field.html', {
+        'field': field,
+        'initial_variant_code': first_variant.code if first_variant else '',
+    })
 
 
 # -------------- chapter + topic fields (HTMX) --------------
@@ -211,7 +235,6 @@ def question_topic_fields_view(request):
         topic = forms.ModelChoiceField(queryset=topics, required=False, empty_label=_('Select topic'))
 
     form = _Form(initial={'chapter': chapter_id})
-    form.fields['topic'].label_from_instance = _topic_label
 
     return render(request, 'app/dashboard/teacher/subject/question/_topic_fields.html', {
         'chapter_field': form['chapter'],

@@ -20,13 +20,13 @@
             {% endif %}
         </button>
 
-        <div class="flex items-center gap-1">
+        <div class="flex items-center">
             <button
                 type="button"
                 @click="openChapterId = {{ chapter.id }}; editingChapterId = {{ chapter.id }}"
-                class="flex justify-center items-center rounded-2xl p-2 cursor-pointer hover:bg-neutral-tertiary"
+                class="flex justify-center items-center rounded-2xl p-3 cursor-pointer hover:bg-neutral-tertiary"
             >
-                <i class="ph ph-pencil size-5"></i>
+                <i class="ph ph-pencil size-4"></i>
             </button>
             <button
                 type="button"
@@ -34,9 +34,9 @@
                 hx-target="#chapters-section"
                 hx-swap="outerHTML"
                 hx-confirm="{% translate 'Delete this chapter together with its topics?' %}"
-                class="flex justify-center items-center rounded-2xl p-2 cursor-pointer text-danger hover:bg-danger-soft"
+                class="flex justify-center items-center rounded-2xl p-3 cursor-pointer text-danger hover:bg-danger-soft"
             >
-                <i class="ph ph-trash size-5"></i>
+                <i class="ph ph-trash size-4"></i>
             </button>
         </div>
     </div>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="w-full md:w-64 shrink-0 space-y-2">
                     <label for="{{ chapter.edit_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
-                    {{ chapter.edit_form.grade }}
+                    {% include "components/select.html" with field=chapter.edit_form.grade %}
                 </div>
             </div>
 

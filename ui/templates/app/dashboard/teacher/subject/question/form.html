@@ -10,21 +10,27 @@
     <link rel="stylesheet" href="{% static 'js/oiq-question-preview/ui.css' %}">
 {% endblock css %}
 
-{% block teacher_header %}
-    <h1 class="text-xl font-black">
-        {% if form.instance.pk %}{% translate "Edit question" %}{% else %}{% translate "Add question" %}{% endif %}
-    </h1>
-    <p class="text-body">{{ subject.name }}</p>
-{% endblock teacher_header %}
 
 {% block teacher_layout %}
 <div
     x-data="{
         tab: '{{ tab|default:'question'|escapejs }}',
         formatCodesById: {{ format_codes_json }},
+        variantCodesById: {{ variant_codes_json }},
         selectedFormatCode: '{{ initial_format_code|default:''|escapejs }}',
+        selectedVariantCode: '{{ initial_variant_code|default:''|escapejs }}',
+        init() {
+            const formatSelect = this.$el.querySelector('select[name=\'format\']');
+            if (formatSelect?.value) {
+                this.selectedFormatCode = this.formatCodesById[formatSelect.value] || this.selectedFormatCode;
+            }
+        },
     }"
-    @change="if ($event.target.name === 'format') { selectedFormatCode = formatCodesById[$event.target.value] || ''; }"
+    @change="
+        if ($event.target.name === 'format') { selectedFormatCode = formatCodesById[$event.target.value] || ''; }
+        if ($event.target.name === 'variant') { selectedVariantCode = variantCodesById[$event.target.value] || ''; }
+    "
+    @variant-init.window="selectedVariantCode = $event.detail.code"
 >
     <div class="mb-6 flex gap-2 border-b border-default">
         <button
@@ -70,7 +76,7 @@
                         {% include "components/select.html" with field=form.format hx_get=variants_url hx_target="#variant-field" hx_swap="outerHTML" %}
                     </div>
 
-                    {% include "app/dashboard/teacher/subject/question/_variant_field.html" with field=form.variant %}
+                    {% include "app/dashboard/teacher/subject/question/_variant_field.html" with field=form.variant initial_variant_code=initial_variant_code %}
 
                     <div class="space-y-2">
                         <label class="block ml-6 font-medium">{% translate "Level" %}</label>
@@ -85,17 +91,7 @@
             </div>
 
             <div x-show="selectedFormatCode === 'test'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-black">{% translate "Answer options" %}</h2>
-                    <button
-                        type="button"
-                        id="add-option-button"
-                        class="flex items-center gap-2 rounded-full border border-default px-4 py-2 font-medium hover:bg-neutral-secondary"
-                    >
-                        <i class="ph ph-plus size-4"></i>
-                        {% translate "Add option" %}
-                    </button>
-                </div>
+                <h2 class="text-lg font-black">{% translate "Answer options" %}</h2>
 
                 {% for error in formset.non_form_errors %}
                     <span class="mt-3 block text-normal text-danger">{{ error }}</span>
@@ -106,6 +102,15 @@
                         {% include "app/dashboard/teacher/subject/question/_option_row.html" %}
                     {% endfor %}
                 </div>
+
+                <button
+                    type="button"
+                    id="add-option-button"
+                    class="mt-3 flex items-center gap-2 rounded-full border border-dashed border-default px-5 py-2.5 font-medium text-body hover:border-brand hover:text-brand"
+                >
+                    <i class="ph ph-plus size-4"></i>
+                    {% translate "Add option" %}
+                </button>
             </div>
         </div>
 
@@ -113,12 +118,29 @@
             <div id="question-preview-content" class="text-body"></div>
         </div>
 
-        <div class="mt-6 flex gap-2">
-            <a href="{% url 'teacher:question-list' subject.pk %}" class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary">
-                {% translate "Cancel" %}
+        <div class="mt-6 flex justify-end gap-2">
+            <a 
+                href="{% url 'teacher:question-list' subject.pk %}"
+                class="relative grid group w-full sm:w-auto"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium 
+                    group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                    "
+                >
+                    {% translate "Cancel" %}
+                </span>
             </a>
-            <button type="submit" class="rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium">
-                {% translate "Save" %}
+
+            <button 
+                type="submit"
+                class="relative grid group w-full md:w-auto"
+            >
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    {% translate "Save" %}
+                </span>
             </button>
         </div>
     </form>

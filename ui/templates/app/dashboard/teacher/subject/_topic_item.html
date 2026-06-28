@@ -18,19 +18,19 @@
             </div>
         </button>
 
-        <div class="flex items-center gap-1">
+        <div class="flex items-center">
             <a
                 href="{% url 'teacher:question-list' chapter.subject_id %}?{% if chapter.grade_id %}grade={{ chapter.grade_id }}&{% endif %}chapter={{ chapter.id }}&topic={{ topic.id }}"
-                class="flex justify-center items-center rounded-2xl p-2 hover:bg-neutral-secondary"
+                class="flex justify-center items-center rounded-2xl p-3 hover:bg-neutral-secondary"
             >
-                <i class="ph ph-eye size-5"></i>
+                <i class="ph ph-eye size-4"></i>
             </a>
             <button
                 type="button"
                 @click="open = true; editingTopicId = (editingTopicId === {{ topic.id }} ? null : {{ topic.id }})"
-                class="flex justify-center items-center rounded-2xl p-2 hover:bg-neutral-secondary"
+                class="flex justify-center items-center rounded-2xl p-3 cursor-pointer hover:bg-neutral-secondary"
             >
-                <i class="ph ph-pencil size-5"></i>
+                <i class="ph ph-pencil size-4"></i>
             </button>
             <button
                 type="button"
@@ -38,9 +38,9 @@
                 hx-target="#topics-section-{{ topic.chapter_id }}"
                 hx-swap="outerHTML"
                 hx-confirm="{% translate 'Delete this topic?' %}"
-                class="flex justify-center items-center rounded-2xl p-2 text-danger hover:bg-danger-soft"
+                class="flex justify-center items-center rounded-2xl p-3 cursor-pointer text-danger hover:bg-danger-soft"
             >
-                <i class="ph ph-trash size-5"></i>
+                <i class="ph ph-trash size-4"></i>
             </button>
         </div>
     </div>
