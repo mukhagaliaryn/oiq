@@ -19,3 +19,7 @@ def ckeditor_image_upload_path(filename, file_hash):
     extension = Path(filename).suffix
 
     return f'core/ckeditor/{file_hash}{extension}'
+
+
+def question_import_image_path(batch_id, index, extension):
+    return f'core/questions/imports/{batch_id}/{index}{extension}'

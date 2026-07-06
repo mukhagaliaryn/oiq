@@ -1,0 +1,51 @@
+{% load i18n %}
+<div class="space-y-3 rounded-2xl border border-default p-4" data-option-row>
+    <div class="space-y-2">
+        {{ option_form.text }}
+        {% for error in option_form.text.errors %}
+            <span class="block text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="flex items-center justify-between gap-3">
+        {% translate "Correct" as correct_label %}
+
+        <label
+            for="{{ option_form.is_correct.id_for_label }}"
+            class="flex items-center gap-2 font-medium cursor-pointer"
+        >
+            <span
+                class="relative mt-0.5 flex size-5 shrink-0 items-center justify-center border border-default transition has-checked:border-brand"
+                :class="variantCode === 'single' ? 'rounded-full' : 'rounded-md has-checked:bg-brand'"
+            >
+                <input
+                    type="checkbox"
+                    name="{{ option_form.is_correct.html_name }}"
+                    id="{{ option_form.is_correct.id_for_label }}"
+                    {% if option_form.is_correct.value %}checked{% endif %}
+                    class="peer absolute inset-0 size-full cursor-pointer opacity-0"
+                    @change="
+                        if (variantCode === 'single' && $event.target.checked) {
+                            $event.target.closest('[data-options-container]').querySelectorAll('input[name$=\'-is_correct\']').forEach(cb => {
+                                if (cb !== $event.target) cb.checked = false;
+                            });
+                        }
+                    "
+                >
+                <i
+                    class="ph ph-check size-3.5 text-neutral-primary opacity-0 transition peer-checked:opacity-100"
+                    :class="variantCode === 'single' ? 'hidden' : ''"
+                ></i>
+                <span
+                    class="size-2.5 rounded-full bg-brand opacity-0 transition peer-checked:opacity-100"
+                    :class="variantCode !== 'single' ? 'hidden' : ''"
+                ></span>
+            </span>
+            <span class="text-body">{{ correct_label }}</span>
+        </label>
+
+        <button type="button" data-remove-option class="flex justify-center items-center rounded-2xl p-3 cursor-pointer text-danger hover:bg-danger-soft">
+            <i class="ph ph-trash size-4"></i>
+        </button>
+    </div>
+    <span class="hidden">{{ option_form.DELETE }}</span>
+</div>

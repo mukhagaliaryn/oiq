@@ -1,7 +1,7 @@
 {% extends "layouts/teacher_layout.html" %}
 {% load i18n static %}
 
-{% block title %}{% translate "Questions" %} — {{ subject.name }}{% endblock title %}
+{% block title %}{% translate "Questions" %} - {{ subject.name }}{% endblock title %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'js/oiq-question-preview/ui.css' %}">
@@ -10,9 +10,11 @@
 
 {% block teacher_layout %}
 <div class="mb-6 flex items-center gap-3">
-    <a href="{% url 'teacher:subject-detail' subject.pk %}" class="flex shrink-0 items-center gap-2 font-medium text-body hover:text-body-subtle">
-        <i class="ph ph-arrow-left size-4"></i>
-        {{ subject.name }}
+    <a 
+        href="{% url 'teacher:subject-detail' subject.pk %}" 
+        class="flex shrink-0 items-center gap-2 font-medium text-body p-3 rounded-2xl hover:bg-neutral-tertiary hover:text-body-subtle"
+    >
+        <i class="ph ph-arrow-left size-5"></i>
     </a>
     <div class="relative flex-1">
         <i class="ph ph-magnifying-glass absolute left-5 top-1/2 size-4 -translate-y-1/2 text-body-subtle"></i>
@@ -31,12 +33,31 @@
             hx-include="#questions-filters"
         >
     </div>
-    <a
+
+    <a 
+        href="{% url 'teacher:question-import' subject.pk %}"
+        class="relative grid group w-full sm:w-auto"
+    >  
+        <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+        <span class="
+            relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium 
+            group-hover:bg-neutral-secondary group-active:translate-y-1.5
+            "
+        >
+            <i class="ph ph-upload-simple size-4"></i>
+            {% translate "Import" %}
+        </span>
+    </a>
+
+    <a 
         href="{% url 'teacher:question-create' subject.pk %}"
-        class="flex shrink-0 items-center gap-2 rounded-full bg-brand px-5 py-2.5 font-medium text-neutral-primary hover:bg-brand-medium"
+        class="relative grid group w-full md:w-auto"
     >
-        <i class="ph ph-plus size-4"></i>
-        {% translate "Add question" %}
+        <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+        <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+            <i class="ph ph-plus size-4"></i>
+            {% translate "Add question" %}
+        </span>
     </a>
 </div>
 

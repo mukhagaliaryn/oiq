@@ -23,25 +23,24 @@ class SubjectForm(forms.ModelForm):
 class ChapterForm(forms.ModelForm):
     class Meta:
         model = Chapter
-        fields = ('title', 'grade', 'description', 'order')
+        fields = ('title', 'description', 'order')
         widgets = {
             'title': forms.TextInput(attrs={'class': INPUT_CLASS}),
-            'grade': forms.Select(),
             'description': RichTextTextarea(height='160px'),
             'order': forms.NumberInput(attrs={'class': INPUT_CLASS}),
         }
 
-    def __init__(self, *args, subject, **kwargs):
+    def __init__(self, *args, subject, grade=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.subject = subject
-
-        self.fields['grade'].queryset = subject.grades.filter(is_active=True).order_by('order')
-        self.fields['grade'].required = False
-        self.fields['grade'].empty_label = _('General (all grades)')
+        self.grade = grade
 
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.subject = self.subject
+
+        if not instance.pk:
+            instance.grade = self.grade
 
         if commit:
             instance.save()

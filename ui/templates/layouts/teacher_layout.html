@@ -47,7 +47,7 @@
 
             {% if request.user.teacher.is_partner and request.user.teacher.subject %}
                 <div class="">
-                    <p class="px-4 pt-4 pb-2 text-xs font-bold uppercase tracking-wide text-body-subtle">
+                    <p class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wide text-body-subtle">
                         {% translate "Subjects" %}
                     </p>
 
@@ -162,7 +162,7 @@
         </header>
 
         <main class="flex-1 px-4 py-4 md:px-6 md:py-8">
-            <div class="mx-auto max-w-7xl">
+            <div class="mx-auto max-w-5xl">
                 {% block teacher_layout %}{% endblock teacher_layout %}
             </div>
         </main>

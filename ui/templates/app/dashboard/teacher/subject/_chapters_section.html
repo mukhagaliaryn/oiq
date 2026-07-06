@@ -20,7 +20,7 @@
         <button
             type="button"
             @click="addOpen = !addOpen"
-            class="flex items-center gap-2 rounded-2xl border border-dashed border-default px-5 py-3 font-medium text-body hover:border-brand hover:text-brand"
+            class="flex items-center gap-2 rounded-full cursor-pointer border border-dashed border-default px-5 py-3 font-medium text-body hover:border-brand hover:text-brand"
         >
             <i x-show="!addOpen" class="ph ph-plus size-5"></i>
             <i x-show="addOpen" class="ph ph-x size-5"></i>
@@ -50,10 +50,6 @@
                     {% for error in chapter_form.title.errors %}
                         <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                     {% endfor %}
-                </div>
-                <div class="w-full md:w-64 shrink-0 space-y-2">
-                    <label for="{{ chapter_form.grade.id_for_label }}" class="block ml-6 font-medium">{% translate "Grade" %}</label>
-                    {% include "components/select.html" with field=chapter_form.grade %}
                 </div>
             </div>
 

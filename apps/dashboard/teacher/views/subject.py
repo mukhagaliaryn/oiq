@@ -65,7 +65,9 @@ def _chapters_section_context(request, subject, selected_grade, editing_chapter_
         if chapter_edit_form is not None and chapter.pk == editing_chapter_id:
             chapter.edit_form = chapter_edit_form
         else:
-            chapter.edit_form = ChapterForm(instance=chapter, subject=subject, prefix=f'chapter-{chapter.pk}')
+            chapter.edit_form = ChapterForm(
+                instance=chapter, subject=subject, grade=selected_grade, prefix=f'chapter-{chapter.pk}',
+            )
 
         chapter.topic_create_form = TopicForm(chapter=chapter, prefix=f'topic-create-{chapter.pk}')
 
@@ -77,7 +79,7 @@ def _chapters_section_context(request, subject, selected_grade, editing_chapter_
         'subject': subject,
         'selected_grade': selected_grade,
         'chapters': chapters,
-        'chapter_form': ChapterForm(subject=subject, prefix='chapter-create'),
+        'chapter_form': ChapterForm(subject=subject, grade=selected_grade, prefix='chapter-create'),
         'editing_chapter_id': editing_chapter_id,
     }
 
@@ -184,7 +186,7 @@ def subject_detail_view(request, pk):
 def chapter_create_view(request, pk):
     subject = owned_subject(request, pk)
     selected_grade = _selected_grade(request, subject)
-    form = ChapterForm(request.POST, subject=subject, prefix='chapter-create')
+    form = ChapterForm(request.POST, subject=subject, grade=selected_grade, prefix='chapter-create')
 
     if form.is_valid():
         form.save()
@@ -206,7 +208,9 @@ def chapter_update_view(request, pk):
     chapter = _owned_chapter(request, pk)
     subject = chapter.subject
     selected_grade = _selected_grade(request, subject)
-    form = ChapterForm(request.POST, instance=chapter, subject=subject, prefix=f'chapter-{chapter.pk}')
+    form = ChapterForm(
+        request.POST, instance=chapter, subject=subject, grade=selected_grade, prefix=f'chapter-{chapter.pk}',
+    )
 
     if form.is_valid():
         form.save()

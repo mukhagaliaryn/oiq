@@ -1,8 +1,8 @@
 {% load i18n %}
 <div id="questions-panel">
-    <div class="flex flex-col lg:flex-row items-start gap-6">
+    <div class="flex flex-col-reverse lg:flex-row items-start gap-6">
 
-        <div class="min-w-0 flex-1">
+        <div class="w-full lg:min-w-0 flex-1">
             {% if page_obj.object_list %}
                 <div class="space-y-3">
                     {% for question in page_obj %}
@@ -79,7 +79,7 @@
             id="questions-filters"
             method="get"
             action="{% url 'teacher:question-list' subject.pk %}"
-            class="w-full lg:w-90 shrink-0 space-y-3 rounded-3xl border border-default bg-neutral-primary p-4"
+            class="static lg:sticky top-18 w-full lg:w-90 shrink-0 space-y-3 rounded-3xl border border-default bg-neutral-primary p-4"
         >
             {% include "components/select.html" with field=filter_form.grade hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
             {% include "components/select.html" with field=filter_form.chapter hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}

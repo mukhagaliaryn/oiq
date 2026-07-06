@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-27 12:34+0500\n"
+"POT-Creation-Date: 2026-07-06 17:41+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,6 +52,7 @@ msgstr "Выберите школу"
 #: core/models/content.py:32 ui/templates/app/auth/register/teacher.html:175
 #: ui/templates/app/dashboard/teacher/account/edit.html:147
 #: ui/templates/app/dashboard/teacher/account/profile.html:78
+#: ui/templates/app/dashboard/teacher/page.html:38
 msgid "Subject"
 msgstr "Предмет"
 
@@ -68,51 +69,93 @@ msgstr "Подтвердите паролем"
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
-#: apps/dashboard/teacher/forms/question.py:15
+#: apps/dashboard/teacher/forms/question.py:10
 msgid "All grades"
 msgstr "Все классы"
 
-#: apps/dashboard/teacher/forms/question.py:16
+#: apps/dashboard/teacher/forms/question.py:11
 msgid "All chapters"
 msgstr "Все разделы"
 
-#: apps/dashboard/teacher/forms/question.py:17
+#: apps/dashboard/teacher/forms/question.py:12
 msgid "All topics"
 msgstr "Все темы"
 
-#: apps/dashboard/teacher/forms/question.py:18
+#: apps/dashboard/teacher/forms/question.py:13
 msgid "All formats"
 msgstr "Все форматы"
 
-#: apps/dashboard/teacher/forms/question.py:19
+#: apps/dashboard/teacher/forms/question.py:14
 msgid "All variants"
 msgstr "Все варианты"
 
-#: apps/dashboard/teacher/forms/question.py:20
+#: apps/dashboard/teacher/forms/question.py:15
 msgid "Search"
 msgstr "Поиск"
 
-#: apps/dashboard/teacher/forms/question.py:52
+#: apps/dashboard/teacher/forms/question.py:46
+#: apps/dashboard/teacher/forms/question_import.py:14
 msgid "Select grade"
 msgstr "Выберите класс"
 
-#: apps/dashboard/teacher/forms/question.py:53
-#: apps/dashboard/teacher/views/question.py:210
+#: apps/dashboard/teacher/forms/question.py:47
+#: apps/dashboard/teacher/forms/question_import.py:15
+#: apps/dashboard/teacher/views/question.py:234
 msgid "Select chapter"
 msgstr "Выберите раздел"
 
-#: apps/dashboard/teacher/forms/question.py:96
-#: apps/dashboard/teacher/views/question.py:183
+#: apps/dashboard/teacher/forms/question.py:89
+#: apps/dashboard/teacher/views/question.py:204
 msgid "No variant"
 msgstr "Без варианта"
 
-#: apps/dashboard/teacher/forms/subject.py:40
-msgid "General (all grades)"
-msgstr "Общий (все классы)"
+#: apps/dashboard/teacher/forms/question_import.py:16
+#: apps/dashboard/teacher/views/question.py:235
+msgid "Select topic"
+msgstr "Выберите тему"
 
-#: apps/dashboard/teacher/forms/subject.py:74
+#: apps/dashboard/teacher/forms/question_import.py:17
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:37
+msgid "Word file (.docx)"
+msgstr "Файл Word (.docx)"
+
+#: apps/dashboard/teacher/forms/question_import.py:43
+#: apps/dashboard/teacher/forms/question_import.py:46
+msgid "Please upload a .docx file."
+msgstr "Загрузите файл в формате .docx."
+
+#: apps/dashboard/teacher/forms/question_import.py:49
+msgid "The file is too large."
+msgstr "Файл слишком большой."
+
+#: apps/dashboard/teacher/forms/subject.py:73
 msgid "A topic with this title already exists in this chapter."
 msgstr "Тема с таким названием уже существует в этом разделе."
+
+#: apps/dashboard/teacher/services/question_import.py:135
+#: apps/dashboard/teacher/services/question_import.py:139
+msgid "Could not convert the document. Please check the file and try again."
+msgstr "Не удалось преобразовать документ. Проверьте файл и попробуйте снова."
+
+#: apps/dashboard/teacher/services/question_import.py:194
+msgid "image not found"
+msgstr "изображение не найдено"
+
+#: apps/dashboard/teacher/services/question_import.py:225
+msgid "The AI service could not process the file. Please try again later."
+msgstr "Сервис ИИ не смог обработать файл. Повторите попытку позже."
+
+#: apps/dashboard/teacher/services/question_import.py:228
+msgid "The AI service declined to process this file."
+msgstr "Сервис ИИ отказался обрабатывать этот файл."
+
+#: apps/dashboard/teacher/services/question_import.py:232
+msgid "The AI service returned an empty response."
+msgstr "Сервис ИИ вернул пустой ответ."
+
+#: apps/dashboard/teacher/services/question_import.py:237
+msgid "The AI service returned an unreadable response."
+msgstr "Не удалось прочитать ответ сервиса ИИ."
 
 #: apps/dashboard/teacher/views/account.py:43
 msgid "Avatar removed."
@@ -135,35 +178,60 @@ msgid "Add at least two options and mark one of them as correct."
 msgstr ""
 "Добавьте минимум два варианта ответа и отметьте один из них как правильный."
 
-#: apps/dashboard/teacher/views/question.py:211
-msgid "Select topic"
-msgstr "Выберите тему"
+#: apps/dashboard/teacher/views/question_import.py:81
+msgid "Add at least two options."
+msgstr "Добавьте минимум два варианта ответа."
 
-#: apps/dashboard/teacher/views/subject.py:114
+#: apps/dashboard/teacher/views/question_import.py:86
+msgid "Mark exactly one option as correct."
+msgstr "Отметьте только один вариант как правильный."
+
+#: apps/dashboard/teacher/views/question_import.py:90
+msgid "Mark at least one option as correct."
+msgstr "Отметьте хотя бы один вариант как правильный."
+
+#: apps/dashboard/teacher/views/question_import.py:125
+msgid "No importable questions were found in this file."
+msgstr "В этом файле не найдено вопросов для импорта."
+
+#: apps/dashboard/teacher/views/question_import.py:155
+#: apps/dashboard/teacher/views/question_import.py:200
+msgid ""
+"This import session has expired or was already completed. Please upload the "
+"file again."
+msgstr ""
+"Срок этой сессии импорта истёк, либо она уже была завершена. Загрузите файл "
+"заново."
+
+#: apps/dashboard/teacher/views/question_import.py:263
+msgid "{} questions imported successfully."
+msgstr "{} вопросов успешно импортировано."
+
+#: apps/dashboard/teacher/views/subject.py:116
 msgid "Subject updated successfully."
 msgstr "Предмет успешно обновлён."
 
-#: apps/dashboard/teacher/views/subject.py:194
+#: apps/dashboard/teacher/views/subject.py:196
 msgid "Chapter created successfully."
 msgstr "Раздел успешно создан."
 
-#: apps/dashboard/teacher/views/subject.py:216
+#: apps/dashboard/teacher/views/subject.py:220
 msgid "Chapter updated successfully."
 msgstr "Раздел успешно обновлён."
 
-#: apps/dashboard/teacher/views/subject.py:239
+#: apps/dashboard/teacher/views/subject.py:243
 msgid "Chapter deleted."
 msgstr "Раздел удалён."
 
-#: apps/dashboard/teacher/views/subject.py:256
+#: apps/dashboard/teacher/views/subject.py:260
 msgid "Topic created successfully."
 msgstr "Тема успешно создана."
 
-#: apps/dashboard/teacher/views/subject.py:277
+#: apps/dashboard/teacher/views/subject.py:281
 msgid "Topic updated successfully."
 msgstr "Тема успешно обновлена."
 
-#: apps/dashboard/teacher/views/subject.py:296
+#: apps/dashboard/teacher/views/subject.py:300
 msgid "Topic deleted."
 msgstr "Тема удалена."
 
@@ -240,61 +308,64 @@ msgstr "Русский"
 msgid "English"
 msgstr "Английский"
 
-#: config/settings.py:175 config/settings.py:197
+#: config/settings.py:182 config/settings.py:204
 msgid "Administration"
 msgstr "Администрирование"
 
-#: config/settings.py:179 config/settings.py:218
+#: config/settings.py:186 config/settings.py:225
 #: ui/templates/layouts/teacher_layout.html:45
 msgid "Dashboard"
 msgstr "Панель управления"
 
-#: config/settings.py:202
+#: config/settings.py:209
 msgid "Website"
 msgstr "Сайт"
 
-#: config/settings.py:229 core/admin/account.py:72
+#: config/settings.py:236 core/admin/account.py:72
 msgid "Account"
 msgstr "Аккаунт"
 
-#: config/settings.py:234 core/models/account.py:27
+#: config/settings.py:241 core/models/account.py:27
 msgid "Users"
 msgstr "Пользователи"
 
-#: config/settings.py:239 core/models/account.py:70
+#: config/settings.py:246 core/models/account.py:70
 msgid "User sessions"
 msgstr "Сессии пользователей"
 
-#: config/settings.py:247
+#: config/settings.py:254
 msgid "Education"
 msgstr "Образование"
 
-#: config/settings.py:252 core/models/education.py:12
+#: config/settings.py:259 core/models/education.py:12
 msgid "Cities"
 msgstr "Города"
 
-#: config/settings.py:257 core/models/education.py:29
+#: config/settings.py:264 core/models/education.py:29
 msgid "Schools"
 msgstr "Школы"
 
-#: config/settings.py:262 core/models/content.py:13 core/models/education.py:45
+#: config/settings.py:269 core/models/content.py:13
+#: core/models/education.py:45
 msgid "Grades"
 msgstr "Классы"
 
-#: config/settings.py:267 core/models/content.py:24
+#: config/settings.py:274 core/models/content.py:24
 #: ui/templates/layouts/teacher_layout.html:51
 msgid "Subjects"
 msgstr "Предметы"
 
-#: config/settings.py:272 core/models/content.py:87
+#: config/settings.py:279 core/models/content.py:87
 msgid "Question formats"
 msgstr "Форматы вопросов"
 
-#: config/settings.py:277 core/models/content.py:142
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:46
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:60
+#: config/settings.py:284 core/models/content.py:142
+#: ui/templates/app/dashboard/teacher/page.html:51
+#: ui/templates/app/dashboard/teacher/page.html:65
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:49
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:63
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:10
 #: ui/templates/app/dashboard/teacher/subject/question/list.html:4
-#: ui/templates/app/dashboard/teacher/subject/question/list.html:11
 msgid "Questions"
 msgstr "Вопросы"
 
@@ -500,10 +571,10 @@ msgstr "Обложка"
 
 #: core/models/content.py:16 core/models/content.py:39
 #: core/models/content.py:58
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:83
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:61
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:79
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:57
 #: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:68
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:102
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:108
 #: ui/templates/app/dashboard/teacher/subject/_topics_section.html:54
 msgid "Description"
 msgstr "Описание"
@@ -513,22 +584,21 @@ msgstr "Описание"
 #: core/models/content.py:102 core/models/education.py:41
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:66
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:44
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:89
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:95
 #: ui/templates/app/dashboard/teacher/subject/_topics_section.html:41
 msgid "Order"
 msgstr "Порядок"
 
 #: core/models/content.py:36 core/models/education.py:44
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:77
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:55
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:52
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:58
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:29
 msgid "Grade"
 msgstr "Класс"
 
 #: core/models/content.py:38 core/models/content.py:53
 #: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:70
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:48
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:93
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:99
 #: ui/templates/app/dashboard/teacher/subject/_topics_section.html:45
 msgid "Title"
 msgstr "Заголовок"
@@ -561,7 +631,7 @@ msgid "Question format"
 msgstr "Формат вопроса"
 
 #: core/models/content.py:98 core/models/content.py:131
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:69
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:75
 msgid "Format"
 msgstr "Формат"
 
@@ -590,22 +660,26 @@ msgid "Author"
 msgstr "Автор"
 
 #: core/models/content.py:135
-#: ui/templates/app/dashboard/teacher/subject/question/_variant_field.html:3
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:42
+#: ui/templates/app/dashboard/teacher/subject/question/_variant_field.html:7
 msgid "Variant"
 msgstr "Вариант"
 
 #: core/models/content.py:137
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:76
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:47
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:82
 msgid "Level"
 msgstr "Уровень"
 
 #: core/models/content.py:138
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:81
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:52
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:87
 msgid "Time limit (sec)"
 msgstr "Лимит времени (сек)"
 
 #: core/models/content.py:141 core/models/content.py:154
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:35
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:17
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:41
 msgid "Question"
 msgstr "Вопрос"
 
@@ -926,10 +1000,13 @@ msgstr ""
 "не восстановит аккаунт."
 
 #: ui/templates/app/dashboard/teacher/account/security.html:171
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:99
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:95
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:65
 #: ui/templates/app/dashboard/teacher/subject/_subject_edit_form.html:81
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:118
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:118
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:124
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:62
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:132
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:99
 #: ui/templates/components/_confirm_modal.html:37
 msgid "Cancel"
 msgstr "Отмена"
@@ -951,54 +1028,74 @@ msgstr "Выберите язык интерфейса."
 msgid "Teacher dashboard"
 msgstr "Панель учителя"
 
-#: ui/templates/app/dashboard/teacher/page.html:14
+#: ui/templates/app/dashboard/teacher/page.html:18
+#, python-format
+msgid "You are a partner teacher for \"%(subject)s\""
+msgstr "Вы являетесь партнёрским учителем по предмету «%(subject)s»"
+
+#: ui/templates/app/dashboard/teacher/page.html:21
+msgid ""
+"As a partner teacher, you can manage this subject's chapters and topics, and"
+" build its question bank."
+msgstr ""
+"Как партнёрский учитель, вы можете управлять главами и темами этого "
+"предмета, а также пополнять банк вопросов."
+
+#: ui/templates/app/dashboard/teacher/page.html:69
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:67
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:59
+msgid "Add question"
+msgstr "Добавить вопрос"
+
+#: ui/templates/app/dashboard/teacher/page.html:82
 #: ui/templates/layouts/teacher_layout.html:75
 msgid "Classes"
 msgstr "Классы"
 
-#: ui/templates/app/dashboard/teacher/page.html:15
+#: ui/templates/app/dashboard/teacher/page.html:83
 msgid "Add learners to classes and track the learning process."
 msgstr "Добавляйте учеников в классы и следите за процессом обучения."
 
-#: ui/templates/app/dashboard/teacher/page.html:22
+#: ui/templates/app/dashboard/teacher/page.html:90
 #: ui/templates/layouts/teacher_layout.html:83
 msgid "Game tasks"
 msgstr "Игровые задания"
 
-#: ui/templates/app/dashboard/teacher/page.html:23
+#: ui/templates/app/dashboard/teacher/page.html:91
 msgid "Create interactive tasks in a Kahoot-like style."
 msgstr "Создавайте интерактивные задания в стиле Kahoot."
 
-#: ui/templates/app/dashboard/teacher/page.html:30
+#: ui/templates/app/dashboard/teacher/page.html:98
 #: ui/templates/layouts/teacher_layout.html:91
 msgid "Results"
 msgstr "Результаты"
 
-#: ui/templates/app/dashboard/teacher/page.html:31
+#: ui/templates/app/dashboard/teacher/page.html:99
 msgid "View learners' progress and task results."
 msgstr "Просматривайте прогресс учеников и результаты заданий."
 
-#: ui/templates/app/dashboard/teacher/page.html:38
+#: ui/templates/app/dashboard/teacher/page.html:106
 msgid "Quick actions"
 msgstr "Быстрые действия"
 
-#: ui/templates/app/dashboard/teacher/page.html:39
+#: ui/templates/app/dashboard/teacher/page.html:107
 msgid "Key actions to get started"
 msgstr "Основные действия для начала работы"
 
-#: ui/templates/app/dashboard/teacher/page.html:45
+#: ui/templates/app/dashboard/teacher/page.html:113
 msgid "Create a new class"
 msgstr "Создать новый класс"
 
-#: ui/templates/app/dashboard/teacher/page.html:46
+#: ui/templates/app/dashboard/teacher/page.html:114
 msgid "Open a class to bring learners together."
 msgstr "Откройте класс, чтобы объединить учеников."
 
-#: ui/templates/app/dashboard/teacher/page.html:50
+#: ui/templates/app/dashboard/teacher/page.html:118
 msgid "Create a game"
 msgstr "Создать игру"
 
-#: ui/templates/app/dashboard/teacher/page.html:51
+#: ui/templates/app/dashboard/teacher/page.html:119
 msgid "Build a game from questions and tasks."
 msgstr "Создавайте игру из вопросов и заданий."
 
@@ -1014,9 +1111,9 @@ msgstr "Общий"
 msgid "Delete this chapter together with its topics?"
 msgstr "Удалить этот раздел вместе с его темами?"
 
-#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:109
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:128
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:121
+#: ui/templates/app/dashboard/teacher/subject/_chapter_item.html:105
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:134
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:142
 msgid "Save"
 msgstr "Сохранить"
 
@@ -1025,7 +1122,7 @@ msgid "No chapters yet for this grade."
 msgstr "Для этого класса пока нет разделов."
 
 #: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:27
-#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:66
+#: ui/templates/app/dashboard/teacher/subject/_chapters_section.html:71
 msgid "Add chapter"
 msgstr "Добавить раздел"
 
@@ -1038,27 +1135,20 @@ msgstr "Закрыть"
 msgid "Change cover"
 msgstr "Изменить обложку"
 
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:22
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:25
 msgid "chapters"
 msgstr "разделов"
 
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:26
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:29
 msgid "topics"
 msgstr "тем"
 
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:30
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:33
 msgid "grades"
 msgstr "классов"
 
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:64
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:5
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
-#: ui/templates/app/dashboard/teacher/subject/question/list.html:26
-msgid "Add question"
-msgstr "Добавить вопрос"
-
-#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:84
-#: ui/templates/app/dashboard/teacher/subject/detail.html:60
+#: ui/templates/app/dashboard/teacher/subject/_subject_info.html:87
+#: ui/templates/app/dashboard/teacher/subject/detail.html:62
 msgid "Edit subject"
 msgstr "Редактировать предмет"
 
@@ -1066,15 +1156,15 @@ msgstr "Редактировать предмет"
 msgid "topic"
 msgstr "тема"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:34
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:40
 msgid "Delete this topic?"
 msgstr "Удалить эту тему?"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:56
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:62
 msgid "questions"
 msgstr "вопросов"
 
-#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:70
+#: ui/templates/app/dashboard/teacher/subject/_topic_item.html:76
 msgid "No questions added yet."
 msgstr "Вопросы пока не добавлены."
 
@@ -1083,11 +1173,11 @@ msgid "No topics yet."
 msgstr "Тем пока нет."
 
 #: ui/templates/app/dashboard/teacher/subject/_topics_section.html:24
-#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:59
+#: ui/templates/app/dashboard/teacher/subject/_topics_section.html:68
 msgid "Add topic"
 msgstr "Добавить тему"
 
-#: ui/templates/app/dashboard/teacher/subject/detail.html:36
+#: ui/templates/app/dashboard/teacher/subject/detail.html:38
 msgid ""
 "No grades are assigned to this subject yet. Ask an administrator to "
 "configure them."
@@ -1095,54 +1185,162 @@ msgstr ""
 "Этому предмету пока не назначены классы. Попросите администратора настроить "
 "их."
 
+#: ui/templates/app/dashboard/teacher/subject/question/_import_option_row.html:10
 #: ui/templates/app/dashboard/teacher/subject/question/_option_row.html:11
 msgid "Correct"
 msgstr "Правильный"
 
-#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:22
-msgid "Search by question text"
-msgstr "Поиск по тексту вопроса"
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:20
+msgid "Import this question"
+msgstr "Импортировать этот вопрос"
 
-#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:59
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:33
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:66
+msgid "Question text"
+msgstr "Текст вопроса"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:61
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:94
+msgid "Answer options"
+msgstr "Варианты ответа"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_import_question_item.html:80
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:112
+msgid "Add option"
+msgstr "Добавить вариант ответа"
+
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:36
 msgid "Delete this question?"
 msgstr "Удалить этот вопрос?"
 
-#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:79
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:56
 msgid "Previous"
 msgstr "Предыдущая"
 
-#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:90
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:67
 msgid "Next"
 msgstr "Следующая"
 
-#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:96
+#: ui/templates/app/dashboard/teacher/subject/question/_panel.html:73
 msgid "No questions found."
 msgstr "Вопросы не найдены."
 
 #: ui/templates/app/dashboard/teacher/subject/question/form.html:5
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:15
 msgid "Edit question"
 msgstr "Изменить вопрос"
 
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:41
+#: ui/templates/app/dashboard/teacher/subject/question/form.html:47
 msgid "Preview"
 msgstr "Просмотр"
 
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:60
-msgid "Question text"
-msgstr "Текст вопроса"
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:4
+msgid "Import questions"
+msgstr "Импорт вопросов"
 
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:89
-msgid "Answer options"
-msgstr "Варианты ответа"
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:16
+msgid "Import questions from a Word file"
+msgstr "Импорт вопросов из файла Word"
 
-#: ui/templates/app/dashboard/teacher/subject/question/form.html:96
-msgid "Add option"
-msgstr "Добавить вариант ответа"
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:20
+msgid ""
+"Upload a .docx file — the AI will read it and turn it into questions "
+"automatically. You'll be able to check and edit everything before it's "
+"saved."
+msgstr ""
+"Загрузите файл .docx — ИИ прочитает его и автоматически превратит в вопросы."
+" Перед сохранением вы сможете всё проверить и отредактировать."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:70
+msgid "Click to choose a file or drag and drop it here"
+msgstr "Нажмите, чтобы выбрать файл, или перетащите его сюда"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:71
+msgid "Word document (.docx)"
+msgstr "Документ Word (.docx)"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:107
+msgid "Analyzing..."
+msgstr "Анализируется..."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:107
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:48
+msgid "Import"
+msgstr "Импорт"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:121
+msgid "Reading the questions..."
+msgstr "Идёт чтение вопросов..."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import.html:122
+msgid ""
+"This may take up to a minute for large files. Please don't close this page."
+msgstr ""
+"Для больших файлов это может занять до минуты. Не закрывайте эту страницу."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:4
+msgid "Check imported questions"
+msgstr "Проверка импортированных вопросов"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:13
+msgid "Check the imported questions"
+msgstr "Проверьте импортированные вопросы"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:15
+#, python-format
+msgid ""
+"\n"
+"                %(counter)s question was found. Check it, edit if needed, and confirm.\n"
+"            "
+msgid_plural ""
+"\n"
+"                %(counter)s questions were found. Check them, edit if needed, and confirm.\n"
+"            "
+msgstr[0] ""
+"\n"
+"                Найден %(counter)s вопрос. Проверьте его, при необходимости отредактируйте и подтвердите.\n"
+"            "
+msgstr[1] ""
+"\n"
+"                Найдено %(counter)s вопросов. Проверьте их, при необходимости отредактируйте и подтвердите.\n"
+"            "
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:25
+msgid "Discard this import? None of these questions will be saved."
+msgstr "Отменить этот импорт? Ни один из этих вопросов не будет сохранён."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:30
+msgid "Back"
+msgstr "Назад"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:38
+msgid "Not imported automatically"
+msgstr "Не импортировано автоматически"
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:41
+msgid ""
+"These items are not in a supported single/multiple choice format. Add them "
+"manually if needed."
+msgstr ""
+"Эти вопросы не в поддерживаемом формате (один/несколько правильных ответов)."
+" При необходимости добавьте их вручную."
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:73
+#, python-format
+msgid "Selected questions will be saved to the topic \"%(title)s\""
+msgstr "Выбранные вопросы будут сохранены в тему \"%(title)s\""
+
+#: ui/templates/app/dashboard/teacher/subject/question/import_review.html:80
+msgid "Confirm"
+msgstr "Подтвердить"
+
+#: ui/templates/app/dashboard/teacher/subject/question/list.html:26
+msgid "Search by question text"
+msgstr "Поиск по тексту вопроса"
 
 #: ui/templates/app/page.html:27
 msgid "An interactive, gamified and visual education platform"
-msgstr "Интерактивная, геймифицированная и наглядная образовательная платформа"
+msgstr ""
+"Интерактивная, геймифицированная и наглядная образовательная платформа"
 
 #: ui/templates/app/page.html:52
 msgid "I already have an account"

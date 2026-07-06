@@ -138,6 +138,13 @@ STATICFILES_DIRS = [
 ]
 
 
+# AI-powered question import (docx)
+# ----------------------------------------------------------------------------------------------------------------------
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
+QUESTION_IMPORT_MODEL = config('QUESTION_IMPORT_MODEL', default='claude-opus-4-8')
+QUESTION_IMPORT_MAX_FILE_SIZE = 20 * 1024 * 1024
+
+
 # Templates settings
 # ----------------------------------------------------------------------------------------------------------------------
 

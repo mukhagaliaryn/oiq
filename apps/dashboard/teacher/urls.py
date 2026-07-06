@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import account, main, question, subject
+from .views import account, main, question, question_import, subject
 
 
 app_name = 'teacher'
@@ -29,4 +29,18 @@ urlpatterns = [
     path('questions/<int:pk>/delete/', question.question_delete_view, name='question-delete'),
     path('questions/variant-field/', question.question_variant_field_view, name='question-variant-field'),
     path('questions/topic-fields/', question.question_topic_fields_view, name='question-topic-fields'),
+
+    path('subject/<int:pk>/questions/import/', question_import.question_import_view, name='question-import'),
+    path(
+        'subject/<int:pk>/questions/import/<str:import_id>/',
+        question_import.question_import_review_view, name='question-import-review',
+    ),
+    path(
+        'subject/<int:pk>/questions/import/<str:import_id>/cancel/',
+        question_import.question_import_cancel_view, name='question-import-cancel',
+    ),
+    path(
+        'subject/<int:pk>/questions/import/<str:import_id>/confirm/',
+        question_import.question_import_confirm_view, name='question-import-confirm',
+    ),
 ]
