@@ -1,0 +1,185 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Security" %}{% endblock title %}
+
+
+{% block teacher_layout %}
+{% include "accounts/account/_tabs.html" %}
+
+<div class="rounded-3xl border border-default bg-neutral-primary p-6">
+    <h2 class="text-xl font-black">{% translate "Change password" %}</h2>
+    <p class="mt-1 text-body">{% translate "Use a strong password that you don't use elsewhere." %}</p>
+
+    <form method="post" class="mt-6 max-w-md space-y-4">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="change_password">
+
+        <div x-data="{ show: false }" class="space-y-2">
+            <label for="{{ password_form.old_password.id_for_label }}" class="block ml-6 font-medium">
+                {% translate "Current password" %}
+            </label>
+            <div class="relative">
+                <input
+                    :type="show ? 'text' : 'password'"
+                    name="old_password"
+                    id="{{ password_form.old_password.id_for_label }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition focus:ring-2 focus:ring-brand"
+                    autocomplete="current-password"
+                    required
+                >
+                <button
+                    type="button"
+                    @click="show = !show"
+                    class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer p-1.5 rounded-full focus:ring-2 focus:ring-brand"
+                >
+                    <i x-show="!show" class="ph ph-eye size-6"></i>
+                    <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                </button>
+            </div>
+            {% for error in password_form.old_password.errors %}
+                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div x-data="{ show: false }" class="space-y-2">
+            <label for="{{ password_form.new_password1.id_for_label }}" class="block ml-6 font-medium">
+                {% translate "New password" %}
+            </label>
+            <div class="relative">
+                <input
+                    :type="show ? 'text' : 'password'"
+                    name="new_password1"
+                    id="{{ password_form.new_password1.id_for_label }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition focus:ring-2 focus:ring-brand"
+                    autocomplete="new-password"
+                    required
+                >
+                <button
+                    type="button"
+                    @click="show = !show"
+                    class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer p-1.5 rounded-full focus:ring-2 focus:ring-brand"
+                >
+                    <i x-show="!show" class="ph ph-eye size-6"></i>
+                    <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                </button>
+            </div>
+            {% if password_form.new_password1.help_text %}
+                <div class="ml-6 text-body">{{ password_form.new_password1.help_text }}</div>
+            {% endif %}
+            {% for error in password_form.new_password1.errors %}
+                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div x-data="{ show: false }" class="space-y-2">
+            <label for="{{ password_form.new_password2.id_for_label }}" class="block ml-6 font-medium">
+                {% translate "Confirm new password" %}
+            </label>
+            <div class="relative">
+                <input
+                    :type="show ? 'text' : 'password'"
+                    name="new_password2"
+                    id="{{ password_form.new_password2.id_for_label }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition focus:ring-2 focus:ring-brand"
+                    autocomplete="new-password"
+                    required
+                >
+                <button
+                    type="button"
+                    @click="show = !show"
+                    class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer p-1.5 rounded-full focus:ring-2 focus:ring-brand"
+                >
+                    <i x-show="!show" class="ph ph-eye size-6"></i>
+                    <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                </button>
+            </div>
+            {% for error in password_form.new_password2.errors %}
+                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        {% for error in password_form.non_field_errors %}
+            <span class="block text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+
+        <button type="submit" class="relative grid group w-full md:w-auto">
+            <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+            <span class="relative w-full px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                {% translate "Update password" %}
+            </span>
+        </button>
+    </form>
+</div>
+
+<div class="mt-6 rounded-3xl border border-danger-medium bg-danger-soft p-6">
+    <h2 class="text-xl font-black text-danger">{% translate "Danger zone" %}</h2>
+    <p class="mt-1 text-body">{% translate "Deactivating your account will sign you out and block access until support restores it." %}</p>
+
+    <div x-data="{ open: {% if delete_form.errors %}true{% else %}false{% endif %} }">
+        <button 
+            type="submit"
+            @click="open = true" 
+            class="relative grid group w-full md:w-auto mt-4"
+        >
+            <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-danger-strong group-active:h-0"></span>
+            <span class="relative w-full px-8 py-3 rounded-full bg-danger text-neutral-primary font-medium cursor-pointer group-hover:bg-danger-medium group-active:translate-y-1.5">
+                {% translate "Deactivate account" %}
+            </span>
+        </button>
+
+        <div
+            x-show="open"
+            x-cloak
+            x-transition.opacity
+            class="fixed inset-0 z-60 flex items-center justify-center bg-dark-backdrop/50 p-4"
+            style="display:none"
+        >
+            <div @click.away="open = false" class="w-full max-w-md rounded-3xl bg-neutral-primary p-6">
+                <h3 class="text-lg font-black">{% translate "Deactivate your account?" %}</h3>
+                <p class="mt-2 text-body">
+                    {% translate "You will be signed out immediately and won't be able to log back in until support reactivates your account." %}
+                </p>
+
+                <form method="post" class="mt-4 space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_account">
+
+                    <div class="space-y-2">
+                        <label for="{{ delete_form.password.id_for_label }}" class="block ml-6 font-medium">
+                            {% translate "Confirm with your password" %}
+                        </label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="{{ delete_form.password.id_for_label }}"
+                            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition focus:ring-2 focus:ring-brand"
+                            autocomplete="current-password"
+                            required
+                        >
+                        {% for error in delete_form.password.errors %}
+                            <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <button
+                            type="button"
+                            @click="open = false"
+                            class="rounded-full border border-default px-5 py-2.5 font-medium hover:bg-neutral-secondary"
+                        >
+                            {% translate "Cancel" %}
+                        </button>
+                        <button
+                            type="submit"
+                            class="rounded-full bg-danger px-5 py-2.5 font-medium text-neutral-primary hover:bg-danger-strong"
+                        >
+                            {% translate "Yes, deactivate" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock teacher_layout %}

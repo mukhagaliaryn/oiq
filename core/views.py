@@ -1,16 +1,13 @@
 import hashlib
 
 from PIL import Image, UnidentifiedImageError
-from django import forms
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
-from core.models import FormatVariant, School
 from core.utils.files import ckeditor_image_upload_path
 
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024
@@ -43,27 +40,3 @@ def ckeditor_image_upload(request):
         default_storage.save(path, upload)
 
     return JsonResponse({'url': default_storage.url(path)})
-
-
-@staff_member_required
-def format_variants(request):
-    variants = FormatVariant.objects.filter(
-        format_id=request.GET.get('format')
-    ).values('id', 'name')
-
-    return JsonResponse({'results': list(variants)})
-
-
-# -------------- school field (HTMX) --------------
-def school_field_view(request):
-    city_id = request.GET.get('city')
-    schools = (
-        School.objects.filter(city_id=city_id, is_active=True).order_by('name')
-        if city_id else School.objects.none()
-    )
-
-    class _SchoolForm(forms.Form):
-        school = forms.ModelChoiceField(queryset=schools, required=True, empty_label=_('Select school'))
-
-    form = _SchoolForm(initial={'school': request.GET.get('school')})
-    return render(request, 'components/_school_field.html', {'field': form['school']})

@@ -1,0 +1,22 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Settings" %}{% endblock title %}
+
+
+{% block teacher_layout %}
+{% include "accounts/account/_tabs.html" %}
+
+<div class="rounded-3xl border border-default bg-neutral-primary p-6">
+    <h2 class="text-xl font-black">{% translate "Language" %}</h2>
+    <p class="mt-1 text-body">{% translate "Choose the interface language." %}</p>
+
+    <form action="{% url 'set_language' %}" method="post" class="mt-6 w-full md:max-w-xs" onchange="this.submit()">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+        <label for="id_language" class="sr-only">{% translate "Language" %}</label>
+        {% include "components/select.html" with field=form.language %}
+    </form>
+</div>
+{% endblock teacher_layout %}

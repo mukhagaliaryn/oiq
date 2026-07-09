@@ -1,0 +1,92 @@
+{% load i18n %}
+<div id="questions-panel">
+    <div class="flex flex-col-reverse lg:flex-row items-start gap-6">
+
+        <div class="w-full lg:min-w-0 flex-1">
+            {% if page_obj.object_list %}
+                <div class="space-y-3">
+                    {% for question in page_obj %}
+                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-default bg-neutral-primary p-3 sm:gap-4 sm:p-4">
+                            <a href="{% url 'teaching:question-update' question.pk %}" class="min-w-0 flex-1 space-y-2">
+                                <div class="flex flex-wrap items-center gap-1 text-xs">
+                                    <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.format.name }}</span>
+                                    {% if question.variant %}
+                                        <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.variant.name }}</span>
+                                    {% endif %}
+                                    <span class="rounded-full bg-neutral-tertiary px-2.5 py-1 font-medium text-body-subtle">{{ question.get_level_display }}</span>
+                                </div>
+                                <div class="grid gap-1">
+                                    <div class="truncate font-semibold">#{{ question.id }}. {{ question.text_preview|safe }}</div>
+                                    <span class="block text-body-subtle text-xs">{{ question.topic.title }}</span>
+                                </div>
+                            </a>
+
+                            <div class="flex shrink-0 items-center">
+                                <a 
+                                    href="{% url 'teaching:question-update' question.pk %}"
+                                    class="flex justify-center items-center rounded-2xl p-3 cursor-pointer hover:bg-neutral-tertiary"
+                                >
+                                    <i class="ph ph-pencil size-4"></i>
+                                </a>
+                                <button
+                                    type="button"
+                                    hx-delete="{% url 'teaching:question-delete' question.pk %}?{{ request.GET.urlencode }}"
+                                    hx-target="#questions-panel"
+                                    hx-swap="outerHTML"
+                                    hx-confirm="{% translate 'Delete this question?' %}"
+                                    class="flex justify-center items-center rounded-2xl cursor-pointer p-3 text-danger hover:bg-danger-soft"
+                                >
+                                    <i class="ph ph-trash size-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <div class="mt-6 flex items-center justify-center gap-2">
+                        {% if page_obj.has_previous %}
+                            <a
+                                href="{% querystring page=page_obj.previous_page_number %}"
+                                hx-get="{% querystring page=page_obj.previous_page_number %}"
+                                hx-target="#questions-panel"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                                class="rounded-full border border-default px-4 py-2 font-medium hover:bg-neutral-secondary"
+                            >{% translate "Previous" %}</a>
+                        {% endif %}
+                        <span class="px-3 text-body-subtle">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                        {% if page_obj.has_next %}
+                            <a
+                                href="{% querystring page=page_obj.next_page_number %}"
+                                hx-get="{% querystring page=page_obj.next_page_number %}"
+                                hx-target="#questions-panel"
+                                hx-swap="outerHTML"
+                                hx-push-url="true"
+                                class="rounded-full border border-default px-4 py-2 font-medium hover:bg-neutral-secondary"
+                            >{% translate "Next" %}</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="rounded-3xl border border-dashed border-default p-8 text-center text-body-subtle">
+                    {% translate "No questions found." %}
+                </div>
+            {% endif %}
+        </div>
+
+        <form
+            id="questions-filters"
+            method="get"
+            action="{% url 'teaching:question-list' subject.pk %}"
+            class="static lg:sticky top-18 w-full lg:w-90 shrink-0 space-y-3 rounded-3xl border border-default bg-neutral-primary p-4"
+        >
+            {% include "components/select.html" with field=filter_form.grade hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/select.html" with field=filter_form.chapter hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/select.html" with field=filter_form.topic hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/select.html" with field=filter_form.format hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/select.html" with field=filter_form.variant hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+        </form>
+
+    </div>
+</div>

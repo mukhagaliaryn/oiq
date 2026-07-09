@@ -19,7 +19,7 @@
         class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-default bg-neutral-primary transition-transform duration-300 lg:translate-x-0"
     >
         <div class="flex items-center justify-between h-16 px-4 border-b border-default">
-            <a href="{% url 'teacher:dashboard' %}" class="flex items-center gap-2 active:scale-90">
+            <a href="{% url 'teaching:dashboard' %}" class="flex items-center gap-2 active:scale-90">
                 <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
             </a>
             <button
@@ -33,7 +33,7 @@
 
         <nav class="flex-1 space-y-1 overflow-y-auto p-2">
             <a
-                href="{% url 'teacher:dashboard' %}"
+                href="{% url 'teaching:dashboard' %}"
                 class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
                 {% if request.resolver_match.url_name == 'dashboard' %}
                     bg-brand text-neutral-primary
@@ -53,7 +53,7 @@
 
                     
                         <a
-                            href="{% url 'teacher:subject-detail' request.user.teacher.subject_id %}"
+                            href="{% url 'teaching:subject-detail' request.user.teacher.subject_id %}"
                             class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
                             {% if request.resolver_match.url_name == 'subject-detail' %}
                                 bg-brand text-neutral-primary
@@ -106,7 +106,7 @@
                 >
                     <i class="ph ph-list size-5"></i>
                 </button>
-                <a href="{% url 'teacher:dashboard' %}" class="flex lg:hidden active:scale-90">
+                <a href="{% url 'teaching:dashboard' %}" class="flex lg:hidden active:scale-90">
                     <img src="{% static 'images/logo.svg' %}" class="w-16" alt="Brand logo">
                 </a>
             </div>
@@ -141,18 +141,18 @@
                         class="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
                         style="display:none"
                     >
-                        <a href="{% url 'teacher:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                        <a href="{% url 'accounts:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
                             <i class="ph ph-user size-5"></i>
                             {% translate "Profile" %}
                         </a>
-                        <a href="{% url 'teacher:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                        <a href="{% url 'accounts:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
                             <i class="ph ph-gear size-5"></i>
                             {% translate "Account settings" %}
                         </a>
 
                         <div class="my-2 border-t border-default"></div>
 
-                        <a href="{% url 'main:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
+                        <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
                             <i class="ph ph-sign-out size-5"></i>
                             {% translate "Sign out" %}
                         </a>

@@ -15,8 +15,12 @@ urlpatterns += i18n_patterns(
 
     # apps...
     path('', include('apps.main.urls')),
-    path('learner/', include('apps.dashboard.learner.urls')),
-    path('teacher/', include('apps.dashboard.teacher.urls')),
+    path('', include('apps.accounts.urls')),
+    path('catalog/', include('apps.catalog.urls')),
+    
+    path('directory/', include('apps.directory.urls')),
+    path('learn/', include('apps.learning.urls')),
+    path('subjects/', include('apps.teaching.urls')),
 
     prefix_default_language=True,
 )

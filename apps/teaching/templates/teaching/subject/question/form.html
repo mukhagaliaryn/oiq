@@ -1,0 +1,158 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if form.instance.pk %}{% translate "Edit question" %}{% else %}{% translate "Add question" %}{% endif %}
+{% endblock title %}
+
+{% block css %}
+    {{ media.css }}
+    <link rel="stylesheet" href="{% static 'js/oiq-question-preview/ui.css' %}">
+{% endblock css %}
+
+
+{% block teacher_layout %}
+<div
+    x-data="{
+        tab: '{{ tab|default:'question'|escapejs }}',
+        formatCodesById: {{ format_codes_json }},
+        variantCodesById: {{ variant_codes_json }},
+        selectedFormatCode: '{{ initial_format_code|default:''|escapejs }}',
+        selectedVariantCode: '{{ initial_variant_code|default:''|escapejs }}',
+        init() {
+            const formatSelect = this.$el.querySelector('select[name=\'format\']');
+            if (formatSelect?.value) {
+                this.selectedFormatCode = this.formatCodesById[formatSelect.value] || this.selectedFormatCode;
+            }
+        },
+    }"
+    @change="
+        if ($event.target.name === 'format') { selectedFormatCode = formatCodesById[$event.target.value] || ''; }
+        if ($event.target.name === 'variant') { selectedVariantCode = variantCodesById[$event.target.value] || ''; }
+    "
+    @variant-init.window="selectedVariantCode = $event.detail.code"
+>
+    <div class="mb-6 flex gap-2 border-b border-default">
+        <button
+            type="button"
+            @click="tab = 'question'"
+            class="border-b-2 px-4 py-3 font-medium transition"
+            :class="tab === 'question' ? 'border-brand text-brand' : 'border-transparent text-body hover:text-body-subtle'"
+        >{% translate "Question" %}</button>
+        <button
+            type="button"
+            @click="tab = 'preview'; $nextTick(() => updateQuestionPreview())"
+            class="border-b-2 px-4 py-3 font-medium transition"
+            :class="tab === 'preview' ? 'border-brand text-brand' : 'border-transparent text-body hover:text-body-subtle'"
+        >{% translate "Preview" %}</button>
+    </div>
+
+    <form method="post" id="question-form" novalidate>
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div x-show="tab === 'question'" class="space-y-6">
+            <div class="space-y-5 rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
+                <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    <div class="space-y-2">
+                        <label class="block ml-6 font-medium">{% translate "Grade" %}</label>
+                        {% include "components/select.html" with field=form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
+                    </div>
+
+                    {% include "teaching/subject/question/_topic_fields.html" with chapter_field=form.chapter topic_field=form.topic %}
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block ml-6 font-medium">{% translate "Question text" %}</label>
+                    {{ form.text }}
+                    {% for error in form.text.errors %}
+                        <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="space-y-2">
+                        <label class="block ml-6 font-medium">{% translate "Format" %}</label>
+                        {% include "components/select.html" with field=form.format hx_get=variants_url hx_target="#variant-field" hx_swap="outerHTML" %}
+                    </div>
+
+                    {% include "teaching/subject/question/_variant_field.html" with field=form.variant initial_variant_code=initial_variant_code %}
+
+                    <div class="space-y-2">
+                        <label class="block ml-6 font-medium">{% translate "Level" %}</label>
+                        {% include "components/select.html" with field=form.level %}
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block ml-6 font-medium">{% translate "Time limit (sec)" %}</label>
+                        {{ form.time_limit }}
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="selectedFormatCode === 'test'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
+                <h2 class="text-lg font-black">{% translate "Answer options" %}</h2>
+
+                {% for error in formset.non_form_errors %}
+                    <span class="mt-3 block text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+
+                <div id="options-container" class="mt-4 space-y-3">
+                    {% for option_form in formset %}
+                        {% include "teaching/subject/question/_option_row.html" %}
+                    {% endfor %}
+                </div>
+
+                <button
+                    type="button"
+                    id="add-option-button"
+                    class="mt-3 flex items-center gap-2 rounded-full border border-dashed border-default px-5 py-2.5 font-medium text-body hover:border-brand hover:text-brand"
+                >
+                    <i class="ph ph-plus size-4"></i>
+                    {% translate "Add option" %}
+                </button>
+            </div>
+        </div>
+
+        <div x-show="tab === 'preview'" x-cloak class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
+            <div id="question-preview-content" class="text-body"></div>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-2">
+            <a 
+                href="{% url 'teaching:question-list' subject.pk %}"
+                class="relative grid group w-full sm:w-auto"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium 
+                    group-hover:bg-neutral-secondary group-active:translate-y-1.5
+                    "
+                >
+                    {% translate "Cancel" %}
+                </span>
+            </a>
+
+            <button 
+                type="submit"
+                class="relative grid group w-full md:w-auto"
+            >
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    {% translate "Save" %}
+                </span>
+            </button>
+        </div>
+    </form>
+
+    <template id="option-empty-form">
+        {% include "teaching/subject/question/_option_row.html" with option_form=formset.empty_form %}
+    </template>
+</div>
+{% endblock teacher_layout %}
+
+{% block js %}
+    {{ media.js }}
+    <script src="{% static 'js/oiq-question-preview/oiq-question-preview.bundle.js' %}"></script>
+    <script src="{% static 'js/teacher/question-form.js' %}"></script>
+{% endblock js %}

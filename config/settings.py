@@ -39,8 +39,12 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
 
     # apps...
-    'apps.dashboard.learner.apps.LearnerConfig',
-    'apps.dashboard.teacher.apps.TeacherConfig',
+    'apps.directory.apps.DirectoryConfig',
+    'apps.catalog.apps.CatalogConfig',
+    'apps.accounts.apps.AccountsConfig',
+    'apps.main.apps.MainConfig',
+    'apps.teaching.apps.TeachingConfig',
+    'apps.learning.apps.LearningConfig',
 ]
 
 
@@ -156,11 +160,11 @@ TAILWIND_APP_NAME = 'ui'
 # ----------------------------------------------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'core.utils.backends.EmailOrUsernameBackend'
+    'apps.accounts.backends.EmailOrUsernameBackend'
 ]
 
-AUTH_USER_MODEL = 'core.User'
-LOGIN_URL = 'main:login'
+AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = 'accounts:login'
 
 
 # Email settings
@@ -240,12 +244,12 @@ UNFOLD = {
                     {
                         'title': _('Users'),
                         'icon': 'account_circle',
-                        'link': reverse_lazy('admin:core_user_changelist'),
+                        'link': reverse_lazy('admin:accounts_user_changelist'),
                     },
                     {
                         'title': _('User sessions'),
                         'icon': 'admin_panel_settings',
-                        'link': reverse_lazy('admin:core_usersession_changelist'),
+                        'link': reverse_lazy('admin:accounts_usersession_changelist'),
                     },
                     # ...
                 ],
@@ -258,32 +262,32 @@ UNFOLD = {
                     {
                         'title': _('Cities'),
                         'icon': 'apartment',
-                        'link': reverse_lazy('admin:core_city_changelist'),
+                        'link': reverse_lazy('admin:directory_city_changelist'),
                     },
                     {
                         'title': _('Schools'),
                         'icon': 'school',
-                        'link': reverse_lazy('admin:core_school_changelist'),
+                        'link': reverse_lazy('admin:directory_school_changelist'),
                     },
                     {
                         'title': _('Grades'),
                         'icon': 'cast_for_education',
-                        'link': reverse_lazy('admin:core_grade_changelist'),
+                        'link': reverse_lazy('admin:directory_grade_changelist'),
                     },
                     {
                         'title': _('Subjects'),
                         'icon': 'book_2',
-                        'link': reverse_lazy('admin:core_subject_changelist'),
+                        'link': reverse_lazy('admin:catalog_subject_changelist'),
                     },
                     {
                         'title': _('Question formats'),
                         'icon': 'quiz',
-                        'link': reverse_lazy('admin:core_questionformat_changelist'),
+                        'link': reverse_lazy('admin:catalog_questionformat_changelist'),
                     },
                     {
                         'title': _('Questions'),
                         'icon': 'live_help',
-                        'link': reverse_lazy('admin:core_question_changelist'),
+                        'link': reverse_lazy('admin:catalog_question_changelist'),
                     },
                     # ...
 

@@ -1,0 +1,90 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Check imported questions" %} - {{ subject.name }}{% endblock title %}
+
+{% block css %}
+    {{ media.css }}
+{% endblock css %}
+
+{% block teacher_layout %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h1 class="text-xl font-black">{% translate "Check the imported questions" %}</h1>
+        <p class="mt-1 text-normal text-body-subtle">
+            {% blocktranslate count counter=question_count %}
+                {{ counter }} question was found. Check it, edit if needed, and confirm.
+            {% plural %}
+                {{ counter }} questions were found. Check them, edit if needed, and confirm.
+            {% endblocktranslate %}
+        </p>
+    </div>
+    <button
+        type="button"
+        hx-post="{% url 'teaching:question-import-cancel' subject.pk import_id %}"
+        hx-confirm="{% translate 'Discard this import? None of these questions will be saved.' %}"
+        hx-swap="none"
+        class="flex shrink-0 items-center gap-2 font-medium text-body hover:text-body-subtle"
+    >
+        <i class="ph ph-arrow-left size-4"></i>
+        {% translate "Back" %}
+    </button>
+</div>
+
+{% if unsupported %}
+<div class="mb-6 rounded-3xl border border-warning-medium bg-warning-soft p-4 sm:p-6">
+    <h2 class="flex items-center gap-2 font-bold text-warning">
+        <i class="ph ph-warning size-5"></i>
+        {% translate "Not imported automatically" %}
+    </h2>
+    <p class="mt-1 text-normal text-body-subtle">
+        {% translate "These items are not in a supported single/multiple choice format. Add them manually if needed." %}
+    </p>
+    <ul class="mt-3 space-y-2">
+        {% for question in unsupported %}
+            <li class="rounded-2xl border border-default bg-neutral-primary p-4">
+                <div class="text-body">{{ question.text_html|safe }}</div>
+                {% if question.warning %}
+                    <p class="mt-2 text-normal text-body-subtle">{{ question.warning }}</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form
+    method="post"
+    action="{% url 'teaching:question-import-confirm' subject.pk import_id %}"
+    id="import-review-form"
+    x-data="{ variantCodesById: {{ variant_codes_json }} }"
+    novalidate
+>
+    {% csrf_token %}
+
+    <div class="space-y-4">
+        {% for item in items %}
+            {% include "teaching/subject/question/_import_question_item.html" %}
+        {% endfor %}
+    </div>
+
+    <div class="sticky z-10 bottom-4 mt-6 flex flex-wrap items-center justify-end gap-3 rounded-3xl border border-default bg-neutral-primary p-4 shadow-xl">
+        <span class="mr-auto font-medium text-body-subtle">
+            {% blocktranslate with title=topic.title %}Selected questions will be saved to the topic "{{ title }}"{% endblocktranslate %}
+        </span>
+
+        <button type="submit" class="relative grid group">
+            <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+            <span class="relative flex items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                <i class="ph ph-check-circle size-5"></i>
+                {% translate "Confirm" %}
+            </span>
+        </button>
+    </div>
+</form>
+{% endblock teacher_layout %}
+
+{% block js %}
+    {{ media.js }}
+    <script src="{% static 'js/teacher/question-import.js' %}"></script>
+{% endblock js %}

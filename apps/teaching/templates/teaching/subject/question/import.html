@@ -1,0 +1,126 @@
+{% extends "layouts/teacher_layout.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Import questions" %} - {{ subject.name }}{% endblock title %}
+
+{% block teacher_layout %}
+<div class="mb-6 flex items-center gap-3">
+    <a href="{% url 'teaching:question-list' subject.pk %}" class="flex shrink-0 items-center gap-2 font-medium text-body hover:text-body-subtle">
+        <i class="ph ph-arrow-left size-4"></i>
+        {% translate "Questions" %}
+    </a>
+</div>
+
+<div x-data="{ loading: false }" class="relative">
+    <div class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6">
+        <h1 class="text-xl font-black">{% translate "Import questions from a Word file" %}</h1>
+        <div class="mt-2 flex gap-2 items-center text-normal bg-neutral-tertiary p-4 rounded-2xl text-body-subtle">
+            <i class="ph ph-info size-4"></i>
+            <span>
+                {% translate "Upload a .docx file — the AI will read it and turn it into questions automatically. You'll be able to check and edit everything before it's saved." %}
+            </span>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" @submit="loading = true" class="mt-6 space-y-5" novalidate>
+            {% csrf_token %}
+
+            <div class="grid gap-4 sm:grid-cols-3">
+                <div class="space-y-2">
+                    <label class="block ml-6 font-medium">{% translate "Grade" %}</label>
+                    {% include "components/select.html" with field=upload_form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
+                </div>
+
+                {% include "teaching/subject/question/_topic_fields.html" with chapter_field=upload_form.chapter topic_field=upload_form.topic %}
+            </div>
+
+            <div class="space-y-2">
+                <label class="block ml-6 font-medium">{% translate "Word file (.docx)" %}</label>
+
+                <label
+                    for="{{ upload_form.file.id_for_label }}"
+                    x-data="{ fileName: '', isDragging: false }"
+                    @dragover.prevent="isDragging = true"
+                    @dragenter.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="
+                        isDragging = false;
+                        if ($event.dataTransfer.files.length) {
+                            $refs.fileInput.files = $event.dataTransfer.files;
+                            fileName = $event.dataTransfer.files[0].name;
+                        }
+                    "
+                    class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition"
+                    :class="isDragging ? 'border-brand bg-brand-soft' : 'border-default bg-neutral-primary hover:border-brand hover:bg-neutral-secondary'"
+                >
+                    <input
+                        type="file"
+                        name="{{ upload_form.file.html_name }}"
+                        id="{{ upload_form.file.id_for_label }}"
+                        accept=".docx"
+                        required
+                        x-ref="fileInput"
+                        @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''"
+                        class="sr-only"
+                    >
+
+                    <i class="ph ph-file-arrow-up size-10" :class="fileName ? 'text-brand' : 'text-body-subtle'"></i>
+
+                    <template x-if="!fileName">
+                        <div>
+                            <p class="font-medium">{% translate "Click to choose a file or drag and drop it here" %}</p>
+                            <p class="mt-1 text-normal text-body-subtle">{% translate "Word document (.docx)" %}</p>
+                        </div>
+                    </template>
+
+                    <template x-if="fileName">
+                        <span class="flex items-center gap-2 rounded-full bg-neutral-tertiary px-4 py-2 font-medium text-body">
+                            <i class="ph ph-file-doc size-4 text-brand"></i>
+                            <span x-text="fileName"></span>
+                            <button
+                                type="button"
+                                @click.prevent.stop="fileName = ''; $refs.fileInput.value = ''"
+                                class="flex items-center justify-center rounded-full p-1 text-body-subtle hover:bg-danger-soft hover:text-danger"
+                            >
+                                <i class="ph ph-x size-3.5"></i>
+                            </button>
+                        </span>
+                    </template>
+                </label>
+
+                {% for error in upload_form.file.errors %}
+                    <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <a href="{% url 'teaching:question-list' subject.pk %}" class="relative grid group w-full sm:w-auto">
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
+                    <span class="relative w-full px-6 py-3 flex justify-center items-center gap-2 rounded-full cursor-pointer bg-neutral-primary border border-default font-medium group-hover:bg-neutral-secondary group-active:translate-y-1.5">
+                        {% translate "Cancel" %}
+                    </span>
+                </a>
+
+                <button type="submit" :disabled="loading" class="relative grid group w-full sm:w-auto disabled:pointer-events-none disabled:opacity-70">
+                    <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                    <span class="relative w-full flex justify-center items-center gap-2 px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                        <i x-show="loading" x-cloak class="ph ph-spinner size-4 animate-spin"></i>
+                        <span x-text="loading ? '{% translate "Analyzing..." %}' : '{% translate "Import" %}'"></span>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div
+        x-show="loading"
+        x-cloak
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-neutral-primary/90 backdrop-blur-sm"
+    >
+        <i class="ph ph-spinner size-10 animate-spin text-brand"></i>
+        <div class="text-center">
+            <p class="font-bold">{% translate "Reading the questions..." %}</p>
+            <p class="mt-1 text-normal text-body-subtle">{% translate "This may take up to a minute for large files. Please don't close this page." %}</p>
+        </div>
+    </div>
+</div>
+{% endblock teacher_layout %}

@@ -3,6 +3,20 @@ from datetime import datetime
 from pathlib import Path
 
 
+def delete_old_file(sender, instance, field_name):
+    if not instance.pk:
+        return
+    try:
+        old = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+    old_file = getattr(old, field_name)
+    old_name = getattr(old_file, 'name', None)
+    new_name = getattr(getattr(instance, field_name), 'name', None)
+    if old_name and old_name != new_name:
+        old_file.storage.delete(old_name)
+
+
 def user_avatar_upload_path(instance, filename):
     extension = Path(filename).suffix
 

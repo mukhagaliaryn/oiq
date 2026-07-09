@@ -14,6 +14,8 @@ develop-eggs/
 downloads/
 media/
 backups/
+oiq_data.json
+oiq_data_original.json
 node_modules/
 eggs/
 .eggs/

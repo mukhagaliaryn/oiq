@@ -1,0 +1,87 @@
+{% load i18n %}
+<div
+    class="rounded-3xl border border-default bg-neutral-primary p-4 sm:p-6"
+    data-question-block
+    x-data="{ variantCode: variantCodesById[String({{ item.question_form.variant.value|default_if_none:'' }})] || 'single' }"
+    @change="
+        if ($event.target.name === '{{ item.question_form.variant.html_name }}') {
+            variantCode = variantCodesById[$event.target.value] || 'single';
+        }
+    "
+>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <span class="flex items-center gap-2 font-bold text-body-subtle">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-neutral-tertiary text-normal">
+                {{ item.index|add:1 }}
+            </span>
+            {% translate "Question" %}
+        </span>
+
+        {% translate "Import this question" as include_label %}
+        {% include "components/checkbox.html" with field=item.question_form.include label=include_label wrapper_class="flex items-center gap-2 font-medium cursor-pointer" %}
+    </div>
+
+    {% if item.warning %}
+        <p class="mb-4 rounded-xl bg-warning-soft px-4 py-2 text-normal text-warning">{{ item.warning }}</p>
+    {% endif %}
+
+    {% for error in item.question_form.non_field_errors %}
+        <span class="mb-3 block text-normal text-danger">{{ error }}</span>
+    {% endfor %}
+
+    <div class="space-y-2">
+        <label class="block ml-6 font-medium">{% translate "Question text" %}</label>
+        {{ item.question_form.text }}
+        {% for error in item.question_form.text.errors %}
+            <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div class="space-y-2">
+            <label class="block ml-6 font-medium">{% translate "Variant" %}</label>
+            {% include "components/select.html" with field=item.question_form.variant %}
+        </div>
+
+        <div class="space-y-2">
+            <label class="block ml-6 font-medium">{% translate "Level" %}</label>
+            {% include "components/select.html" with field=item.question_form.level %}
+        </div>
+
+        <div class="space-y-2">
+            <label class="block ml-6 font-medium">{% translate "Time limit (sec)" %}</label>
+            {{ item.question_form.time_limit }}
+            {% for error in item.question_form.time_limit.errors %}
+                <span class="block mt-1 text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <h3 class="font-bold">{% translate "Answer options" %}</h3>
+        {{ item.option_formset.management_form }}
+
+        {% for error in item.option_formset.non_form_errors %}
+            <span class="mt-3 block text-normal text-danger">{{ error }}</span>
+        {% endfor %}
+
+        <div class="mt-3 space-y-3" data-options-container>
+            {% for option_form in item.option_formset %}
+                {% include "teaching/subject/question/_import_option_row.html" %}
+            {% endfor %}
+        </div>
+
+        <button
+            type="button"
+            data-add-option-button
+            class="mt-3 flex items-center gap-2 rounded-full border border-dashed border-default px-5 py-2.5 font-medium text-body hover:border-brand hover:text-brand"
+        >
+            <i class="ph ph-plus size-4"></i>
+            {% translate "Add option" %}
+        </button>
+
+        <template data-option-empty-form>
+            {% include "teaching/subject/question/_import_option_row.html" with option_form=item.option_formset.empty_form %}
+        </template>
+    </div>
+</div>

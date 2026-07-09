@@ -1,0 +1,143 @@
+{% load i18n %}
+<div class="mb-4 md:mb-6" x-data="{ open: false }">
+    <!-- Mobile/tablet: dropdown -->
+    <div class="relative lg:hidden">
+        <button
+            type="button"
+            id="account-tabs-toggle"
+            @click="open = !open"
+            class="flex w-full items-center justify-between gap-2 rounded-2xl border border-default bg-neutral-primary px-4 py-3 font-medium"
+        >
+            <span class="flex items-center gap-2">
+                {% if request.resolver_match.url_name == 'profile' %}
+                    <i class="ph-fill ph-user size-4"></i>
+                    {% translate "Profile" %}
+                {% elif request.resolver_match.url_name == 'account-edit' %}
+                    <i class="ph-fill ph-pencil size-4"></i>
+                    {% translate "Edit profile" %}
+                {% elif request.resolver_match.url_name == 'account-settings' %}
+                    <i class="ph-fill ph-gear size-4"></i>
+                    {% translate "Settings" %}
+                {% elif request.resolver_match.url_name == 'account-security' %}
+                    <i class="ph-fill ph-shield size-4"></i>
+                    {% translate "Security" %}
+                {% endif %}
+            </span>
+            <i class="ph ph-caret-down size-4 shrink-0" :class="{ 'rotate-180': open }"></i>
+        </button>
+
+        <div
+            id="account-tabs-mobile"
+            x-show="open"
+            x-cloak
+            @click.away="open = false"
+            x-transition.origin.top
+            class="absolute left-0 right-0 z-40 mt-2 overflow-hidden rounded-2xl border border-default bg-neutral-primary p-2 shadow-xl"
+            style="display:none"
+        >
+            <a
+                href="{% url 'accounts:profile' request.user.username %}"
+                class="flex items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition
+                {% if request.resolver_match.url_name == 'profile' %}
+                    bg-brand-soft text-brand
+                {% else %}
+                    text-body hover:bg-neutral-secondary
+                {% endif %}"
+            >
+                <i class="{% if request.resolver_match.url_name == 'profile' %}ph-fill{% else %}ph{% endif %} ph-user size-4"></i>
+                {% translate "Profile" %}
+            </a>
+            <a
+                href="{% url 'accounts:account-edit' %}"
+                class="flex items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition
+                {% if request.resolver_match.url_name == 'account-edit' %}
+                    bg-brand-soft text-brand
+                {% else %}
+                    text-body hover:bg-neutral-secondary
+                {% endif %}"
+            >
+                <i class="{% if request.resolver_match.url_name == 'account-edit' %}ph-fill{% else %}ph{% endif %} ph-pencil size-4"></i>
+                {% translate "Edit profile" %}
+            </a>
+            <a
+                href="{% url 'accounts:account-settings' %}"
+                class="flex items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition
+                {% if request.resolver_match.url_name == 'account-settings' %}
+                    bg-brand-soft text-brand
+                {% else %}
+                    text-body hover:bg-neutral-secondary
+                {% endif %}"
+            >
+                <i class="{% if request.resolver_match.url_name == 'account-settings' %}ph-fill{% else %}ph{% endif %} ph-gear size-4"></i>
+                {% translate "Settings" %}
+            </a>
+            <a
+                href="{% url 'accounts:account-security' %}"
+                class="flex items-center gap-3 rounded-xl px-4 py-2.5 font-medium transition
+                {% if request.resolver_match.url_name == 'account-security' %}
+                    bg-brand-soft text-brand
+                {% else %}
+                    text-body hover:bg-neutral-secondary
+                {% endif %}"
+            >
+                <i class="{% if request.resolver_match.url_name == 'account-security' %}ph-fill{% else %}ph{% endif %} ph-shield size-4"></i>
+                {% translate "Security" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Desktop: tabs -->
+    <div id="account-tabs" class="hidden gap-2 border-b border-default lg:flex">
+        <a
+            href="{% url 'accounts:profile' request.user.username %}"
+            class="flex items-center gap-2 border-b-2 px-4 py-3 font-medium transition
+            {% if request.resolver_match.url_name == 'profile' %}
+                border-brand text-brand
+            {% else %}
+                border-transparent text-body hover:text-body-subtle
+            {% endif %}"
+        >
+            <i class="{% if request.resolver_match.url_name == 'profile' %}ph-fill{% else %}ph{% endif %} ph-user size-5"></i>
+            {% translate "Profile" %}
+        </a>
+
+        <a
+            href="{% url 'accounts:account-edit' %}"
+            class="flex items-center gap-2 border-b-2 px-4 py-3 font-medium transition
+            {% if request.resolver_match.url_name == 'account-edit' %}
+                border-brand text-brand
+            {% else %}
+                border-transparent text-body hover:text-body-subtle
+            {% endif %}"
+        >
+            <i class="{% if request.resolver_match.url_name == 'account-edit' %}ph-fill{% else %}ph{% endif %} ph-pencil size-5"></i>
+            {% translate "Edit profile" %}
+        </a>
+
+        <a
+            href="{% url 'accounts:account-settings' %}"
+            class="flex items-center gap-2 border-b-2 px-4 py-3 font-medium transition
+            {% if request.resolver_match.url_name == 'account-settings' %}
+                border-brand text-brand
+            {% else %}
+                border-transparent text-body hover:text-body-subtle
+            {% endif %}"
+        >
+            <i class="{% if request.resolver_match.url_name == 'account-settings' %}ph-fill{% else %}ph{% endif %} ph-gear size-5"></i>
+            {% translate "Settings" %}
+        </a>
+
+        <a
+            href="{% url 'accounts:account-security' %}"
+            class="flex items-center gap-2 border-b-2 px-4 py-3 font-medium transition
+            {% if request.resolver_match.url_name == 'account-security' %}
+                border-brand text-brand
+            {% else %}
+                border-transparent text-body hover:text-body-subtle
+            {% endif %}"
+        >
+            <i class="{% if request.resolver_match.url_name == 'account-security' %}ph-fill{% else %}ph{% endif %} ph-shield size-5"></i>
+            {% translate "Security" %}
+        </a>
+    </div>
+</div>

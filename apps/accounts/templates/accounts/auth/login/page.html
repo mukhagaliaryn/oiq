@@ -1,0 +1,88 @@
+{% extends "layouts/auth_layout.html" %}
+{% load i18n static %}
+{% block title %}{% translate "Sign in" %}{% endblock title %}
+
+
+{% block link %}
+    <a href="{% url 'main:main' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
+        <i class="ph ph-caret-left size-6"></i>
+    </a>
+{% endblock link %}
+
+{% block auth_layout %}
+<div class="w-full max-w-md mx-auto">
+    <div class="bg-neutral-primary space-y-8">
+        <div class="text-center space-y-4">
+            <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-black">{% translate "Sign in" %}</h1>
+            </div>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label for="username" class="block ml-6 font-medium">
+                    {% translate "Email or username" %}
+                </label>
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    value="{{ form.username.value|default:'' }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                    placeholder="example@gmail.com"
+                    autocomplete="username"
+                    required
+                >
+                {% for error in form.username.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="id_password" class="block ml-6 font-medium">
+                    {% translate "Password" %}
+                </label>
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password"
+                        id="id_password"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 pr-14 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="current-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                    >
+                        <i x-show="!show" class="ph ph-eye size-6"></i>
+                        <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                    </button>
+                </div>
+                {% for error in form.password.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <button 
+                type="submit"
+                class="relative grid group w-full"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    {% translate "Sign in" %}
+                </span>
+            </button>
+        </form>
+
+        <p class="text-center text-body">
+            {% translate "Don't have an account?" %}
+            <a href="{% url 'accounts:register' %}" class="font-medium text-brand hover:underline">{% translate "Sign up" %}</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
