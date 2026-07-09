@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.directory.apps.DirectoryConfig',
     'apps.catalog.apps.CatalogConfig',
     'apps.accounts.apps.AccountsConfig',
+
     'apps.main.apps.MainConfig',
     'apps.teaching.apps.TeachingConfig',
     'apps.learning.apps.LearningConfig',
