@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from core.utils.files import user_avatar_upload_path
 
 
-
 # -------------- User --------------
 class User(AbstractUser):
     class Role(models.TextChoices):

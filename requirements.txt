@@ -16,12 +16,12 @@ django-tailwind==4.4.2
 django-unfold==0.92.0
 docstring_parser==0.18.0
 greenlet==3.5.3
+grimp==3.15
 gunicorn==26.0.0
 h11==0.16.0
 honcho==2.0.0
 httpcore==1.0.9
 httpx==0.28.1
-grimp==3.15
 idna==3.13
 import-linter==2.13
 Jinja2==3.1.6

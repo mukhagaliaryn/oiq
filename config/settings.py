@@ -143,7 +143,7 @@ STATICFILES_DIRS = [
 ]
 
 
-# AI-powered question import (docx)
+# AI API Key settings
 # ----------------------------------------------------------------------------------------------------------------------
 ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 QUESTION_IMPORT_MODEL = config('QUESTION_IMPORT_MODEL', default='claude-opus-4-8')
