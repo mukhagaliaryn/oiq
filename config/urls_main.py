@@ -13,13 +13,12 @@ urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('core/', include('core.urls')),
 
-    # apps... (тек oiq.kz — school.oiq.kz үшін config/urls_school.py қара)
-    # auth (login/logout/register) — apps.main-де, ортақ (тек oiq.kz-те); account/profile — әр өнімде бөлек.
+    path('catalog/', include('apps.catalog.urls')),
+    path('directory/', include('apps.directory.urls')),
+
     path('', include('apps.main.urls')),
     path('teaching/', include('apps.teaching.urls')),
     path('learning/', include('apps.learning.urls')),
-    path('catalog/', include('apps.catalog.urls')),
-    path('directory/', include('apps.directory.urls')),
 
     prefix_default_language=True,
 )

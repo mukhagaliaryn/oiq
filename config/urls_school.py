@@ -9,8 +9,6 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
-    # landing (org таңдау/онбординг) '' -де, workspace '<org>/'-де — екеуі бір app_name='school'
-    # пакетінде біріктірілген (config/urls_main.py-дегі accounts секілді, reverse() gotcha-сын болдырмау үшін).
     path('', include('apps.school.urls')),
     prefix_default_language=True,
 )
