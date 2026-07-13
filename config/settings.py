@@ -1,5 +1,5 @@
 from pathlib import Path
-from decouple import config, Csv
+from decouple import config
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.templatetags.static import static
@@ -10,9 +10,20 @@ from django.templatetags.static import static
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'config.urls_main'
 WSGI_APPLICATION = 'config.wsgi.application'
+
+# -------------- Subdomain routing (school.oiq.kz) --------------
+BASE_DOMAIN = config('BASE_DOMAIN', default='oiq.lvh.me')   # prod: .env-те oiq.kz
+SCHOOL_HOST = f'school.{BASE_DOMAIN}'
+
+ALLOWED_HOSTS = [BASE_DOMAIN, SCHOOL_HOST]
+SESSION_COOKIE_DOMAIN = f'.{BASE_DOMAIN}'
+CSRF_COOKIE_DOMAIN = f'.{BASE_DOMAIN}'
+
+_scheme = 'http' if DEBUG else 'https'
+_port = ':8000' if DEBUG else ''
+CSRF_TRUSTED_ORIGINS = [f'{_scheme}://{BASE_DOMAIN}{_port}', f'{_scheme}://{SCHOOL_HOST}{_port}']
 
 
 # -------------- Application definition --------------
@@ -31,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.postgres',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -46,16 +58,19 @@ INSTALLED_APPS = [
     'apps.main.apps.MainConfig',
     'apps.teaching.apps.TeachingConfig',
     'apps.learning.apps.LearningConfig',
+    'apps.school.apps.SchoolConfig',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'config.middleware.HostURLConfMiddleware',
     'core.utils.middleware.CookieLocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'apps.school.middleware.OrganizationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -165,7 +180,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
-LOGIN_URL = 'accounts:login'
+LOGIN_URL = 'main:login'
 
 
 # Email settings
@@ -230,9 +245,9 @@ UNFOLD = {
                         'title': _('Dashboard'),
                         'icon': 'dashboard',
                         'link': reverse_lazy('admin:index'),
-                        'badge': '3',
-                        'badge_variant': 'info',
-                        'badge_style': 'solid',
+                        # 'badge': '3',
+                        # 'badge_variant': 'info',
+                        # 'badge_style': 'solid',
                         'permission': lambda request: request.user.is_superuser,
                     },
                 ],
@@ -292,6 +307,23 @@ UNFOLD = {
                     },
                     # ...
 
+                ],
+            },
+            {
+                'title': _('School system'),
+                'separator': True,
+                'collapsible': True,
+                'items': [
+                    {
+                        'title': _('Organizations'),
+                        'icon': 'corporate_fare',
+                        'link': reverse_lazy('admin:school_organization_changelist'),
+                    },
+                    {
+                        'title': _('Memberships'),
+                        'icon': 'group',
+                        'link': reverse_lazy('admin:school_membership_changelist'),
+                    },
                 ],
             },
         ],

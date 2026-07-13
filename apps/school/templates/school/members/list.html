@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Members" %} — {{ organization.name }}{% endblock %}
+
+{% block base %}
+<div class="max-w-3xl mx-auto py-16 px-4">
+    <h1 class="text-2xl font-semibold mb-6">{% translate "Members" %}</h1>
+
+    <table class="w-full mb-10 text-left">
+        <thead>
+            <tr class="border-b">
+                <th class="py-2">{% translate "User" %}</th>
+                <th class="py-2">{% translate "Roles" %}</th>
+                {% if can_manage %}<th class="py-2"></th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for membership in members %}
+            <tr class="border-b">
+                <td class="py-2">{{ membership.user }} ({{ membership.user.email }})</td>
+                {% if can_manage %}
+                <td class="py-2">
+                    <form method="post" action="{% url 'school:member-update-roles' org=membership.organization.slug membership_id=membership.pk %}" class="flex flex-wrap items-center gap-2">
+                        {% csrf_token %}
+                        {% for value, label in org_roles %}
+                        <label class="text-sm">
+                            <input type="checkbox" name="roles" value="{{ value }}" {% if value in membership.roles %}checked{% endif %}>
+                            {{ label }}
+                        </label>
+                        {% endfor %}
+                        <button type="submit" class="text-primary-600 hover:underline">{% translate "Save" %}</button>
+                    </form>
+                </td>
+                <td class="py-2">
+                    <form method="post" action="{% url 'school:member-remove' org=membership.organization.slug membership_id=membership.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-600 hover:underline">{% translate "Remove" %}</button>
+                    </form>
+                </td>
+                {% else %}
+                <td class="py-2">{{ membership.roles|join:", " }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if can_manage %}
+    <h2 class="text-xl font-semibold mb-4">{% translate "Add member" %}</h2>
+
+    <input
+        type="text" name="q" placeholder="{% translate 'Search by email, phone or name' %}"
+        class="border rounded px-3 py-2 w-full mb-2"
+        hx-get="{% url 'school:member-search' org=organization.slug %}"
+        hx-trigger="keyup changed delay:300ms"
+        hx-target="#search-results"
+    >
+    <div id="search-results"></div>
+    {% endif %}
+</div>
+{% endblock %}

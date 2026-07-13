@@ -54,13 +54,13 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         'display_name',
         'username',
         'email',
-        'role',
+        'account_type',
         'is_verified',
         'is_active',
         'last_login'
     )
     list_display_links = ('avatar_preview', 'display_name', 'username')
-    list_filter = ('role', 'is_active', 'is_staff', 'is_superuser', 'is_verified')
+    list_filter = ('account_type', 'is_active', 'is_staff', 'is_superuser', 'is_verified')
     search_fields = ('username', 'first_name', 'middle_name', 'last_name', 'email', 'phone')
     ordering = ('id',)
     readonly_fields = ('password_change_link', 'last_login', 'date_joined')
@@ -80,7 +80,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         }),
         (_('Status'), {
             'classes': ('tab',),
-            'fields': ('role', 'is_verified', 'is_active',
+            'fields': ('account_type', 'is_verified', 'is_active',
             ),
         }),
         (_('Permissions'), {

@@ -27,7 +27,7 @@
             <h6 class="text-2xl font-black text-body-subtle">{% translate "An interactive, gamified and visual education platform" %}</h6>
             <div class="max-w-sm mx-auto grid gap-4">
                 <a 
-                    href="{% url 'accounts:register' %}" 
+                    href="{% url 'main:register' %}"
                     class="relative grid group"
                 >  
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
@@ -40,7 +40,7 @@
                     </span>
                 </a>
                 <a 
-                    href="{% url 'accounts:login' %}" 
+                    href="{% url 'main:login' %}"
                     class="relative grid group"
                 >  
                     <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-neutral-fivetenary group-active:h-0"></span>
@@ -53,6 +53,11 @@
                     </span>
                 </a>
             </div>
+
+            <a href="{{ school_url }}" class="inline-flex items-center gap-2 font-medium text-body hover:text-body-subtle">
+                <i class="ph ph-buildings size-5"></i>
+                {% translate "Are you a school? Go to the school system" %}
+            </a>
         </div>
     </div>
 </div>

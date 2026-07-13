@@ -16,12 +16,12 @@ def anonymous_required(view_func):
     return wrapper
 
 
-def role_required(*roles):
+def account_type_required(*account_types):
     def decorator(view_func):
         @wraps(view_func)
         @login_required
         def wrapper(request, *args, **kwargs):
-            if request.user.role not in roles:
+            if request.user.account_type not in account_types:
                 raise PermissionDenied
 
             return view_func(request, *args, **kwargs)
@@ -32,15 +32,15 @@ def role_required(*roles):
 
 
 def learner_required(view_func):
-    return role_required('learner')(view_func)
+    return account_type_required('learner')(view_func)
 
 
 def teacher_required(view_func):
-    return role_required('teacher')(view_func)
+    return account_type_required('teacher')(view_func)
 
 
 def admin_required(view_func):
-    return role_required('admin')(view_func)
+    return account_type_required('admin')(view_func)
 
 
 def partner_teacher_required(view_func):
@@ -48,7 +48,7 @@ def partner_teacher_required(view_func):
     @login_required
     def wrapper(request, *args, **kwargs):
         is_partner = (
-            request.user.role == request.user.Role.TEACHER
+            request.user.account_type == request.user.AccountType.TEACHER
             and hasattr(request.user, 'teacher')
             and request.user.teacher.is_partner
         )

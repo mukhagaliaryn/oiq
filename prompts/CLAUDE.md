@@ -20,8 +20,9 @@ OIQ — мектеп оқушылары мен оқытушыларына арн
 2. **Оқушы бағыты** (`learning`) — Duolingo / Brilliant.org стилі: аутентификацияланған оқушы өз бетімен
    пәндік бағытты кезең-кезеңімен өтеді (прогресс, ұпай, ЖИ-көмекші).
 
-Болашақта үшінші бағыт қосылады: **SIS** (`school`) — мектептің администрациялық/құжаттамалық жүйесі
-(қатысу, кесте, КТЖ/ҚМЖ, мекеме workspace-і). Ол `school.oiq.kz/<org>/` жолымен, субдоменсіз жасалады.
+Үшінші бағыт — **мектеп жүйесі / SIS** (`school`) — мектептің ұйымдастыру ортасы, бөлек субдоменде:
+`school.oiq.kz` (landing/онбординг) және `school.oiq.kz/<org>/` (ұйым workspace-і). Қазір MVP: `Organization`/
+`Membership`, жүйелік администратор (`OrgRole.SYS_ADMIN`) мүшелерді (негізінен мұғалімдерді) қосады.
 
 **Стек:** Django 6 + PostgreSQL, admin — `django-unfold`, фронтенд — Tailwind CSS 4 + HTMX + Alpine.js +
 Lucide иконкалары, rich-text — CKEditor 5 (KaTeX қосылған кастомды бандл). Деплой — Ubuntu + Gunicorn + Nginx.
@@ -37,7 +38,7 @@ Lucide иконкалары, rich-text — CKEditor 5 (KaTeX қосылған к
 ### Төрт қабат (тәуелділік тек төмен қарай)
 
 ```
-ӨНІМ:      apps.teaching · apps.learning · apps.main   (болашақта apps.school)
+ӨНІМ:      apps.teaching · apps.learning · apps.main · apps.school
               ↓ тұтынады (тек services/selectors арқылы)
 ACCOUNTS:  apps.accounts
               ↓ тұтынады (тек services/selectors арқылы)
@@ -55,12 +56,13 @@ ACCOUNTS:  apps.accounts
 |-----|-------|----------------------|---------|
 | `core` | іргетас | **concrete модель ЖОҚ** — тек `BaseModel`/`TimeStampedModel`/`ActiveModel` абстракттары, утилита, ортақ виджет | — |
 | `ui` | іргетас | — | Tailwind, `base.html`, `layouts/`, ортақ `components/` |
-| `accounts` | негізгі | `User`, `UserSession`, `Teacher` | `/auth/*`, `/account/*` |
+| `accounts` | негізгі | `User`, `UserSession`, `Teacher` | **бет ЖОҚ** — тек identity `services`/`selectors`/`decorators` |
 | `catalog` | негізгі | `Subject`, `Chapter`, `Topic`, `QuestionFormat`, `FormatVariant`, `Question`, `Option` | HTMX: format-variants |
 | `directory` | негізгі | `City`, `School`, `Grade` | HTMX: school-field |
-| `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/subjects/*`, мұғалім dashboard |
-| `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learn/*` |
-| `main` | өнім | — | `/` (лендинг) |
+| `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/teaching/*` (authoring, dashboard, `/teaching/account/*`) |
+| `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learning/*` (dashboard, `/learning/account/`) |
+| `main` | өнім | — | `/` (лендинг) + тіркелу `/auth/register/*` + `main:login`/`main:logout` (`teacher`/`learner`/`admin`) |
+| `school` | өнім | `Organization`, `Membership` | `school.oiq.kz`: `/` (landing+CTA), `school:login`/`school:logout` (тек `SCHOOL_USER`), `/<org>/*` |
 
 ### Негізгі ережелер (толығы — `prompts/RULES.md`)
 
@@ -71,8 +73,11 @@ ACCOUNTS:  apps.accounts
   және User-ге `settings.AUTH_USER_MODEL`. Модель импорты циклдік тәуелділік тудырады.
 - **Өнім app-тар бір-бірін ешқашан импорттамайды.** Негізгі домендер де бір-бірінің Python кодын импорттамайды.
 - **Бет қай app-та?** — оны істейтін *рөл* емес, ол өзгертетін *дерек/домен* шешеді.
-  Мысалы «мұғалім профилін өңдейді» беті → `accounts` (User дерегі), `teaching` емес.
-- **URL — бөлек өлшем:** бір app бірнеше префикске қызмет етеді (`accounts` → `/auth/*` және `/account/*`).
+  Мысалы «мұғалім аккаунтын өңдейді» беті → `teaching` (мұғалімнің өз UI-ы), ал жаңа `User` жасау/логин
+  логикасы — `accounts.services`-те, презентациясы (login/register беті) ортақ болғандықтан `main`-де.
+- **URL — бөлек өлшем:** бір app бірнеше префикске қызмет етеді (`main` → `/` және `/auth/*`).
+- **Субдомен:** `school.oiq.kz` бөлек `urlconf`-та (`config/urls_school.py`), хостқа қарап
+  `HostURLConfMiddleware` ауыстырады. Толығы — `prompts/RULES.md` §7.1.
 - Шекараны `import-linter` қорғайды: `lint-imports` (конфиг — `.importlinter`).
 
 ---
@@ -98,36 +103,52 @@ apps/<app>/
 
 ## URL маршруттау
 
-`config/urls.py` — `i18n_patterns` арқылы тілге қарай префикс (`prefix_default_language=True`: `/kk/...`, `/ru/...`, `/en/...`).
+Екі бөлек `ROOT_URLCONF` бар, хостқа қарай `config/middleware.py::HostURLConfMiddleware` ауыстырады
+(толығы — `prompts/RULES.md` §7.1):
 
-```python
-path('admin/',     admin.site.urls),
-path('core/',      include('core.urls')),                    # ckeditor upload
-path('',           include('apps.main.urls')),               # лендинг
-path('auth/',      include('apps.accounts.urls.auth')),      # login, logout, register
-path('account/',   include('apps.accounts.urls.account')),   # profile, edit, settings, security
-path('subjects/',  include('apps.teaching.urls')),           # authoring + мұғалім dashboard
-path('learn/',     include('apps.learning.urls')),           # оқушы dashboard
-path('catalog/',   include('apps.catalog.urls')),            # HTMX: format-variants
-path('directory/', include('apps.directory.urls')),          # HTMX: school-field
-```
+- **`config/urls_main.py`** — `oiq.kz` (`settings.ROOT_URLCONF`-тегі әдепкі/fallback), `i18n_patterns`
+  арқылы тілге қарай префикс (`prefix_default_language=True`: `/kk/...`, `/ru/...`, `/en/...`).
+  ```python
+  path('admin/',     admin.site.urls),
+  path('core/',      include('core.urls')),                # ckeditor upload
+  path('',           include('apps.main.urls')),           # лендинг + тіркелу + main:login/logout
+  path('teaching/',  include('apps.teaching.urls')),       # authoring + мұғалім dashboard + /teaching/account/*
+  path('learning/',  include('apps.learning.urls')),       # оқушы dashboard + /learning/account/
+  path('catalog/',   include('apps.catalog.urls')),        # HTMX: format-variants
+  path('directory/', include('apps.directory.urls')),      # HTMX: school-field
+  ```
+- **`config/urls_school.py`** — `school.oiq.kz`: `path('', include('apps.school.urls'))` (landing+CTA
+  `''`-де, `school:login`/`school:logout` (тек `SCHOOL_USER`), ұйым workspace-і `<slug:org>/`-де,
+  бір `app_name='school'`-де біріктірілген).
+
+Dev-те екі хостты да ажырату үшін `lvh.me` қолданылады (`BASE_DOMAIN=oiq.lvh.me` — `oiq.lvh.me:8000` /
+`school.oiq.lvh.me:8000`, `/etc/hosts` керек емес). Сессия cookie `.{BASE_DOMAIN}` деңгейінде ортақ.
 
 ---
 
 ## Рұқсаттар мен рөлдер
 
-`apps.accounts.models.User.Role`: `ADMIN`, `TEACHER`, `LEARNER`.
-`AUTH_USER_MODEL = 'accounts.User'`.
+`apps.accounts.models.User.AccountType`: `ADMIN`, `TEACHER`, `LEARNER`, `SCHOOL_USER`.
+`AUTH_USER_MODEL = 'accounts.User'`. Бұл — **тек аккаунт түрі** («қай хостқа/dashboard-қа бағытталады»);
+`Teacher.type` (regular/partner) және `school.Membership.roles` (ұйымдағы рөл) — бөлек, тәуелсіз ұғымдар
+(толығы — `prompts/RULES.md` §1.2).
 
 Аутентификация backend-тері (`AUTHENTICATION_BACKENDS`): стандартты `ModelBackend` және
 `apps.accounts.backends.EmailOrUsernameBackend` (логин email немен username бойынша).
 
 `apps/accounts/decorators.py`:
-- `anonymous_required` — авторизацияланған қолданушыны рөліне сай dashboard-қа бағыттайды.
-- `role_required(*roles)` және оның негізінде `learner_required`, `teacher_required`, `admin_required`.
+- `anonymous_required` — авторизацияланған қолданушыны `account_type`-іне сай dashboard-қа бағыттайды.
+- `account_type_required(*types)` және оның негізінде `learner_required`, `teacher_required`, `admin_required`.
 - `partner_teacher_required` — `Teacher.Type.PARTNER` («жүйелік/серіктес оқытушы») мұғалімдерге.
 
-Рөл бойынша redirect: `apps.accounts.services.get_user_redirect_url(user)`.
+`apps/school/decorators.py::org_role_required(*roles)` — ұйым ішіндегі рөлге (`Membership.roles`) қарай,
+`OrganizationMiddleware` қойған `request.membership`-ті тексереді (`school`-ға тән, жоғарыдағы декораторлармен
+шатастырма).
+
+Redirect: `apps.accounts.services.get_user_redirect_url(user)` — `SCHOOL_USER`-ды `school.oiq.kz`-ке
+(cross-host, `core.utils.urls.build_absolute_url`) бағыттайды, қалғанын өз dashboard-ына. Бұл — `main:login`
+арқылы кірген `SCHOOL_USER` үшін fallback; әдетте олар тікелей `school:login`-мен кіреді (`prompts/RULES.md`
+§1.1) — сол login **тек** `SCHOOL_USER`-ды қабылдайды, басқасына қате көрсетеді.
 
 > Рөлдік қол жеткізу **декоратормен** шешіледі, app бөлумен емес. «Dashboard» — URL префиксі емес,
 > layout + навигация ұғымы.
@@ -178,7 +199,7 @@ path('directory/', include('apps.directory.urls')),          # HTMX: school-fiel
 ```bash
 source env/bin/activate          # виртуалды орта env/ ішінде
 
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000   # 0.0.0.0 — school.oiq.lvh.me субдоменін де қабылдау үшін
 python manage.py migrate
 python manage.py makemigrations
 python manage.py createsuperuser
@@ -187,9 +208,13 @@ python manage.py collectstatic
 lint-imports                     # import-linter: архитектура шекарасын тексеру
 ```
 
+Dev-те: `http://oiq.lvh.me:8000` (негізгі) және `http://school.oiq.lvh.me:8000` (мектеп жүйесі) —
+`lvh.me` DNS-тен автоматты `127.0.0.1`-ге шешіледі, `/etc/hosts` өзгертудің қажеті жоқ.
+
 `config/settings.py` барлық құпия мәндерді `.env`-тен (`python-decouple`) оқиды:
-`SECRET_KEY`, `DB_*`, `ALLOWED_HOSTS`, `EMAIL_*`, `SITE_NAME`, `ADMIN_URL`, `WEBSITE_URL`,
-`ANTHROPIC_API_KEY`, `QUESTION_IMPORT_MODEL`.
+`SECRET_KEY`, `DB_*`, `BASE_DOMAIN` (dev әдепкісі `oiq.lvh.me`, prod-та `oiq.kz`), `EMAIL_*`, `SITE_NAME`,
+`ADMIN_URL`, `WEBSITE_URL`, `ANTHROPIC_API_KEY`, `QUESTION_IMPORT_MODEL`. `ALLOWED_HOSTS` қолмен
+берілмейді — `BASE_DOMAIN`/`SCHOOL_HOST`-тан автоматты есептеледі (`prompts/RULES.md` §7.1).
 
 ### Фронтенд (Tailwind CSS)
 
@@ -253,6 +278,10 @@ AI/docx логикасы `teaching`-те, ал сұрақты **сақтау** `
 ---
 
 ## Аударма (i18n)
+
+> **Ереже (`prompts/RULES.md` §11):** жаңа/өзгерген `gettext_lazy`/`{% translate %}` жолы қосылған **сол
+> тапсырмада** дереу `makemessages` → `.po`-дағы `#, fuzzy`/бос `msgstr`-ды нақты аудармамен түзету →
+> `compilemessages` орындалуы керек. Кейінге қалдырма.
 
 `USE_I18N = True`, `LANGUAGES = (kk, ru, en)`, `LOCALE_PATHS = [BASE_DIR / 'locales']`,
 `django-modeltranslation` орнатылған (модель өрістерінің аудармасын `translation.py`-да

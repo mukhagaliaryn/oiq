@@ -21,10 +21,10 @@ oiq-main/
     accounts/    # НЕГІЗГІ домен
     catalog/     # НЕГІЗГІ домен
     directory/   # НЕГІЗГІ домен
-    main/        # ӨНІМ
+    main/        # ӨНІМ — лендинг + ортақ auth (login/register/logout)
     teaching/    # ӨНІМ
     learning/    # ӨНІМ
-    school/      # ӨНІМ (болашақ SIS — әзірге жасалмайды)
+    school/      # ӨНІМ — мектеп жүйесі (SIS), бөлек субдомен (school.oiq.kz)
   locales/
 ```
 
@@ -64,13 +64,57 @@ oiq-main/
 |-----|-------|----------------------|---------|
 | `core` | іргетас | абстракт база (`BaseModel` т.б.), утилита, ортақ виджет. **Concrete модель ЖОҚ** | — |
 | `ui` | іргетас | Tailwind, `base.html`, `layouts/`, ортақ `components/` | — |
-| `accounts` | негізгі | User, UserSession, Teacher | `/auth/*`, `/account/*` |
+| `accounts` | негізгі | User, UserSession, Teacher | **бет ЖОҚ** — тек identity `services`/`selectors`/`decorators` (§1.1) |
 | `catalog` | негізгі | Subject, Chapter, Topic, QuestionFormat, FormatVariant, Question, Option | HTMX: format-variants |
 | `directory` | негізгі | City, School, Grade | HTMX: school-field |
-| `main` | өнім | — | `/` (лендинг) |
-| `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/subjects/*`, мұғалім dashboard |
-| `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learn/*` |
-| `school` | өнім (болашақ) | Attendance, Timetable, КТЖ/ҚМЖ | `/school/*` |
+| `main` | өнім | — | `/` (лендинг) + ортақ `/auth/*` (login/register/logout, §1.1) |
+| `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/teaching/*` (authoring, dashboard, `/teaching/account/*`) |
+| `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learning/*` (dashboard, `/learning/account/`) |
+| `school` | өнім | `Organization`, `Membership` (мектеп-тенант, мүшелік) | `school.oiq.kz` (бөлек субдомен, §7.1): `/`, `/<org>/*` |
+
+### 1.1. Identity vs auth vs account — үш бөлек орын
+
+`accounts` **ешбір бетті иеленбейді** — ол таза identity домені: `User`/`Teacher` модельдері + `services`
+(`change_password`, `update_email`, `set_avatar`, `update_basic_info`, `deactivate_account`,
+`create_learner_user`, `create_teacher_user`, `create_external_user`, `get_user_redirect_url` т.б.) +
+`selectors` + `decorators` (`teacher_required`, `learner_required`, `partner_teacher_required`...).
+Басқа app-тар осы **сервистерді шақырады**, `accounts`-тың өз бет/шаблоны жоқ.
+
+- **Тіркелу (register) — тек `main`-де, бір рет, `oiq.kz`-те.** Тіркелу нүктесі біреу (SCHOOL_SYSTEM.md
+  принципі): `main` `accounts.services`-ті шақырып, `User` жасайды. School мүшелері өздігінен тіркелмейді —
+  оларды сол ұйымның `school.OrgRole.SYS_ADMIN`-і қосады (§1.2, TASK-03).
+- **Login — хостқа қарай екі бөлек нүкте, бірақ бір `accounts` identity-мен.** `main:login` (`oiq.kz`) —
+  `teacher`/`learner`/`admin` `account_type`-ке; `school:login` (`school.oiq.kz`) — тек `SCHOOL_USER`-ге
+  (басқа `account_type` кірсе — `AuthenticationForm.confirm_login_allowed` қатесі, кіргізбейді). Екеуі де
+  бір `User` кестесін, бір parolь/сессияны қолданады — тек **қай форма қай account_type-ты қабылдайды**
+  соны шектейді. Logout те дәл солай хостқа тән (`main:logout`, `school:logout`).
+- **Аккаунт/профиль беті — әр өнімде бөлек.** `teaching` → `/teaching/account/*` (мұғалім профилі: Teacher
+  дерегі), `learning` → `/learning/account/` (оқушы профилі), `school` → `<org>/account/` (мүше профилі,
+  ұйымдағы рөлдер). Әрқайсысы өз UI-ымен, бірақ жазу/валидация логикасы **тек `accounts.services`-те**
+  (бір көзден) — форма жеңіл, сервис валидациялап, `ValidationError` көтереді.
+
+**Неге бөлек:** «Бет қай app-та?» ережесі (§7) бойынша auth (User дерегін жасау/тексеру) — `accounts`-тың
+жауапкершілігі, бірақ оның **презентациясы** ортақ кіру нүктесі болғандықтан `main`-де; ал профиль/аккаунт
+беті — өнімге тән (мұғалім/оқушы/мектеп мүшесі әртүрлі дерек көреді), сондықтан әр өнімде.
+
+### 1.2. «Рөл» — үш ортогональ (тәуелсіз) ұғым
+
+Бұларды шатастырма — үшеуі бір-біріне кедергі жасамайды, бір адам үшеуін де бір мезгілде ұстай алады:
+
+| Ұғым | Қайда | Мәні | Саны |
+|------|-------|------|------|
+| **Аккаунт түрі** | `accounts.User.account_type` | платформаға кім болып тіркелді (`admin`/`teacher`/`learner`/`school_user`) — қай хостқа/dashboard-қа бағытталады | глобал, біреу |
+| **Мұғалім қабілеті** | `accounts.Teacher.type` | `regular` (сыртқы) / `partner` (catalog-қа контент сала алады) | біреу |
+| **Ұйымдағы рөл** | `school.Membership.roles` | директор/жүйелік администратор/сынып жетекшісі/пән мұғалімі/оқушы/ата-ана... | мектепке қатысты, **бірнешеу** |
+
+`User.account_type = SCHOOL_USER` болса, ол қолданушы `teacher_required`/`learner_required`
+декораторларымен автоматты бөгеледі (§1.1-дегі `teaching`/`learning`-ге кіре алмайды) — қосымша тексеру
+керек емес, себебі декоратор дәл `account_type`-ты тексереді. `get_user_redirect_url` (`accounts.services`)
+`SCHOOL_USER`-ды `school.oiq.kz`-ке (cross-host, `core.utils.urls.build_absolute_url` арқылы) бағыттайды.
+
+`school.services.register_and_add_member(...)` жаңа қолданушыны әрқашан `account_type='school_user'`
+етіп жасайды (`accounts.services.create_external_user`), `Teacher` профилін жасамайды — себебі мектеп
+мүшесі мен `teaching` өнімінің сыртқы мұғалімі **бөлек ұғым**.
 
 ---
 
@@ -81,7 +125,7 @@ oiq-main/
 | `core`, `ui` | Django, сыртқы кітапханалар | **ешбір `apps.*`** |
 | `catalog`, `directory` | `core` | бір-бірін, `accounts`-ты, кез келген өнім app-ты |
 | `accounts` | `catalog`/`directory`-дің **ашық интерфейсі** (`services`/`selectors`) + `core` | `catalog`/`directory`-дің **жабық ішін** (`models`, `forms`); кез келген өнім app-ты |
-| өнім app (main/teaching/learning/school) | негізгі домендердің **ашық интерфейсі** (`services`/`selectors`) + `core` | басқа өнім app-ты; кез келген доменнің **жабық ішін** (`models`, `forms`, `_` функциялар) |
+| өнім app (main/teaching/learning/school) | `accounts` пен негізгі домендердің **ашық интерфейсі** (`services`/`selectors`/`decorators`) + `core` | басқа өнім app-ты; кез келген доменнің **жабық ішін** (`models`, `forms`, `_` функциялар) |
 
 **Алтын ереже:** өнім app-тар бір-бірін ешқашан импорттамайды. `catalog` мен `directory` бір-бірінің
 Python кодын импорттамайды — олар тек FK жол-сілтемесі арқылы байланысады (§4). `accounts` — ерекшелік:
@@ -260,13 +304,48 @@ __all__ = [
 
 App пен URL — екі бөлек нәрсе. **Бір app бірнеше URL префиксіне қызмет ете алады, әрі префикс app атымен бірдей болуы шарт емес.**
 
-- Мыс: `accounts` app-ы әрі `/auth/*` (login, register), әрі `/account/*` (profile, edit, security) беттерін береді.
+- Мыс: `main` app-ы әрі `/` (лендинг), әрі `/auth/*` (login, register, logout) беттерін береді (§1.1).
 - **Бет қай app-та?** — оны істейтін **рөл** емес, ол өзгертетін **дерек/домен** шешеді.
-  «Мұғалім профилін өңдейді» беті → `accounts` (User дерегі), `teaching` емес.
+  «Мұғалім профилін өңдейді» беті → `teaching` (мұғалім аккаунт аймағы, §1.1), «жаңа User жасайды/
+  аутентификациялайды» беті → презентация ортақ болғандықтан `main`-де (логика — `accounts.services`).
 - «Dashboard» деген — URL префиксі емес, **layout + навигация** ұғымы.
   Рөлдік қол жеткізу декоратор/permission-мен шешіледі, app бөлумен емес.
-- Бірнеше префикс керек болса, app ішінде `urls/` пакеті болады (`urls/auth.py`, `urls/account.py`),
-  ал `config/urls.py` соларды бөлек `include` етеді.
+- Бірнеше префикс керек болса, app ішінде `urls/` пакеті болады.
+  **Ескерту (белгілі gotcha):** пакет ішіндегі әр submodule-де **бөлек** `app_name` қоюға БОЛМАЙДЫ —
+  Django-да екінші submodule-дің URL аттары `reverse()`-те табылмай қалады (`namespace_dict` тек
+  біріншісін сақтайды, тек W005 warning шығады, қате емес — сондықтан байқалмай қалуы оңай). Дұрысы:
+  `app_name` тек пакеттің `__init__.py`-інде бір рет, ішінде submodule-дерді `include()` ет:
+  ```python
+  # apps/school/urls/__init__.py
+  from django.urls import include, path
+  from . import landing, workspace
+
+  app_name = 'school'          # ← тек осында, бір рет
+  urlpatterns = [
+      path('', include(landing)),        # landing.py-де app_name ЖОҚ
+      path('<slug:org>/', include(workspace)),  # workspace.py-де де ЖОҚ
+  ]
+  ```
+
+### 7.1. Субдомен маршруты (`school.oiq.kz`)
+
+Бір Django процесі, бір DB, бір сессия — тек хостқа қарап `urlconf` ауысады (монолит, gateway/token
+керек емес):
+
+- `config/urls_main.py` — `oiq.kz` (`main`, `teaching`, `learning`, `catalog`, `directory` HTMX-і).
+- `config/urls_school.py` — `school.oiq.kz` (тек `apps.school.urls`).
+- `settings.ROOT_URLCONF = 'config.urls_main'` — әдепкі/fallback.
+- `config/middleware.py::HostURLConfMiddleware` — хост `school.`-мен басталса `request.urlconf =
+  'config.urls_school'` қояды. **`LocaleMiddleware`-ден (`CookieLocaleMiddleware`) БҰРЫН** тұруы керек.
+- `settings.BASE_DOMAIN`/`SCHOOL_HOST` — `.env`-тен (`BASE_DOMAIN`, dev әдепкісі `oiq.lvh.me` — DNS-тен
+  автоматты `127.0.0.1`-ге шешіледі, `/etc/hosts` керек емес). `SESSION_COOKIE_DOMAIN`/`CSRF_COOKIE_DOMAIN`
+  `.{BASE_DOMAIN}` — сондықтан сессия екі хостта да ортақ (қайта кіру керек емес).
+- `reverse()` тек **ағымдағы** `request.urlconf` ішінде жұмыс істейді. Хостаралық сілтеме (мыс. `main`-нен
+  `school`-ге, немесе керісінше — аноним `school.oiq.kz`-ке келгенде `oiq.kz/auth/login/`-ге бағыттау)
+  керек болса — `core.utils.urls.build_absolute_url(host, viewname, urlconf=..., ...)` хелперін қолдан.
+- `apps/school/middleware.py::OrganizationMiddleware` — `HostURLConfMiddleware`-ден және
+  `AuthenticationMiddleware`-ден **КЕЙІН**. `<slug:org>` view kwarg-ын `process_view`-де ұстап,
+  `Organization`/`Membership`-ті `request`-ке қояды (мүше емес → 404, аноним → cross-host login redirect).
 
 ---
 
@@ -274,9 +353,11 @@ App пен URL — екі бөлек нәрсе. **Бір app бірнеше URL
 
 - «education» сөзін домен атауы ретінде **қолданба** — ол екіұшты.
   Анықтамалық дерек (City/School/Grade) → `directory`. Мұғалім бағыты → `teaching`. Оқушы бағыты → `learning`.
-- Қазіргі `directory.School` (анықтамалық: city + name, мұғалімнің мектебі) мен болашақ SIS тенанты **бөлек**.
-  Тенант-мекеме болашақта `accounts.Organization` деп аталады. Шатастырма.
-- «Жүйелік/серіктес оқытушы» ұғымы кодта `Teacher.Type.PARTNER`-ге сәйкес.
+- `directory.School` (анықтамалық: city + name, мұғалімнің мектебі) мен `school.Organization` (SIS
+  тенанты — slug, workspace, мүшелік) **бөлек** модельдер, шатастырма. `Organization.school` FK арқылы
+  анықтамалыққа сілтейді (§1 жоғарыдағы FK ережесі).
+- «Жүйелік/серіктес оқытушы» ұғымы кодта `Teacher.Type.PARTNER`-ге сәйкес — бұл `school.OrgRole.SYS_ADMIN`
+  (мектептің IT-әкімшісі, ұйымдағы рөл) ұғымымен шатастырылмайды (§1.2).
 
 ---
 
@@ -325,13 +406,13 @@ modules =
     apps.main
     apps.teaching
     apps.learning
-    # apps.school  ← SIS жасалғанда қос
+    apps.school
 
 [importlinter:contract:layers]
 name = тәуелділік тек төмен қарай
 type = layers
 layers =
-    apps.main | apps.teaching | apps.learning
+    apps.main | apps.teaching | apps.learning | apps.school
     apps.accounts
     apps.catalog | apps.directory
     core
@@ -339,9 +420,6 @@ layers =
 
 > `accounts` бөлек қабатта (§1 ескертпесі): ол `catalog`/`directory`-дің ашық интерфейсін тұтынады,
 > ал солар `accounts`-ты да, бір-бірін де импорттамайды.
-
-> `apps.school` әлі жоқ. Ол жасалғанда `products-independent` пен `layers` контрактына қос.
-> Жоқ модульді контрактқа жазсаң `lint-imports` қате береді.
 
 Тексеру: `lint-imports`. Контракт бұзылса — қате; оны кодты түзетіп шеш, контрактты әлсіретіп «жасырма».
 
@@ -360,4 +438,9 @@ layers =
 - ❌ Домендік шаблонды `ui`-ге қоспа; `ui`-ден домендік шаблонды `include` жасама.
 - ❌ Бизнес логиканы view немесе шаблонға жазба — `services`/`selectors`-ке қой.
 - ❌ Дерек бар DB-де миграцияны backup-сыз жасама.
+- ❌ **Жаңа/өзгерген `gettext_lazy(...)` немесе `{% translate %}` жолын `.po`-ға аудармай қалдырма.**
+  Сол тапсырма/commit ішінде дереу орында (§9): `makemessages -l kk -l ru --no-obsolete
+  --ignore=env/* --ignore=ui/static_src/*` → шыққан `#, fuzzy` мен бос `msgstr ""`-ды **нақты**
+  kk/ru аудармасымен ауыстыр (ескі fuzzy-сәйкестік көбіне қате аударма болады, тексерместен қалдырма) →
+  `compilemessages -l kk -l ru`. Кейінге қалдырылған аударма — техникалық борыш емес, **бітпеген жұмыс**.
 - ❌ Ережеге қайшы тапсырманы «айналып өтіп» орындама — қайшылықты хабарла.

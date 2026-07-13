@@ -1,0 +1,172 @@
+{% extends "layouts/auth_layout.html" %}
+{% load i18n static %}
+{% block title %}{% translate "Sign up as a learner" %}{% endblock title %}
+
+
+{% block link %}
+    <a href="{% url 'main:register' %}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-neutral-secondary active:scale-90">
+        <i class="ph ph-caret-left size-6"></i>
+    </a>
+{% endblock link %}
+
+
+{% block auth_layout %}
+<div class="w-full max-w-md mx-auto">
+    <div class="bg-neutral-primary space-y-8">
+        <div class="text-center space-y-4">
+            <img src="{% static 'images/logo.svg' %}" class="w-24 md:w-36 mx-auto" alt="Brand logo">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-black">{% translate "Sign up as a learner" %}</h1>
+                <span class="text-body">{% translate "Start your personal learning space" %}</span>
+            </div>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label for="email" class="block ml-6 font-medium">
+                    {% translate "Email" %}
+                </label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value="{{ form.email.value|default:'' }}"
+                    class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                    placeholder="example@mail.com"
+                    autocomplete="email"
+                    required
+                >
+                {% for error in form.email.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="space-y-2">
+                    <label for="first_name" class="block ml-6 font-medium">
+                        {% translate "First name" %}
+                    </label>
+                    <input
+                        type="text"
+                        name="first_name"
+                        id="first_name"
+                        value="{{ form.first_name.value|default:'' }}"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="given-name"
+                        required
+                    >
+                    {% for error in form.first_name.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="last_name" class="ml-6 block font-medium">
+                        {% translate "Last name" %}
+                    </label>
+                    <input
+                        type="text"
+                        name="last_name"
+                        id="last_name"
+                        value="{{ form.last_name.value|default:'' }}"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        autocomplete="family-name"
+                        required
+                    >
+                    {% for error in form.last_name.errors %}
+                        <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="password1" class="block ml-6 font-medium">
+                    {% translate "Password" %}
+                </label>
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password1"
+                        id="id_password1"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        placeholder="{% translate 'Password' %}"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                    >
+                        <i x-show="!show" class="ph ph-eye size-6"></i>
+                        <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                    </button>
+                </div>
+
+                {% if form.password1.help_text %}
+                    <div class="ml-6 text-sm text-body">
+                        {{ form.password1.help_text }}
+                    </div>
+                {% endif %}
+                {% for error in form.password1.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div x-data="{ show: false }" class="space-y-2">
+                <label for="password2" class="block ml-6 font-medium">
+                    {% translate "Confirm password" %}
+                </label>
+                <div class="relative">
+                    <input
+                        :type="show ? 'text' : 'password'"
+                        name="password2"
+                        id="id_password2"
+                        class="w-full rounded-full border border-default bg-neutral-primary px-6 py-3 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                        placeholder="{% translate 'Confirm password' %}"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        @click="show = !show"
+                        class="absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center text-body hover:text-body-subtle cursor-pointer rounded-full p-1.5 focus:ring-2 focus:ring-brand"
+                    >
+                        <i x-show="!show" class="ph ph-eye size-6"></i>
+                        <i x-show="show" class="ph ph-eye-slash size-6"></i>
+                    </button>
+                </div>
+
+                {% for error in form.password2.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="space-y-2">
+                {% translate "I agree with the platform's terms of use." as agreement_label %}
+                {% include "components/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
+
+                {% for error in form.agreement.errors %}
+                    <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <button 
+                type="submit"
+                class="relative grid group w-full"
+            >  
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="
+                    relative w-full px-6 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer
+                    group-hover:bg-brand-medium group-active:translate-y-1.5
+                    "
+                >
+                    {% translate "Sign up" %}
+                </span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -25,13 +25,13 @@ modules =
     apps.main
     apps.teaching
     apps.learning
-    # apps.school  ← SIS жасалғанда қос
+    apps.school
 
 [importlinter:contract:layers]
 name = тәуелділік тек төмен қарай
 type = layers
 layers =
-    apps.main | apps.teaching | apps.learning
+    apps.main | apps.teaching | apps.learning | apps.school
     apps.accounts
     apps.catalog | apps.directory
     core

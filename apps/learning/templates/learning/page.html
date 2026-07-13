@@ -12,9 +12,14 @@
                 <p class="text-body">{% translate "Personal learning and classroom tasks" %}</p>
             </div>
 
-            <a href="{% url 'accounts:logout' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
-                {% translate "Sign out" %}
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{% url 'learning:account' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
+                    {% translate "Account" %}
+                </a>
+                <a href="{% url 'main:logout' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
+                    {% translate "Sign out" %}
+                </a>
+            </div>
         </div>
     </header>
 

@@ -6,15 +6,16 @@ from core.utils.files import user_avatar_upload_path
 
 # -------------- User --------------
 class User(AbstractUser):
-    class Role(models.TextChoices):
+    class AccountType(models.TextChoices):
         ADMIN = 'admin', _('Admin')
         TEACHER = 'teacher', _('Teacher')
         LEARNER = 'learner', _('Learner')
+        SCHOOL_USER = 'school_user', _('School system user')
 
     middle_name = models.CharField(_('Middle name'), max_length=128, null=True, blank=True)
-    role = models.CharField(
-        _('Role'), max_length=16, choices=Role.choices,
-        default=Role.LEARNER, help_text=_('Shows the user\'s role in the system.')
+    account_type = models.CharField(
+        _('Account type'), max_length=16, choices=AccountType.choices,
+        default=AccountType.LEARNER, help_text=_('Shows which product the user belongs to (teaching/learning/school).')
     )
     phone = models.CharField(_('Phone'), max_length=32, blank=True)
     avatar = models.ImageField(_('Avatar'), upload_to=user_avatar_upload_path, blank=True, null=True)

@@ -141,18 +141,18 @@
                         class="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
                         style="display:none"
                     >
-                        <a href="{% url 'accounts:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                        <a href="{% url 'teaching:profile' request.user.username %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
                             <i class="ph ph-user size-5"></i>
                             {% translate "Profile" %}
                         </a>
-                        <a href="{% url 'accounts:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
+                        <a href="{% url 'teaching:account-edit' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-body-subtle hover:bg-neutral-secondary">
                             <i class="ph ph-gear size-5"></i>
                             {% translate "Account settings" %}
                         </a>
 
                         <div class="my-2 border-t border-default"></div>
 
-                        <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
+                        <a href="{% url 'main:logout' %}" class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-normal text-danger hover:bg-danger-soft">
                             <i class="ph ph-sign-out size-5"></i>
                             {% translate "Sign out" %}
                         </a>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block base %}
+<div class="max-w-2xl mx-auto py-16 px-4">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-semibold mb-2">{{ organization.name }}</h1>
+        <a href="{% url 'school:logout' %}" class="text-body hover:text-body-subtle">{% translate "Sign out" %}</a>
+    </div>
+    <p class="text-secondary">{% translate "Your roles" %}: {{ membership.roles|join:", " }}</p>
+
+    <a class="inline-block mt-4 text-primary-600 hover:underline" href="{% url 'school:account' org=organization.slug %}">
+        {% translate "My account" %}
+    </a>
+
+    {% if can_manage %}
+    <a class="inline-block mt-6 text-primary-600 hover:underline" href="{% url 'school:member-list' org=organization.slug %}">
+        {% translate "Manage members" %}
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

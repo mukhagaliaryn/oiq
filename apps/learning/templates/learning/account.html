@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "My account" %}{% endblock title %}
+
+{% block base %}
+<div class="min-h-screen bg-neutral-secondary">
+    <header class="border-b border-default bg-neutral-primary">
+        <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+            <h1 class="text-2xl font-black">{% translate "My account" %}</h1>
+            <a href="{% url 'learning:dashboard' %}" class="rounded-full border border-default px-5 py-2 font-medium text-body hover:text-body-subtle">
+                {% translate "Back to dashboard" %}
+            </a>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl space-y-6 px-6 py-8">
+        <section class="rounded-3xl border border-default bg-neutral-primary p-6">
+            <h2 class="text-xl font-black">{% translate "Profile" %}</h2>
+
+            <form method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+
+                {% for field in basic_form %}
+                <div class="space-y-1">
+                    <label for="{{ field.id_for_label }}" class="block font-medium">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <span class="block text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="rounded-full bg-brand px-6 py-3 font-medium text-neutral-primary hover:bg-brand-medium">
+                    {% translate "Save changes" %}
+                </button>
+            </form>
+        </section>
+
+        <section class="rounded-3xl border border-default bg-neutral-primary p-6">
+            <h2 class="text-xl font-black">{% translate "Language" %}</h2>
+
+            <form action="{% url 'set_language' %}" method="post" class="mt-4 max-w-xs">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label for="id_language" class="sr-only">{% translate "Language" %}</label>
+                <select name="language" id="id_language" class="w-full rounded-full border border-default px-4 py-2" onchange="this.form.submit()">
+                    {% for value, label in settings_form.language.field.choices %}
+                    <option value="{{ value }}" {% if value == settings_form.language.value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </section>
+
+        <section class="rounded-3xl border border-default bg-neutral-primary p-6">
+            <h2 class="text-xl font-black">{% translate "Change password" %}</h2>
+
+            <form method="post" class="mt-4 max-w-md space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
+
+                {% for field in password_form %}
+                <div class="space-y-1">
+                    <label for="{{ field.id_for_label }}" class="block font-medium">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <span class="block text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                {% for error in password_form.non_field_errors %}
+                    <span class="block text-normal text-danger">{{ error }}</span>
+                {% endfor %}
+
+                <button type="submit" class="rounded-full bg-brand px-6 py-3 font-medium text-neutral-primary hover:bg-brand-medium">
+                    {% translate "Update password" %}
+                </button>
+            </form>
+        </section>
+
+        <section class="rounded-3xl border border-danger-medium bg-danger-soft p-6">
+            <h2 class="text-xl font-black text-danger">{% translate "Danger zone" %}</h2>
+            <p class="mt-1 text-body">{% translate "Deactivating your account will sign you out and block access until support restores it." %}</p>
+
+            <form method="post" class="mt-4 max-w-sm space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_account">
+
+                <div class="space-y-1">
+                    <label for="{{ delete_form.password.id_for_label }}" class="block font-medium">{{ delete_form.password.label }}</label>
+                    {{ delete_form.password }}
+                    {% for error in delete_form.password.errors %}
+                        <span class="block text-normal text-danger">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="rounded-full bg-danger px-6 py-3 font-medium text-neutral-primary hover:bg-danger-strong">
+                    {% translate "Deactivate account" %}
+                </button>
+            </form>
+        </section>
+    </main>
+</div>
+{% endblock %}

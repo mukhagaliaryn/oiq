@@ -1,0 +1,29 @@
+{% load i18n %}
+
+{% if users %}
+<ul class="border rounded divide-y">
+    {% for user in users %}
+    <li class="p-3 flex items-center justify-between">
+        <span>{{ user }} ({{ user.email }})</span>
+        <form method="post" action="{% url 'school:member-add' org=organization.slug %}" class="flex items-center gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ user.pk }}">
+            <input type="hidden" name="roles" value="teacher">
+            <button type="submit" class="text-primary-600 hover:underline">{% translate "Add as teacher" %}</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% elif query %}
+<div class="border rounded p-4">
+    <p class="text-secondary mb-3">{% translate "No user found. Register a new teacher:" %}</p>
+    <form method="post" action="{% url 'school:member-register' org=organization.slug %}" class="space-y-2">
+        {% csrf_token %}
+        <input type="hidden" name="roles" value="teacher">
+        <input type="email" name="email" placeholder="{% translate 'Email' %}" required class="border rounded px-3 py-2 w-full">
+        <input type="text" name="first_name" placeholder="{% translate 'First name' %}" class="border rounded px-3 py-2 w-full">
+        <input type="text" name="last_name" placeholder="{% translate 'Last name' %}" class="border rounded px-3 py-2 w-full">
+        <button type="submit" class="text-primary-600 hover:underline">{% translate "Register and add" %}</button>
+    </form>
+</div>
+{% endif %}
