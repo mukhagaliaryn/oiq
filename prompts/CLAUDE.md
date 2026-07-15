@@ -25,7 +25,7 @@ OIQ — мектеп оқушылары мен оқытушыларына арн
 `Membership`, жүйелік администратор (`OrgRole.SYS_ADMIN`) мүшелерді (негізінен мұғалімдерді) қосады.
 
 **Стек:** Django 6 + PostgreSQL, admin — `django-unfold`, фронтенд — Tailwind CSS 4 + HTMX + Alpine.js +
-Lucide иконкалары, rich-text — CKEditor 5 (KaTeX қосылған кастомды бандл). Деплой — Ubuntu + Gunicorn + Nginx.
+Phosphor иконкалары, rich-text — CKEditor 5 (KaTeX қосылған кастомды бандл). Деплой — Ubuntu + Gunicorn + Nginx.
 Интерфейс негізгі тілі — қазақша (`kk`), `ru`/`en` локализациясы бар.
 
 ---
@@ -159,14 +159,18 @@ Redirect: `apps.accounts.services.get_user_redirect_url(user)` — `SCHOOL_USER`
 
 Екі бөлек нәрсе (`prompts/RULES.md` §6):
 
-- **Дизайн-жүйе → `ui/templates/`:** `base.html` (Tailwind, htmx/Alpine/Lucide, toast),
-  `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`),
+- **Дизайн-жүйе → `ui/templates/`:** `base.html` (Tailwind, htmx/Alpine/Phosphor, toast),
+  `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`, `school_layout`),
   **ортақ** `components/` (`_messages`, `_confirm_modal`, `select`, `checkbox`, `radio`).
 - **Домендік шаблон → сол app-та:** `apps/<app>/templates/<app>/...`
 
 Ережелер:
 - `ui` домендік шаблонды білмейді. Домен ортақ `ui`-ды қолданады:
   `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/select.html" %}`.
+- **`school` — екінші, shadcn-стиль дизайн тілі** (толығы `prompts/RULES.md` §6.1): teaching/learning-тің
+  дөңгеленген Phosphor-негізді стилін қайталамайды, тек түс жүйесі (`@theme`) мен иконка жиынтығы
+  (Phosphor) ортақ. Өз блоктары `ui/templates/components/school/`-де, бөлек namespace-те, ортақ
+  `components/`-ке араласпайды.
 - `TEMPLATES['DIRS'] = [BASE_DIR / 'ui/templates']` **және** `APP_DIRS=True` — екеуі де қосулы.
 - Домендік шаблонды әрқашан namespace-пен шақыр: `render(request, 'teaching/subject/detail.html', ...)`.
 - Tailwind сканері домендік шаблондарды да оқуы керек — `tailwind.config.js`-тегі `content`-те

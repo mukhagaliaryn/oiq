@@ -287,6 +287,11 @@ __all__ = [
 - `ui` домендік шаблонды **білмейді** (ui → домен ❌).
 - Домен ортақ `ui`-ды қолданады (домен → ui ✅): `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/select.html" %}`.
 - Компонент ортақ болса (форма элементі, modal, toast) → `ui/components/`. Нақты доменнің partial-і (`_subject_info.html`) → сол app-та.
+- **Жалпы принцип:** локалды компонент/partial (тек бір app қолданады) — әрқашан сол
+  `apps/<app>/templates/<app>/**` ішінде, ешқашан `ui`-де емес. Global (бірнеше app/дизайн тіл
+  қолданатын) компонент/layout қана `ui`-ге шығады. `ui` өзі ішінде де бір біркелкі жиын емес —
+  дизайн тіл бөлек болса (мыс. `school` vs `teaching`/`learning`/`main`), `ui/templates/components/`
+  сол дизайн тілдер бойынша namespace-пен бөлінеді (толығы — §6.1).
 - `TEMPLATES['DIRS'] = [BASE_DIR / 'ui/templates']` **және** `APP_DIRS=True` — екеуі де қосулы қалады.
 - Домендік шаблонды namespace-пен шақыр: `render(request, 'teaching/subject/detail.html', ...)`.
 - Tailwind сканері домендік шаблондарды да оқуы керек. `ui/static_src/tailwind.config.js`:
@@ -297,6 +302,30 @@ __all__ = [
   ]
   ```
   Өзгерткен соң: `cd ui/static_src && npm run build`.
+
+### 6.1. `school` — екінші дизайн-тіл (shadcn-стиль)
+
+`school` (`school.oiq.kz`) `teaching`/`learning`/`main`-нің дөңгеленген (rounded-2xl), Phosphor-негізді
+дизайн тілін **қайталамайды** — ол dashboard/workspace admin, сондықтан **shadcn UI**-ге ұқсас (тар
+radius, нәзік border, дерекке бай) стильде жасалады. Ортақ болатыны — **тек түс жүйесі**
+(`ui/static_src/src/styles.css`-тегі `@theme`: `--color-brand`, `--color-neutral-*`,
+`--color-success/danger/warning-*` т.б.) және иконка жиынтығы (Phosphor — жаңа тәуелділік қосылмайды).
+Button, input, select, nav, card секілді блоктар — екеуінде де бөлек стильде.
+
+Орналасу — жоғарыдағы жалпы принциптің нақты мысалы (**global → `ui`, локал → app өзінде**), бірақ
+shadcn-стиль блоктар teaching/learning-тің ортақ `components/`-іне араласпайды — бөлек namespace-те:
+
+- `ui/templates/layouts/school_layout.html` — бар (sidebar + workspace layout).
+- `ui/templates/components/school/` — school-ға тән button/input/select/nav/card т.б. partial-дар
+  (мыс. `components/school/button.html`). Тек school шаблондары қолданады
+  (`{% include "components/school/button.html" %}`), teaching/learning оларды импорттамайды.
+- Ортақ `components/` (`_messages`, `_confirm_modal`, `select`, `checkbox`, `radio`) — тек
+  teaching/learning/main дизайн тіліне тиесілі, `school` оларды қолданбайды (форма/nav элементінің
+  өз shadcn-стиль баламасы болады).
+- `apps/school/templates/school/...` — бұрынғысынша домендік (бет-контент) шаблондар, §6 ережесі
+  бойынша.
+
+School беттерінің дизайны жеке-жеке `TASK` ретінде бекітіледі.
 
 ---
 

@@ -14,8 +14,8 @@
         class="fixed z-50 w-full"
     >
         <div class="max-w-7xl mx-auto flex items-center justify-between h-16 px-4">
-            <a 
-                href="{% url 'main:main' %}"
+            <a
+                href="{% if request.urlconf == 'config.urls_school' %}{% url 'school:landing' %}{% else %}{% url 'main:main' %}{% endif %}"
                 class="flex items-center gap-2 active:scale-90"
             >
                 <img src="{% static 'images/logo.svg' %}" class="w-16 md:w-20" alt="Brand logo">

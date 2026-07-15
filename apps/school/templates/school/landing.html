@@ -1,39 +1,48 @@
-{% extends "base.html" %}
+{% extends 'layouts/main_layout.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "School system" %}{% endblock %}
+{% block title %}{% translate "School system" %}{% endblock title %}
 
-{% block base %}
-{% if organizations is None %}
-<div class="min-h-screen flex items-center justify-center">
-    <div class="max-w-xl mx-auto py-16 px-4 text-center space-y-6">
-        <h1 class="text-3xl font-black">{% translate "OIQ school system" %}</h1>
-        <p class="text-body">
-            {% translate "Attendance, timetable and classroom management for your school — all in one workspace." %}
-        </p>
-        <a href="{% url 'school:login' %}" class="relative grid group">
-            <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
-            <span class="relative px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
-                {% translate "Sign in" %}
-            </span>
-        </a>
+
+{% block main_layout %}
+<div class="min-h-screen flex justify-center items-center">
+    {% if organizations is None %}
+    <div class="max-w-7xl mx-auto flex flex-col items-center md:flex-row gap-8 md:gap-16 py-16 px-4">
+        <div class="flex-1 flex items-center justify-center">
+            <div class="flex size-64 sm:size-75 items-center justify-center rounded-3xl border border-default bg-neutral-secondary">
+                <i class="ph ph-buildings size-24 text-body-subtle"></i>
+            </div>
+        </div>
+
+        <div class="w-full md:max-w-lg mx-auto space-y-3 text-center md:text-left">
+            <h1 class="text-3xl font-black">{% translate "OIQ school system" %}</h1>
+            <p class="text-body">
+                {% translate "Attendance, timetable and classroom management for your school — all in one workspace." %}
+            </p>
+            <a href="{% url 'school:login' %}" class="relative inline-grid group">
+                <span class="absolute -bottom-1.5 w-full h-full rounded-full bg-brand-strong group-active:h-0"></span>
+                <span class="relative px-8 py-3 rounded-full bg-brand text-neutral-primary font-medium cursor-pointer group-hover:bg-brand-medium group-active:translate-y-1.5">
+                    {% translate "Sign in" %}
+                </span>
+            </a>
+        </div>
     </div>
-</div>
-{% else %}
-<div class="max-w-2xl mx-auto py-16 px-4">
-    <h1 class="text-2xl font-semibold mb-6">{% translate "My schools" %}</h1>
-
-    {% if organizations %}
-    <ul class="space-y-2">
-        {% for organization in organizations %}
-        <li>
-            <a class="text-primary-600 hover:underline" href="{% url 'school:dashboard' org=organization.slug %}">{{ organization.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
     {% else %}
-    <p class="text-secondary">{% translate "You are not a member of any school yet." %}</p>
+    <div class="w-full max-w-2xl mx-auto py-16 px-4">
+        <h1 class="text-2xl font-semibold mb-6">{% translate "My schools" %}</h1>
+
+        {% if organizations %}
+        <ul class="space-y-2">
+            {% for organization in organizations %}
+            <li>
+                <a class="text-brand hover:underline" href="{% url 'school:dashboard' org=organization.slug %}">{{ organization.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-body-subtle">{% translate "You are not a member of any school yet." %}</p>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
-{% endif %}
-{% endblock %}
+{% endblock main_layout %}
