@@ -1,62 +1,120 @@
-{% extends "base.html" %}
+{% extends "layouts/school_layout.html" %}
 {% load i18n %}
 
 {% block title %}{% translate "Members" %} — {{ organization.name }}{% endblock %}
 
-{% block base %}
-<div class="max-w-3xl mx-auto py-16 px-4">
-    <h1 class="text-2xl font-semibold mb-6">{% translate "Members" %}</h1>
+{% block school_layout %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-2xl font-black">{% translate "Members" %}</h1>
+        <p class="text-body-subtle">{% blocktranslate count counter=members|length %}{{ counter }} person in this school{% plural %}{{ counter }} people in this school{% endblocktranslate %}</p>
+    </div>
 
-    <table class="w-full mb-10 text-left">
-        <thead>
-            <tr class="border-b">
-                <th class="py-2">{% translate "User" %}</th>
-                <th class="py-2">{% translate "Roles" %}</th>
-                {% if can_manage %}<th class="py-2"></th>{% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for membership in members %}
-            <tr class="border-b">
-                <td class="py-2">{{ membership.user }} ({{ membership.user.email }})</td>
-                {% if can_manage %}
-                <td class="py-2">
-                    <form method="post" action="{% url 'school:member-update-roles' org=membership.organization.slug membership_id=membership.pk %}" class="flex flex-wrap items-center gap-2">
-                        {% csrf_token %}
-                        {% for value, label in org_roles %}
-                        <label class="text-sm">
-                            <input type="checkbox" name="roles" value="{{ value }}" {% if value in membership.roles %}checked{% endif %}>
-                            {{ label }}
-                        </label>
-                        {% endfor %}
-                        <button type="submit" class="text-primary-600 hover:underline">{% translate "Save" %}</button>
-                    </form>
-                </td>
-                <td class="py-2">
-                    <form method="post" action="{% url 'school:member-remove' org=membership.organization.slug membership_id=membership.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="text-red-600 hover:underline">{% translate "Remove" %}</button>
-                    </form>
-                </td>
-                {% else %}
-                <td class="py-2">{{ membership.roles|join:", " }}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="overflow-hidden rounded-3xl border border-default bg-neutral-primary">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-default text-normal text-body-subtle">
+                    <th class="px-6 py-3 font-medium">{% translate "User" %}</th>
+                    <th class="px-6 py-3 font-medium">{% translate "Roles" %}</th>
+                    {% if can_manage %}<th class="px-6 py-3"></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-default">
+                {% for membership in members %}
+                <tr x-data="{ editing: false }">
+                    <td class="px-6 py-4 align-top">
+                        <div class="flex items-center gap-3">
+                            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft font-bold text-brand">
+                                {{ membership.user.display_name|first|upper }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="truncate font-medium">{{ membership.user.display_name }}</p>
+                                <p class="truncate text-normal text-body-subtle">{{ membership.user.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 align-top">
+                        <div class="flex flex-wrap gap-1.5" x-show="!editing">
+                            {% for value, label in org_roles %}
+                                {% if value in membership.roles %}
+                                <span class="rounded-full bg-neutral-tertiary px-3 py-1 text-xs font-medium text-body">{{ label }}</span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not membership.roles %}
+                            <span class="text-body-subtle">—</span>
+                            {% endif %}
+                        </div>
+
+                        {% if can_manage %}
+                        <form
+                            x-show="editing" x-cloak
+                            method="post"
+                            action="{% url 'school:member-update-roles' org=organization.slug membership_id=membership.pk %}"
+                            class="flex flex-wrap items-center gap-2"
+                        >
+                            {% csrf_token %}
+                            {% for value, label in org_roles %}
+                            <label class="flex items-center gap-1.5 rounded-full border border-default px-3 py-1.5 text-xs cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft">
+                                <input type="checkbox" name="roles" value="{{ value }}" {% if value in membership.roles %}checked{% endif %} class="size-3.5 accent-brand">
+                                {{ label }}
+                            </label>
+                            {% endfor %}
+                            <button type="submit" class="rounded-full bg-brand px-4 py-1.5 text-xs font-medium text-neutral-primary hover:bg-brand-medium cursor-pointer">
+                                {% translate "Save" %}
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                    {% if can_manage %}
+                    <td class="px-6 py-4 align-top text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <button
+                                type="button"
+                                @click="editing = !editing"
+                                class="rounded-xl p-2 text-body-subtle transition hover:bg-neutral-secondary hover:text-body cursor-pointer"
+                                :class="{ 'bg-neutral-secondary text-body': editing }"
+                            >
+                                <i class="ph ph-pencil-simple size-4.5"></i>
+                            </button>
+                            <form
+                                method="post"
+                                action="{% url 'school:member-remove' org=organization.slug membership_id=membership.pk %}"
+                                onsubmit="return confirm('{% translate "Remove this member from the school?" %}')"
+                            >
+                                {% csrf_token %}
+                                <button type="submit" class="rounded-xl p-2 text-body-subtle transition hover:bg-danger-soft hover:text-danger cursor-pointer">
+                                    <i class="ph ph-trash size-4.5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-body-subtle">{% translate "No members yet." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% if can_manage %}
-    <h2 class="text-xl font-semibold mb-4">{% translate "Add member" %}</h2>
+    <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <h2 class="text-xl font-black">{% translate "Add member" %}</h2>
 
-    <input
-        type="text" name="q" placeholder="{% translate 'Search by email, phone or name' %}"
-        class="border rounded px-3 py-2 w-full mb-2"
-        hx-get="{% url 'school:member-search' org=organization.slug %}"
-        hx-trigger="keyup changed delay:300ms"
-        hx-target="#search-results"
-    >
-    <div id="search-results"></div>
+        <div class="relative mt-4">
+            <i class="ph ph-magnifying-glass absolute left-5 top-1/2 size-5 -translate-y-1/2 text-body-subtle"></i>
+            <input
+                type="text" name="q" placeholder="{% translate 'Search by email, phone or name' %}"
+                class="w-full rounded-full border border-default bg-neutral-primary py-3 pl-12 pr-6 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+                hx-get="{% url 'school:member-search' org=organization.slug %}"
+                hx-trigger="keyup changed delay:300ms"
+                hx-target="#search-results"
+            >
+        </div>
+        <div id="search-results" class="mt-4"></div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

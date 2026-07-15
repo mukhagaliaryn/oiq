@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 15:24+0500\n"
+"POT-Creation-Date: 2026-07-14 13:31+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,7 +66,7 @@ msgstr "Партнёр"
 
 #: apps/accounts/models/teacher.py:13 apps/accounts/models/user.py:25
 #: apps/accounts/models/user.py:50 apps/school/models/organization.py:42
-#: apps/school/templates/school/members/list.html:13
+#: apps/school/templates/school/members/list.html:17
 msgid "User"
 msgstr "Пользователь"
 
@@ -447,7 +447,7 @@ msgstr "Выберите школу"
 #: apps/main/templates/main/auth/register/teacher.html:223
 #: apps/main/templates/main/auth/register/teacher.html:232
 #: apps/school/forms/account.py:10
-#: apps/school/templates/school/members/_search_results.html:24
+#: apps/school/templates/school/members/_search_results.html:39
 #: apps/teaching/forms/account.py:9
 #: apps/teaching/templates/teaching/account/edit.html:66
 msgid "First name"
@@ -458,7 +458,7 @@ msgstr "Имя"
 #: apps/main/templates/main/auth/register/teacher.html:243
 #: apps/main/templates/main/auth/register/teacher.html:252
 #: apps/school/forms/account.py:14
-#: apps/school/templates/school/members/_search_results.html:25
+#: apps/school/templates/school/members/_search_results.html:43
 #: apps/teaching/forms/account.py:10
 #: apps/teaching/templates/teaching/account/edit.html:81
 msgid "Last name"
@@ -500,18 +500,18 @@ msgstr "Неверный пароль."
 #: apps/learning/templates/learning/account.html:10
 #: apps/school/templates/school/account.html:4
 #: apps/school/templates/school/account.html:9
-#: apps/school/templates/school/workspace/dashboard.html:15
+#: apps/school/templates/school/workspace/dashboard.html:40
+#: ui/templates/layouts/school_layout.html:88
 msgid "My account"
 msgstr "Мой аккаунт"
 
 #: apps/learning/templates/learning/account.html:12
-#: apps/school/templates/school/account.html:11
 #: apps/teaching/templates/teaching/account/profile.html:13
 msgid "Back to dashboard"
 msgstr "Вернуться к панели"
 
 #: apps/learning/templates/learning/account.html:19
-#: apps/school/templates/school/account.html:21
+#: apps/school/templates/school/account.html:25
 #: apps/teaching/templates/teaching/account/_tabs.html:14
 #: apps/teaching/templates/teaching/account/_tabs.html:48
 #: apps/teaching/templates/teaching/account/_tabs.html:101
@@ -520,7 +520,7 @@ msgid "Profile"
 msgstr "Профиль"
 
 #: apps/learning/templates/learning/account.html:36
-#: apps/school/templates/school/account.html:38
+#: apps/school/templates/school/account.html:45
 #: apps/teaching/templates/teaching/account/edit.html:157
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:87
 msgid "Save changes"
@@ -534,13 +534,13 @@ msgid "Language"
 msgstr "Язык"
 
 #: apps/learning/templates/learning/account.html:57
-#: apps/school/templates/school/account.html:44
+#: apps/school/templates/school/account.html:51
 #: apps/teaching/templates/teaching/account/security.html:11
 msgid "Change password"
 msgstr "Изменить пароль"
 
 #: apps/learning/templates/learning/account.html:77
-#: apps/school/templates/school/account.html:64
+#: apps/school/templates/school/account.html:74
 #: apps/teaching/templates/teaching/account/security.html:109
 msgid "Update password"
 msgstr "Обновить пароль"
@@ -574,7 +574,7 @@ msgid "Personal learning and classroom tasks"
 msgstr "Индивидуальное обучение и задания класса"
 
 #: apps/learning/templates/learning/page.html:20
-#: apps/school/templates/school/workspace/dashboard.html:10
+#: ui/templates/layouts/school_layout.html:159
 #: ui/templates/layouts/teacher_layout.html:157
 msgid "Sign out"
 msgstr "Выйти"
@@ -615,12 +615,12 @@ msgstr "Пока нет активности. Результаты появят�
 msgid "Avatar removed."
 msgstr "Аватар удалён."
 
-#: apps/learning/views/account.py:63 apps/school/views/account.py:35
+#: apps/learning/views/account.py:63 apps/school/views/account.py:36
 #: apps/teaching/views/account.py:86
 msgid "Profile has been updated."
 msgstr "Профиль обновлён."
 
-#: apps/learning/views/account.py:80 apps/school/views/account.py:52
+#: apps/learning/views/account.py:80 apps/school/views/account.py:53
 #: apps/teaching/views/account.py:131
 msgid "Password has been changed."
 msgstr "Пароль изменён."
@@ -646,7 +646,7 @@ msgstr "Пароль"
 #: apps/main/forms/auth.py:20
 #: apps/main/templates/main/auth/register/learner.html:29
 #: apps/main/templates/main/auth/register/teacher.html:202
-#: apps/school/templates/school/members/_search_results.html:23
+#: apps/school/templates/school/members/_search_results.html:34
 #: apps/teaching/templates/teaching/account/profile.html:62
 msgid "Email"
 msgstr "Электронная почта"
@@ -819,7 +819,7 @@ msgstr "Интерактивная, геймифицированная и наг
 msgid "I already have an account"
 msgstr "У меня уже есть аккаунт"
 
-#: apps/main/templates/main/page.html:59
+#: apps/main/templates/main/page.html:63
 msgid "Are you a school? Go to the school system"
 msgstr "Вы школа? Перейдите в школьную систему"
 
@@ -890,7 +890,7 @@ msgid "Parent"
 msgstr "Родитель"
 
 #: apps/school/models/organization.py:51
-#: apps/school/templates/school/members/list.html:14
+#: apps/school/templates/school/members/list.html:18
 msgid "Roles"
 msgstr "Роли"
 
@@ -902,8 +902,7 @@ msgstr "Членство"
 msgid "Memberships"
 msgstr "Членства"
 
-#: apps/school/templates/school/account.html:17
-#: apps/school/templates/school/workspace/dashboard.html:12
+#: apps/school/templates/school/account.html:14
 msgid "Your roles"
 msgstr "Ваши роли"
 
@@ -920,7 +919,9 @@ msgstr "Школьная система OIQ"
 msgid ""
 "Attendance, timetable and classroom management for your school — all in one "
 "workspace."
-msgstr "Посещаемость, расписание и управление классами вашей школы — всё в одном workspace."
+msgstr ""
+"Посещаемость, расписание и управление классами вашей школы — всё в одном "
+"workspace."
 
 #: apps/school/templates/school/landing.html:24
 msgid "My schools"
@@ -930,45 +931,66 @@ msgstr "Мои школы"
 msgid "You are not a member of any school yet."
 msgstr "Вы пока не являетесь участником ни одной школы."
 
-#: apps/school/templates/school/members/_search_results.html:12
+#: apps/school/templates/school/members/_search_results.html:21
 msgid "Add as teacher"
 msgstr "Добавить как учителя"
 
-#: apps/school/templates/school/members/_search_results.html:19
+#: apps/school/templates/school/members/_search_results.html:29
 msgid "No user found. Register a new teacher:"
 msgstr "Пользователь не найден. Зарегистрируйте нового учителя:"
 
-#: apps/school/templates/school/members/_search_results.html:26
+#: apps/school/templates/school/members/_search_results.html:48
 msgid "Register and add"
 msgstr "Зарегистрировать и добавить"
 
 #: apps/school/templates/school/members/list.html:4
-#: apps/school/templates/school/members/list.html:8
+#: apps/school/templates/school/members/list.html:9
+#: apps/school/templates/school/workspace/dashboard.html:54
+#: ui/templates/layouts/school_layout.html:74
 msgid "Members"
 msgstr "Участники"
 
-#: apps/school/templates/school/members/list.html:32
+#: apps/school/templates/school/members/list.html:10
+#, python-format
+msgid "%(counter)s person in this school"
+msgid_plural "%(counter)s people in this school"
+msgstr[0] "%(counter)s человек в этой школе"
+msgstr[1] "%(counter)s человек в этой школе"
+
+#: apps/school/templates/school/members/list.html:63
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:105
 #: apps/teaching/templates/teaching/subject/_topic_item.html:134
 #: apps/teaching/templates/teaching/subject/question/form.html:142
 msgid "Save"
 msgstr "Сохранить"
 
-#: apps/school/templates/school/members/list.html:38
-msgid "Remove"
-msgstr "Удалить"
+#: apps/school/templates/school/members/list.html:82
+msgid "Remove this member from the school?"
+msgstr "Удалить этого участника из школы?"
 
-#: apps/school/templates/school/members/list.html:50
+#: apps/school/templates/school/members/list.html:95
+msgid "No members yet."
+msgstr "Пока нет участников."
+
+#: apps/school/templates/school/members/list.html:104
 msgid "Add member"
 msgstr "Добавить участника"
 
-#: apps/school/templates/school/members/list.html:53
+#: apps/school/templates/school/members/list.html:109
 msgid "Search by email, phone or name"
 msgstr "Поиск по email, телефону или имени"
 
-#: apps/school/templates/school/workspace/dashboard.html:20
-msgid "Manage members"
-msgstr "Управление участниками"
+#: apps/school/templates/school/workspace/dashboard.html:9
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: apps/school/templates/school/workspace/dashboard.html:41
+msgid "Profile and password"
+msgstr "Профиль и пароль"
+
+#: apps/school/templates/school/workspace/dashboard.html:55
+msgid "Manage school staff"
+msgstr "Управление сотрудниками школы"
 
 #: apps/school/views/members.py:46
 msgid "User not found."
@@ -1535,6 +1557,7 @@ msgid "Administration"
 msgstr "Администрирование"
 
 #: config/settings.py:206 config/settings.py:245
+#: ui/templates/layouts/school_layout.html:60
 #: ui/templates/layouts/teacher_layout.html:45
 msgid "Dashboard"
 msgstr "Панель управления"
@@ -1579,12 +1602,18 @@ msgstr "Загрузите корректный файл изображения.
 msgid "Delete"
 msgstr "Удалить"
 
+#: ui/templates/layouts/school_layout.html:44
+#: ui/templates/layouts/school_layout.html:152
+msgid "Switch school"
+msgstr "Сменить школу"
+
+#: ui/templates/layouts/school_layout.html:148
+#: ui/templates/layouts/teacher_layout.html:150
+msgid "Account settings"
+msgstr "Настройки аккаунта"
+
 #: ui/templates/layouts/teacher_layout.html:77
 #: ui/templates/layouts/teacher_layout.html:85
 #: ui/templates/layouts/teacher_layout.html:93
 msgid "Soon"
 msgstr "Скоро"
-
-#: ui/templates/layouts/teacher_layout.html:150
-msgid "Account settings"
-msgstr "Настройки аккаунта"

@@ -1,24 +1,61 @@
-{% extends "base.html" %}
+{% extends "layouts/school_layout.html" %}
 {% load i18n %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
-{% block base %}
-<div class="max-w-2xl mx-auto py-16 px-4">
-    <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold mb-2">{{ organization.name }}</h1>
-        <a href="{% url 'school:logout' %}" class="text-body hover:text-body-subtle">{% translate "Sign out" %}</a>
+{% block school_layout %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-2xl font-black">{% translate "Welcome" %}, {{ request.user.display_name }}</h1>
+        <p class="text-body-subtle">{{ organization.name }}</p>
     </div>
-    <p class="text-secondary">{% translate "Your roles" %}: {{ membership.roles|join:", " }}</p>
 
-    <a class="inline-block mt-4 text-primary-600 hover:underline" href="{% url 'school:account' org=organization.slug %}">
-        {% translate "My account" %}
-    </a>
+    <div class="rounded-3xl border border-default bg-neutral-primary p-6">
+        <div class="flex items-center gap-4">
+            <span class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-2xl font-black text-brand">
+                {{ organization.name|first|upper }}
+            </span>
+            <div class="min-w-0">
+                <h2 class="truncate text-xl font-black">{{ organization.name }}</h2>
+                <div class="mt-1.5 flex flex-wrap gap-1.5">
+                    {% for value, label in org_roles %}
+                        {% if value in membership.roles %}
+                        <span class="rounded-full bg-neutral-tertiary px-3 py-1 text-xs font-medium text-body">{{ label }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {% if can_manage %}
-    <a class="inline-block mt-6 text-primary-600 hover:underline" href="{% url 'school:member-list' org=organization.slug %}">
-        {% translate "Manage members" %}
-    </a>
-    {% endif %}
+    <div class="grid gap-4 sm:grid-cols-2">
+        <a
+            href="{% url 'school:account' org=organization.slug %}"
+            class="flex items-center gap-4 rounded-3xl border border-default bg-neutral-primary p-6 transition hover:border-brand"
+        >
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                <i class="ph ph-user-gear size-5"></i>
+            </span>
+            <div>
+                <p class="font-semibold">{% translate "My account" %}</p>
+                <p class="text-normal text-body-subtle">{% translate "Profile and password" %}</p>
+            </div>
+        </a>
+
+        {% if can_manage %}
+        <a
+            href="{% url 'school:member-list' org=organization.slug %}"
+            class="flex items-center gap-4 rounded-3xl border border-default bg-neutral-primary p-6 transition hover:border-brand"
+        >
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand">
+                <i class="ph ph-users-three size-5"></i>
+            </span>
+            <div>
+                <p class="font-semibold">{% translate "Members" %}</p>
+                <p class="text-normal text-body-subtle">{% translate "Manage school staff" %}</p>
+            </div>
+        </a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

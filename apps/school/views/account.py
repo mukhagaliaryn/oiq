@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.services import change_password, update_basic_info
 from apps.school.forms.account import BasicInfoForm, ChangePasswordForm
+from apps.school.models import OrgRole
 
 
 # -------------- account_view --------------
@@ -55,6 +56,8 @@ def account_view(request, org):
     context = {
         'organization': request.organization,
         'membership': request.membership,
+        'can_manage': request.membership.has_role(OrgRole.SYS_ADMIN),
+        'org_roles': OrgRole.choices,
         'basic_form': basic_form,
         'password_form': password_form,
     }

@@ -9,4 +9,5 @@ def dashboard_view(request, org):
         'organization': request.organization,
         'membership': request.membership,
         'can_manage': request.membership.has_role(OrgRole.SYS_ADMIN),
+        'org_roles': OrgRole.choices,
     })

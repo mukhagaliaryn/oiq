@@ -1,29 +1,52 @@
 {% load i18n %}
 
 {% if users %}
-<ul class="border rounded divide-y">
+<div class="space-y-2">
     {% for user in users %}
-    <li class="p-3 flex items-center justify-between">
-        <span>{{ user }} ({{ user.email }})</span>
-        <form method="post" action="{% url 'school:member-add' org=organization.slug %}" class="flex items-center gap-2">
+    <div class="flex items-center justify-between gap-4 rounded-2xl border border-default p-3">
+        <div class="flex min-w-0 items-center gap-3">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft font-bold text-brand">
+                {{ user.display_name|first|upper }}
+            </span>
+            <div class="min-w-0">
+                <p class="truncate font-medium">{{ user.display_name }}</p>
+                <p class="truncate text-normal text-body-subtle">{{ user.email }}</p>
+            </div>
+        </div>
+        <form method="post" action="{% url 'school:member-add' org=organization.slug %}">
             {% csrf_token %}
             <input type="hidden" name="user_id" value="{{ user.pk }}">
             <input type="hidden" name="roles" value="teacher">
-            <button type="submit" class="text-primary-600 hover:underline">{% translate "Add as teacher" %}</button>
+            <button type="submit" class="shrink-0 rounded-full bg-brand px-4 py-2 text-normal font-medium text-neutral-primary transition hover:bg-brand-medium cursor-pointer">
+                {% translate "Add as teacher" %}
+            </button>
         </form>
-    </li>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% elif query %}
-<div class="border rounded p-4">
-    <p class="text-secondary mb-3">{% translate "No user found. Register a new teacher:" %}</p>
+<div class="rounded-2xl border border-default p-4">
+    <p class="mb-3 text-body-subtle">{% translate "No user found. Register a new teacher:" %}</p>
     <form method="post" action="{% url 'school:member-register' org=organization.slug %}" class="space-y-2">
         {% csrf_token %}
         <input type="hidden" name="roles" value="teacher">
-        <input type="email" name="email" placeholder="{% translate 'Email' %}" required class="border rounded px-3 py-2 w-full">
-        <input type="text" name="first_name" placeholder="{% translate 'First name' %}" class="border rounded px-3 py-2 w-full">
-        <input type="text" name="last_name" placeholder="{% translate 'Last name' %}" class="border rounded px-3 py-2 w-full">
-        <button type="submit" class="text-primary-600 hover:underline">{% translate "Register and add" %}</button>
+        <input
+            type="email" name="email" placeholder="{% translate 'Email' %}" required
+            class="w-full rounded-full border border-default bg-neutral-primary px-6 py-2.5 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+        >
+        <div class="flex gap-2">
+            <input
+                type="text" name="first_name" placeholder="{% translate 'First name' %}"
+                class="w-full rounded-full border border-default bg-neutral-primary px-6 py-2.5 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+            >
+            <input
+                type="text" name="last_name" placeholder="{% translate 'Last name' %}"
+                class="w-full rounded-full border border-default bg-neutral-primary px-6 py-2.5 outline-none transition placeholder:text-body focus:ring-2 focus:ring-brand"
+            >
+        </div>
+        <button type="submit" class="rounded-full bg-brand px-6 py-2.5 font-medium text-neutral-primary transition hover:bg-brand-medium cursor-pointer">
+            {% translate "Register and add" %}
+        </button>
     </form>
 </div>
 {% endif %}
