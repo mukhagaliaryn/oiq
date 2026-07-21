@@ -1,7 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from apps.catalog.selectors import get_active_subjects
-from apps.directory.selectors import get_cities, get_schools_by_city
+from apps.catalog.selectors import get_active_subjects, get_cities, get_schools_by_city
 
 
 # -------------- BasicInfoForm --------------

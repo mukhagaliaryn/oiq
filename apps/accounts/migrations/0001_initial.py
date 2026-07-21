@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('auth', '0012_alter_user_first_name_max_length'),
-        ('directory', '0001_initial'),
     ]
 
     operations = [
@@ -74,8 +73,6 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('type', models.CharField(choices=[('regular', 'Regular'), ('partner', 'Partner')], default='regular', max_length=16, verbose_name='Type')),
                 ('agreement_accepted_at', models.DateTimeField(blank=True, null=True, verbose_name='Agreement accepted at')),
-                ('city', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teachers', to='directory.city', verbose_name='City')),
-                ('school', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teachers', to='directory.school', verbose_name='School')),
             ],
             options={
                 'verbose_name': 'Teacher',

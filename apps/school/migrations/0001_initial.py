@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('directory', '0001_initial'),
+        ('catalog', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
                 ('name', models.CharField(max_length=255, verbose_name='Name')),
                 ('slug', models.SlugField(unique=True, verbose_name='Slug')),
-                ('school', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='organizations', to='directory.school', verbose_name='School')),
+                ('school', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='organizations', to='catalog.school', verbose_name='School')),
             ],
             options={
                 'verbose_name': 'Organization',

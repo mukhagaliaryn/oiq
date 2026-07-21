@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
 
     # apps...
-    'apps.directory.apps.DirectoryConfig',
     'apps.catalog.apps.CatalogConfig',
     'apps.accounts.apps.AccountsConfig',
 
@@ -271,24 +270,24 @@ UNFOLD = {
                 ],
             },
             {
-                'title': _('Education'),
+                'title': _('Catalog'),
                 'separator': True,
                 'collapsible': True,
                 'items': [
                     {
                         'title': _('Cities'),
                         'icon': 'apartment',
-                        'link': reverse_lazy('admin:directory_city_changelist'),
+                        'link': reverse_lazy('admin:catalog_city_changelist'),
                     },
                     {
                         'title': _('Schools'),
                         'icon': 'school',
-                        'link': reverse_lazy('admin:directory_school_changelist'),
+                        'link': reverse_lazy('admin:catalog_school_changelist'),
                     },
                     {
                         'title': _('Grades'),
                         'icon': 'cast_for_education',
-                        'link': reverse_lazy('admin:directory_grade_changelist'),
+                        'link': reverse_lazy('admin:catalog_grade_changelist'),
                     },
                     {
                         'title': _('Subjects'),
@@ -306,7 +305,6 @@ UNFOLD = {
                         'link': reverse_lazy('admin:catalog_question_changelist'),
                     },
                     # ...
-
                 ],
             },
             {

@@ -11,13 +11,6 @@ source_modules =
 forbidden_modules =
     apps
 
-[importlinter:contract:foundation-independent]
-name = catalog және directory бір-бірінен тәуелсіз (FK тек жол-сілтеме)
-type = independence
-modules =
-    apps.catalog
-    apps.directory
-
 [importlinter:contract:products-independent]
 name = өнім app-тар бір-бірін импорттамайды
 type = independence
@@ -33,5 +26,5 @@ type = layers
 layers =
     apps.main | apps.teaching | apps.learning | apps.school
     apps.accounts
-    apps.catalog | apps.directory
+    apps.catalog
     core

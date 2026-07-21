@@ -11,7 +11,7 @@
 
 
 {% block auth_layout %}
-    {% url 'directory:school-field' as school_field_url %}
+    {% url 'catalog:school-field' as school_field_url %}
     <div
         class="w-full max-w-md mx-0"
         x-data="{
@@ -161,7 +161,7 @@
                             {% translate "School" %}
                         </label>
                         <div @change="formData.school = String($event.target.value || ''); schoolError = false; saveForm()">
-                            {% include "directory/_school_field.html" with field=form.school %}
+                            {% include "catalog/_school_field.html" with field=form.school %}
                         </div>
                         <span x-show="schoolError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.school.errors %}

@@ -10,10 +10,58 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0001_initial'),
-        ('directory', '0001_initial'),
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='City',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
+                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
+                ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
+                ('name', models.CharField(max_length=128, unique=True, verbose_name='Name')),
+            ],
+            options={
+                'verbose_name': 'City',
+                'verbose_name_plural': 'Cities',
+                'ordering': ('name',),
+            },
+        ),
+        migrations.CreateModel(
+            name='Grade',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
+                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
+                ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
+                ('name', models.CharField(max_length=64, verbose_name='Name')),
+                ('code', models.SlugField(max_length=64, verbose_name='Code')),
+                ('order', models.PositiveSmallIntegerField(default=0, verbose_name='Order')),
+            ],
+            options={
+                'verbose_name': 'Grade',
+                'verbose_name_plural': 'Grades',
+                'ordering': ('order', 'name'),
+            },
+        ),
+        migrations.CreateModel(
+            name='School',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
+                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
+                ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
+                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                ('city', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='schools', to='catalog.city', verbose_name='City')),
+            ],
+            options={
+                'verbose_name': 'School',
+                'verbose_name_plural': 'Schools',
+                'ordering': ('city__name', 'name'),
+                'unique_together': {('city', 'name')},
+            },
+        ),
         migrations.CreateModel(
             name='FormatVariant',
             fields=[
@@ -90,7 +138,7 @@ class Migration(migrations.Migration):
                 ('cover', models.ImageField(blank=True, null=True, upload_to='subjects/covers/', verbose_name='Cover')),
                 ('description', models.TextField(blank=True, verbose_name='Description')),
                 ('order', models.PositiveSmallIntegerField(default=0, verbose_name='Order')),
-                ('grades', models.ManyToManyField(blank=True, related_name='subjects', to='directory.grade', verbose_name='Grades')),
+                ('grades', models.ManyToManyField(blank=True, related_name='subjects', to='catalog.grade', verbose_name='Grades')),
             ],
             options={
                 'verbose_name': 'Subject',
@@ -108,7 +156,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255, verbose_name='Title')),
                 ('description', models.TextField(blank=True, verbose_name='Description')),
                 ('order', models.PositiveSmallIntegerField(default=0, verbose_name='Order')),
-                ('grade', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='chapters', to='directory.grade', verbose_name='Grade')),
+                ('grade', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='chapters', to='catalog.grade', verbose_name='Grade')),
                 ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chapters', to='catalog.subject', verbose_name='Subject')),
             ],
             options={

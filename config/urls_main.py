@@ -14,7 +14,6 @@ urlpatterns += i18n_patterns(
     path('core/', include('core.urls')),
 
     path('catalog/', include('apps.catalog.urls')),
-    path('directory/', include('apps.directory.urls')),
 
     path('', include('apps.main.urls')),
     path('teaching/', include('apps.teaching.urls')),

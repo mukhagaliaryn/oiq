@@ -17,6 +17,16 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='teacher',
+            name='city',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teachers', to='catalog.city', verbose_name='City'),
+        ),
+        migrations.AddField(
+            model_name='teacher',
+            name='school',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teachers', to='catalog.school', verbose_name='School'),
+        ),
+        migrations.AddField(
+            model_name='teacher',
             name='subject',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='teachers', to='catalog.subject', verbose_name='Subject'),
         ),

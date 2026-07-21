@@ -1,10 +1,25 @@
+from django import forms
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
-from apps.catalog.selectors import get_format_variants
+from apps.catalog.selectors import get_format_variants, get_schools_by_city
 
 
 @staff_member_required
 def format_variants(request):
     variants = get_format_variants(request.GET.get('format')).values('id', 'name')
     return JsonResponse({'results': list(variants)})
+
+
+# -------------- school field (HTMX) --------------
+def school_field_view(request):
+    city_id = request.GET.get('city')
+    schools = get_schools_by_city(city_id)
+
+    class _SchoolForm(forms.Form):
+        school = forms.ModelChoiceField(queryset=schools, required=True, empty_label=_('Select school'))
+
+    form = _SchoolForm(initial={'school': request.GET.get('school')})
+    return render(request, 'catalog/_school_field.html', {'field': form['school']})

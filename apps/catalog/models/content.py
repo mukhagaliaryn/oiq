@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from core.models import BaseModel
+from .registry import Grade
 
 
 # Subject models
@@ -10,7 +11,7 @@ class Subject(BaseModel):
     name = models.CharField(_('Name'), max_length=128)
     cover = models.ImageField(_('Cover'), upload_to='subjects/covers/', blank=True, null=True)
     grades = models.ManyToManyField(
-        'directory.Grade', verbose_name=_('Grades'),
+        Grade, verbose_name=_('Grades'),
         related_name='subjects', blank=True,
     )
     description = models.TextField(_('Description'), blank=True)
@@ -32,7 +33,7 @@ class Chapter(BaseModel):
         related_name='chapters', verbose_name=_('Subject')
     )
     grade = models.ForeignKey(
-        'directory.Grade', on_delete=models.SET_NULL, null=True, blank=True,
+        Grade, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='chapters', verbose_name=_('Grade')
     )
     title = models.CharField(_('Title'), max_length=255)

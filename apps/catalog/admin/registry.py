@@ -1,7 +1,7 @@
 from django.contrib import admin
 from unfold.admin import TabularInline
 from core.admin.base import BaseModelAdmin
-from apps.directory.models import City, School
+from apps.catalog.models import City, Grade, School
 
 
 # City admin
@@ -35,4 +35,17 @@ class SchoolAdmin(BaseModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('name', 'city')}),
+    )
+
+
+# Grade admin
+# ----------------------------------------------------------------------------------------------------------------------
+# -------------- Grade admin --------------
+@admin.register(Grade)
+class GradeAdmin(BaseModelAdmin):
+    list_display = ('name', 'code', 'order', )
+    search_fields = ('name',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'code', 'order')}),
     )

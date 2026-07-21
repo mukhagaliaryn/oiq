@@ -8,7 +8,7 @@ from core.models import BaseModel
 # -------------- Organization --------------
 class Organization(BaseModel):
     school = models.ForeignKey(
-        'directory.School', verbose_name=_('School'),
+        'catalog.School', verbose_name=_('School'),
         on_delete=models.SET_NULL, related_name='organizations',
         blank=True, null=True,
     )

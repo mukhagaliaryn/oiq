@@ -14,12 +14,12 @@ class Teacher(models.Model):
         on_delete=models.CASCADE, related_name='teacher',
     )
     city = models.ForeignKey(
-        'directory.City', verbose_name=_('City'),
+        'catalog.City', verbose_name=_('City'),
         on_delete=models.SET_NULL, related_name='teachers',
         blank=True, null=True,
     )
     school = models.ForeignKey(
-        'directory.School', verbose_name=_('School'),
+        'catalog.School', verbose_name=_('School'),
         on_delete=models.SET_NULL, related_name='teachers',
         blank=True, null=True,
     )

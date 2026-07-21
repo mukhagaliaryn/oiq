@@ -19,8 +19,7 @@ oiq-main/
   ui/            # ІРГЕТАС: Tailwind, base.html, layouts/, ортақ components/
   apps/
     accounts/    # НЕГІЗГІ домен
-    catalog/     # НЕГІЗГІ домен
-    directory/   # НЕГІЗГІ домен
+    catalog/     # НЕГІЗГІ домен (Subject/Chapter/Topic/Question + City/School/Grade анықтамалығы)
     main/        # ӨНІМ — лендинг + ортақ auth (login/register/logout)
     teaching/    # ӨНІМ
     learning/    # ӨНІМ
@@ -37,12 +36,12 @@ oiq-main/
               │ тұтынады (тек services/selectors арқылы)
               ▼
 ┌─ accounts ────────────────────────────────────────────────┐
-│  apps.accounts                                             │  ← User/Teacher, catalog+directory-ды тұтынады
+│  apps.accounts                                             │  ← User/Teacher, catalog-ты тұтынады
 └───────────────────────────────────────────────────────────┘
               │ тұтынады (тек services/selectors арқылы)
               ▼
-┌─ НЕГІЗГІ (іргеталық) домендер ───────────────────────────┐
-│  apps.catalog · apps.directory                             │  ← ортақ дерек, бір-бірінен тәуелсіз
+┌─ НЕГІЗГІ (іргеталық) домен ──────────────────────────────┐
+│  apps.catalog                                              │  ← ортақ дерек (curriculum + анықтамалық)
 └───────────────────────────────────────────────────────────┘
               │ қолданады (мұра, утилита, layout)
               ▼
@@ -51,10 +50,10 @@ oiq-main/
 └───────────────────────────────────────────────────────────┘
 ```
 
-> **Неге `accounts` бөлек қабатта:** `Teacher` (accounts) қала/мектепті (`directory`) және пәнді (`catalog`)
+> **Неге `accounts` бөлек қабатта:** `Teacher` (accounts) қала/мектепті және пәнді `catalog`-қа
 > FK арқылы сілтейді (тіркелу/профиль формасында сол таңдау тізімдерін көрсету керек). Сол себепті
-> `accounts`-қа **catalog мен directory-дің ашық интерфейсін (services/selectors) тұтынуға рұқсат етілген**
-> (§2), ал `catalog` мен `directory` бір-бірінен және `accounts`-тан толық тәуелсіз қалады. Кері бағытта
+> `accounts`-қа **catalog-тың ашық интерфейсін (services/selectors) тұтынуға рұқсат етілген**
+> (§2), ал `catalog` өзі `accounts`-тан толық тәуелсіз қалады. Кері бағытта
 > (`catalog.Question.author → accounts.Teacher`) байланыс **тек FK жол-сілтемесімен** жасалады (§4) —
 > Python импорты жоқ, сондықтан циклдік тәуелділік пайда болмайды.
 
@@ -65,12 +64,16 @@ oiq-main/
 | `core` | іргетас | абстракт база (`BaseModel` т.б.), утилита, ортақ виджет. **Concrete модель ЖОҚ** | — |
 | `ui` | іргетас | Tailwind, `base.html`, `layouts/`, ортақ `components/` | — |
 | `accounts` | негізгі | User, UserSession, Teacher | **бет ЖОҚ** — тек identity `services`/`selectors`/`decorators` (§1.1) |
-| `catalog` | негізгі | Subject, Chapter, Topic, QuestionFormat, FormatVariant, Question, Option | HTMX: format-variants |
-| `directory` | негізгі | City, School, Grade | HTMX: school-field |
+| `catalog` | негізгі | Subject, Chapter, Topic, QuestionFormat, FormatVariant, Question, Option, City, School, Grade | HTMX: format-variants, school-field |
 | `main` | өнім | — | `/` (лендинг) + ортақ `/auth/*` (login/register/logout, §1.1) |
 | `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/teaching/*` (authoring, dashboard, `/teaching/account/*`) |
 | `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learning/*` (dashboard, `/learning/account/`) |
 | `school` | өнім | `Organization`, `Membership` (мектеп-тенант, мүшелік) | `school.oiq.kz` (бөлек субдомен, §7.1): `/`, `/<org>/*` |
+
+`catalog` ішінде домен екі логикалық топқа бөлінеді (файл деңгейінде): `content.py`/`question.py` —
+curriculum (Subject/Chapter/Topic/Question), `registry.py` — анықтамалық (City/School/Grade). Екеуі де
+бір app, бір `services`/`selectors`/`admin` ашық интерфейсі арқылы сыртқа шығады (2026-07 рефакторингіне
+дейін `directory` деп бөлек app болған, файл/қалта санын азайту үшін `catalog`-қа біріктірілді).
 
 ### 1.1. Identity vs auth vs account — үш бөлек орын
 
@@ -123,14 +126,13 @@ oiq-main/
 | Кім | Нені импорттай алады | Нені импорттай АЛМАЙДЫ |
 |-----|----------------------|------------------------|
 | `core`, `ui` | Django, сыртқы кітапханалар | **ешбір `apps.*`** |
-| `catalog`, `directory` | `core` | бір-бірін, `accounts`-ты, кез келген өнім app-ты |
-| `accounts` | `catalog`/`directory`-дің **ашық интерфейсі** (`services`/`selectors`) + `core` | `catalog`/`directory`-дің **жабық ішін** (`models`, `forms`); кез келген өнім app-ты |
+| `catalog` | `core` | `accounts`-ты, кез келген өнім app-ты |
+| `accounts` | `catalog`-тың **ашық интерфейсі** (`services`/`selectors`) + `core` | `catalog`-тың **жабық ішін** (`models`, `forms`); кез келген өнім app-ты |
 | өнім app (main/teaching/learning/school) | `accounts` пен негізгі домендердің **ашық интерфейсі** (`services`/`selectors`/`decorators`) + `core` | басқа өнім app-ты; кез келген доменнің **жабық ішін** (`models`, `forms`, `_` функциялар) |
 
-**Алтын ереже:** өнім app-тар бір-бірін ешқашан импорттамайды. `catalog` мен `directory` бір-бірінің
-Python кодын импорттамайды — олар тек FK жол-сілтемесі арқылы байланысады (§4). `accounts` — ерекшелік:
-ол `catalog`/`directory`-дің **ашық интерфейсін** (models емес!) тұтынуға құқылы (себебі жоғарыдағы §1
-ескертпесі), бірақ солардың жабық ішіне (models/forms) қатынай алмайды — тек `services`/`selectors`.
+**Алтын ереже:** өнім app-тар бір-бірін ешқашан импорттамайды. `accounts` — ерекшелік:
+ол `catalog`-тың **ашық интерфейсін** (models емес!) тұтынуға құқылы (себебі жоғарыдағы §1
+ескертпесі), бірақ оның жабық ішіне (models/forms) қатынай алмайды — тек `services`/`selectors`.
 
 ---
 
@@ -381,7 +383,7 @@ App пен URL — екі бөлек нәрсе. **Бір app бірнеше URL
 Бір Django процесі, бір DB, бір сессия — тек хостқа қарап `urlconf` ауысады (монолит, gateway/token
 керек емес):
 
-- `config/urls_main.py` — `oiq.kz` (`main`, `teaching`, `learning`, `catalog`, `directory` HTMX-і).
+- `config/urls_main.py` — `oiq.kz` (`main`, `teaching`, `learning`, `catalog` HTMX-і).
 - `config/urls_school.py` — `school.oiq.kz` (тек `apps.school.urls`).
 - `settings.ROOT_URLCONF = 'config.urls_main'` — әдепкі/fallback.
 - `config/middleware.py::HostURLConfMiddleware` — хост `school.`-мен басталса `request.urlconf =
@@ -401,8 +403,8 @@ App пен URL — екі бөлек нәрсе. **Бір app бірнеше URL
 ## 8. Атау конвенциялары
 
 - «education» сөзін домен атауы ретінде **қолданба** — ол екіұшты.
-  Анықтамалық дерек (City/School/Grade) → `directory`. Мұғалім бағыты → `teaching`. Оқушы бағыты → `learning`.
-- `directory.School` (анықтамалық: city + name, мұғалімнің мектебі) мен `school.Organization` (SIS
+  Анықтамалық дерек (City/School/Grade) → `catalog` (`registry.py`). Мұғалім бағыты → `teaching`. Оқушы бағыты → `learning`.
+- `catalog.School` (анықтамалық: city + name, мұғалімнің мектебі) мен `school.Organization` (SIS
   тенанты — slug, workspace, мүшелік) **бөлек** модельдер, шатастырма. `Organization.school` FK арқылы
   анықтамалыққа сілтейді (§1 жоғарыдағы FK ережесі).
 - «Жүйелік/серіктес оқытушы» ұғымы кодта `Teacher.Type.PARTNER`-ге сәйкес — бұл `school.OrgRole.SYS_ADMIN`
@@ -442,13 +444,6 @@ source_modules =
 forbidden_modules =
     apps
 
-[importlinter:contract:foundation-independent]
-name = catalog және directory бір-бірінен тәуелсіз (FK тек жол-сілтеме)
-type = independence
-modules =
-    apps.catalog
-    apps.directory
-
 [importlinter:contract:products-independent]
 name = өнім app-тар бір-бірін импорттамайды
 type = independence
@@ -464,12 +459,12 @@ type = layers
 layers =
     apps.main | apps.teaching | apps.learning | apps.school
     apps.accounts
-    apps.catalog | apps.directory
+    apps.catalog
     core
 ```
 
-> `accounts` бөлек қабатта (§1 ескертпесі): ол `catalog`/`directory`-дің ашық интерфейсін тұтынады,
-> ал солар `accounts`-ты да, бір-бірін де импорттамайды.
+> `accounts` бөлек қабатта (§1 ескертпесі): ол `catalog`-тың ашық интерфейсін тұтынады,
+> ал `catalog` өзі `accounts`-ты импорттамайды.
 
 Тексеру: `lint-imports`. Контракт бұзылса — қате; оны кодты түзетіп шеш, контрактты әлсіретіп «жасырма».
 

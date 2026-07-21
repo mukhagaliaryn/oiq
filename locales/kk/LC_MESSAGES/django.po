@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 14:52+0500\n"
+"POT-Creation-Date: 2026-07-21 21:29+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin/user.py:79 apps/learning/templates/learning/page.html:17
-#: config/settings.py:256
+#: apps/accounts/admin/user.py:79 apps/accounts/apps.py:7
+#: apps/learning/templates/learning/page.html:17 config/settings.py:255
 msgid "Account"
 msgstr "Аккаунт"
 
@@ -47,7 +47,7 @@ msgid "Password change link"
 msgstr "Құпия сөзді өзгерту сілтемесі"
 
 #: apps/accounts/admin/user.py:143 apps/accounts/models/user.py:21
-#: apps/learning/forms/account.py:21 apps/teaching/forms/account.py:14
+#: apps/learning/forms/account.py:21 apps/teaching/forms/account.py:13
 msgid "Avatar"
 msgstr "Аватар"
 
@@ -70,28 +70,28 @@ msgstr "Серіктес"
 msgid "User"
 msgstr "Пайдаланушы"
 
-#: apps/accounts/models/teacher.py:17 apps/directory/models/location.py:11
-#: apps/directory/models/location.py:22 apps/main/forms/auth.py:45
+#: apps/accounts/models/teacher.py:17 apps/catalog/models/registry.py:11
+#: apps/catalog/models/registry.py:22 apps/main/forms/auth.py:44
 #: apps/main/templates/main/auth/register/teacher.html:147
-#: apps/teaching/forms/account.py:28
+#: apps/teaching/forms/account.py:27
 #: apps/teaching/templates/teaching/account/edit/page.html:130
 #: apps/teaching/templates/teaching/account/profile/page.html:70
 msgid "City"
 msgstr "Қала"
 
-#: apps/accounts/models/teacher.py:22 apps/directory/models/location.py:28
-#: apps/main/forms/auth.py:51
+#: apps/accounts/models/teacher.py:22 apps/catalog/models/registry.py:28
+#: apps/main/forms/auth.py:50
 #: apps/main/templates/main/auth/register/teacher.html:161
-#: apps/school/models/organization.py:11 apps/teaching/forms/account.py:34
+#: apps/school/models/organization.py:11 apps/teaching/forms/account.py:33
 #: apps/teaching/templates/teaching/account/edit/page.html:138
 #: apps/teaching/templates/teaching/account/profile/page.html:74
 msgid "School"
 msgstr "Мектеп"
 
-#: apps/accounts/models/teacher.py:27 apps/catalog/models/content.py:23
-#: apps/catalog/models/content.py:32 apps/main/forms/auth.py:57
+#: apps/accounts/models/teacher.py:27 apps/catalog/models/content.py:24
+#: apps/catalog/models/content.py:33 apps/main/forms/auth.py:56
 #: apps/main/templates/main/auth/register/teacher.html:175
-#: apps/teaching/forms/account.py:40
+#: apps/teaching/forms/account.py:39
 #: apps/teaching/templates/teaching/account/edit/page.html:147
 #: apps/teaching/templates/teaching/account/profile/page.html:78
 #: apps/teaching/templates/teaching/page.html:38
@@ -129,7 +129,7 @@ msgstr "Оқушы"
 msgid "School system user"
 msgstr "Мектеп мүшесі"
 
-#: apps/accounts/models/user.py:15 apps/teaching/forms/account.py:11
+#: apps/accounts/models/user.py:15 apps/teaching/forms/account.py:10
 #: apps/teaching/templates/teaching/account/edit/page.html:98
 msgid "Middle name"
 msgstr "Әкесінің аты"
@@ -143,7 +143,7 @@ msgid "Shows which product the user belongs to (teaching/learning/school)."
 msgstr "Қолданушы қай өнімге тиесілі екенін көрсетеді (оқытушы/оқушы/мектеп)."
 
 #: apps/accounts/models/user.py:20 apps/learning/forms/account.py:18
-#: apps/school/forms/account.py:18 apps/teaching/forms/account.py:12
+#: apps/school/forms/account.py:18 apps/teaching/forms/account.py:11
 #: apps/teaching/templates/teaching/account/edit/page.html:112
 #: apps/teaching/templates/teaching/account/profile/page.html:66
 msgid "Phone"
@@ -161,7 +161,7 @@ msgstr "Пайдаланушының аккаунты расталғанын б�
 msgid "Email address"
 msgstr "Электронды поштасы"
 
-#: apps/accounts/models/user.py:30 config/settings.py:261
+#: apps/accounts/models/user.py:30 config/settings.py:260
 msgid "Users"
 msgstr "Пайдаланушылар"
 
@@ -221,7 +221,7 @@ msgstr "Соңғы белсенділік уақыты"
 msgid "User session"
 msgstr "Пайдаланушы сеансы"
 
-#: apps/accounts/models/user.py:75 config/settings.py:266
+#: apps/accounts/models/user.py:75 config/settings.py:265
 msgid "User sessions"
 msgstr "Пайдаланушы сеанстары"
 
@@ -263,26 +263,30 @@ msgstr "Мәтін"
 msgid "Question link"
 msgstr "Сұрақ сілтемесі"
 
-#: apps/catalog/models/content.py:10 apps/catalog/models/question.py:9
-#: apps/catalog/models/question.py:28 apps/directory/models/grade.py:8
-#: apps/directory/models/location.py:8 apps/directory/models/location.py:25
+#: apps/catalog/apps.py:7
+msgid "Catalog"
+msgstr "Каталог"
+
+#: apps/catalog/models/content.py:11 apps/catalog/models/question.py:9
+#: apps/catalog/models/question.py:28 apps/catalog/models/registry.py:8
+#: apps/catalog/models/registry.py:25 apps/catalog/models/registry.py:39
 #: apps/school/models/organization.py:15
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:12
 msgid "Name"
 msgstr "Атауы"
 
-#: apps/catalog/models/content.py:11
+#: apps/catalog/models/content.py:12
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:29
 msgid "Cover"
 msgstr "Мұқаба"
 
-#: apps/catalog/models/content.py:13 apps/directory/models/grade.py:14
-#: config/settings.py:289
+#: apps/catalog/models/content.py:14 apps/catalog/models/registry.py:45
+#: config/settings.py:288
 msgid "Grades"
 msgstr "Сыныптар"
 
-#: apps/catalog/models/content.py:16 apps/catalog/models/content.py:39
-#: apps/catalog/models/content.py:58
+#: apps/catalog/models/content.py:17 apps/catalog/models/content.py:40
+#: apps/catalog/models/content.py:59
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:79
 #: apps/teaching/templates/teaching/subject/_chapters_section.html:57
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:68
@@ -291,9 +295,9 @@ msgstr "Сыныптар"
 msgid "Description"
 msgstr "Сипаттама"
 
-#: apps/catalog/models/content.py:17 apps/catalog/models/content.py:40
-#: apps/catalog/models/content.py:59 apps/catalog/models/question.py:11
-#: apps/catalog/models/question.py:30 apps/directory/models/grade.py:10
+#: apps/catalog/models/content.py:18 apps/catalog/models/content.py:41
+#: apps/catalog/models/content.py:60 apps/catalog/models/question.py:11
+#: apps/catalog/models/question.py:30 apps/catalog/models/registry.py:41
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:66
 #: apps/teaching/templates/teaching/subject/_chapters_section.html:44
 #: apps/teaching/templates/teaching/subject/_topic_item.html:95
@@ -301,18 +305,18 @@ msgstr "Сипаттама"
 msgid "Order"
 msgstr "Реті"
 
-#: apps/catalog/models/content.py:24 config/settings.py:294
+#: apps/catalog/models/content.py:25 config/settings.py:293
 #: ui/templates/layouts/teacher_layout.html:51
 msgid "Subjects"
 msgstr "Пәндер"
 
-#: apps/catalog/models/content.py:36 apps/directory/models/grade.py:13
+#: apps/catalog/models/content.py:37 apps/catalog/models/registry.py:44
 #: apps/teaching/templates/teaching/subject/question/form/page.html:58
 #: apps/teaching/templates/teaching/subject/question/import/page.html:29
 msgid "Grade"
 msgstr "Сынып"
 
-#: apps/catalog/models/content.py:38 apps/catalog/models/content.py:53
+#: apps/catalog/models/content.py:39 apps/catalog/models/content.py:54
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:70
 #: apps/teaching/templates/teaching/subject/_chapters_section.html:48
 #: apps/teaching/templates/teaching/subject/_topic_item.html:99
@@ -320,26 +324,26 @@ msgstr "Сынып"
 msgid "Title"
 msgstr "Атауы"
 
-#: apps/catalog/models/content.py:43 apps/catalog/models/content.py:56
+#: apps/catalog/models/content.py:44 apps/catalog/models/content.py:57
 #: apps/teaching/templates/teaching/subject/question/_topic_fields.html:4
 msgid "Chapter"
 msgstr "Тарау"
 
-#: apps/catalog/models/content.py:44
+#: apps/catalog/models/content.py:45
 msgid "Chapters"
 msgstr "Тараулар"
 
-#: apps/catalog/models/content.py:62 apps/catalog/models/question.py:50
+#: apps/catalog/models/content.py:63 apps/catalog/models/question.py:50
 #: apps/teaching/templates/teaching/subject/question/_topic_fields.html:8
 msgid "Topic"
 msgstr "Тақырып"
 
-#: apps/catalog/models/content.py:63
+#: apps/catalog/models/content.py:64
 msgid "Topics"
 msgstr "Тақырыптар"
 
 #: apps/catalog/models/question.py:10 apps/catalog/models/question.py:29
-#: apps/directory/models/grade.py:9
+#: apps/catalog/models/registry.py:40
 msgid "Code"
 msgstr "Код"
 
@@ -347,7 +351,7 @@ msgstr "Код"
 msgid "Question format"
 msgstr "Сұрақ форматы"
 
-#: apps/catalog/models/question.py:15 config/settings.py:299
+#: apps/catalog/models/question.py:15 config/settings.py:298
 msgid "Question formats"
 msgstr "Сұрақ форматтары"
 
@@ -411,7 +415,7 @@ msgstr "Сұрақ"
 #: apps/teaching/templates/teaching/subject/_subject_info.html:63
 #: apps/teaching/templates/teaching/subject/question/import/page.html:10
 #: apps/teaching/templates/teaching/subject/question/list/page.html:4
-#: config/settings.py:304
+#: config/settings.py:303
 msgid "Questions"
 msgstr "Сұрақтар"
 
@@ -439,70 +443,70 @@ msgstr "Жауап нұсқалары"
 msgid "#{} option"
 msgstr "№{} нұсқа"
 
-#: apps/directory/models/location.py:12 config/settings.py:279
+#: apps/catalog/models/registry.py:12 config/settings.py:278
 msgid "Cities"
 msgstr "Қалалар"
 
-#: apps/directory/models/location.py:29 config/settings.py:284
+#: apps/catalog/models/registry.py:29 config/settings.py:283
 msgid "Schools"
 msgstr "Мектептер"
 
-#: apps/directory/views.py:14 apps/main/forms/auth.py:54
-#: apps/teaching/forms/account.py:37
+#: apps/catalog/views.py:22 apps/main/forms/auth.py:53
+#: apps/teaching/forms/account.py:36
 msgid "Select school"
 msgstr "Мектепті таңдаңыз"
 
-#: apps/learning/forms/account.py:10 apps/main/forms/auth.py:18
+#: apps/learning/forms/account.py:10 apps/main/forms/auth.py:17
 #: apps/main/templates/main/auth/register/learner.html:49
 #: apps/main/templates/main/auth/register/teacher.html:223
 #: apps/main/templates/main/auth/register/teacher.html:232
 #: apps/school/forms/account.py:10
 #: apps/school/templates/school/members/_search_results.html:39
-#: apps/teaching/forms/account.py:9
+#: apps/teaching/forms/account.py:8
 #: apps/teaching/templates/teaching/account/edit/page.html:66
 msgid "First name"
 msgstr "Есімі"
 
-#: apps/learning/forms/account.py:14 apps/main/forms/auth.py:19
+#: apps/learning/forms/account.py:14 apps/main/forms/auth.py:18
 #: apps/main/templates/main/auth/register/learner.html:67
 #: apps/main/templates/main/auth/register/teacher.html:243
 #: apps/main/templates/main/auth/register/teacher.html:252
 #: apps/school/forms/account.py:14
 #: apps/school/templates/school/members/_search_results.html:43
-#: apps/teaching/forms/account.py:10
+#: apps/teaching/forms/account.py:9
 #: apps/teaching/templates/teaching/account/edit/page.html:81
 msgid "Last name"
 msgstr "Тегі"
 
 #: apps/learning/forms/account.py:27 apps/school/forms/account.py:26
-#: apps/teaching/forms/account.py:57
+#: apps/teaching/forms/account.py:56
 #: apps/teaching/templates/teaching/account/security/page.html:20
 msgid "Current password"
 msgstr "Қазіргі құпия сөз"
 
 #: apps/learning/forms/account.py:31 apps/school/forms/account.py:30
-#: apps/teaching/forms/account.py:58
+#: apps/teaching/forms/account.py:57
 #: apps/teaching/templates/teaching/account/security/page.html:47
 msgid "New password"
 msgstr "Жаңа құпия сөз"
 
 #: apps/learning/forms/account.py:35 apps/school/forms/account.py:34
-#: apps/teaching/forms/account.py:59
+#: apps/teaching/forms/account.py:58
 #: apps/teaching/templates/teaching/account/security/page.html:77
 msgid "Confirm new password"
 msgstr "Жаңа құпия сөзді қайталау"
 
 #: apps/learning/forms/account.py:43 apps/school/forms/account.py:42
-#: apps/teaching/forms/account.py:65
+#: apps/teaching/forms/account.py:64
 msgid "Passwords do not match."
 msgstr "Құпия сөздер сәйкес келмейді."
 
-#: apps/learning/forms/account.py:51 apps/teaching/forms/account.py:73
+#: apps/learning/forms/account.py:51 apps/teaching/forms/account.py:72
 #: apps/teaching/templates/teaching/account/security/page.html:150
 msgid "Confirm with your password"
 msgstr "Құпия сөзіңізбен растаңыз"
 
-#: apps/learning/forms/account.py:63 apps/teaching/forms/account.py:85
+#: apps/learning/forms/account.py:63 apps/teaching/forms/account.py:84
 msgid "Incorrect password."
 msgstr "Құпия сөз қате."
 
@@ -639,12 +643,12 @@ msgstr "Құпия сөз өзгертілді."
 msgid "Your account has been deactivated."
 msgstr "Аккаунтыңыз өшірілді."
 
-#: apps/main/forms/auth.py:13 apps/main/templates/main/auth/login/page.html:27
+#: apps/main/forms/auth.py:12 apps/main/templates/main/auth/login/page.html:27
 #: apps/school/forms/auth.py:9 apps/school/templates/school/auth/login.html:29
 msgid "Email or username"
 msgstr "Эл. пошта немесе пайдаланушы аты"
 
-#: apps/main/forms/auth.py:14 apps/main/templates/main/auth/login/page.html:46
+#: apps/main/forms/auth.py:13 apps/main/templates/main/auth/login/page.html:46
 #: apps/main/templates/main/auth/register/learner.html:86
 #: apps/main/templates/main/auth/register/learner.html:94
 #: apps/main/templates/main/auth/register/teacher.html:264
@@ -653,7 +657,7 @@ msgstr "Эл. пошта немесе пайдаланушы аты"
 msgid "Password"
 msgstr "Құпия сөз"
 
-#: apps/main/forms/auth.py:20
+#: apps/main/forms/auth.py:19
 #: apps/main/templates/main/auth/register/learner.html:29
 #: apps/main/templates/main/auth/register/teacher.html:202
 #: apps/school/templates/school/members/_search_results.html:34
@@ -661,19 +665,19 @@ msgstr "Құпия сөз"
 msgid "Email"
 msgstr "Электронды пошта"
 
-#: apps/main/forms/auth.py:22
+#: apps/main/forms/auth.py:21
 msgid "I agree with terms"
 msgstr "Шарттармен келісемін"
 
-#: apps/main/forms/auth.py:34
+#: apps/main/forms/auth.py:33
 msgid "User with this email already exists."
 msgstr "Бұл email-мен пайдаланушы тіркелген."
 
-#: apps/main/forms/auth.py:48 apps/teaching/forms/account.py:31
+#: apps/main/forms/auth.py:47 apps/teaching/forms/account.py:30
 msgid "Select city"
 msgstr "Қаланы таңдаңыз"
 
-#: apps/main/forms/auth.py:60 apps/teaching/forms/account.py:43
+#: apps/main/forms/auth.py:59 apps/teaching/forms/account.py:42
 msgid "Select subject"
 msgstr "Пәнді таңдаңыз"
 
@@ -848,6 +852,11 @@ msgstr "Аккаунтыңыз сәтті құрылды."
 msgid "Teacher account has been created successfully."
 msgstr "Мұғалім аккаунты сәтті құрылды."
 
+#: apps/school/apps.py:7 apps/school/templates/school/auth/login.html:19
+#: apps/school/templates/school/landing.html:4 config/settings.py:311
+msgid "School system"
+msgstr "Мектеп жүйесі"
+
 #: apps/school/forms/auth.py:17
 msgid ""
 "This login page is only for school system users. If you are a teacher or a "
@@ -862,7 +871,7 @@ msgstr "Slug"
 msgid "Organization"
 msgstr "Ұйым"
 
-#: apps/school/models/organization.py:20 config/settings.py:318
+#: apps/school/models/organization.py:20 config/settings.py:316
 msgid "Organizations"
 msgstr "Ұйымдар"
 
@@ -907,18 +916,13 @@ msgstr "Рөлдер"
 msgid "Membership"
 msgstr "Мүшелік"
 
-#: apps/school/models/organization.py:56 config/settings.py:323
+#: apps/school/models/organization.py:56 config/settings.py:321
 msgid "Memberships"
 msgstr "Мүшеліктер"
 
 #: apps/school/templates/school/account.html:14
 msgid "Your roles"
 msgstr "Сіздің рөліңіз"
-
-#: apps/school/templates/school/auth/login.html:19
-#: apps/school/templates/school/landing.html:4 config/settings.py:313
-msgid "School system"
-msgstr "Мектеп жүйесі"
 
 #: apps/school/templates/school/landing.html:18
 msgid "OIQ school system"
@@ -1025,59 +1029,59 @@ msgstr "Рөлдер жаңартылды."
 msgid "Member removed."
 msgstr "Мүше өшірілді."
 
-#: apps/teaching/forms/question.py:11
+#: apps/teaching/forms/question.py:10
 msgid "All grades"
 msgstr "Барлық сыныптар"
 
-#: apps/teaching/forms/question.py:12
+#: apps/teaching/forms/question.py:11
 msgid "All chapters"
 msgstr "Барлық бөлімдер"
 
-#: apps/teaching/forms/question.py:13
+#: apps/teaching/forms/question.py:12
 msgid "All topics"
 msgstr "Барлық тақырыптар"
 
-#: apps/teaching/forms/question.py:14
+#: apps/teaching/forms/question.py:13
 msgid "All formats"
 msgstr "Барлық форматтар"
 
-#: apps/teaching/forms/question.py:15
+#: apps/teaching/forms/question.py:14
 msgid "All variants"
 msgstr "Барлық нұсқалар"
 
-#: apps/teaching/forms/question.py:16
+#: apps/teaching/forms/question.py:15
 msgid "Search"
 msgstr "Іздеу"
 
-#: apps/teaching/forms/question.py:33 apps/teaching/forms/question_import.py:15
+#: apps/teaching/forms/question.py:32 apps/teaching/forms/question_import.py:14
 msgid "Select grade"
 msgstr "Сыныпты таңдаңыз"
 
-#: apps/teaching/forms/question.py:34 apps/teaching/forms/question_import.py:16
+#: apps/teaching/forms/question.py:33 apps/teaching/forms/question_import.py:15
 #: apps/teaching/views/question.py:224
 msgid "Select chapter"
 msgstr "Бөлімді таңдаңыз"
 
-#: apps/teaching/forms/question.py:66 apps/teaching/views/question.py:203
+#: apps/teaching/forms/question.py:65 apps/teaching/views/question.py:203
 msgid "No variant"
 msgstr "Нұсқасы жоқ"
 
-#: apps/teaching/forms/question_import.py:17
+#: apps/teaching/forms/question_import.py:16
 #: apps/teaching/views/question.py:225
 msgid "Select topic"
 msgstr "Тақырыпты таңдаңыз"
 
-#: apps/teaching/forms/question_import.py:18
+#: apps/teaching/forms/question_import.py:17
 #: apps/teaching/templates/teaching/subject/question/import/page.html:37
 msgid "Word file (.docx)"
 msgstr "Word файлы (.docx)"
 
-#: apps/teaching/forms/question_import.py:34
-#: apps/teaching/forms/question_import.py:37
+#: apps/teaching/forms/question_import.py:33
+#: apps/teaching/forms/question_import.py:36
 msgid "Please upload a .docx file."
 msgstr "Жарамды .docx файлын жүктеңіз."
 
-#: apps/teaching/forms/question_import.py:40
+#: apps/teaching/forms/question_import.py:39
 msgid "The file is too large."
 msgstr "Файл өлшемі тым үлкен."
 
@@ -1550,33 +1554,33 @@ msgstr "Тақырып сәтті жаңартылды."
 msgid "Topic deleted."
 msgstr "Тақырып жойылды."
 
-#: config/settings.py:138
+#: config/settings.py:137
 msgid "Kazakh"
 msgstr "Қазақша"
 
-#: config/settings.py:139
+#: config/settings.py:138
 msgid "Russian"
 msgstr "Орысша"
 
-#: config/settings.py:140
+#: config/settings.py:139
 msgid "English"
 msgstr "Ағылшынша"
 
-#: config/settings.py:202 config/settings.py:224
+#: config/settings.py:201 config/settings.py:223
 msgid "Administration"
 msgstr "Әкімшілік"
 
-#: config/settings.py:206 config/settings.py:245
+#: config/settings.py:205 config/settings.py:244
 #: ui/templates/layouts/school_layout.html:62
 #: ui/templates/layouts/teacher_layout.html:45
 msgid "Dashboard"
 msgstr "Басқару тақтасы"
 
-#: config/settings.py:229
+#: config/settings.py:228
 msgid "Website"
 msgstr "Сайт"
 
-#: config/settings.py:274
+#: config/settings.py:273
 msgid "Education"
 msgstr "Білім беру"
 

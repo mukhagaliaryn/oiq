@@ -42,23 +42,22 @@ Phosphor иконкалары, rich-text — CKEditor 5 (KaTeX қосылған 
               ↓ тұтынады (тек services/selectors арқылы)
 ACCOUNTS:  apps.accounts
               ↓ тұтынады (тек services/selectors арқылы)
-НЕГІЗГІ:   apps.catalog · apps.directory   (бір-бірінен тәуелсіз)
+НЕГІЗГІ:   apps.catalog
               ↓ қолданады (мұра, утилита, layout)
 ІРГЕТАС:   core (абстракт модель, утилита) · ui (дизайн-жүйе)
 ```
 
-> `accounts` бөлек қабатта: `Teacher` (accounts) қала/мектепті (`directory`) және пәнді (`catalog`) FK
-> арқылы сілтейді, сондықтан тіркелу/профиль формасында сол таңдау тізімдерін көрсету үшін `accounts`-қа
-> `catalog`/`directory`-дің **ашық интерфейсін** (services/selectors, models емес) тұтынуға рұқсат
-> етілген. `catalog` мен `directory` өздері бір-бірінен және `accounts`-тан толық тәуелсіз.
+> `accounts` бөлек қабатта: `Teacher` (accounts) қала/мектепті және пәнді `catalog`-қа FK арқылы сілтейді,
+> сондықтан тіркелу/профиль формасында сол таңдау тізімдерін көрсету үшін `accounts`-қа `catalog`-тың
+> **ашық интерфейсін** (services/selectors, models емес) тұтынуға рұқсат етілген. `catalog` өзі
+> `accounts`-тан толық тәуелсіз.
 
 | App | Қабат | Иеленеді (модельдер) | Беттері |
 |-----|-------|----------------------|---------|
 | `core` | іргетас | **concrete модель ЖОҚ** — тек `BaseModel`/`TimeStampedModel`/`ActiveModel` абстракттары, утилита, ортақ виджет | — |
 | `ui` | іргетас | — | Tailwind, `base.html`, `layouts/`, ортақ `components/` |
 | `accounts` | негізгі | `User`, `UserSession`, `Teacher` | **бет ЖОҚ** — тек identity `services`/`selectors`/`decorators` |
-| `catalog` | негізгі | `Subject`, `Chapter`, `Topic`, `QuestionFormat`, `FormatVariant`, `Question`, `Option` | HTMX: format-variants |
-| `directory` | негізгі | `City`, `School`, `Grade` | HTMX: school-field |
+| `catalog` | негізгі | `Subject`, `Chapter`, `Topic`, `QuestionFormat`, `FormatVariant`, `Question`, `Option`, `City`, `School`, `Grade` | HTMX: format-variants, school-field |
 | `teaching` | өнім | (болашақ) Kahoot сессия модельдері | `/teaching/*` (authoring, dashboard, `/teaching/account/*`) |
 | `learning` | өнім | (болашақ) прогресс/XP модельдері | `/learning/*` (dashboard, `/learning/account/`) |
 | `main` | өнім | — | `/` (лендинг) + тіркелу `/auth/register/*` + `main:login`/`main:logout` (`teacher`/`learner`/`admin`) |
@@ -69,7 +68,7 @@ ACCOUNTS:  apps.accounts
 - **Ашық интерфейс:** домен сыртқа тек `selectors.py` (оқу, side effect жоқ) және `services.py` (жазу/әрекет)
   арқылы сөйлеседі. Басқа app-тан `Model.objects.filter(...)` жазуға болмайды.
 - **Жабық іші:** `models.py`, `forms/`, шаблондар, `_` префиксті функциялар — басқа app көрмейді.
-- **Кросс-app FK — әрқашан жол-сілтеме** (`'catalog.Subject'`, `'accounts.Teacher'`, `'directory.Grade'`)
+- **Кросс-app FK — әрқашан жол-сілтеме** (`'catalog.Subject'`, `'accounts.Teacher'`, `'catalog.Grade'`)
   және User-ге `settings.AUTH_USER_MODEL`. Модель импорты циклдік тәуелділік тудырады.
 - **Өнім app-тар бір-бірін ешқашан импорттамайды.** Негізгі домендер де бір-бірінің Python кодын импорттамайды.
 - **Бет қай app-та?** — оны істейтін *рөл* емес, ол өзгертетін *дерек/домен* шешеді.
@@ -111,8 +110,7 @@ apps/<app>/
   ```python
   path('admin/',     admin.site.urls),
   path('core/',      include('core.urls')),                # ckeditor upload
-  path('catalog/',   include('apps.catalog.urls')),        # HTMX: format-variants
-  path('directory/', include('apps.directory.urls')),      # HTMX: school-field
+  path('catalog/',   include('apps.catalog.urls')),        # HTMX: format-variants, school-field
   path('',           include('apps.main.urls')),           # лендинг + тіркелу + main:login/logout
   path('teaching/',  include('apps.teaching.urls')),       # authoring + мұғалім dashboard + /teaching/account/*
   path('learning/',  include('apps.learning.urls')),       # оқушы dashboard + /learning/account/
@@ -267,7 +265,7 @@ Vite-тің әдепкі asset-URL/base64 түрлендіруі жұмыс іс
 Жаңа модель қосқанда оны `UNFOLD['SIDEBAR']['navigation']` тізіміне де қосу керек —
 `_('...')` атауы мен `reverse_lazy('admin:<app_label>_<model>_changelist')` сілтемесімен, әйтпесе сайдбарда көрінбейді.
 
-> App белгісі (`app_label`) — жаңа құрылымда `accounts`, `catalog`, `directory`
+> App белгісі (`app_label`) — жаңа құрылымда `accounts`, `catalog`
 > (мыс. `admin:catalog_question_changelist`), бұрынғы `core` емес.
 
 `core/admin/base.py`-да екі ортақ миксин бар:

@@ -3,8 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from apps.catalog.selectors import get_active_subjects
-from apps.directory.selectors import get_cities, get_schools_by_city
+from apps.catalog.selectors import get_active_subjects, get_cities, get_schools_by_city
 
 User = get_user_model()
 

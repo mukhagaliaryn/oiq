@@ -1,1 +1,1 @@
-from . import content, question  # noqa: F401
+from . import content, question, registry  # noqa: F401

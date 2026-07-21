@@ -2,9 +2,8 @@ from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from core.forms.base import INPUT_CLASS, RichTextTextarea
-from apps.catalog.models import Chapter, Question, Topic
+from apps.catalog.models import Chapter, Grade, Question, Topic
 from apps.catalog.selectors import get_chapters, get_format_variants_by_format_code, get_subject_grades, get_topics
-from apps.directory.models import Grade
 
 DOCX_CONTENT_TYPES = (
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

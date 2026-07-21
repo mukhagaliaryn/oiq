@@ -2,9 +2,8 @@ from django import forms
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 from core.forms.base import INPUT_CLASS, RichTextTextarea
-from apps.catalog.models import Chapter, FormatVariant, Option, Question, QuestionFormat, Topic
+from apps.catalog.models import Chapter, FormatVariant, Grade, Option, Question, QuestionFormat, Topic
 from apps.catalog.selectors import get_chapters, get_format_variants, get_question_formats, get_subject_grades, get_topics
-from apps.directory.models import Grade
 
 
 class QuestionFilterForm(forms.Form):

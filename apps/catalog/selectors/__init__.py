@@ -1,3 +1,4 @@
+from .registry import get_cities, get_schools_by_city, get_active_grades
 from .subject import (
     get_subject, get_subject_tree, get_subject_grades, get_active_subjects,
     get_chapters, get_chapter, get_chapter_topics, count_subject_topics,
@@ -11,6 +12,7 @@ from .question import (
 )
 
 __all__ = [
+    'get_cities', 'get_schools_by_city', 'get_active_grades',
     'get_subject', 'get_subject_tree', 'get_subject_grades', 'get_active_subjects',
     'get_chapters', 'get_chapter', 'get_chapter_topics', 'count_subject_topics',
     'get_topics', 'get_topic',

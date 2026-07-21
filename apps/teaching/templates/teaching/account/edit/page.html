@@ -124,7 +124,7 @@
             </div>
         </div>
 
-        {% url 'directory:school-field' as school_field_url %}
+        {% url 'catalog:school-field' as school_field_url %}
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
                 <label for="id_city" class="block ml-6 font-medium">{% translate "City" %}</label>
@@ -136,7 +136,7 @@
 
             <div class="space-y-2">
                 <label for="id_school" class="block ml-6 font-medium">{% translate "School" %}</label>
-                {% include "directory/_school_field.html" with field=teacher_form.school %}
+                {% include "catalog/_school_field.html" with field=teacher_form.school %}
                 {% for error in teacher_form.school.errors %}
                     <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                 {% endfor %}
