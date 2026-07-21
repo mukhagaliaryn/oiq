@@ -230,12 +230,16 @@ apps/<app>/
 ```python
 # apps/accounts/models/__init__.py
 from .user import User, UserSession
-from .teacher import Teacher
+from .profile import Teacher
 
 __all__ = ['User', 'UserSession', 'Teacher']
 ```
 
-- Импорт реті маңызды: тәуелдісін кейін қой (`user` → `teacher`).
+- Импорт реті маңызды: тәуелдісін кейін қой (`user` → `profile`).
+- Файл атауы модель атымен бірдей болуы шарт емес: `profile.py` — account-type-ке тән профиль
+  моделдерін топтастыратын ортақ файл (қазір тек `Teacher`, болашақта `Learner` секілді басқа
+  профиль моделі қосылса, сонда да осы файлға қосылады — `content.py`/`registry.py` (`catalog`)
+  қалай бірнеше байланысты модельді бір файлда топтастырса, солай).
 - Модель әлі жоқ болса: `models/__init__.py` бос қалады (файл бар, мазмұны жоқ).
 - `app_label`-ды қолмен жазудың қажеті жоқ — модуль `apps.<app>` пакетінің ішінде болғандықтан Django өзі анықтайды.
 
