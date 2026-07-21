@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n static %}
 
+{% block messages %}{% include "components/school/messages.html" %}{% endblock messages %}
+{% block confirm_modal %}{% include "components/school/confirm_modal.html" %}{% endblock confirm_modal %}
 
 {% block base %}
 <div x-data="{ sidebarOpen: false }" class="flex min-h-screen bg-neutral-secondary">

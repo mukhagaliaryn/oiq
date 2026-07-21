@@ -30,7 +30,7 @@ class CityAdmin(BaseModelAdmin):
 @admin.register(School)
 class SchoolAdmin(BaseModelAdmin):
     list_display = ('name', 'city')
-    search_fields = ('name', 'city')
+    search_fields = ('name', 'city__name')
     list_filter = ('city',)
 
     fieldsets = (

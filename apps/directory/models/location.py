@@ -31,4 +31,4 @@ class School(BaseModel):
         unique_together = ('city', 'name')
 
     def __str__(self):
-        return f'{self.name} — {self.city}'
+        return self.name

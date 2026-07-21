@@ -18,7 +18,7 @@
         </span>
 
         {% translate "Import this question" as include_label %}
-        {% include "components/checkbox.html" with field=item.question_form.include label=include_label wrapper_class="flex items-center gap-2 font-medium cursor-pointer" %}
+        {% include "components/product/checkbox.html" with field=item.question_form.include label=include_label wrapper_class="flex items-center gap-2 font-medium cursor-pointer" %}
     </div>
 
     {% if item.warning %}
@@ -40,12 +40,12 @@
     <div class="mt-4 grid gap-4 sm:grid-cols-3">
         <div class="space-y-2">
             <label class="block ml-6 font-medium">{% translate "Variant" %}</label>
-            {% include "components/select.html" with field=item.question_form.variant %}
+            {% include "components/product/select.html" with field=item.question_form.variant %}
         </div>
 
         <div class="space-y-2">
             <label class="block ml-6 font-medium">{% translate "Level" %}</label>
-            {% include "components/select.html" with field=item.question_form.level %}
+            {% include "components/product/select.html" with field=item.question_form.level %}
         </div>
 
         <div class="space-y-2">
@@ -67,7 +67,7 @@
 
         <div class="mt-3 space-y-3" data-options-container>
             {% for option_form in item.option_formset %}
-                {% include "teaching/subject/question/_import_option_row.html" %}
+                {% include "teaching/subject/question/import_review/_import_option_row.html" %}
             {% endfor %}
         </div>
 
@@ -81,7 +81,7 @@
         </button>
 
         <template data-option-empty-form>
-            {% include "teaching/subject/question/_import_option_row.html" with option_form=item.option_formset.empty_form %}
+            {% include "teaching/subject/question/import_review/_import_option_row.html" with option_form=item.option_formset.empty_form %}
         </template>
     </div>
 </div>

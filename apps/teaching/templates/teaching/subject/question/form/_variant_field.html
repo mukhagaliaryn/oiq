@@ -5,5 +5,5 @@
     x-init="$dispatch('variant-init', { code: '{{ initial_variant_code|default:''|escapejs }}' })"
 >
     <label class="block ml-6 font-medium">{% translate "Variant" %}</label>
-    {% include "components/select.html" with field=field %}
+    {% include "components/product/select.html" with field=field %}
 </div>

@@ -1,9 +1,9 @@
 {% with current_value=field.value|default:False %}
 <label
     for="{{ field.id_for_label }}"
-    class="{{ wrapper_class|default:'flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft' }}"
+    class="{{ wrapper_class|default:'flex items-start gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-checked:border-brand has-checked:bg-brand-soft' }}"
 >
-    <span class="relative mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border border-default transition has-[:checked]:border-brand has-[:checked]:bg-brand">
+    <span class="relative mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border border-default transition has-checked:border-brand has-checked:bg-brand">
         <input
             type="checkbox"
             name="{{ field.html_name }}"

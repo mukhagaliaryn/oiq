@@ -81,11 +81,11 @@
             action="{% url 'teaching:question-list' subject.pk %}"
             class="static lg:sticky top-18 w-full lg:w-90 shrink-0 space-y-3 rounded-3xl border border-default bg-neutral-primary p-4"
         >
-            {% include "components/select.html" with field=filter_form.grade hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
-            {% include "components/select.html" with field=filter_form.chapter hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
-            {% include "components/select.html" with field=filter_form.topic hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
-            {% include "components/select.html" with field=filter_form.format hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
-            {% include "components/select.html" with field=filter_form.variant hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/product/select.html" with field=filter_form.grade hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/product/select.html" with field=filter_form.chapter hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/product/select.html" with field=filter_form.topic hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/product/select.html" with field=filter_form.format hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
+            {% include "components/product/select.html" with field=filter_form.variant hx_get=request.path hx_target="#questions-panel" hx_swap="outerHTML" hx_push_url=True hx_include="closest form, #question-search-input" %}
         </form>
 
     </div>

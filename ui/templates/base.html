@@ -23,8 +23,8 @@
 </head>
 
 <body class="font-inter text-normal text-heading">
-    {% include "components/_messages.html" %}
-    {% include "components/_confirm_modal.html" %}
+    {% block messages %}{% include "components/product/messages.html" %}{% endblock messages %}
+    {% block confirm_modal %}{% include "components/product/confirm_modal.html" %}{% endblock confirm_modal %}
 
     <main>
         {% block base %}{% endblock base %}

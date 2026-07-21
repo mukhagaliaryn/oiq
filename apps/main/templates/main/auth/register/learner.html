@@ -146,7 +146,7 @@
 
             <div class="space-y-2">
                 {% translate "I agree with the platform's terms of use." as agreement_label %}
-                {% include "components/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
+                {% include "components/product/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
 
                 {% for error in form.agreement.errors %}
                     <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>

@@ -108,9 +108,9 @@ def question_list_view(request, pk):
     context = _question_panel_context(request, subject)
 
     if request.headers.get('HX-Request') == 'true':
-        return render(request, 'teaching/subject/question/_panel.html', context)
+        return render(request, 'teaching/subject/question/list/_panel.html', context)
 
-    return render(request, 'teaching/subject/question/list.html', context)
+    return render(request, 'teaching/subject/question/list/page.html', context)
 
 
 # -------------- question create --------------
@@ -148,7 +148,7 @@ def question_create_view(request, pk):
         formset = OptionFormSet(instance=Question(), prefix='options')
 
     return render(
-        request, 'teaching/subject/question/form.html',
+        request, 'teaching/subject/question/form/page.html',
         _question_form_context(request, subject, form, formset),
     )
 
@@ -173,7 +173,7 @@ def question_update_view(request, pk):
         formset = OptionFormSet(instance=question, prefix='options')
 
     context = _question_form_context(request, subject, form, formset, tab=request.GET.get('tab', 'question'))
-    return render(request, 'teaching/subject/question/form.html', context)
+    return render(request, 'teaching/subject/question/form/page.html', context)
 
 
 # -------------- question delete --------------
@@ -185,7 +185,7 @@ def question_delete_view(request, pk):
     deactivate_question(question)
 
     return render(
-        request, 'teaching/subject/question/_panel.html',
+        request, 'teaching/subject/question/list/_panel.html',
         _question_panel_context(request, subject),
     )
 
@@ -204,7 +204,7 @@ def question_variant_field_view(request):
         )
 
     field = _VariantForm(initial={'variant': first_variant})['variant']
-    return render(request, 'teaching/subject/question/_variant_field.html', {
+    return render(request, 'teaching/subject/question/form/_variant_field.html', {
         'field': field,
         'initial_variant_code': first_variant.code if first_variant else '',
     })

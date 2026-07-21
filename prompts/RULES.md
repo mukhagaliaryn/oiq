@@ -279,19 +279,26 @@ __all__ = [
 Екі бөлек нәрсе:
 
 - **Дизайн-жүйе / құрал-жабдық** → `ui`-де қалады: Tailwind көзі мен build (`ui/static_src`),
-  компиляцияланған CSS, `base.html`, `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`),
-  **ортақ** `components/` (`_messages`, `_confirm_modal`, `select`, `checkbox`, `radio`).
+  компиляцияланған CSS, `base.html`, `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`,
+  `school_layout`), дизайн-тіл бойынша namespace-пен бөлінген глобалды `components/product/` мен
+  `components/school/` (§6.1).
 - **Домендік шаблон** → сол app-та: `apps/<app>/templates/<app>/...`
 
 Ережелер:
 - `ui` домендік шаблонды **білмейді** (ui → домен ❌).
-- Домен ортақ `ui`-ды қолданады (домен → ui ✅): `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/select.html" %}`.
-- Компонент ортақ болса (форма элементі, modal, toast) → `ui/components/`. Нақты доменнің partial-і (`_subject_info.html`) → сол app-та.
+- Домен ортақ `ui`-ды қолданады (домен → ui ✅): `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/product/select.html" %}`.
+- Компонент глобалды болса (форма элементі, modal, toast) → `ui/templates/components/<дизайн-тіл>/`
+  (§6.1). Нақты доменнің partial-і (`_subject_info.html`) → сол app-та.
 - **Жалпы принцип:** локалды компонент/partial (тек бір app қолданады) — әрқашан сол
   `apps/<app>/templates/<app>/**` ішінде, ешқашан `ui`-де емес. Global (бірнеше app/дизайн тіл
   қолданатын) компонент/layout қана `ui`-ге шығады. `ui` өзі ішінде де бір біркелкі жиын емес —
-  дизайн тіл бөлек болса (мыс. `school` vs `teaching`/`learning`/`main`), `ui/templates/components/`
-  сол дизайн тілдер бойынша namespace-пен бөлінеді (толығы — §6.1).
+  дизайн тіл бөлек болса (§6.1), `ui/templates/components/` сол дизайн тілдер бойынша namespace-пен
+  бөлінеді, ортақ түбір `components/` де тек namespace каталогтарды ұстайды (`product/`, `school/`).
+- **`_` префиксі — тек app ішіндегі локалды partial үшін, глобалды компонентте ЖОҚ.** `_` белгісі
+  «бұл шаблон дербес бет емес, бір бетке ғана тиесілі fragment» дегенді білдіреді (§ жоғарыдағы app
+  беттер иерархиясы). `ui/templates/components/**` ішіндегі глобалды компонент өзі толыққанды ашық
+  интерфейс — қай app болса да тікелей шақырады, бір беттің ішкі бөлшегі емес — сондықтан жай атаумен:
+  `select.html`, `checkbox.html`, `messages.html`, `confirm_modal.html` (`_select.html` емес).
 - `TEMPLATES['DIRS'] = [BASE_DIR / 'ui/templates']` **және** `APP_DIRS=True` — екеуі де қосулы қалады.
 - Домендік шаблонды namespace-пен шақыр: `render(request, 'teaching/subject/detail.html', ...)`.
 - Tailwind сканері домендік шаблондарды да оқуы керек. `ui/static_src/tailwind.config.js`:
@@ -303,29 +310,42 @@ __all__ = [
   ```
   Өзгерткен соң: `cd ui/static_src && npm run build`.
 
-### 6.1. `school` — екінші дизайн-тіл (shadcn-стиль)
+### 6.1. Екі дизайн-тіл, екі глобалды компонент каталогы
 
-`school` (`school.oiq.kz`) `teaching`/`learning`/`main`-нің дөңгеленген (rounded-2xl), Phosphor-негізді
-дизайн тілін **қайталамайды** — ол dashboard/workspace admin, сондықтан **shadcn UI**-ге ұқсас (тар
-radius, нәзік border, дерекке бай) стильде жасалады. Ортақ болатыны — **тек түс жүйесі**
-(`ui/static_src/src/styles.css`-тегі `@theme`: `--color-brand`, `--color-neutral-*`,
-`--color-success/danger/warning-*` т.б.) және иконка жиынтығы (Phosphor — жаңа тәуелділік қосылмайды).
-Button, input, select, nav, card секілді блоктар — екеуінде де бөлек стильде.
+Жоба екі бөлікке бөлінеді: **school жүйесі** (`school.oiq.kz`) және **білім беру бағыты**
+(`main`/`teaching`/`learning`). Екеуінің UI дизайн тілі әдейі бөлек:
 
-Орналасу — жоғарыдағы жалпы принциптің нақты мысалы (**global → `ui`, локал → app өзінде**), бірақ
-shadcn-стиль блоктар teaching/learning-тің ортақ `components/`-іне араласпайды — бөлек namespace-те:
+- **`teaching`/`learning`/`main` — интерактивті/геймификациялық стиль.** Платформа ойын форматына
+  ұқсайтындықтан және публикалық (аутентификацияланбаған қатысушылар да көретін) бөлім болғандықтан,
+  дөңгеленген (rounded-full/2xl), Phosphor-негізді компоненттер қолданылады.
+- **`school` — таза workspace/dashboard стилі (shadcn-стиль).** Мектеп жүйесі әкімшілік/ұйымдастыру
+  ортасы болғандықтан, жинақы, ыңғайлы, "офистік" келеді: тар radius, нәзік border, дерекке бай,
+  бұлайлы/ойын элементтері жоқ.
 
-- `ui/templates/layouts/school_layout.html` — бар (sidebar + workspace layout).
-- `ui/templates/components/school/` — school-ға тән button/input/select/nav/card т.б. partial-дар
-  (мыс. `components/school/button.html`). Тек school шаблондары қолданады
-  (`{% include "components/school/button.html" %}`), teaching/learning оларды импорттамайды.
-- Ортақ `components/` (`_messages`, `_confirm_modal`, `select`, `checkbox`, `radio`) — тек
-  teaching/learning/main дизайн тіліне тиесілі, `school` оларды қолданбайды (форма/nav элементінің
-  өз shadcn-стиль баламасы болады).
+**Ортақ болатыны — тек екеу:** түс жүйесі (`ui/static_src/src/styles.css`-тегі `@theme`: `--color-brand`,
+`--color-neutral-*`, `--color-success/danger/warning/info-*` т.б. — жаңа бренд реңі керек болса
+`--color-brand-secondary` секілді атаумен сол жерге қосылады) және иконка жиынтығы (Phosphor, жаңа
+тәуелділік қосылмайды). Button, input, select, nav, card, toast, modal секілді нақты блоктардың
+**екеуінде де өз стилі бар** — бір-бірінің компонентін импорттамайды/қолданбайды.
+
+Осы бөлінудің нақты орналасуы (`ui/templates/components/` ішінде):
+
+- **`components/product/`** — `main`/`teaching`/`learning` дизайн тіліне тиесілі глобалды
+  компоненттер: `select.html`, `checkbox.html`, `radio.html`, `messages.html` (toast),
+  `confirm_modal.html` (hx-confirm modal). Тек осы үш app шаблондары қолданады:
+  `{% include "components/product/select.html" with ... %}`.
+- **`components/school/`** — `school` дизайн тіліне тиесілі баламалары: `messages.html`,
+  `confirm_modal.html` (шағын radius, дерекке бай, бұлайсыз). `button.html`/`select.html`/`input.html`
+  секілді қалған блоктар кейінгі жеке-жеке `TASK`-та бекітіледі (әзірге school беттерінде тікелей класс
+  жазылады).
+- `ui/templates/layouts/school_layout.html` `base.html`-дегі `{% block messages %}`/
+  `{% block confirm_modal %}` блоктарын `components/school/`-мен қайта анықтайды (override) — сол
+  себепті `teacher_layout`/`main_layout`/`auth_layout` ештеңе істемейді, әдепкі (`components/product/`)
+  күйінде қалады.
 - `apps/school/templates/school/...` — бұрынғысынша домендік (бет-контент) шаблондар, §6 ережесі
-  бойынша.
+  бойынша, дизайн-жүйеге қатысы жоқ.
 
-School беттерінің дизайны жеке-жеке `TASK` ретінде бекітіледі.
+School-дың қалған беттерінің (button, card, input, nav) дизайны жеке-жеке `TASK` ретінде бекітіледі.
 
 ---
 
@@ -397,7 +417,8 @@ App пен URL — екі бөлек нәрсе. **Бір app бірнеше URL
 - Өрісті нүктелі жаңартқанда `save(update_fields=[...])` қолдан.
 - **i18n:** қолданушыға көрінетін мәтін — `gettext_lazy` (кодта, бастапқы тіл `en`) немесе `{% translate %}` (шаблонда).
   Жаңа/көшкен жолдардан кейін `makemessages` → `.po`-дағы `#, fuzzy` мен бос `msgstr`-ды түзет → `compilemessages`.
-- **HTMX:** reload-сыз CRUD. OOB toast (`components/_messages.html`), қажет болса `HX-Retarget`/`HX-Reswap`/`HX-Trigger`.
+- **HTMX:** reload-сыз CRUD. OOB toast (`components/product/messages.html` немесе `school`-да
+  `components/school/messages.html`), қажет болса `HX-Retarget`/`HX-Reswap`/`HX-Trigger`.
 - Логин email немесе username бойынша (`EmailOrUsernameBackend`).
 - Rich-text (сұрақ мәтіні, сипаттама) — жобадағы дайын `oiq-ckeditor-5` бандлы (`RichTextTextarea` виджеті).
 

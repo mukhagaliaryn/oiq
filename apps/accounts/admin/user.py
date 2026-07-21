@@ -44,6 +44,7 @@ class TeacherInline(StackedInline):
     model = Teacher
     extra = 0
     tab = True
+    autocomplete_fields = ('city', 'school', 'subject')
 
 
 # -------------- UserAdmin --------------
@@ -67,6 +68,12 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
     inlines = (UserSessionInline, TeacherInline)
+
+    def get_inlines(self, request, obj=None):
+        if obj and obj.account_type == User.AccountType.TEACHER:
+            return self.inlines
+
+        return (UserSessionInline,)
 
     fieldsets = (
         (_('Account'), {

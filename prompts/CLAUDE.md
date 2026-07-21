@@ -111,15 +111,18 @@ apps/<app>/
   ```python
   path('admin/',     admin.site.urls),
   path('core/',      include('core.urls')),                # ckeditor upload
+  path('catalog/',   include('apps.catalog.urls')),        # HTMX: format-variants
+  path('directory/', include('apps.directory.urls')),      # HTMX: school-field
   path('',           include('apps.main.urls')),           # лендинг + тіркелу + main:login/logout
   path('teaching/',  include('apps.teaching.urls')),       # authoring + мұғалім dashboard + /teaching/account/*
   path('learning/',  include('apps.learning.urls')),       # оқушы dashboard + /learning/account/
-  path('catalog/',   include('apps.catalog.urls')),        # HTMX: format-variants
-  path('directory/', include('apps.directory.urls')),      # HTMX: school-field
   ```
+  `i18n_patterns`-тан тыс (префиксі жоқ): `path('i18n/', include('django.conf.urls.i18n'))` (тіл ауыстыру
+  формасы), `media/`/`static/` `serve()` (dev), және `DEBUG=True` кезде `__reload__/` (`django_browser_reload`).
 - **`config/urls_school.py`** — `school.oiq.kz`: `path('', include('apps.school.urls'))` (landing+CTA
   `''`-де, `school:login`/`school:logout` (тек `SCHOOL_USER`), ұйым workspace-і `<slug:org>/`-де,
-  бір `app_name='school'`-де біріктірілген).
+  бір `app_name='school'`-де біріктірілген). Дәл сол `i18n/`/`media/`/`static/`/`__reload__` қосымша
+  маршруттары мұнда да бар.
 
 Dev-те екі хостты да ажырату үшін `lvh.me` қолданылады (`BASE_DOMAIN=oiq.lvh.me` — `oiq.lvh.me:8000` /
 `school.oiq.lvh.me:8000`, `/etc/hosts` керек емес). Сессия cookie `.{BASE_DOMAIN}` деңгейінде ортақ.
@@ -159,18 +162,21 @@ Redirect: `apps.accounts.services.get_user_redirect_url(user)` — `SCHOOL_USER`
 
 Екі бөлек нәрсе (`prompts/RULES.md` §6):
 
-- **Дизайн-жүйе → `ui/templates/`:** `base.html` (Tailwind, htmx/Alpine/Phosphor, toast),
-  `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`, `school_layout`),
-  **ортақ** `components/` (`_messages`, `_confirm_modal`, `select`, `checkbox`, `radio`).
+- **Дизайн-жүйе → `ui/templates/`:** `base.html` (Tailwind, htmx/Alpine/Phosphor, toast/confirm-modal
+  `{% block %}`-тары), `layouts/` (`auth_layout`, `main_layout`, `teacher_layout`, `school_layout`),
+  дизайн-тіл бойынша namespace-пен бөлінген `components/product/` мен `components/school/` (§6.1).
 - **Домендік шаблон → сол app-та:** `apps/<app>/templates/<app>/...`
 
 Ережелер:
 - `ui` домендік шаблонды білмейді. Домен ортақ `ui`-ды қолданады:
-  `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/select.html" %}`.
-- **`school` — екінші, shadcn-стиль дизайн тілі** (толығы `prompts/RULES.md` §6.1): teaching/learning-тің
-  дөңгеленген Phosphor-негізді стилін қайталамайды, тек түс жүйесі (`@theme`) мен иконка жиынтығы
-  (Phosphor) ортақ. Өз блоктары `ui/templates/components/school/`-де, бөлек namespace-те, ортақ
-  `components/`-ке араласпайды.
+  `{% extends "layouts/teacher_layout.html" %}`, `{% include "components/product/select.html" %}`.
+- **Екі дизайн тілі бар, әрқайсысының өз глобалды компонент каталогы** (толығы `prompts/RULES.md` §6.1):
+  `main`/`teaching`/`learning` (интерактивті/геймификациялық, публикалық бөлім) — `components/product/`;
+  `school` (таза workspace/dashboard, shadcn-стиль) — `components/school/`. Тек түс жүйесі (`@theme`)
+  мен иконка жиынтығы (Phosphor) ортақ, button/select/toast/modal секілді блоктар екеуінде де бөлек.
+  `ui/templates/layouts/school_layout.html` `base.html`-дегі toast/modal `{% block %}`-тарын
+  `components/school/`-мен қайта анықтайды; `teacher_layout`/`main_layout`/`auth_layout`
+  `components/product/` әдепкісінде қалады.
 - `TEMPLATES['DIRS'] = [BASE_DIR / 'ui/templates']` **және** `APP_DIRS=True` — екеуі де қосулы.
 - Домендік шаблонды әрқашан namespace-пен шақыр: `render(request, 'teaching/subject/detail.html', ...)`.
 - Tailwind сканері домендік шаблондарды да оқуы керек — `tailwind.config.js`-тегі `content`-те
@@ -178,10 +184,12 @@ Redirect: `apps.accounts.services.get_user_redirect_url(user)` — `SCHOOL_USER`
 
 **UI ескертпелері:**
 - Базалық HTML `select` ыңғайсыз — дайын кастомды компонент бар:
-  `{% include "components/select.html" with field=form.field_name %}` (Alpine.js dropdown).
-- CRUD әрекеттері reload-сыз (HTMX/Alpine), нәтижесінде animate toast шығады (`components/_messages.html`,
+  `{% include "components/product/select.html" with field=form.field_name %}` (Alpine.js dropdown).
+- CRUD әрекеттері reload-сыз (HTMX/Alpine), нәтижесінде animate toast шығады
+  (`components/product/messages.html` немесе `school`-да `components/school/messages.html`,
   OOB swap). Қажет болса `HX-Retarget`/`HX-Reswap`/`HX-Trigger` тақырыптары.
-- Түстер мен мәндер айнымалы түрінде `styles.css`-те. Платформа адаптивті (мобиль/планшет/десктоп).
+- Түстер мен мәндер айнымалы түрінде `styles.css`-те (`--color-success/danger/warning/info-*`).
+  Платформа адаптивті (мобиль/планшет/десктоп).
 
 ---
 
@@ -216,8 +224,8 @@ Dev-те: `http://oiq.lvh.me:8000` (негізгі) және `http://school.oiq.
 `lvh.me` DNS-тен автоматты `127.0.0.1`-ге шешіледі, `/etc/hosts` өзгертудің қажеті жоқ.
 
 `config/settings.py` барлық құпия мәндерді `.env`-тен (`python-decouple`) оқиды:
-`SECRET_KEY`, `DB_*`, `BASE_DOMAIN` (dev әдепкісі `oiq.lvh.me`, prod-та `oiq.kz`), `EMAIL_*`, `SITE_NAME`,
-`ADMIN_URL`, `WEBSITE_URL`, `ANTHROPIC_API_KEY`, `QUESTION_IMPORT_MODEL`. `ALLOWED_HOSTS` қолмен
+`DEBUG`, `SECRET_KEY`, `DB_*`, `BASE_DOMAIN` (dev әдепкісі `oiq.lvh.me`, prod-та `oiq.kz`), `EMAIL_*`,
+`SITE_NAME`, `ADMIN_URL`, `WEBSITE_URL`, `ANTHROPIC_API_KEY`, `QUESTION_IMPORT_MODEL`. `ALLOWED_HOSTS` қолмен
 берілмейді — `BASE_DOMAIN`/`SCHOOL_HOST`-тан автоматты есептеледі (`prompts/RULES.md` §7.1).
 
 ### Фронтенд (Tailwind CSS)
@@ -288,8 +296,10 @@ AI/docx логикасы `teaching`-те, ал сұрақты **сақтау** `
 > `compilemessages` орындалуы керек. Кейінге қалдырма.
 
 `USE_I18N = True`, `LANGUAGES = (kk, ru, en)`, `LOCALE_PATHS = [BASE_DIR / 'locales']`,
-`django-modeltranslation` орнатылған (модель өрістерінің аудармасын `translation.py`-да
-`modeltranslation.translator.register` арқылы тіркеу).
+`django-modeltranslation` `INSTALLED_APPS`-та орнатылған, бірақ қазір **ешбір модельге қолданылмаған**
+(жобада `translation.py` файлы жоқ). Модель өрісін (мыс. `Question.text`) бірнеше тілде сақтау керек
+болса, сол app-та `translation.py` жасап, `modeltranslation.translator.register` арқылы тіркеу керек —
+бұл әлі жасалмаған дайындық қадамы, іске асырылған тәжірибе емес.
 
 Кодта бастапқы тіл — **ағылшынша**: `gettext_lazy('...')`. Шаблондарда: `{% translate '...' %}`.
 

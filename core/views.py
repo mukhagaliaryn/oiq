@@ -1,7 +1,7 @@
 import hashlib
 
 from PIL import Image, UnidentifiedImageError
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +13,7 @@ from core.utils.files import ckeditor_image_upload_path
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024
 
 
-@staff_member_required
+@login_required
 @csrf_protect
 @require_POST
 def ckeditor_image_upload(request):

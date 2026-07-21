@@ -147,7 +147,7 @@
                             {% translate "City" %}
                         </label>
                         <div @change="onCityChange($event)">
-                            {% include "components/select.html" with field=form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
+                            {% include "components/product/select.html" with field=form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
                         </div>
                         <span x-show="cityError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.city.errors %}
@@ -175,7 +175,7 @@
                             {% translate "Subject" %}
                         </label>
                         <div @change="formData.subject = String($event.target.value || ''); subjectError = false; saveForm()">
-                            {% include "components/select.html" with field=form.subject %}
+                            {% include "components/product/select.html" with field=form.subject %}
                         </div>
                         <span x-show="subjectError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
                         {% for error in form.subject.errors %}
@@ -325,7 +325,7 @@
                     <div class="space-y-2">
                         {% translate "I agree with the platform's terms of use." as agreement_label %}
                         <div @change="formData.agreement = $event.target.checked; saveForm()">
-                            {% include "components/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
+                            {% include "components/product/checkbox.html" with field=form.agreement label=agreement_label wrapper_class="flex items-center gap-3 rounded-full border border-default px-6 py-3 cursor-pointer transition has-[:checked]:border-brand has-[:checked]:bg-brand-soft" %}
                         </div>
                         {% for error in form.agreement.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>

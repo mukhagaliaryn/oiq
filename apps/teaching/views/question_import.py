@@ -120,7 +120,7 @@ def question_import_view(request, pk):
                 result = run_question_import(upload_form.cleaned_data['file'].read(), import_id)
             except QuestionImportError as error:
                 messages.error(request, str(error))
-                return render(request, 'teaching/subject/question/import.html', {
+                return render(request, 'teaching/subject/question/import/page.html', {
                     'subject': subject, 'upload_form': upload_form,
                     'topic_fields_url': reverse('teaching:question-topic-fields'),
                 })
@@ -133,7 +133,7 @@ def question_import_view(request, pk):
                     default_storage.delete(path)
 
                 messages.error(request, _('No importable questions were found in this file.'))
-                return render(request, 'teaching/subject/question/import.html', {
+                return render(request, 'teaching/subject/question/import/page.html', {
                     'subject': subject, 'upload_form': upload_form,
                     'topic_fields_url': reverse('teaching:question-topic-fields'),
                 })
@@ -149,7 +149,7 @@ def question_import_view(request, pk):
     else:
         upload_form = QuestionImportUploadForm(subject=subject)
 
-    return render(request, 'teaching/subject/question/import.html', {
+    return render(request, 'teaching/subject/question/import/page.html', {
         'subject': subject, 'upload_form': upload_form,
         'topic_fields_url': reverse('teaching:question-topic-fields'),
     })
@@ -170,7 +170,7 @@ def question_import_review_view(request, pk, import_id):
     unsupported = [_parsed_question_from_dict(question) for question in data['unsupported']]
     items = _question_forms_from_parsed(questions)
 
-    return render(request, 'teaching/subject/question/import_review.html', {
+    return render(request, 'teaching/subject/question/import_review/page.html', {
         'subject': subject,
         'topic': topic,
         'import_id': import_id,
@@ -227,7 +227,7 @@ def question_import_confirm_view(request, pk, import_id):
             all_valid = False
 
     if not all_valid:
-        return render(request, 'teaching/subject/question/import_review.html', {
+        return render(request, 'teaching/subject/question/import_review/page.html', {
             'subject': subject,
             'topic': topic,
             'import_id': import_id,

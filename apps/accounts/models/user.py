@@ -19,7 +19,11 @@ class User(AbstractUser):
     )
     phone = models.CharField(_('Phone'), max_length=32, blank=True)
     avatar = models.ImageField(_('Avatar'), upload_to=user_avatar_upload_path, blank=True, null=True)
-    is_verified = models.BooleanField(_('Is verified'), default=False)
+    is_verified = models.BooleanField(
+        _('Is verified'), default=False,
+        help_text=_('Marks whether the user has confirmed their account (e.g. via email).'),
+    )
+    email = models.EmailField(_('Email address'), blank=True)
 
     class Meta:
         verbose_name = _('User')
@@ -32,6 +36,8 @@ class User(AbstractUser):
     @property
     def display_name(self):
         return ' '.join(filter(None, [self.first_name, self.last_name])) or self.username
+
+    display_name.fget.short_description = _('Full name')
 
     @property
     def full_name(self):

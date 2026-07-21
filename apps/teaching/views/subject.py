@@ -21,7 +21,7 @@ from apps.accounts.decorators import partner_teacher_required
 def _render_with_toast(request, template, context, msg):
     messages.success(request, msg)
     html = render_to_string(template, context, request=request)
-    toast = render_to_string('components/_messages.html', {}, request=request)
+    toast = render_to_string('components/product/messages.html', {}, request=request)
     return HttpResponse(html + f'<div hx-swap-oob="beforeend:body">{toast}</div>', content_type='text/html; charset=utf-8')
 
 
@@ -129,7 +129,7 @@ def subject_update_view(request, pk):
             info_html = render_to_string(
                 'teaching/subject/_subject_info.html', _subject_info_context(subject), request=request
             )
-            toast_html = render_to_string('components/_messages.html', {}, request=request)
+            toast_html = render_to_string('components/product/messages.html', {}, request=request)
             body = info_html + f'<div hx-swap-oob="beforeend:body">{toast_html}</div>'
             response = HttpResponse(body, content_type='text/html; charset=utf-8')
             response['HX-Retarget'] = '#subject-info'
@@ -169,7 +169,7 @@ def subject_detail_view(request, pk):
     context['grades'] = grades
     context.update(_subject_info_context(subject))
 
-    return render(request, 'teaching/subject/detail.html', context)
+    return render(request, 'teaching/subject/page.html', context)
 
 
 # Chapter

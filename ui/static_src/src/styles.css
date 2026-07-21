@@ -36,7 +36,12 @@
   --color-warning: var(--color-orange-500);
   --color-warning-medium: var(--color-orange-100);
   --color-warning-strong: var(--color-orange-700);
-  
+
+  --color-info-soft: var(--color-sky-50);
+  --color-info: var(--color-sky-600);
+  --color-info-medium: var(--color-sky-100);
+  --color-info-strong: var(--color-sky-800);
+
   --color-dark-soft: var(--color-neutral-800);
   --color-dark: var(--color-neutral-800);
   --color-dark-strong: var(--color-neutral-900);
@@ -168,7 +173,7 @@
 }
 
 .toast-info {
-  @apply border text-amber-500;
+  @apply border text-info;
 }
 
 .toast-warning {

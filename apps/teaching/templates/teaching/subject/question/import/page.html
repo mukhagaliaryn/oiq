@@ -27,7 +27,7 @@
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="space-y-2">
                     <label class="block ml-6 font-medium">{% translate "Grade" %}</label>
-                    {% include "components/select.html" with field=upload_form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
+                    {% include "components/product/select.html" with field=upload_form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
                 </div>
 
                 {% include "teaching/subject/question/_topic_fields.html" with chapter_field=upload_form.chapter topic_field=upload_form.topic %}

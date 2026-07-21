@@ -128,7 +128,7 @@
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
                 <label for="id_city" class="block ml-6 font-medium">{% translate "City" %}</label>
-                {% include "components/select.html" with field=teacher_form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
+                {% include "components/product/select.html" with field=teacher_form.city hx_get=school_field_url hx_target="#school-field" hx_swap="outerHTML" %}
                 {% for error in teacher_form.city.errors %}
                     <span class="block mt-1 text-normal text-danger">{{ error }}</span>
                 {% endfor %}
@@ -145,7 +145,7 @@
 
         <div class="max-w-md space-y-2">
             <label for="id_subject" class="block ml-6 font-medium">{% translate "Subject" %}</label>
-            {% include "components/select.html" with field=teacher_form.subject %}
+            {% include "components/product/select.html" with field=teacher_form.subject %}
             {% for error in teacher_form.subject.errors %}
                 <span class="block mt-1 text-normal text-danger">{{ error }}</span>
             {% endfor %}

@@ -56,7 +56,7 @@
                 <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                     <div class="space-y-2">
                         <label class="block ml-6 font-medium">{% translate "Grade" %}</label>
-                        {% include "components/select.html" with field=form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
+                        {% include "components/product/select.html" with field=form.grade hx_get=topic_fields_url hx_target="#topic-fields" hx_swap="outerHTML" %}
                     </div>
 
                     {% include "teaching/subject/question/_topic_fields.html" with chapter_field=form.chapter topic_field=form.topic %}
@@ -73,14 +73,14 @@
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div class="space-y-2">
                         <label class="block ml-6 font-medium">{% translate "Format" %}</label>
-                        {% include "components/select.html" with field=form.format hx_get=variants_url hx_target="#variant-field" hx_swap="outerHTML" %}
+                        {% include "components/product/select.html" with field=form.format hx_get=variants_url hx_target="#variant-field" hx_swap="outerHTML" %}
                     </div>
 
-                    {% include "teaching/subject/question/_variant_field.html" with field=form.variant initial_variant_code=initial_variant_code %}
+                    {% include "teaching/subject/question/form/_variant_field.html" with field=form.variant initial_variant_code=initial_variant_code %}
 
                     <div class="space-y-2">
                         <label class="block ml-6 font-medium">{% translate "Level" %}</label>
-                        {% include "components/select.html" with field=form.level %}
+                        {% include "components/product/select.html" with field=form.level %}
                     </div>
 
                     <div class="space-y-2">
@@ -99,7 +99,7 @@
 
                 <div id="options-container" class="mt-4 space-y-3">
                     {% for option_form in formset %}
-                        {% include "teaching/subject/question/_option_row.html" %}
+                        {% include "teaching/subject/question/form/_option_row.html" %}
                     {% endfor %}
                 </div>
 
@@ -146,7 +146,7 @@
     </form>
 
     <template id="option-empty-form">
-        {% include "teaching/subject/question/_option_row.html" with option_form=formset.empty_form %}
+        {% include "teaching/subject/question/form/_option_row.html" with option_form=formset.empty_form %}
     </template>
 </div>
 {% endblock teacher_layout %}

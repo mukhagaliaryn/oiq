@@ -37,7 +37,7 @@ def profile_view(request, username):
         'profile_user': profile_user,
         'is_own_profile': profile_user == request.user,
     }
-    return render(request, 'teaching/account/profile.html', context)
+    return render(request, 'teaching/account/profile/page.html', context)
 
 
 # -------------- account edit view --------------
@@ -90,7 +90,7 @@ def account_edit_view(request):
         'user_form': basic_form,
         'teacher_form': teacher_form,
     }
-    return render(request, 'teaching/account/edit.html', context)
+    return render(request, 'teaching/account/edit/page.html', context)
 
 
 # -------------- account settings view --------------
@@ -102,7 +102,7 @@ def account_settings_view(request):
         )
 
     form = _SettingsForm(initial={'language': get_language()})
-    return render(request, 'teaching/account/settings.html', {'form': form})
+    return render(request, 'teaching/account/settings/page.html', {'form': form})
 
 
 # -------------- account security view --------------
@@ -144,4 +144,4 @@ def account_security_view(request):
         'password_form': password_form,
         'delete_form': delete_form,
     }
-    return render(request, 'teaching/account/security.html', context)
+    return render(request, 'teaching/account/security/page.html', context)

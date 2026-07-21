@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 13:31+0500\n"
+"POT-Creation-Date: 2026-07-21 14:52+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,41 +17,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/accounts/admin/user.py:72 apps/learning/templates/learning/page.html:17
+#: apps/accounts/admin/user.py:79 apps/learning/templates/learning/page.html:17
 #: config/settings.py:256
 msgid "Account"
 msgstr "Аккаунт"
 
-#: apps/accounts/admin/user.py:76
+#: apps/accounts/admin/user.py:83
 msgid "Personal information"
 msgstr "Личные данные"
 
-#: apps/accounts/admin/user.py:81
+#: apps/accounts/admin/user.py:88
 msgid "Status"
 msgstr "Статус"
 
-#: apps/accounts/admin/user.py:86
+#: apps/accounts/admin/user.py:93
 msgid "Permissions"
 msgstr "Права доступа"
 
-#: apps/accounts/admin/user.py:90
+#: apps/accounts/admin/user.py:97
 msgid "Important dates"
 msgstr "Важные даты"
 
-#: apps/accounts/admin/user.py:97
+#: apps/accounts/admin/user.py:104
 msgid "Create user"
 msgstr "Создать пользователя"
 
-#: apps/accounts/admin/user.py:133
+#: apps/accounts/admin/user.py:140
 msgid "Password change link"
 msgstr "Ссылка для смены пароля"
 
-#: apps/accounts/admin/user.py:136 apps/accounts/models/user.py:21
+#: apps/accounts/admin/user.py:143 apps/accounts/models/user.py:21
 #: apps/learning/forms/account.py:21 apps/teaching/forms/account.py:14
 msgid "Avatar"
 msgstr "Аватар"
 
-#: apps/accounts/admin/user.py:137
+#: apps/accounts/admin/user.py:144
 msgid "Password change"
 msgstr "Смена пароля"
 
@@ -60,12 +60,12 @@ msgid "Regular"
 msgstr "Обычный"
 
 #: apps/accounts/models/teacher.py:10
-#: apps/teaching/templates/teaching/account/profile.html:37
+#: apps/teaching/templates/teaching/account/profile/page.html:37
 msgid "Partner"
 msgstr "Партнёр"
 
-#: apps/accounts/models/teacher.py:13 apps/accounts/models/user.py:25
-#: apps/accounts/models/user.py:50 apps/school/models/organization.py:42
+#: apps/accounts/models/teacher.py:13 apps/accounts/models/user.py:29
+#: apps/accounts/models/user.py:56 apps/school/models/organization.py:42
 #: apps/school/templates/school/members/list.html:17
 msgid "User"
 msgstr "Пользователь"
@@ -74,8 +74,8 @@ msgstr "Пользователь"
 #: apps/directory/models/location.py:22 apps/main/forms/auth.py:45
 #: apps/main/templates/main/auth/register/teacher.html:147
 #: apps/teaching/forms/account.py:28
-#: apps/teaching/templates/teaching/account/edit.html:130
-#: apps/teaching/templates/teaching/account/profile.html:70
+#: apps/teaching/templates/teaching/account/edit/page.html:130
+#: apps/teaching/templates/teaching/account/profile/page.html:70
 msgid "City"
 msgstr "Город"
 
@@ -83,8 +83,8 @@ msgstr "Город"
 #: apps/main/forms/auth.py:51
 #: apps/main/templates/main/auth/register/teacher.html:161
 #: apps/school/models/organization.py:11 apps/teaching/forms/account.py:34
-#: apps/teaching/templates/teaching/account/edit.html:138
-#: apps/teaching/templates/teaching/account/profile.html:74
+#: apps/teaching/templates/teaching/account/edit/page.html:138
+#: apps/teaching/templates/teaching/account/profile/page.html:74
 msgid "School"
 msgstr "Школа"
 
@@ -92,8 +92,8 @@ msgstr "Школа"
 #: apps/catalog/models/content.py:32 apps/main/forms/auth.py:57
 #: apps/main/templates/main/auth/register/teacher.html:175
 #: apps/teaching/forms/account.py:40
-#: apps/teaching/templates/teaching/account/edit.html:147
-#: apps/teaching/templates/teaching/account/profile.html:78
+#: apps/teaching/templates/teaching/account/edit/page.html:147
+#: apps/teaching/templates/teaching/account/profile/page.html:78
 #: apps/teaching/templates/teaching/page.html:38
 msgid "Subject"
 msgstr "Предмет"
@@ -108,7 +108,7 @@ msgstr "Дата принятия соглашения"
 
 #: apps/accounts/models/teacher.py:38 apps/accounts/models/user.py:11
 #: apps/main/templates/main/auth/register/page.html:24
-#: apps/teaching/templates/teaching/account/profile.html:33
+#: apps/teaching/templates/teaching/account/profile/page.html:33
 msgid "Teacher"
 msgstr "Учитель"
 
@@ -127,10 +127,10 @@ msgstr "Ученик"
 
 #: apps/accounts/models/user.py:13
 msgid "School system user"
-msgstr "Пользователь школьной системы"
+msgstr "Участник школы"
 
 #: apps/accounts/models/user.py:15 apps/teaching/forms/account.py:11
-#: apps/teaching/templates/teaching/account/edit.html:98
+#: apps/teaching/templates/teaching/account/edit/page.html:98
 msgid "Middle name"
 msgstr "Отчество"
 
@@ -146,72 +146,84 @@ msgstr ""
 
 #: apps/accounts/models/user.py:20 apps/learning/forms/account.py:18
 #: apps/school/forms/account.py:18 apps/teaching/forms/account.py:12
-#: apps/teaching/templates/teaching/account/edit.html:112
-#: apps/teaching/templates/teaching/account/profile.html:66
+#: apps/teaching/templates/teaching/account/edit/page.html:112
+#: apps/teaching/templates/teaching/account/profile/page.html:66
 msgid "Phone"
 msgstr "Телефон"
 
-#: apps/accounts/models/user.py:22
+#: apps/accounts/models/user.py:23
 msgid "Is verified"
 msgstr "Подтверждён"
 
-#: apps/accounts/models/user.py:26 config/settings.py:261
+#: apps/accounts/models/user.py:24
+msgid "Marks whether the user has confirmed their account (e.g. via email)."
+msgstr "Показывает, подтвердил ли пользователь свой аккаунт (например, через email)."
+
+#: apps/accounts/models/user.py:26
+msgid "Email address"
+msgstr "Адрес электронной почты"
+
+#: apps/accounts/models/user.py:30 config/settings.py:261
 msgid "Users"
 msgstr "Пользователи"
 
-#: apps/accounts/models/user.py:44
+#: apps/accounts/models/user.py:40
+msgid "Full name"
+msgstr "ФИО"
+
+#: apps/accounts/models/user.py:50
 msgid "Desktop"
 msgstr "Компьютер"
 
-#: apps/accounts/models/user.py:45
+#: apps/accounts/models/user.py:51
 msgid "Mobile"
 msgstr "Мобильный"
 
-#: apps/accounts/models/user.py:46
+#: apps/accounts/models/user.py:52
 msgid "Tablet"
 msgstr "Планшет"
 
-#: apps/accounts/models/user.py:47
+#: apps/accounts/models/user.py:53
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: apps/accounts/models/user.py:53
+#: apps/accounts/models/user.py:59
 msgid "Session key"
 msgstr "Ключ сессии"
 
-#: apps/accounts/models/user.py:56
+#: apps/accounts/models/user.py:62
 msgid "Device type"
 msgstr "Тип устройства"
 
-#: apps/accounts/models/user.py:59
+#: apps/accounts/models/user.py:65
 msgid "Device name"
 msgstr "Название устройства"
 
-#: apps/accounts/models/user.py:60
+#: apps/accounts/models/user.py:66
 msgid "Browser"
 msgstr "Браузер"
 
-#: apps/accounts/models/user.py:61
+#: apps/accounts/models/user.py:67
 msgid "Operating system"
 msgstr "Операционная система"
 
-#: apps/accounts/models/user.py:63
+#: apps/accounts/models/user.py:69
 msgid "IP address"
 msgstr "IP-адрес"
 
-#: apps/accounts/models/user.py:64
+#: apps/accounts/models/user.py:70
 msgid "User agent"
 msgstr "User agent"
 
-#: apps/accounts/models/user.py:65
+#: apps/accounts/models/user.py:71
 msgid "Last activity at"
 msgstr "Дата последней активности"
 
-#: apps/accounts/models/user.py:68
+#: apps/accounts/models/user.py:74
 msgid "User session"
 msgstr "Сессия пользователя"
 
-#: apps/accounts/models/user.py:69 config/settings.py:266
+#: apps/accounts/models/user.py:75 config/settings.py:266
 msgid "User sessions"
 msgstr "Сессии пользователей"
 
@@ -297,8 +309,8 @@ msgid "Subjects"
 msgstr "Предметы"
 
 #: apps/catalog/models/content.py:36 apps/directory/models/grade.py:13
-#: apps/teaching/templates/teaching/subject/question/form.html:58
-#: apps/teaching/templates/teaching/subject/question/import.html:29
+#: apps/teaching/templates/teaching/subject/question/form/page.html:58
+#: apps/teaching/templates/teaching/subject/question/import/page.html:29
 msgid "Grade"
 msgstr "Класс"
 
@@ -342,7 +354,7 @@ msgid "Question formats"
 msgstr "Форматы вопросов"
 
 #: apps/catalog/models/question.py:26 apps/catalog/models/question.py:59
-#: apps/teaching/templates/teaching/subject/question/form.html:75
+#: apps/teaching/templates/teaching/subject/question/form/page.html:75
 msgid "Format"
 msgstr "Формат"
 
@@ -371,26 +383,26 @@ msgid "Author"
 msgstr "Автор"
 
 #: apps/catalog/models/question.py:63
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:42
-#: apps/teaching/templates/teaching/subject/question/_variant_field.html:7
+#: apps/teaching/templates/teaching/subject/question/form/_variant_field.html:7
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:42
 msgid "Variant"
 msgstr "Вариант"
 
 #: apps/catalog/models/question.py:65
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:47
-#: apps/teaching/templates/teaching/subject/question/form.html:82
+#: apps/teaching/templates/teaching/subject/question/form/page.html:82
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:47
 msgid "Level"
 msgstr "Уровень"
 
 #: apps/catalog/models/question.py:66
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:52
-#: apps/teaching/templates/teaching/subject/question/form.html:87
+#: apps/teaching/templates/teaching/subject/question/form/page.html:87
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:52
 msgid "Time limit (sec)"
 msgstr "Лимит времени (сек)"
 
 #: apps/catalog/models/question.py:69 apps/catalog/models/question.py:80
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:17
-#: apps/teaching/templates/teaching/subject/question/form.html:41
+#: apps/teaching/templates/teaching/subject/question/form/page.html:41
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:17
 msgid "Question"
 msgstr "Вопрос"
 
@@ -399,8 +411,8 @@ msgstr "Вопрос"
 #: apps/teaching/templates/teaching/page.html:65
 #: apps/teaching/templates/teaching/subject/_subject_info.html:49
 #: apps/teaching/templates/teaching/subject/_subject_info.html:63
-#: apps/teaching/templates/teaching/subject/question/import.html:10
-#: apps/teaching/templates/teaching/subject/question/list.html:4
+#: apps/teaching/templates/teaching/subject/question/import/page.html:10
+#: apps/teaching/templates/teaching/subject/question/list/page.html:4
 #: config/settings.py:304
 msgid "Questions"
 msgstr "Вопросы"
@@ -449,7 +461,7 @@ msgstr "Выберите школу"
 #: apps/school/forms/account.py:10
 #: apps/school/templates/school/members/_search_results.html:39
 #: apps/teaching/forms/account.py:9
-#: apps/teaching/templates/teaching/account/edit.html:66
+#: apps/teaching/templates/teaching/account/edit/page.html:66
 msgid "First name"
 msgstr "Имя"
 
@@ -460,25 +472,25 @@ msgstr "Имя"
 #: apps/school/forms/account.py:14
 #: apps/school/templates/school/members/_search_results.html:43
 #: apps/teaching/forms/account.py:10
-#: apps/teaching/templates/teaching/account/edit.html:81
+#: apps/teaching/templates/teaching/account/edit/page.html:81
 msgid "Last name"
 msgstr "Фамилия"
 
 #: apps/learning/forms/account.py:27 apps/school/forms/account.py:26
 #: apps/teaching/forms/account.py:57
-#: apps/teaching/templates/teaching/account/security.html:20
+#: apps/teaching/templates/teaching/account/security/page.html:20
 msgid "Current password"
 msgstr "Текущий пароль"
 
 #: apps/learning/forms/account.py:31 apps/school/forms/account.py:30
 #: apps/teaching/forms/account.py:58
-#: apps/teaching/templates/teaching/account/security.html:47
+#: apps/teaching/templates/teaching/account/security/page.html:47
 msgid "New password"
 msgstr "Новый пароль"
 
 #: apps/learning/forms/account.py:35 apps/school/forms/account.py:34
 #: apps/teaching/forms/account.py:59
-#: apps/teaching/templates/teaching/account/security.html:77
+#: apps/teaching/templates/teaching/account/security/page.html:77
 msgid "Confirm new password"
 msgstr "Повторите новый пароль"
 
@@ -488,7 +500,7 @@ msgid "Passwords do not match."
 msgstr "Пароли не совпадают."
 
 #: apps/learning/forms/account.py:51 apps/teaching/forms/account.py:73
-#: apps/teaching/templates/teaching/account/security.html:150
+#: apps/teaching/templates/teaching/account/security/page.html:150
 msgid "Confirm with your password"
 msgstr "Подтвердите паролем"
 
@@ -501,12 +513,12 @@ msgstr "Неверный пароль."
 #: apps/school/templates/school/account.html:4
 #: apps/school/templates/school/account.html:9
 #: apps/school/templates/school/workspace/dashboard.html:40
-#: ui/templates/layouts/school_layout.html:88
+#: ui/templates/layouts/school_layout.html:90
 msgid "My account"
 msgstr "Мой аккаунт"
 
 #: apps/learning/templates/learning/account.html:12
-#: apps/teaching/templates/teaching/account/profile.html:13
+#: apps/teaching/templates/teaching/account/profile/page.html:13
 msgid "Back to dashboard"
 msgstr "Вернуться к панели"
 
@@ -521,37 +533,37 @@ msgstr "Профиль"
 
 #: apps/learning/templates/learning/account.html:36
 #: apps/school/templates/school/account.html:45
-#: apps/teaching/templates/teaching/account/edit.html:157
+#: apps/teaching/templates/teaching/account/edit/page.html:157
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:87
 msgid "Save changes"
 msgstr "Сохранить изменения"
 
 #: apps/learning/templates/learning/account.html:42
 #: apps/learning/templates/learning/account.html:47
-#: apps/teaching/templates/teaching/account/settings.html:11
-#: apps/teaching/templates/teaching/account/settings.html:18
+#: apps/teaching/templates/teaching/account/settings/page.html:11
+#: apps/teaching/templates/teaching/account/settings/page.html:18
 msgid "Language"
 msgstr "Язык"
 
 #: apps/learning/templates/learning/account.html:57
 #: apps/school/templates/school/account.html:51
-#: apps/teaching/templates/teaching/account/security.html:11
+#: apps/teaching/templates/teaching/account/security/page.html:11
 msgid "Change password"
 msgstr "Изменить пароль"
 
 #: apps/learning/templates/learning/account.html:77
 #: apps/school/templates/school/account.html:74
-#: apps/teaching/templates/teaching/account/security.html:109
+#: apps/teaching/templates/teaching/account/security/page.html:109
 msgid "Update password"
 msgstr "Обновить пароль"
 
 #: apps/learning/templates/learning/account.html:83
-#: apps/teaching/templates/teaching/account/security.html:116
+#: apps/teaching/templates/teaching/account/security/page.html:116
 msgid "Danger zone"
 msgstr "Опасная зона"
 
 #: apps/learning/templates/learning/account.html:84
-#: apps/teaching/templates/teaching/account/security.html:117
+#: apps/teaching/templates/teaching/account/security/page.html:117
 msgid ""
 "Deactivating your account will sign you out and block access until support "
 "restores it."
@@ -560,7 +572,7 @@ msgstr ""
 "не восстановит его."
 
 #: apps/learning/templates/learning/account.html:99
-#: apps/teaching/templates/teaching/account/security.html:127
+#: apps/teaching/templates/teaching/account/security/page.html:127
 msgid "Deactivate account"
 msgstr "Деактивировать аккаунт"
 
@@ -574,7 +586,7 @@ msgid "Personal learning and classroom tasks"
 msgstr "Индивидуальное обучение и задания класса"
 
 #: apps/learning/templates/learning/page.html:20
-#: ui/templates/layouts/school_layout.html:159
+#: ui/templates/layouts/school_layout.html:161
 #: ui/templates/layouts/teacher_layout.html:157
 msgid "Sign out"
 msgstr "Выйти"
@@ -647,7 +659,7 @@ msgstr "Пароль"
 #: apps/main/templates/main/auth/register/learner.html:29
 #: apps/main/templates/main/auth/register/teacher.html:202
 #: apps/school/templates/school/members/_search_results.html:34
-#: apps/teaching/templates/teaching/account/profile.html:62
+#: apps/teaching/templates/teaching/account/profile/page.html:62
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -735,7 +747,7 @@ msgstr "Вы успешно зарегистрировались на платф
 #: apps/school/templates/school/auth/login.html:3
 #: apps/school/templates/school/auth/login.html:18
 #: apps/school/templates/school/auth/login.html:79
-#: apps/school/templates/school/landing.html:17
+#: apps/school/templates/school/landing.html:25
 msgid "Sign in"
 msgstr "Войти"
 
@@ -911,11 +923,11 @@ msgstr "Ваши роли"
 msgid "School system"
 msgstr "Школьная система"
 
-#: apps/school/templates/school/landing.html:10
+#: apps/school/templates/school/landing.html:18
 msgid "OIQ school system"
 msgstr "Школьная система OIQ"
 
-#: apps/school/templates/school/landing.html:12
+#: apps/school/templates/school/landing.html:20
 msgid ""
 "Attendance, timetable and classroom management for your school — all in one "
 "workspace."
@@ -923,11 +935,11 @@ msgstr ""
 "Посещаемость, расписание и управление классами вашей школы — всё в одном "
 "workspace."
 
-#: apps/school/templates/school/landing.html:24
+#: apps/school/templates/school/landing.html:32
 msgid "My schools"
 msgstr "Мои школы"
 
-#: apps/school/templates/school/landing.html:35
+#: apps/school/templates/school/landing.html:43
 msgid "You are not a member of any school yet."
 msgstr "Вы пока не являетесь участником ни одной школы."
 
@@ -946,7 +958,7 @@ msgstr "Зарегистрировать и добавить"
 #: apps/school/templates/school/members/list.html:4
 #: apps/school/templates/school/members/list.html:9
 #: apps/school/templates/school/workspace/dashboard.html:54
-#: ui/templates/layouts/school_layout.html:74
+#: ui/templates/layouts/school_layout.html:76
 msgid "Members"
 msgstr "Участники"
 
@@ -960,7 +972,7 @@ msgstr[1] "%(counter)s человек в этой школе"
 #: apps/school/templates/school/members/list.html:63
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:105
 #: apps/teaching/templates/teaching/subject/_topic_item.html:134
-#: apps/teaching/templates/teaching/subject/question/form.html:142
+#: apps/teaching/templates/teaching/subject/question/form/page.html:142
 msgid "Save"
 msgstr "Сохранить"
 
@@ -1059,7 +1071,7 @@ msgid "Select topic"
 msgstr "Выберите тему"
 
 #: apps/teaching/forms/question_import.py:18
-#: apps/teaching/templates/teaching/subject/question/import.html:37
+#: apps/teaching/templates/teaching/subject/question/import/page.html:37
 msgid "Word file (.docx)"
 msgstr "Файл Word (.docx)"
 
@@ -1104,43 +1116,43 @@ msgstr "Не удалось прочитать ответ сервиса ИИ."
 #: apps/teaching/templates/teaching/account/_tabs.html:17
 #: apps/teaching/templates/teaching/account/_tabs.html:60
 #: apps/teaching/templates/teaching/account/_tabs.html:114
-#: apps/teaching/templates/teaching/account/edit.html:4
-#: apps/teaching/templates/teaching/account/profile.html:54
+#: apps/teaching/templates/teaching/account/edit/page.html:4
+#: apps/teaching/templates/teaching/account/profile/page.html:54
 msgid "Edit profile"
 msgstr "Редактировать профиль"
 
 #: apps/teaching/templates/teaching/account/_tabs.html:20
 #: apps/teaching/templates/teaching/account/_tabs.html:72
 #: apps/teaching/templates/teaching/account/_tabs.html:127
-#: apps/teaching/templates/teaching/account/settings.html:4
+#: apps/teaching/templates/teaching/account/settings/page.html:4
 msgid "Settings"
 msgstr "Настройки"
 
 #: apps/teaching/templates/teaching/account/_tabs.html:23
 #: apps/teaching/templates/teaching/account/_tabs.html:84
 #: apps/teaching/templates/teaching/account/_tabs.html:140
-#: apps/teaching/templates/teaching/account/security.html:4
+#: apps/teaching/templates/teaching/account/security/page.html:4
 msgid "Security"
 msgstr "Безопасность"
 
-#: apps/teaching/templates/teaching/account/edit.html:43
+#: apps/teaching/templates/teaching/account/edit/page.html:43
 msgid "Change photo"
 msgstr "Изменить фото"
 
-#: apps/teaching/templates/teaching/account/edit.html:55
+#: apps/teaching/templates/teaching/account/edit/page.html:55
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:58
 msgid "JPG or PNG, up to 5MB."
 msgstr "JPG или PNG, до 5 МБ."
 
-#: apps/teaching/templates/teaching/account/security.html:12
+#: apps/teaching/templates/teaching/account/security/page.html:12
 msgid "Use a strong password that you don't use elsewhere."
 msgstr "Используйте надёжный пароль, который вы не используете больше нигде."
 
-#: apps/teaching/templates/teaching/account/security.html:139
+#: apps/teaching/templates/teaching/account/security/page.html:139
 msgid "Deactivate your account?"
 msgstr "Деактивировать аккаунт?"
 
-#: apps/teaching/templates/teaching/account/security.html:141
+#: apps/teaching/templates/teaching/account/security/page.html:141
 msgid ""
 "You will be signed out immediately and won't be able to log back in until "
 "support reactivates your account."
@@ -1148,23 +1160,24 @@ msgstr ""
 "Вы будете немедленно выведены из системы и не сможете войти, пока поддержка "
 "не восстановит аккаунт."
 
-#: apps/teaching/templates/teaching/account/security.html:171
+#: apps/teaching/templates/teaching/account/security/page.html:171
 #: apps/teaching/templates/teaching/subject/_chapter_item.html:95
 #: apps/teaching/templates/teaching/subject/_chapters_section.html:65
 #: apps/teaching/templates/teaching/subject/_subject_edit_form.html:81
 #: apps/teaching/templates/teaching/subject/_topic_item.html:124
 #: apps/teaching/templates/teaching/subject/_topics_section.html:62
-#: apps/teaching/templates/teaching/subject/question/form.html:132
-#: apps/teaching/templates/teaching/subject/question/import.html:99
-#: ui/templates/components/_confirm_modal.html:37
+#: apps/teaching/templates/teaching/subject/question/form/page.html:132
+#: apps/teaching/templates/teaching/subject/question/import/page.html:99
+#: ui/templates/components/product/confirm_modal.html:37
+#: ui/templates/components/school/confirm_modal.html:37
 msgid "Cancel"
 msgstr "Отмена"
 
-#: apps/teaching/templates/teaching/account/security.html:177
+#: apps/teaching/templates/teaching/account/security/page.html:177
 msgid "Yes, deactivate"
 msgstr "Да, деактивировать"
 
-#: apps/teaching/templates/teaching/account/settings.html:12
+#: apps/teaching/templates/teaching/account/settings/page.html:12
 msgid "Choose the interface language."
 msgstr "Выберите язык интерфейса."
 
@@ -1187,8 +1200,8 @@ msgstr ""
 
 #: apps/teaching/templates/teaching/page.html:69
 #: apps/teaching/templates/teaching/subject/_subject_info.html:67
-#: apps/teaching/templates/teaching/subject/question/form.html:5
-#: apps/teaching/templates/teaching/subject/question/list.html:59
+#: apps/teaching/templates/teaching/subject/question/form/page.html:5
+#: apps/teaching/templates/teaching/subject/question/list/page.html:59
 msgid "Add question"
 msgstr "Добавить вопрос"
 
@@ -1286,7 +1299,7 @@ msgid "grades"
 msgstr "классов"
 
 #: apps/teaching/templates/teaching/subject/_subject_info.html:87
-#: apps/teaching/templates/teaching/subject/detail.html:62
+#: apps/teaching/templates/teaching/subject/page.html:62
 msgid "Edit subject"
 msgstr "Редактировать предмет"
 
@@ -1315,7 +1328,7 @@ msgstr "Тем пока нет."
 msgid "Add topic"
 msgstr "Добавить тему"
 
-#: apps/teaching/templates/teaching/subject/detail.html:38
+#: apps/teaching/templates/teaching/subject/page.html:38
 msgid ""
 "No grades are assigned to this subject yet. Ask an administrator to "
 "configure them."
@@ -1323,63 +1336,43 @@ msgstr ""
 "Этому предмету пока не назначены классы. Попросите администратора настроить "
 "их."
 
-#: apps/teaching/templates/teaching/subject/question/_import_option_row.html:10
-#: apps/teaching/templates/teaching/subject/question/_option_row.html:11
+#: apps/teaching/templates/teaching/subject/question/form/_option_row.html:11
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_option_row.html:10
 msgid "Correct"
 msgstr "Правильный"
 
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:20
-msgid "Import this question"
-msgstr "Импортировать этот вопрос"
-
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:33
-#: apps/teaching/templates/teaching/subject/question/form.html:66
-msgid "Question text"
-msgstr "Текст вопроса"
-
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:61
-#: apps/teaching/templates/teaching/subject/question/form.html:94
-msgid "Answer options"
-msgstr "Варианты ответа"
-
-#: apps/teaching/templates/teaching/subject/question/_import_question_item.html:80
-#: apps/teaching/templates/teaching/subject/question/form.html:112
-msgid "Add option"
-msgstr "Добавить вариант ответа"
-
-#: apps/teaching/templates/teaching/subject/question/_panel.html:36
-msgid "Delete this question?"
-msgstr "Удалить этот вопрос?"
-
-#: apps/teaching/templates/teaching/subject/question/_panel.html:56
-msgid "Previous"
-msgstr "Предыдущая"
-
-#: apps/teaching/templates/teaching/subject/question/_panel.html:67
-msgid "Next"
-msgstr "Следующая"
-
-#: apps/teaching/templates/teaching/subject/question/_panel.html:73
-msgid "No questions found."
-msgstr "Вопросы не найдены."
-
-#: apps/teaching/templates/teaching/subject/question/form.html:5
+#: apps/teaching/templates/teaching/subject/question/form/page.html:5
 msgid "Edit question"
 msgstr "Изменить вопрос"
 
-#: apps/teaching/templates/teaching/subject/question/form.html:47
+#: apps/teaching/templates/teaching/subject/question/form/page.html:47
 msgid "Preview"
 msgstr "Просмотр"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:4
+#: apps/teaching/templates/teaching/subject/question/form/page.html:66
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:33
+msgid "Question text"
+msgstr "Текст вопроса"
+
+#: apps/teaching/templates/teaching/subject/question/form/page.html:94
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:61
+msgid "Answer options"
+msgstr "Варианты ответа"
+
+#: apps/teaching/templates/teaching/subject/question/form/page.html:112
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:80
+msgid "Add option"
+msgstr "Добавить вариант ответа"
+
+#: apps/teaching/templates/teaching/subject/question/import/page.html:4
 msgid "Import questions"
 msgstr "Импорт вопросов"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:16
+#: apps/teaching/templates/teaching/subject/question/import/page.html:16
 msgid "Import questions from a Word file"
 msgstr "Импорт вопросов из файла Word"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:20
+#: apps/teaching/templates/teaching/subject/question/import/page.html:20
 msgid ""
 "Upload a .docx file — the AI will read it and turn it into questions "
 "automatically. You'll be able to check and edit everything before it's saved."
@@ -1387,42 +1380,46 @@ msgstr ""
 "Загрузите файл .docx — ИИ прочитает его и автоматически превратит в вопросы. "
 "Перед сохранением вы сможете всё проверить и отредактировать."
 
-#: apps/teaching/templates/teaching/subject/question/import.html:70
+#: apps/teaching/templates/teaching/subject/question/import/page.html:70
 msgid "Click to choose a file or drag and drop it here"
 msgstr "Нажмите, чтобы выбрать файл, или перетащите его сюда"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:71
+#: apps/teaching/templates/teaching/subject/question/import/page.html:71
 msgid "Word document (.docx)"
 msgstr "Документ Word (.docx)"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:107
+#: apps/teaching/templates/teaching/subject/question/import/page.html:107
 msgid "Analyzing..."
 msgstr "Анализируется..."
 
-#: apps/teaching/templates/teaching/subject/question/import.html:107
-#: apps/teaching/templates/teaching/subject/question/list.html:48
+#: apps/teaching/templates/teaching/subject/question/import/page.html:107
+#: apps/teaching/templates/teaching/subject/question/list/page.html:48
 msgid "Import"
 msgstr "Импорт"
 
-#: apps/teaching/templates/teaching/subject/question/import.html:121
+#: apps/teaching/templates/teaching/subject/question/import/page.html:121
 msgid "Reading the questions..."
 msgstr "Идёт чтение вопросов..."
 
-#: apps/teaching/templates/teaching/subject/question/import.html:122
+#: apps/teaching/templates/teaching/subject/question/import/page.html:122
 msgid ""
 "This may take up to a minute for large files. Please don't close this page."
 msgstr ""
 "Для больших файлов это может занять до минуты. Не закрывайте эту страницу."
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:4
+#: apps/teaching/templates/teaching/subject/question/import_review/_import_question_item.html:20
+msgid "Import this question"
+msgstr "Импортировать этот вопрос"
+
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:4
 msgid "Check imported questions"
 msgstr "Проверка импортированных вопросов"
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:13
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:13
 msgid "Check the imported questions"
 msgstr "Проверьте импортированные вопросы"
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:15
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:15
 #, python-format
 msgid ""
 "\n"
@@ -1445,19 +1442,19 @@ msgstr[1] ""
 "необходимости отредактируйте и подтвердите.\n"
 "            "
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:25
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:25
 msgid "Discard this import? None of these questions will be saved."
 msgstr "Отменить этот импорт? Ни один из этих вопросов не будет сохранён."
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:30
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:30
 msgid "Back"
 msgstr "Назад"
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:38
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:38
 msgid "Not imported automatically"
 msgstr "Не импортировано автоматически"
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:41
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:41
 msgid ""
 "These items are not in a supported single/multiple choice format. Add them "
 "manually if needed."
@@ -1465,16 +1462,32 @@ msgstr ""
 "Эти вопросы не в поддерживаемом формате (один/несколько правильных ответов). "
 "При необходимости добавьте их вручную."
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:73
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:73
 #, python-format
 msgid "Selected questions will be saved to the topic \"%(title)s\""
 msgstr "Выбранные вопросы будут сохранены в тему \"%(title)s\""
 
-#: apps/teaching/templates/teaching/subject/question/import_review.html:80
+#: apps/teaching/templates/teaching/subject/question/import_review/page.html:80
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: apps/teaching/templates/teaching/subject/question/list.html:26
+#: apps/teaching/templates/teaching/subject/question/list/_panel.html:36
+msgid "Delete this question?"
+msgstr "Удалить этот вопрос?"
+
+#: apps/teaching/templates/teaching/subject/question/list/_panel.html:56
+msgid "Previous"
+msgstr "Предыдущая"
+
+#: apps/teaching/templates/teaching/subject/question/list/_panel.html:67
+msgid "Next"
+msgstr "Следующая"
+
+#: apps/teaching/templates/teaching/subject/question/list/_panel.html:73
+msgid "No questions found."
+msgstr "Вопросы не найдены."
+
+#: apps/teaching/templates/teaching/subject/question/list/page.html:26
 msgid "Search by question text"
 msgstr "Поиск по тексту вопроса"
 
@@ -1557,7 +1570,7 @@ msgid "Administration"
 msgstr "Администрирование"
 
 #: config/settings.py:206 config/settings.py:245
-#: ui/templates/layouts/school_layout.html:60
+#: ui/templates/layouts/school_layout.html:62
 #: ui/templates/layouts/teacher_layout.html:45
 msgid "Dashboard"
 msgstr "Панель управления"
@@ -1598,16 +1611,17 @@ msgstr "Размер файла не должен превышать 5MB."
 msgid "Please upload a valid image file."
 msgstr "Загрузите корректный файл изображения."
 
-#: ui/templates/components/_confirm_modal.html:44
+#: ui/templates/components/product/confirm_modal.html:44
+#: ui/templates/components/school/confirm_modal.html:44
 msgid "Delete"
 msgstr "Удалить"
 
-#: ui/templates/layouts/school_layout.html:44
-#: ui/templates/layouts/school_layout.html:152
+#: ui/templates/layouts/school_layout.html:46
+#: ui/templates/layouts/school_layout.html:154
 msgid "Switch school"
 msgstr "Сменить школу"
 
-#: ui/templates/layouts/school_layout.html:148
+#: ui/templates/layouts/school_layout.html:150
 #: ui/templates/layouts/teacher_layout.html:150
 msgid "Account settings"
 msgstr "Настройки аккаунта"
