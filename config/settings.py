@@ -157,55 +157,6 @@ STATICFILES_DIRS = [
 ]
 
 
-# Logging settings
-# ----------------------------------------------------------------------------------------------------------------------
-LOGS_DIR = BASE_DIR / 'logs'
-LOGS_DIR.mkdir(exist_ok=True)
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{asctime} {levelname} {name} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGS_DIR / 'django.log',
-            'maxBytes': 10 * 1024 * 1024,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['console', 'file'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-    },
-}
-
-
-# AI API Key settings
-# ----------------------------------------------------------------------------------------------------------------------
-ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
-QUESTION_IMPORT_MODEL = config('QUESTION_IMPORT_MODEL', default='claude-opus-4-8')
-QUESTION_IMPORT_MAX_FILE_SIZE = 20 * 1024 * 1024
-
-
 # Templates settings
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -233,6 +184,13 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+
+# AI API Key settings
+# ----------------------------------------------------------------------------------------------------------------------
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
+QUESTION_IMPORT_MODEL = config('QUESTION_IMPORT_MODEL', default='claude-opus-4-8')
+QUESTION_IMPORT_MAX_FILE_SIZE = 20 * 1024 * 1024
 
 
 # Unfold settings

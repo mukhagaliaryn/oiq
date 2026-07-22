@@ -1,7 +1,11 @@
+import logging
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
+
+logger = logging.getLogger(__name__)
 
 
 def send_registration_success_email(user):
@@ -25,4 +29,7 @@ def send_registration_success_email(user):
         to=[user.email],
     )
     email.attach_alternative(html_content, 'text/html')
-    email.send(fail_silently=False)
+    try:
+        email.send(fail_silently=False)
+    except Exception:
+        logger.exception('Registration success email-ды %s-ге жіберу сәтсіз аяқталды.', user.email)
