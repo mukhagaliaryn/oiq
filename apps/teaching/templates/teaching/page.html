@@ -7,18 +7,27 @@
 
 {% block teacher_layout %}
 {% if request.user.teacher.is_partner and request.user.teacher.subject %}
-    <section class="mb-6 rounded-3xl border border-default bg-brand-soft p-6">
+    <section class="mb-6 rounded-3xl border border-default bg-neutral-primary p-6">
         <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div class="flex-1 flex items-start lg:items-center gap-4">
-                <div class="flex size-20 shrink-0 items-center justify-center rounded-2xl bg-brand text-neutral-primary">
-                    <i class="ph-fill ph-user-circle-check size-10"></i>
+                <div class="relative shrink-0 size-24">
+                    {% if request.user.avatar %}
+                        <img src="{{ request.user.avatar.url }}" class="size-full rounded-full border-6 border-neutral-tertiary object-cover" alt="{{ request.user.display_name }}">
+                    {% else %}
+                        <div class="flex size-full items-center justify-center rounded-full border-6 border-neutral-tertiary bg-brand-soft font-bold text-4xl text-brand">
+                            {{ request.user.display_name|first|upper }}
+                        </div>
+                    {% endif %}
+                    <span class="absolute bottom-1 right-1 flex size-7 items-center justify-center rounded-full bg-neutral-tertiary text-success">
+                        <i class="ph-fill ph-check-circle size-7"></i>
+                    </span>
                 </div>
                 <div class="max-w-2xl">
                     <h2 class="font-black text-xl">
-                        {% blocktranslate with subject=request.user.teacher.subject.name %}You are a partner teacher for "{{ subject }}"{% endblocktranslate %}
+                        {% blocktranslate with greeting=greeting name=request.user.full_name %}{{ greeting }}, {{ name }}{% endblocktranslate %}
                     </h2>
                     <p class="mt-1 text-body">
-                        {% translate "As a partner teacher, you can manage this subject's chapters and topics, and build its question bank." %}
+                        {% blocktranslate with subject=request.user.teacher.subject.name %}You can manage materials and the question bank for the "{{ subject }}" subject.{% endblocktranslate %}
                     </p>
                 </div>
             </div>

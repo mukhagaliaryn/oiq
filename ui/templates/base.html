@@ -33,8 +33,6 @@
     {% block js %}{% endblock js %}
 
     <script>
-        // Alpine (x-show/:class) manages "style"/"class" itself; htmx's attribute
-        // settling would otherwise overwrite those right after a swap and undo it.
         htmx.config.attributesToSettle = [];
 
         document.body.addEventListener('htmx:configRequest', function (event) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 21:29+0500\n"
+"POT-Creation-Date: 2026-07-22 17:40+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,22 +55,22 @@ msgstr "Аватар"
 msgid "Password change"
 msgstr "Смена пароля"
 
-#: apps/accounts/models/teacher.py:9
+#: apps/accounts/models/profile.py:9
 msgid "Regular"
 msgstr "Обычный"
 
-#: apps/accounts/models/teacher.py:10
+#: apps/accounts/models/profile.py:10
 #: apps/teaching/templates/teaching/account/profile/page.html:37
 msgid "Partner"
 msgstr "Партнёр"
 
-#: apps/accounts/models/teacher.py:13 apps/accounts/models/user.py:29
+#: apps/accounts/models/profile.py:13 apps/accounts/models/user.py:29
 #: apps/accounts/models/user.py:56 apps/school/models/organization.py:42
 #: apps/school/templates/school/members/list.html:17
 msgid "User"
 msgstr "Пользователь"
 
-#: apps/accounts/models/teacher.py:17 apps/catalog/models/registry.py:11
+#: apps/accounts/models/profile.py:17 apps/catalog/models/registry.py:11
 #: apps/catalog/models/registry.py:22 apps/main/forms/auth.py:44
 #: apps/main/templates/main/auth/register/teacher.html:147
 #: apps/teaching/forms/account.py:27
@@ -79,7 +79,7 @@ msgstr "Пользователь"
 msgid "City"
 msgstr "Город"
 
-#: apps/accounts/models/teacher.py:22 apps/catalog/models/registry.py:28
+#: apps/accounts/models/profile.py:22 apps/catalog/models/registry.py:28
 #: apps/main/forms/auth.py:50
 #: apps/main/templates/main/auth/register/teacher.html:161
 #: apps/school/models/organization.py:11 apps/teaching/forms/account.py:33
@@ -88,31 +88,31 @@ msgstr "Город"
 msgid "School"
 msgstr "Школа"
 
-#: apps/accounts/models/teacher.py:27 apps/catalog/models/content.py:24
+#: apps/accounts/models/profile.py:27 apps/catalog/models/content.py:24
 #: apps/catalog/models/content.py:33 apps/main/forms/auth.py:56
 #: apps/main/templates/main/auth/register/teacher.html:175
 #: apps/teaching/forms/account.py:39
 #: apps/teaching/templates/teaching/account/edit/page.html:147
 #: apps/teaching/templates/teaching/account/profile/page.html:78
-#: apps/teaching/templates/teaching/page.html:38
+#: apps/teaching/templates/teaching/page.html:47
 msgid "Subject"
 msgstr "Предмет"
 
-#: apps/accounts/models/teacher.py:32
+#: apps/accounts/models/profile.py:32
 msgid "Type"
 msgstr "Тип"
 
-#: apps/accounts/models/teacher.py:35
+#: apps/accounts/models/profile.py:35
 msgid "Agreement accepted at"
 msgstr "Дата принятия соглашения"
 
-#: apps/accounts/models/teacher.py:38 apps/accounts/models/user.py:11
+#: apps/accounts/models/profile.py:38 apps/accounts/models/user.py:11
 #: apps/main/templates/main/auth/register/page.html:24
 #: apps/teaching/templates/teaching/account/profile/page.html:33
 msgid "Teacher"
 msgstr "Учитель"
 
-#: apps/accounts/models/teacher.py:39
+#: apps/accounts/models/profile.py:39
 msgid "Teachers"
 msgstr "Учителя"
 
@@ -266,7 +266,7 @@ msgstr "Текст"
 msgid "Question link"
 msgstr "Ссылка на вопрос"
 
-#: apps/catalog/apps.py:7
+#: apps/catalog/apps.py:7 config/settings.py:273
 msgid "Catalog"
 msgstr "Каталог"
 
@@ -412,8 +412,8 @@ msgid "Question"
 msgstr "Вопрос"
 
 #: apps/catalog/models/question.py:70
-#: apps/teaching/templates/teaching/page.html:51
-#: apps/teaching/templates/teaching/page.html:65
+#: apps/teaching/templates/teaching/page.html:60
+#: apps/teaching/templates/teaching/page.html:74
 #: apps/teaching/templates/teaching/subject/_subject_info.html:49
 #: apps/teaching/templates/teaching/subject/_subject_info.html:63
 #: apps/teaching/templates/teaching/subject/question/import/page.html:10
@@ -684,7 +684,7 @@ msgstr "Выберите город"
 msgid "Select subject"
 msgstr "Выберите предмет"
 
-#: apps/main/services/emails.py:8
+#: apps/main/services/emails.py:12
 #: apps/main/templates/main/auth/email/registration_success.html:7
 msgid "Welcome to the OIQ platform!"
 msgstr "Добро пожаловать на платформу OIQ!"
@@ -1190,74 +1190,75 @@ msgstr "Выберите язык интерфейса."
 msgid "Teacher dashboard"
 msgstr "Панель учителя"
 
-#: apps/teaching/templates/teaching/page.html:18
+#: apps/teaching/templates/teaching/page.html:27
 #, python-format
-msgid "You are a partner teacher for \"%(subject)s\""
-msgstr "Вы являетесь партнёрским учителем по предмету «%(subject)s»"
+msgid "%(greeting)s, %(name)s"
+msgstr "%(greeting)s, %(name)s"
 
-#: apps/teaching/templates/teaching/page.html:21
+#: apps/teaching/templates/teaching/page.html:30
+#, python-format
 msgid ""
-"As a partner teacher, you can manage this subject's chapters and topics, and "
-"build its question bank."
+"You can manage materials and the question bank for the \"%(subject)s\" "
+"subject."
 msgstr ""
-"Как партнёрский учитель, вы можете управлять главами и темами этого "
-"предмета, а также пополнять банк вопросов."
+"У вас есть возможность управлять материалами и банком вопросов по предмету "
+"«%(subject)s»."
 
-#: apps/teaching/templates/teaching/page.html:69
+#: apps/teaching/templates/teaching/page.html:78
 #: apps/teaching/templates/teaching/subject/_subject_info.html:67
 #: apps/teaching/templates/teaching/subject/question/form/page.html:5
 #: apps/teaching/templates/teaching/subject/question/list/page.html:59
 msgid "Add question"
 msgstr "Добавить вопрос"
 
-#: apps/teaching/templates/teaching/page.html:83
+#: apps/teaching/templates/teaching/page.html:92
 #: ui/templates/layouts/teacher_layout.html:75
 msgid "Classes"
 msgstr "Классы"
 
-#: apps/teaching/templates/teaching/page.html:84
+#: apps/teaching/templates/teaching/page.html:93
 msgid "Add learners to classes and track the learning process."
 msgstr "Добавляйте учеников в классы и следите за процессом обучения."
 
-#: apps/teaching/templates/teaching/page.html:91
+#: apps/teaching/templates/teaching/page.html:100
 #: ui/templates/layouts/teacher_layout.html:83
 msgid "Game tasks"
 msgstr "Игровые задания"
 
-#: apps/teaching/templates/teaching/page.html:92
+#: apps/teaching/templates/teaching/page.html:101
 msgid "Create interactive tasks in a Kahoot-like style."
 msgstr "Создавайте интерактивные задания в стиле Kahoot."
 
-#: apps/teaching/templates/teaching/page.html:99
+#: apps/teaching/templates/teaching/page.html:108
 #: ui/templates/layouts/teacher_layout.html:91
 msgid "Results"
 msgstr "Результаты"
 
-#: apps/teaching/templates/teaching/page.html:100
+#: apps/teaching/templates/teaching/page.html:109
 msgid "View learners' progress and task results."
 msgstr "Просматривайте прогресс учеников и результаты заданий."
 
-#: apps/teaching/templates/teaching/page.html:107
+#: apps/teaching/templates/teaching/page.html:116
 msgid "Quick actions"
 msgstr "Быстрые действия"
 
-#: apps/teaching/templates/teaching/page.html:108
+#: apps/teaching/templates/teaching/page.html:117
 msgid "Key actions to get started"
 msgstr "Основные действия для начала работы"
 
-#: apps/teaching/templates/teaching/page.html:114
+#: apps/teaching/templates/teaching/page.html:123
 msgid "Create a new class"
 msgstr "Создать новый класс"
 
-#: apps/teaching/templates/teaching/page.html:115
+#: apps/teaching/templates/teaching/page.html:124
 msgid "Open a class to bring learners together."
 msgstr "Откройте класс, чтобы объединить учеников."
 
-#: apps/teaching/templates/teaching/page.html:119
+#: apps/teaching/templates/teaching/page.html:128
 msgid "Create a game"
 msgstr "Создать игру"
 
-#: apps/teaching/templates/teaching/page.html:120
+#: apps/teaching/templates/teaching/page.html:129
 msgid "Build a game from questions and tasks."
 msgstr "Создавайте игру из вопросов и заданий."
 
@@ -1496,6 +1497,18 @@ msgstr "Вопросы не найдены."
 msgid "Search by question text"
 msgstr "Поиск по тексту вопроса"
 
+#: apps/teaching/views/main.py:11
+msgid "Good morning"
+msgstr "Доброе утро"
+
+#: apps/teaching/views/main.py:13
+msgid "Good afternoon"
+msgstr "Добрый день"
+
+#: apps/teaching/views/main.py:15
+msgid "Good evening"
+msgstr "Добрый вечер"
+
 #: apps/teaching/views/question.py:71
 msgid "Add at least two options and mark one of them as correct."
 msgstr ""
@@ -1583,10 +1596,6 @@ msgstr "Панель управления"
 #: config/settings.py:228
 msgid "Website"
 msgstr "Сайт"
-
-#: config/settings.py:273
-msgid "Education"
-msgstr "Образование"
 
 #: core/admin/base.py:13 core/admin/base.py:41
 msgid "General information"
