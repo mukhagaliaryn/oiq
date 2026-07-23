@@ -88,3 +88,22 @@ class Option(models.Model):
 
     def __str__(self):
         return _('#{} option').format(self.pk)
+
+
+# -------------- MatchPair --------------
+class MatchPair(models.Model):
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE,
+        related_name='match_pairs', verbose_name=_('Question')
+    )
+    left = models.TextField(_('Left item'))
+    right = models.TextField(_('Right item'))
+    order = models.PositiveSmallIntegerField(_('Order'), default=0)
+
+    class Meta:
+        verbose_name = _('Match pair')
+        verbose_name_plural = _('Match pairs')
+        ordering = ('order',)
+
+    def __str__(self):
+        return _('#{} match pair').format(self.pk)

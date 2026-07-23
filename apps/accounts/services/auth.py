@@ -77,13 +77,13 @@ def create_teacher_user(*, form, agreement_accepted_at=None):
     )
     user.save(update_fields=['username'])
 
-    Teacher.objects.create(
+    teacher = Teacher.objects.create(
         user=user,
         city=form.cleaned_data.get('city'),
         school=form.cleaned_data.get('school'),
-        subject=form.cleaned_data.get('subject'),
         agreement_accepted_at=agreement_accepted_at,
     )
+    teacher.subjects.set(form.cleaned_data.get('subjects') or [])
 
     return user
 

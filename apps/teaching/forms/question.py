@@ -2,8 +2,11 @@ from django import forms
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 from core.forms.base import INPUT_CLASS, RichTextTextarea
-from apps.catalog.models import Chapter, FormatVariant, Grade, Option, Question, QuestionFormat, Topic
-from apps.catalog.selectors import get_chapters, get_format_variants, get_question_formats, get_subject_grades, get_topics
+from apps.accounts.selectors import get_teachers_by_ids
+from apps.catalog.models import Chapter, FormatVariant, Grade, MatchPair, Option, Question, QuestionFormat, Topic
+from apps.catalog.selectors import (
+    get_chapters, get_format_variants, get_question_authors, get_question_formats, get_subject_grades, get_topics,
+)
 
 
 class QuestionFilterForm(forms.Form):
@@ -12,6 +15,7 @@ class QuestionFilterForm(forms.Form):
     topic = forms.ModelChoiceField(queryset=Topic.objects.none(), required=False, empty_label=_('All topics'))
     format = forms.ModelChoiceField(queryset=QuestionFormat.objects.none(), required=False, empty_label=_('All formats'))
     variant = forms.ModelChoiceField(queryset=FormatVariant.objects.none(), required=False, empty_label=_('All variants'))
+    author = forms.ModelChoiceField(queryset=get_teachers_by_ids([]), required=False, empty_label=_('All authors'))
     q = forms.CharField(required=False, label=_('Search'), widget=forms.TextInput(attrs={'class': INPUT_CLASS}))
 
     def __init__(self, *args, subject, **kwargs):
@@ -26,6 +30,7 @@ class QuestionFilterForm(forms.Form):
         self.fields['topic'].queryset = get_topics(subject, chapter_id=chapter_id, grade_id=grade_id)
         self.fields['format'].queryset = get_question_formats()
         self.fields['variant'].queryset = get_format_variants(format_id)
+        self.fields['author'].queryset = get_teachers_by_ids(get_question_authors(subject))
 
 
 class QuestionForm(forms.ModelForm):
@@ -98,5 +103,21 @@ class OptionForm(forms.ModelForm):
 
 OptionFormSet = inlineformset_factory(
     Question, Option, form=OptionForm,
+    extra=0, can_delete=True, validate_min=False,
+)
+
+
+class MatchPairForm(forms.ModelForm):
+    class Meta:
+        model = MatchPair
+        fields = ('left', 'right')
+        widgets = {
+            'left': RichTextTextarea(height='100px'),
+            'right': RichTextTextarea(height='100px'),
+        }
+
+
+MatchPairFormSet = inlineformset_factory(
+    Question, MatchPair, form=MatchPairForm,
     extra=0, can_delete=True, validate_min=False,
 )

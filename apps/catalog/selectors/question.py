@@ -31,7 +31,31 @@ def get_questions(*, subject=None, author=None, grade_id=None, chapter_id=None, 
     if search:
         questions = questions.filter(text__icontains=search)
 
-    return questions.select_related('topic', 'topic__chapter', 'format', 'variant').order_by('-created_at')
+    return questions.select_related(
+        'topic', 'topic__chapter', 'format', 'variant', 'author', 'author__user',
+    ).order_by('-created_at')
+
+
+def get_question_authors(subject):
+    return Question.objects.filter(
+        topic__chapter__subject=subject, is_active=True, author__isnull=False,
+    ).values_list('author_id', flat=True).distinct()
+
+
+def get_question_stats(questions):
+    unordered = questions.order_by()
+
+    counts_by_level = dict(unordered.values_list('level').annotate(count=Count('id')))
+    level_breakdown = [(label, counts_by_level.get(value, 0)) for value, label in Question.Level.choices]
+
+    counts_by_format = dict(unordered.values_list('format_id').annotate(count=Count('id')))
+    format_breakdown = [(fmt.name, counts_by_format.get(fmt.id, 0)) for fmt in get_question_formats()]
+
+    return {
+        'total': questions.count(),
+        'level_breakdown': level_breakdown,
+        'format_breakdown': format_breakdown,
+    }
 
 
 def get_question(pk):
@@ -40,6 +64,10 @@ def get_question(pk):
 
 def get_question_formats():
     return QuestionFormat.objects.order_by('order')
+
+
+def get_question_format(pk):
+    return get_object_or_404(QuestionFormat, pk=pk)
 
 
 def get_question_format_by_code(code):

@@ -57,10 +57,10 @@ def account_edit_view(request):
         'middle_name': user.middle_name,
         'phone': user.phone,
     })
-    teacher_form = TeacherProfileForm(request.POST or None, initial={
+    teacher_form = TeacherProfileForm(request.POST or None, subjects_locked=teacher.is_partner, initial={
         'city': teacher.city_id,
         'school': teacher.school_id,
-        'subject': teacher.subject_id,
+        'subjects': teacher.subjects.values_list('id', flat=True),
     })
 
     if request.method == 'POST':
@@ -80,7 +80,7 @@ def account_edit_view(request):
                 teacher,
                 city=teacher_form.cleaned_data['city'],
                 school=teacher_form.cleaned_data['school'],
-                subject=teacher_form.cleaned_data['subject'],
+                subjects=teacher_form.cleaned_data['subjects'],
             )
 
             messages.success(request, _('Profile has been updated.'))

@@ -1,51 +1,71 @@
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-question-block]").forEach(function (block) {
-        const container = block.querySelector("[data-options-container]");
-        const addButton = block.querySelector("[data-add-option-button]");
-        const emptyTemplate = block.querySelector("[data-option-empty-form]");
-        const totalForms = block.querySelector("input[name$='-options-TOTAL_FORMS']");
+function setupBlockFormsetControls(block, options) {
+    const container = block.querySelector(options.containerSelector);
+    const addButton = block.querySelector(options.addButtonSelector);
+    const emptyTemplate = block.querySelector(options.emptyTemplateSelector);
+    const totalForms = block.querySelector(options.totalFormsSelector);
 
-        if (!container || !addButton || !emptyTemplate || !totalForms) {
+    if (!container || !addButton || !emptyTemplate || !totalForms) {
+        return;
+    }
+
+    addButton.addEventListener("click", function () {
+        const index = parseInt(totalForms.value, 10);
+        const fragment = emptyTemplate.content.cloneNode(true);
+
+        fragment.querySelectorAll("[name], [id], label[for]").forEach(function (element) {
+            ["name", "id", "for"].forEach(function (attr) {
+                if (element.hasAttribute(attr)) {
+                    element.setAttribute(attr, element.getAttribute(attr).replace(/__prefix__/g, index));
+                }
+            });
+        });
+
+        const row = fragment.querySelector(options.rowSelector);
+        container.appendChild(fragment);
+        totalForms.value = index + 1;
+
+        if (row) {
+            row.dispatchEvent(new CustomEvent("formset:added", { bubbles: true }));
+        }
+    });
+
+    container.addEventListener("click", function (event) {
+        const removeButton = event.target.closest(options.removeSelector);
+        if (!removeButton) {
             return;
         }
 
-        addButton.addEventListener("click", function () {
-            const index = parseInt(totalForms.value, 10);
-            const fragment = emptyTemplate.content.cloneNode(true);
+        const row = removeButton.closest(options.rowSelector);
+        if (!row) {
+            return;
+        }
 
-            fragment.querySelectorAll("[name], [id], label[for]").forEach(function (element) {
-                ["name", "id", "for"].forEach(function (attr) {
-                    if (element.hasAttribute(attr)) {
-                        element.setAttribute(attr, element.getAttribute(attr).replace(/__prefix__/g, index));
-                    }
-                });
-            });
+        const deleteField = row.querySelector('input[name$="-DELETE"]');
+        if (deleteField) {
+            deleteField.checked = true;
+        }
+        row.classList.add("hidden");
+    });
+}
 
-            const row = fragment.querySelector("[data-option-row]");
-            container.appendChild(fragment);
-            totalForms.value = index + 1;
-
-            if (row) {
-                row.dispatchEvent(new CustomEvent("formset:added", { bubbles: true }));
-            }
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-question-block]").forEach(function (block) {
+        setupBlockFormsetControls(block, {
+            containerSelector: "[data-options-container]",
+            addButtonSelector: "[data-add-option-button]",
+            emptyTemplateSelector: "[data-option-empty-form]",
+            totalFormsSelector: "input[name$='-options-TOTAL_FORMS']",
+            rowSelector: "[data-option-row]",
+            removeSelector: "[data-remove-option]",
         });
 
-        container.addEventListener("click", function (event) {
-            const removeButton = event.target.closest("[data-remove-option]");
-            if (!removeButton) {
-                return;
-            }
-
-            const row = removeButton.closest("[data-option-row]");
-            if (!row) {
-                return;
-            }
-
-            const deleteField = row.querySelector('input[name$="-DELETE"]');
-            if (deleteField) {
-                deleteField.checked = true;
-            }
-            row.classList.add("hidden");
+        setupBlockFormsetControls(block, {
+            containerSelector: "[data-pairs-container]",
+            addButtonSelector: "[data-add-pair-button]",
+            emptyTemplateSelector: "[data-pair-empty-form]",
+            totalFormsSelector: "input[name$='-pairs-TOTAL_FORMS']",
+            rowSelector: "[data-pair-row]",
+            removeSelector: "[data-remove-pair]",
         });
     });
 

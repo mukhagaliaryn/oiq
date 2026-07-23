@@ -10,10 +10,10 @@ from django.utils.translation import gettext_lazy as _
 from apps.catalog.models import Question
 from apps.catalog.selectors import (
     get_all_format_variants, get_chapters, get_format_variants,
-    get_question, get_question_formats, get_questions, get_topics,
+    get_question, get_question_formats, get_question_stats, get_questions, get_topics,
 )
 from apps.catalog.services import create_question, deactivate_question
-from apps.teaching.forms.question import OptionFormSet, QuestionFilterForm, QuestionForm
+from apps.teaching.forms.question import MatchPairFormSet, OptionFormSet, QuestionFilterForm, QuestionForm
 from apps.teaching.views.common import owned_subject
 from apps.accounts.decorators import partner_teacher_required
 from core.utils.text import question_text_preview
@@ -25,19 +25,19 @@ def _owned_question(request, pk):
     teacher = request.user.teacher
     question = get_question(pk)
 
-    if question.topic.chapter.subject_id != teacher.subject_id or question.author_id != teacher.pk:
+    if not teacher.subjects.filter(pk=question.topic.chapter.subject_id).exists():
         raise Http404
 
     return question
 
 
 def _question_panel_context(request, subject):
-    teacher = request.user.teacher
     filter_form = QuestionFilterForm(request.GET, subject=subject)
     data = filter_form.cleaned_data if filter_form.is_valid() else {}
 
     questions = get_questions(
-        subject=subject, author=teacher,
+        subject=subject,
+        author=data.get('author'),
         grade_id=data['grade'].pk if data.get('grade') else None,
         chapter_id=data['chapter'].pk if data.get('chapter') else None,
         topic_id=data['topic'].pk if data.get('topic') else None,
@@ -46,6 +46,7 @@ def _question_panel_context(request, subject):
         search=data.get('q') or None,
     )
 
+    stats = get_question_stats(questions)
     page_obj = Paginator(questions, PAGE_SIZE).get_page(request.GET.get('page'))
 
     for question in page_obj:
@@ -55,13 +56,11 @@ def _question_panel_context(request, subject):
         'subject': subject,
         'filter_form': filter_form,
         'page_obj': page_obj,
+        'stats': stats,
     }
 
 
-def _validate_test_options(form, formset):
-    if not form.cleaned_data.get('format') or form.cleaned_data['format'].code != 'test':
-        return True
-
+def _validate_test_options(formset):
     surviving = [f for f in formset.forms if f.cleaned_data and not f.cleaned_data.get('DELETE')]
 
     if len(surviving) >= 2 and any(f.cleaned_data.get('is_correct') for f in surviving):
@@ -73,7 +72,29 @@ def _validate_test_options(form, formset):
     return False
 
 
-def _question_form_context(request, subject, form, formset, tab='question'):
+def _validate_match_pairs(formset):
+    surviving = [f for f in formset.forms if f.cleaned_data and not f.cleaned_data.get('DELETE')]
+
+    if len(surviving) >= 2:
+        return True
+
+    formset._non_form_errors = formset.error_class([
+        _('Add at least two match pairs.'),
+    ])
+    return False
+
+
+def _validate_answer_data(format_code, option_formset, match_pair_formset):
+    if format_code == 'test':
+        return _validate_test_options(option_formset)
+
+    if format_code == 'matching':
+        return _validate_match_pairs(match_pair_formset)
+
+    return True
+
+
+def _question_form_context(request, subject, form, option_formset, match_pair_formset, tab='question'):
     format_codes = {str(f.id): f.code for f in get_question_formats()}
     variant_codes = {str(v.id): v.code for v in get_all_format_variants()}
 
@@ -87,15 +108,16 @@ def _question_form_context(request, subject, form, formset, tab='question'):
     return {
         'subject': subject,
         'form': form,
-        'formset': formset,
-        'media': form.media + formset.media,
+        'option_formset': option_formset,
+        'match_pair_formset': match_pair_formset,
+        'media': form.media + option_formset.media + match_pair_formset.media,
         'tab': tab,
         'format_codes_json': json.dumps(format_codes),
         'variant_codes_json': json.dumps(variant_codes),
         'initial_format_code': selected_format.code if selected_format else '',
         'initial_variant_code': selected_variant.code if selected_variant else '',
         'variants_url': reverse('teaching:question-variant-field'),
-        'topic_fields_url': reverse('teaching:question-topic-fields'),
+        'topic_fields_url': f"{reverse('teaching:question-topic-fields')}?subject={subject.pk}",
     }
 
 
@@ -121,21 +143,36 @@ def question_create_view(request, pk):
 
     if request.method == 'POST':
         form = QuestionForm(request.POST, subject=subject, teacher=teacher)
-        formset = OptionFormSet(request.POST, instance=Question(), prefix='options')
+        option_formset = OptionFormSet(request.POST, instance=Question(), prefix='options')
+        match_pair_formset = MatchPairFormSet(request.POST, instance=Question(), prefix='pairs')
 
-        if form.is_valid() and formset.is_valid() and _validate_test_options(form, formset):
-            options = [
-                {'answer': f.cleaned_data['answer'], 'is_correct': f.cleaned_data.get('is_correct', False)}
-                for f in formset.forms
-                if f.cleaned_data and not f.cleaned_data.get('DELETE')
-            ]
-            create_question(
-                topic=form.cleaned_data['topic'], author=teacher, text=form.cleaned_data['text'],
-                format=form.cleaned_data['format'], variant=form.cleaned_data['variant'],
-                level=form.cleaned_data['level'], time_limit=form.cleaned_data['time_limit'],
-                options=options,
-            )
-            return redirect('teaching:question-list', subject.pk)
+        if form.is_valid() and option_formset.is_valid() and match_pair_formset.is_valid():
+            format_code = form.cleaned_data['format'].code
+
+            if _validate_answer_data(format_code, option_formset, match_pair_formset):
+                options = None
+                match_pairs = None
+
+                if format_code == 'test':
+                    options = [
+                        {'answer': f.cleaned_data['answer'], 'is_correct': f.cleaned_data.get('is_correct', False)}
+                        for f in option_formset.forms
+                        if f.cleaned_data and not f.cleaned_data.get('DELETE')
+                    ]
+                elif format_code == 'matching':
+                    match_pairs = [
+                        {'left': f.cleaned_data['left'], 'right': f.cleaned_data['right']}
+                        for f in match_pair_formset.forms
+                        if f.cleaned_data and not f.cleaned_data.get('DELETE')
+                    ]
+
+                create_question(
+                    topic=form.cleaned_data['topic'], author=teacher, text=form.cleaned_data['text'],
+                    format=form.cleaned_data['format'], variant=form.cleaned_data['variant'],
+                    level=form.cleaned_data['level'], time_limit=form.cleaned_data['time_limit'],
+                    options=options, match_pairs=match_pairs,
+                )
+                return redirect('teaching:question-list', subject.pk)
     else:
         first_format = get_question_formats().first()
         first_variant = get_format_variants(first_format.pk).first() if first_format else None
@@ -145,11 +182,12 @@ def question_create_view(request, pk):
             initial['topic'] = topic_id
 
         form = QuestionForm(subject=subject, teacher=teacher, initial=initial)
-        formset = OptionFormSet(instance=Question(), prefix='options')
+        option_formset = OptionFormSet(instance=Question(), prefix='options')
+        match_pair_formset = MatchPairFormSet(instance=Question(), prefix='pairs')
 
     return render(
         request, 'teaching/subject/question/form/page.html',
-        _question_form_context(request, subject, form, formset),
+        _question_form_context(request, subject, form, option_formset, match_pair_formset),
     )
 
 
@@ -162,17 +200,29 @@ def question_update_view(request, pk):
 
     if request.method == 'POST':
         form = QuestionForm(request.POST, instance=question, subject=subject, teacher=teacher)
-        formset = OptionFormSet(request.POST, instance=question, prefix='options')
+        option_formset = OptionFormSet(request.POST, instance=question, prefix='options')
+        match_pair_formset = MatchPairFormSet(request.POST, instance=question, prefix='pairs')
 
-        if form.is_valid() and formset.is_valid() and _validate_test_options(form, formset):
-            form.save()
-            formset.save()
-            return redirect('teaching:question-list', subject.pk)
+        if form.is_valid() and option_formset.is_valid() and match_pair_formset.is_valid():
+            format_code = form.cleaned_data['format'].code
+
+            if _validate_answer_data(format_code, option_formset, match_pair_formset):
+                form.save()
+
+                if format_code == 'test':
+                    option_formset.save()
+                elif format_code == 'matching':
+                    match_pair_formset.save()
+
+                return redirect('teaching:question-list', subject.pk)
     else:
         form = QuestionForm(instance=question, subject=subject, teacher=teacher)
-        formset = OptionFormSet(instance=question, prefix='options')
+        option_formset = OptionFormSet(instance=question, prefix='options')
+        match_pair_formset = MatchPairFormSet(instance=question, prefix='pairs')
 
-    context = _question_form_context(request, subject, form, formset, tab=request.GET.get('tab', 'question'))
+    context = _question_form_context(
+        request, subject, form, option_formset, match_pair_formset, tab=request.GET.get('tab', 'question'),
+    )
     return render(request, 'teaching/subject/question/form/page.html', context)
 
 
@@ -213,9 +263,13 @@ def question_variant_field_view(request):
 # -------------- chapter + topic fields (HTMX) --------------
 @partner_teacher_required
 def question_topic_fields_view(request):
-    subject_id = request.user.teacher.subject_id
+    teacher = request.user.teacher
+    subject_id = request.GET.get('subject')
     grade_id = request.GET.get('grade')
     chapter_id = request.GET.get('chapter')
+
+    if not subject_id or not teacher.subjects.filter(pk=subject_id).exists():
+        raise Http404
 
     chapters = get_chapters(subject_id, grade_id=grade_id)
     topics = get_topics(subject_id, chapter_id=chapter_id, grade_id=grade_id)
@@ -229,5 +283,5 @@ def question_topic_fields_view(request):
     return render(request, 'teaching/subject/question/_topic_fields.html', {
         'chapter_field': form['chapter'],
         'topic_field': form['topic'],
-        'topic_fields_url': reverse('teaching:question-topic-fields'),
+        'topic_fields_url': f"{reverse('teaching:question-topic-fields')}?subject={subject_id}",
     })

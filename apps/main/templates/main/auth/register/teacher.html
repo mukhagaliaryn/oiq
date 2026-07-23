@@ -20,7 +20,7 @@
             formData: {
                 city: '',
                 school: '',
-                subject: '',
+                subjects: [],
                 first_name: '',
                 last_name: '',
                 email: '',
@@ -29,7 +29,7 @@
 
             cityError: false,
             schoolError: false,
-            subjectError: false,
+            subjectsError: false,
 
             init() {
                 const savedForm = localStorage.getItem('teacherRegisterForm')
@@ -43,11 +43,11 @@
 
                 this.formData.city = String(this.formData.city || '')
                 this.formData.school = String(this.formData.school || '')
-                this.formData.subject = String(this.formData.subject || '')
+                this.formData.subjects = (this.formData.subjects || []).map(String)
 
                 this.$nextTick(() => {
                     this.setFieldValue(document.getElementById('id_city'), this.formData.city)
-                    this.setFieldValue(document.getElementById('id_subject'), this.formData.subject)
+                    this.setMultiFieldValue(document.getElementById('id_subjects'), this.formData.subjects)
 
                     if (this.formData.city) {
                         htmx.ajax('GET', `{{ school_field_url }}?city=${this.formData.city}&school=${this.formData.school}`, {
@@ -71,10 +71,20 @@
                 if (data) data.value = value
             },
 
+            setMultiFieldValue(el, values) {
+                if (!el) return
+                Array.from(el.options).forEach((option) => {
+                    option.selected = values.includes(String(option.value))
+                })
+
+                const data = Alpine.$data(el.closest('[x-data]'))
+                if (data) data.value = values
+            },
+
             saveForm() {
                 this.formData.city = String(this.formData.city || '')
                 this.formData.school = String(this.formData.school || '')
-                this.formData.subject = String(this.formData.subject || '')
+                this.formData.subjects = (this.formData.subjects || []).map(String)
 
                 localStorage.setItem(
                     'teacherRegisterForm',
@@ -97,9 +107,9 @@
             nextStep() {
                 this.cityError = !this.formData.city
                 this.schoolError = !this.formData.school
-                this.subjectError = !this.formData.subject
+                this.subjectsError = this.formData.subjects.length === 0
 
-                if (this.cityError || this.schoolError || this.subjectError) return
+                if (this.cityError || this.schoolError || this.subjectsError) return
 
                 this.saveForm()
                 this.setStep(2)
@@ -169,16 +179,16 @@
                         {% endfor %}
                     </div>
 
-                    <!-- Subject -->
+                    <!-- Subjects -->
                     <div class="space-y-2">
-                        <label for="id_subject" class="block ml-6 font-medium">
-                            {% translate "Subject" %}
+                        <label for="id_subjects" class="block ml-6 font-medium">
+                            {% translate "Subjects" %}
                         </label>
-                        <div @change="formData.subject = String($event.target.value || ''); subjectError = false; saveForm()">
-                            {% include "components/product/select.html" with field=form.subject %}
+                        <div @change="formData.subjects = Array.from($event.target.selectedOptions).map((o) => o.value); subjectsError = false; saveForm()">
+                            {% include "components/product/multi_select.html" with field=form.subjects %}
                         </div>
-                        <span x-show="subjectError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
-                        {% for error in form.subject.errors %}
+                        <span x-show="subjectsError" x-cloak class="block mt-1 text-normal text-center text-danger">{% translate "This field is required." %}</span>
+                        {% for error in form.subjects.errors %}
                             <span class="block mt-1 text-normal text-center text-danger">{{ error }}</span>
                         {% endfor %}
                     </div>

@@ -4,8 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import TabularInline, ModelAdmin
 from core.admin.base import BaseModelAdmin, LinkedAdminMixin
 from core.utils.text import question_text_preview
-from apps.catalog.models import QuestionFormat, FormatVariant, Question, Option
-from apps.catalog.forms.question import QuestionAdminForm, OptionAdminForm
+from apps.catalog.models import QuestionFormat, FormatVariant, Question, Option, MatchPair
+from apps.catalog.forms.question import QuestionAdminForm, OptionAdminForm, MatchPairAdminForm
 
 
 # Question format admin
@@ -32,6 +32,13 @@ class OptionInline(TabularInline):
     form = OptionAdminForm
 
 
+# -------------- MatchPairInline --------------
+class MatchPairInline(TabularInline):
+    model = MatchPair
+    extra = 0
+    form = MatchPairAdminForm
+
+
 # -------------- QuestionAdmin --------------
 @admin.register(Question)
 class QuestionAdmin(LinkedAdminMixin, BaseModelAdmin):
@@ -40,7 +47,7 @@ class QuestionAdmin(LinkedAdminMixin, BaseModelAdmin):
     list_filter = ('topic', 'format', 'variant', 'level')
     form = QuestionAdminForm
     readonly_fields = ('admin_link',)
-    inlines = (OptionInline, )
+    inlines = (OptionInline, MatchPairInline)
 
     fieldsets = (
         (_('Question content'), {

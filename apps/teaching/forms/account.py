@@ -35,20 +35,22 @@ class TeacherProfileForm(forms.Form):
         required=True,
         empty_label=_('Select school'),
     )
-    subject = forms.ModelChoiceField(
-        label=_('Subject'),
+    subjects = forms.ModelMultipleChoiceField(
+        label=_('Subjects'),
         queryset=get_active_subjects(),
         required=True,
-        empty_label=_('Select subject'),
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, subjects_locked=False, **kwargs):
         super().__init__(*args, **kwargs)
 
         city_id = self.data.get('city') or self.initial.get('city')
 
         if city_id:
             self.fields['school'].queryset = get_schools_by_city(city_id)
+
+        if subjects_locked:
+            self.fields['subjects'].disabled = True
 
 
 # -------------- ChangePasswordForm --------------

@@ -29,7 +29,7 @@ def _owned_chapter(request, pk):
     teacher = request.user.teacher
     chapter = get_chapter(pk)
 
-    if chapter.subject_id != teacher.subject_id:
+    if not teacher.subjects.filter(pk=chapter.subject_id).exists():
         raise Http404
 
     return chapter
@@ -39,7 +39,7 @@ def _owned_topic(request, pk):
     teacher = request.user.teacher
     topic = get_topic(pk)
 
-    if topic.chapter.subject_id != teacher.subject_id:
+    if not teacher.subjects.filter(pk=topic.chapter.subject_id).exists():
         raise Http404
 
     return topic

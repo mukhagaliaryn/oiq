@@ -52,11 +52,10 @@ class TeacherRegisterForm(BaseRegisterForm):
         required=True,
         empty_label=_('Select school'),
     )
-    subject = forms.ModelChoiceField(
-        label=_('Subject'),
+    subjects = forms.ModelMultipleChoiceField(
+        label=_('Subjects'),
         queryset=get_active_subjects(),
         required=True,
-        empty_label=_('Select subject'),
     )
 
     def __init__(self, *args, **kwargs):

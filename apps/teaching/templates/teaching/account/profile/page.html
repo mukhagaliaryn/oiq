@@ -75,8 +75,10 @@
             <p class="mt-1 font-medium">{{ profile_user.teacher.school|default:"—" }}</p>
         </div>
         <div>
-            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "Subject" %}</p>
-            <p class="mt-1 font-medium">{{ profile_user.teacher.subject|default:"—" }}</p>
+            <p class="text-xs font-medium uppercase tracking-wide text-body-subtle">{% translate "Subjects" %}</p>
+            <p class="mt-1 font-medium">
+                {% for subject in profile_user.teacher.subjects.all %}{{ subject.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}
+            </p>
         </div>
     </div>
 </div>

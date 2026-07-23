@@ -44,7 +44,8 @@ class TeacherInline(StackedInline):
     model = Teacher
     extra = 0
     tab = True
-    autocomplete_fields = ('city', 'school', 'subject')
+    autocomplete_fields = ('city', 'school')
+    filter_horizontal = ('subjects',)
 
 
 # -------------- UserAdmin --------------

@@ -1,8 +1,8 @@
-from apps.catalog.models import Option, Question
+from apps.catalog.models import MatchPair, Option, Question
 
 
 def create_question(*, topic, author, text, format, variant=None, level=Question.Level.EASY,
-                     time_limit=30, options=None):
+                     time_limit=30, options=None, match_pairs=None):
     question = Question.objects.create(
         topic=topic, author=author, text=text, format=format, variant=variant,
         level=level, time_limit=time_limit,
@@ -12,6 +12,12 @@ def create_question(*, topic, author, text, format, variant=None, level=Question
         Option.objects.bulk_create([
             Option(question=question, answer=option['answer'], is_correct=option.get('is_correct', False))
             for option in options
+        ])
+
+    if match_pairs:
+        MatchPair.objects.bulk_create([
+            MatchPair(question=question, left=pair['left'], right=pair['right'], order=index)
+            for index, pair in enumerate(match_pairs)
         ])
 
     return question

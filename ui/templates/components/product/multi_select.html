@@ -1,0 +1,102 @@
+{% load i18n %}
+<div
+    {% if not field.field.disabled %}
+    x-data="{
+        open: false,
+        value: [{% for v in field.value %}'{{ v|escapejs }}',{% endfor %}],
+        options: [
+            {% for value, label in field.field.choices %}
+                { value: '{{ value|default_if_none:''|escapejs }}', label: '{{ label|escapejs }}' }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        get labels() {
+            return this.options.filter((option) => this.value.includes(String(option.value))).map((option) => option.label);
+        },
+        toggle(val) {
+            val = String(val);
+            this.value = this.value.includes(val)
+                ? this.value.filter((v) => v !== val)
+                : [...this.value, val];
+
+            const select = this.$refs['{{ field.html_name }}'];
+            Array.from(select.options).forEach((option) => {
+                option.selected = this.value.includes(String(option.value));
+            });
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        },
+    }"
+    @keydown.escape.window="open = false"
+    {% endif %}
+    class="relative"
+>
+    <button
+        type="button"
+        {% if field.field.disabled %}
+        disabled
+        class="flex min-h-[3.25rem] w-full flex-wrap items-center gap-1.5 rounded-2xl border border-default bg-neutral-tertiary px-6 py-3 text-left text-body-subtle"
+        {% else %}
+        @click="open = !open"
+        class="flex min-h-[3.25rem] w-full flex-wrap items-center gap-2 rounded-2xl border border-default bg-neutral-primary px-6 py-3 text-left outline-none transition focus:ring-2 focus:ring-brand"
+        {% endif %}
+    >
+        {% if field.field.disabled %}
+            {% for value, label in field.field.choices %}
+                {% if value in field.value %}
+                    <span class="rounded-full bg-neutral-quaternary px-2.5 py-1 text-normal">{{ label }}</span>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <span class="flex flex-1 flex-wrap gap-1.5">
+                <template x-if="labels.length === 0">
+                    <span class="text-body-subtle">{% translate "Select" %}</span>
+                </template>
+                <template x-for="text in labels" :key="text">
+                    <span class="rounded-full bg-brand-soft px-2.5 py-1 text-normal text-brand" x-text="text"></span>
+                </template>
+            </span>
+            <i class="ph ph-caret-down size-4 shrink-0 text-body-subtle transition" :class="{ 'rotate-180': open }"></i>
+        {% endif %}
+    </button>
+
+    {% if not field.field.disabled %}
+        <div
+            x-show="open"
+            x-cloak
+            @click.away="open = false"
+            x-transition.origin.top
+            class="absolute left-0 right-0 z-20 mt-2 max-h-64 overflow-y-auto rounded-xl border border-default bg-neutral-primary p-2 shadow-xl"
+        >
+            <template x-for="option in options" :key="option.value">
+                <button
+                    type="button"
+                    @click="toggle(option.value)"
+                    class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-normal transition hover:bg-neutral-secondary"
+                >
+                    <span
+                        class="flex size-4 shrink-0 items-center justify-center rounded-md border border-default transition"
+                        :class="{ 'border-brand bg-brand': value.includes(String(option.value)) }"
+                    >
+                        <i class="ph ph-check size-3 text-neutral-primary opacity-0 transition" :class="{ 'opacity-100': value.includes(String(option.value)) }"></i>
+                    </span>
+                    <span x-text="option.label"></span>
+                </button>
+            </template>
+        </div>
+    {% endif %}
+
+    <select
+        multiple
+        {% if not field.field.disabled %}
+            x-ref="{{ field.html_name }}"
+        {% endif %}
+        name="{{ field.html_name }}"
+        id="{{ field.id_for_label }}"
+        class="hidden"
+        {% if field.field.disabled %}disabled{% endif %}
+        {% if field.field.required %}required{% endif %}
+    >
+        {% for value, label in field.field.choices %}
+            <option value="{{ value }}" {% if value in field.value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</div>

@@ -1,7 +1,7 @@
 from django import forms
 from django.urls import reverse_lazy
 from unfold.widgets import UnfoldAdminSelectWidget
-from apps.catalog.models import Question, Option
+from apps.catalog.models import Question, Option, MatchPair
 from core.forms.base import RichTextTextarea
 
 
@@ -25,4 +25,15 @@ class OptionAdminForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'answer': RichTextTextarea(height='180px'),
+        }
+
+
+# MatchPairAdminForm
+class MatchPairAdminForm(forms.ModelForm):
+    class Meta:
+        model = MatchPair
+        fields = '__all__'
+        widgets = {
+            'left': RichTextTextarea(height='120px'),
+            'right': RichTextTextarea(height='120px'),
         }

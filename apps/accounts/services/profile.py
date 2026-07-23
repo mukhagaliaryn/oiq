@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 User = get_user_model()
 
 BASIC_INFO_FIELDS = ('first_name', 'last_name', 'middle_name', 'phone')
-TEACHER_PROFILE_FIELDS = ('city', 'school', 'subject')
+TEACHER_PROFILE_FIELDS = ('city', 'school')
 
 
 # -------------- update_basic_info --------------
@@ -23,7 +23,7 @@ def update_basic_info(user, **fields):
 
 
 # -------------- update_teacher_profile --------------
-def update_teacher_profile(teacher, **fields):
+def update_teacher_profile(teacher, subjects=None, **fields):
     update_fields = [field for field in fields if field in TEACHER_PROFILE_FIELDS]
 
     for field in update_fields:
@@ -31,6 +31,9 @@ def update_teacher_profile(teacher, **fields):
 
     if update_fields:
         teacher.save(update_fields=update_fields)
+
+    if subjects is not None:
+        teacher.subjects.set(subjects)
 
     return teacher
 

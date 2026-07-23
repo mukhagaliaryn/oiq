@@ -23,10 +23,9 @@ class Teacher(models.Model):
         on_delete=models.SET_NULL, related_name='teachers',
         blank=True, null=True,
     )
-    subject = models.ForeignKey(
-        'catalog.Subject', verbose_name=_('Subject'),
-        on_delete=models.SET_NULL, related_name='teachers',
-        blank=True, null=True,
+    subjects = models.ManyToManyField(
+        'catalog.Subject', verbose_name=_('Subjects'),
+        related_name='teachers', blank=True,
     )
     type = models.CharField(
         _('Type'), max_length=16,

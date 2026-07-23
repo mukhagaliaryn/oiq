@@ -1,0 +1,23 @@
+{% load i18n %}
+<div class="space-y-3 rounded-2xl border border-default p-4" data-pair-row>
+    <div class="grid gap-3 sm:grid-cols-2">
+        <div class="space-y-2">
+            {{ pair_form.left }}
+            {% for error in pair_form.left.errors %}
+                <span class="block text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="space-y-2">
+            {{ pair_form.right }}
+            {% for error in pair_form.right.errors %}
+                <span class="block text-normal text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="flex justify-end">
+        <button type="button" data-remove-pair class="flex justify-center items-center rounded-2xl p-3 cursor-pointer text-danger hover:bg-danger-soft">
+            <i class="ph ph-trash size-4"></i>
+        </button>
+    </div>
+    <span class="hidden">{{ pair_form.DELETE }}</span>
+</div>

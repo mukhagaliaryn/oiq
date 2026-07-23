@@ -45,25 +45,26 @@
                 {% translate "Dashboard" %}
             </a>
 
-            {% if request.user.teacher.is_partner and request.user.teacher.subject %}
+            {% if request.user.teacher.is_partner and request.user.teacher.subjects.all %}
                 <div class="">
                     <p class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wide text-body-subtle">
                         {% translate "Subjects" %}
                     </p>
 
-                    
+                    {% for subject in request.user.teacher.subjects.all %}
                         <a
-                            href="{% url 'teaching:subject-detail' request.user.teacher.subject_id %}"
+                            href="{% url 'teaching:subject-detail' subject.pk %}"
                             class="flex items-center gap-3 rounded-2xl px-4 py-3 font-medium transition
-                            {% if request.resolver_match.url_name == 'subject-detail' %}
+                            {% if request.resolver_match.url_name == 'subject-detail' and request.resolver_match.kwargs.pk|stringformat:'s' == subject.pk|stringformat:'s' %}
                                 bg-brand text-neutral-primary
                             {% else %}
                                 text-body hover:bg-neutral-secondary
                             {% endif %}"
                         >
-                            <i class="{% if request.resolver_match.url_name == 'subject-detail' %}ph-fill{% else %}ph{% endif %} ph-book-open size-5"></i>
-                            {{ request.user.teacher.subject.name }}
+                            <i class="{% if request.resolver_match.url_name == 'subject-detail' and request.resolver_match.kwargs.pk|stringformat:'s' == subject.pk|stringformat:'s' %}ph-fill{% else %}ph{% endif %} ph-book-open size-5"></i>
+                            {{ subject.name }}
                         </a>
+                    {% endfor %}
                 </div>
             {% endif %}
 
